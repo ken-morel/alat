@@ -18,6 +18,8 @@
   "frontend:dev:watcher": "bun run dev",
   "frontend:dev:serverUrl": "auto",
   "wailsjsdir": "./frontend/src/lib",
+  "devServer": "localhost:5173",
+  "frontend:dir": "frontend",
   "author": {
     "name": "Engon Ken Morel",
     "email": "engonken8@gmail.com"

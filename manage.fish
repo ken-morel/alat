@@ -34,19 +34,23 @@ function proto
     echo "Protobuf generation complete."
 end
 
+function dev
+    cd apps/desktop
+    wails dev -tags webkit2_41
+end
 
 # Command dispatcher
 switch "$argv[1]"
-    case "proto"
+    case proto
         proto
-    case "help"
+    case help
         help
     case ""
         echo "Error: No command specified."
         help
         exit 1
     case '*'
-        echo "Error: Unknown command '$argv[1]""
+        echo "Error: Unknown command '$argv[1]'"
         help
         exit 1
 end
