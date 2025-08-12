@@ -1,11 +1,23 @@
 {
   "$schema": "https://wails.io/schemas/config.v2.json",
-  "name": "desktop",
-  "outputfilename": "desktop",
-  "frontend:install": "npm install",
-  "frontend:build": "npm run build",
-  "frontend:dev:watcher": "npm run dev",
+  "info": {
+    "productName": "Alat",
+    "copyright": "Copyright 2025 Engon Ken Morel",
+    "protocols": [
+      {
+        "scheme": "alat",
+        "description": "Alat device link",
+        "role": "Viewer"
+      }
+    ]
+  },
+  "name": "Alat desktop",
+  "outputfilename": "alat-desktop",
+  "frontend:install": "bun install",
+  "frontend:build": "bun run build",
+  "frontend:dev:watcher": "bun run dev",
   "frontend:dev:serverUrl": "auto",
+  "wailsjsdir": "./frontend/src/lib",
   "author": {
     "name": "Engon Ken Morel",
     "email": "engonken8@gmail.com"
