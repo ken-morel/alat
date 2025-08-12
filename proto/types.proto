@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package types;
+
+option go_package = "alat/pkg/core/proto/types";
+
+// Represents a device discovered on the network.
+message Device {
+  string id = 1;
+  string name = 2;
+  enum DeviceType {
+    DESKTOP = 0;
+    MOBILE = 1;
+    TV = 2;
+    WEB = 3;
+  }
+  DeviceType type = 3;
+  string ip_address = 4;
+}

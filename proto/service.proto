@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package services;
+
+import "proto/types.proto";
+
+option go_package = "alat/pkg/core/proto/services";
+
+// The main service for discovering and managing peers.
+service PeerDiscovery {
+  // Retrieves a list of all discovered devices.
+  rpc GetDiscoveredDevices(Empty) returns (DeviceList);
+}
+
+// A message representing no parameters.
+message Empty {}
+
+// A list of devices.
+message DeviceList {
+  repeated types.Device devices = 1;
+}
