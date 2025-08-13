@@ -1,19 +1,26 @@
 # Alat Project
 
-A cross-platform application for connecting devices.
+Alat is a cross-platform application that allows you to seamlessly connect and share data between your devices. Whether you're using a desktop computer, a mobile phone, or a tablet, Alat helps you stay connected and productive.
 
-## Project Structure
+## How it Works
 
-- `proto/`: Protocol Buffer definitions. This is the schema for all communication.
-- `pkg/core/`: The core Go daemon logic, shared across platforms.
-- `apps/`: Contains the platform-specific applications.
-  - `desktop/`: Wails app for Windows, macOS, and Linux.
-  - `mobile/`: Flutter app for iOS and Android.
-  - `server/`: Go server for remote discovery and relay.
-- `go.work`: Go workspace file for managing the Go modules.
-- `manage.fish`: Main project management script.
+Alat uses a combination of technologies to discover and communicate with devices on your local network. It consists of the following components:
+
+*   **A core daemon** that runs on each device and handles the discovery and communication.
+*   **A desktop application** for Windows, macOS, and Linux that allows you to manage your connected devices.
+*   **A mobile application** for iOS and Android that provides the same functionality on the go.
+*   **A server** that can be used for remote discovery and relay, allowing you to connect to your devices from anywhere in the world.
+
+## Features
+
+*   **Automatic device discovery**: Alat automatically discovers other devices on your local network that are running the application.
+*   **Cross-platform**: Alat works on Windows, macOS, Linux, iOS, and Android.
+*   **Secure**: All communication between devices is encrypted.
+*   **Open source**: Alat is open source and available on GitHub.
 
 ## Getting Started
+
+If you're a developer and want to contribute to the project, here's how to get started:
 
 ### 1. Install Protocol Buffers Compiler
 
@@ -42,3 +49,11 @@ You can see all available commands by running:
 ```
 
 Now you are ready to start developing!
+
+## Contributing
+
+We welcome contributions from the community. If you'd like to contribute, please fork the repository and submit a pull request.
+
+## License
+
+Alat is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.

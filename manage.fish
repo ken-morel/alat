@@ -8,6 +8,9 @@ function help
     echo "Commands:"
     echo "  proto    - Generates Go and Dart code from .proto files."
     echo "  help     - Shows this help message."
+    echo "  desktop  - Manage apps/desktop."
+    echo "  mobile   - Manage apps/mobile."
+    echo "  server   - Manage apps/server."
 end
 
 function proto
@@ -35,19 +38,21 @@ function proto
     echo "Protobuf generation complete."
 end
 
-function dev-desktop
-    cd apps/desktop
-    wails dev -tags webkit2_41
-end
-
 # Command dispatcher
 switch "$argv[1]"
     case proto
         proto
     case help
         help
-    case dev-desktop
-        dev-desktop
+    case desktop
+        cd apps/desktop
+        fish manage.fish $argv[2..]
+    case mobile
+        cd apps/mobile
+        fish manage.fish $argv[2..]
+    case server
+        cd apps/server
+        fish manage.fish $argv[2..]
     case ""
         echo "Error: No command specified."
         help

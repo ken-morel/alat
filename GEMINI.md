@@ -1,74 +1,61 @@
-# Gemini Project Context: Alat
+# Gemini Code Assistant Context
+
+This document provides context for the Gemini Code Assistant to understand the `alat` project.
 
 ## Project Overview
 
-This repository contains the source code for "Alat", a cross-platform application designed to connect devices for file exchange, screen mirroring, clipboard syncing, and more.
+`alat` is a cross-platform application designed to connect devices. It consists of a core Go daemon, a desktop application, a mobile application, and a server for remote discovery and relay.
 
-The project is structured as a monorepo and utilizes a core-satellite architecture:
--   **`pkg/core`**: A central, headless daemon written in Go that contains all the core business logic, networking, and service discovery. This is the "brain" of the application.
--   **`apps/`**: This directory houses the platform-specific "heads" or user interfaces.
-    -   **`apps/desktop`**: A desktop application built with Wails (Go + Svelte/TypeScript).
-    -   **`apps/mobile`**: A mobile application for iOS and Android built with Flutter/Dart.
-    -   **`apps/server`**: A Go-based web server that acts as a relay and discovery mechanism for devices not on the same local network.
--   **`proto/`**: Contains the Protocol Buffers (`.proto`) definitions that define the data structures and service contracts for all communication within the Alat ecosystem. This ensures type-safe and efficient data exchange between the Go core, the Flutter app, and other components.
+The project is structured as a monorepo with the following components:
 
-The entire Go codebase is managed as a single unit via a `go.work` workspace file.
+*   **`proto/`**: Contains the Protocol Buffer definitions that define the communication schema between the different parts of the application.
+*   **`pkg/core/`**: The core Go logic shared across all platforms.
+*   **`apps/`**: Contains the platform-specific applications:
+    *   **`desktop/`**: A Wails application for Windows, macOS, and Linux. The frontend is built with Svelte.
+    *   **`mobile/`**: A Flutter application for iOS and Android.
+    *   **`server/`**: A Go server for remote discovery and relay.
+*   **`go.work`**: The Go workspace file that manages the Go modules in the project.
+*   **`manage.fish`**: The main project management script, used for tasks like generating code from the protocol buffers.
 
 ## Building and Running
 
-The project uses a unified management script, `manage.fish`, to handle common development tasks.
+The project is managed using the `manage.fish` script. The following commands are available:
 
-### 1. Prerequisites
+*   **`./manage.fish help`**: Shows the help message with all available commands.
+*   **`./manage.fish proto`**: Generates the Go and Dart code from the `.proto` files. This is a crucial step before building the applications.
+*   **`./manage.fish desktop <command>`**: Manages the desktop application.
+*   **`./manage.fish mobile <command>`**: Manages the mobile application.
+*   **`./manage.fish server <command>`**: Manages the server application.
 
-Before running any commands, you must have the Protocol Buffers compiler (`protoc`) installed.
--   **macOS:** `brew install protobuf`
--   **Linux:** `sudo apt-get install -y protobuf-compiler`
--   **Windows:** `choco install protoc`
+### Building and Running the Desktop App
 
-### 2. Generating Protocol Code
+To build and run the desktop app, you will need to have the Wails CLI installed. Then, you can use the following commands:
 
-To ensure all parts of the application can communicate, you must first generate the necessary Go and Dart code from the `.proto` files.
-
-```fish
-./manage.fish proto
+```bash
+cd apps/desktop
+wails dev
 ```
-This command will:
-1.  Install the required `protoc` plugins for Go and Dart.
-2.  Generate Go code in `pkg/core/proto/`.
-3.  Generate Dart code in `apps/mobile/lib/src/proto/`.
 
-### 3. Running the Applications
+### Building and Running the Mobile App
 
--   **Desktop App**:
-    ```bash
-    # Navigate to the desktop app directory
-    cd apps/desktop
+To build and run the mobile app, you will need to have the Flutter SDK installed. Then, you can use the following commands:
 
-    # Run the Wails development server
-    wails dev
-    ```
+```bash
+cd apps/mobile
+flutter run
+```
 
--   **Mobile App**:
-    ```bash
-    # Navigate to the mobile app directory
-    cd apps/mobile
+### Building and Running the Server
 
-    # Run the Flutter application
-    flutter run
-    ```
+To build and run the server, you can use the following command:
 
--   **Server**:
-    ```bash
-    # Navigate to the server app directory
-    cd apps/server
-
-    # Run the Go server
-    go run .
-    ```
+```bash
+cd apps/server
+go run .
+```
 
 ## Development Conventions
 
--   **Monorepo**: All code for the project is located in this single repository.
--   **Protocol-First**: Any new feature or data structure change should begin with an update to the `.proto` files. After updating, run `./manage.fish proto` to propagate the changes across the codebase.
--   **Go Workspace**: The Go modules (`core`, `desktop`, `server`) are linked in the `go.work` file, allowing for easy cross-module development.
--   **Centralized Logic**: All core business logic should reside in the `pkg/core` module. The platform-specific apps in `apps/` should be as "thin" as possible, primarily handling UI and delegating logic to the core module.
+*   **Protocol Buffers**: All communication between the different parts of the application is defined using Protocol Buffers. When making changes to the communication protocol, you must first update the `.proto` files and then run `./manage.fish proto` to regenerate the code.
+*   **Code Style**: The project uses the standard Go and Dart code styles.
+*   **Testing**: TODO: Add information about the testing strategy.
