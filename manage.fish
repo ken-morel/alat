@@ -26,7 +26,11 @@ function proto
     fish_add_path $HOME/.pub-cache/bin
 
     echo "Generating Go code..."
-    protoc --proto_path=proto --go_out=pkg/core/protobuf --go_opt=paths=source_relative \
+    if not test -e pkg/core/pbuf
+        echo "Creating pkg/core/pbuf folder"
+        mkdir pkg/core/pbuf
+    end
+    protoc --proto_path=proto --go_out=pkg/core/pbuf --go_opt=paths=source_relative \
         proto/types.proto proto/service.proto
 
     # echo "Generating Dart code..."
