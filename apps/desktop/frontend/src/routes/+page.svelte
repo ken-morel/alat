@@ -1,11 +1,2 @@
-<template lang="pug">
-  main h1(class="main-heading") Hello from Pug!
-  p This component is styled with SASS.
-</template>
-
-<style lang="sass">
-
-*
-  color: white
-
-</style>
+<h1>Welcome to SvelteKit</h1>
+<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
