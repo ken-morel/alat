@@ -1,7 +1,6 @@
 #!/usr/bin/env fish
 
 function dev
-    cd apps/desktop
     wails dev -tags webkit2_41 -v 2
 end
 
