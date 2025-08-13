@@ -36,14 +36,15 @@ func (app *App) onSecondInstanceLaunch(secondInstanceData options.SecondInstance
 func (app *App) Run() error {
 	return wails.Run(&options.App{
 		Title:  "desktop",
-		Width:  1024,
-		Height: 768,
+		Width:  800,
+		Height: 600,
 		AssetServer: &assetserver.Options{
 			Assets: app.assets,
 		},
-		BackgroundColour: &options.RGBA{R: 230, G: 240, B: 240, A: 1},
-		OnStartup:        app.startup,
-		OnShutdown:       app.shutdown,
+		BackgroundColour: &options.RGBA{R: 4, G: 2, B: 4, A: 255},
+		//&options.RGBA{R: 17, G: 23, B: 17, A: 255},
+		OnStartup:  app.startup,
+		OnShutdown: app.shutdown,
 		SingleInstanceLock: &options.SingleInstanceLock{
 			UniqueId:               "cm.rbs.engon.alat",
 			OnSecondInstanceLaunch: app.onSecondInstanceLaunch,
