@@ -35,7 +35,7 @@ function proto
     echo "Protobuf generation complete."
 end
 
-function dev
+function dev-desktop
     cd apps/desktop
     wails dev -tags webkit2_41
 end
@@ -46,6 +46,8 @@ switch "$argv[1]"
         proto
     case help
         help
+    case dev-desktop
+        dev-desktop
     case ""
         echo "Error: No command specified."
         help
