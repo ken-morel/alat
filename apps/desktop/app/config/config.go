@@ -8,14 +8,18 @@ import (
 	"os"
 	"path"
 
+	"github.com/google/uuid"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"gopkg.in/yaml.v3"
 )
 
 type Config struct {
-	DeviceName  string
-	DeviceColor options.RGBA
-	DeviceCode  string
+	DeviceName  string       `yaml:"deviceName"`
+	DeviceColor options.RGBA `yaml:"deviceColor"`
+	DeviceCode  string       `yaml:"deviceCode"`
+	Language    string       `yaml:"language"`
+	AutoStart   bool         `yaml:"autoStart"`
+	Theme       string       `yaml:"theme"`
 }
 
 var (
@@ -43,19 +47,57 @@ func LoadConfig() error {
 	if err != nil {
 		return err
 	}
+	defer file.Close()
 	err = yaml.NewDecoder(file).Decode(&config)
 	if err != nil {
 		return err
-	} else {
-		Ready = true
-		return nil
 	}
+
+	Ready = true
+	return nil
+}
+
+func SaveConfig(cfg *Config) error {
+	filePath := GetMainConfigFile()
+	file, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	encoder := yaml.NewEncoder(file)
+	defer encoder.Close()
+
+	return encoder.Encode(cfg)
+}
+
+func GetConfig() Config {
+	return config
+}
+
+func GenerateDeviceCode() string {
+	return uuid.NewString()
 }
 
 func Init() error {
+	AlatConfigDir = GetConfigDir()
+	if err := os.MkdirAll(AlatConfigDir, 0750); err != nil {
+		return fmt.Errorf("could not create config directory: %w", err)
+	}
+
 	if err := LoadConfig(); err != nil {
-		fmt.Println(err.Error())
-		return err
+		hostname, _ := os.Hostname()
+		config = Config{
+			DeviceName:  hostname,
+			DeviceColor: options.RGBA{R: 0, G: 0, B: 0, A: 255},
+			DeviceCode:  GenerateDeviceCode(),
+			Language:    "en-cm",
+			AutoStart:   false,
+			Theme:       "light",
+		}
+		if err := SaveConfig(&config); err != nil {
+			return fmt.Errorf("could not save initial config: %w", err)
+		}
 	}
 	return nil
 }

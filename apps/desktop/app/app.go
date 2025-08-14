@@ -41,6 +41,26 @@ func (app *App) shutdown(ctx context.Context) {
 func (app *App) onSecondInstanceLaunch(secondInstanceData options.SecondInstanceData) {
 }
 
+// IsSetupComplete checks if the application has been configured.
+func (app *App) IsSetupComplete() bool {
+	return config.Ready
+}
+
+// GetConfig returns the current application configuration.
+func (app *App) GetConfig() config.Config {
+	return config.GetConfig()
+}
+
+// SaveConfig saves the application configuration.
+func (app *App) SaveConfig(cfg config.Config) error {
+	return config.SaveConfig(&cfg)
+}
+
+// GenerateDeviceCode generates a new unique device code.
+func (app *App) GenerateDeviceCode() string {
+	return config.GenerateDeviceCode()
+}
+
 func (app *App) Run() error {
 	return wails.Run(&options.App{
 		Title:  "desktop",
