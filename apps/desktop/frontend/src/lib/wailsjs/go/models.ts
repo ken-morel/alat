@@ -3,6 +3,7 @@ export namespace core {
 	export class DeviceAddress {
 	    Port: number;
 	    IP: string;
+	    Phrase: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new DeviceAddress(source);
@@ -12,6 +13,7 @@ export namespace core {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.Port = source["Port"];
 	        this.IP = source["IP"];
+	        this.Phrase = source["Phrase"];
 	    }
 	}
 	export class DeviceInfo {

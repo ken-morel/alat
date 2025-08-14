@@ -4,7 +4,7 @@
 // 	protoc        v3.21.12
 // source: types.proto
 
-package types
+package pbuf
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -78,7 +78,7 @@ type Device struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Type          Device_DeviceType      `protobuf:"varint,3,opt,name=type,proto3,enum=types.Device_DeviceType" json:"type,omitempty"`
+	Type          Device_DeviceType      `protobuf:"varint,3,opt,name=type,proto3,enum=pbuf.Device_DeviceType" json:"type,omitempty"`
 	IpAddress     string                 `protobuf:"bytes,4,opt,name=ip_address,json=ipAddress,proto3" json:"ip_address,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -146,11 +146,11 @@ var File_types_proto protoreflect.FileDescriptor
 
 const file_types_proto_rawDesc = "" +
 	"\n" +
-	"\vtypes.proto\x12\x05types\"\xb1\x01\n" +
+	"\vtypes.proto\x12\x04pbuf\"\xb0\x01\n" +
 	"\x06Device\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\x12,\n" +
-	"\x04type\x18\x03 \x01(\x0e2\x18.types.Device.DeviceTypeR\x04type\x12\x1d\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12+\n" +
+	"\x04type\x18\x03 \x01(\x0e2\x17.pbuf.Device.DeviceTypeR\x04type\x12\x1d\n" +
 	"\n" +
 	"ip_address\x18\x04 \x01(\tR\tipAddress\"6\n" +
 	"\n" +
@@ -159,7 +159,7 @@ const file_types_proto_rawDesc = "" +
 	"\n" +
 	"\x06MOBILE\x10\x01\x12\x06\n" +
 	"\x02TV\x10\x02\x12\a\n" +
-	"\x03WEB\x10\x03B\x1bZ\x19alat/pkg/core/proto/typesb\x06proto3"
+	"\x03WEB\x10\x03B\x14Z\x12alat/pkg/core/pbufb\x06proto3"
 
 var (
 	file_types_proto_rawDescOnce sync.Once
@@ -176,11 +176,11 @@ func file_types_proto_rawDescGZIP() []byte {
 var file_types_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_types_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_types_proto_goTypes = []any{
-	(Device_DeviceType)(0), // 0: types.Device.DeviceType
-	(*Device)(nil),         // 1: types.Device
+	(Device_DeviceType)(0), // 0: pbuf.Device.DeviceType
+	(*Device)(nil),         // 1: pbuf.Device
 }
 var file_types_proto_depIdxs = []int32{
-	0, // 0: types.Device.type:type_name -> types.Device.DeviceType
+	0, // 0: pbuf.Device.type:type_name -> pbuf.Device.DeviceType
 	1, // [1:1] is the sub-list for method output_type
 	1, // [1:1] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name

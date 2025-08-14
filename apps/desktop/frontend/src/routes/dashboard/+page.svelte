@@ -28,7 +28,7 @@
         {/each}
       {/await}
     </div>
-    <button class="w3-button w3-block">Pair a device</button>
+    <a href="/pair" class="w3-button w3-block">Pair a device</a>
   </div>
 </section>
 
@@ -44,7 +44,7 @@ section.connected-devices
   div
     max-width: 800px
     margin: auto
-    button
+    a
       max-width: 90%
       background-color: theme.$secondary-d3
       margin: auto

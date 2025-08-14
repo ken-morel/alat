@@ -4,15 +4,15 @@
 // 	protoc        v3.21.12
 // source: service.proto
 
-package services
+package pbuf
 
 import (
-	types "alat/pkg/core/proto/types"
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -62,7 +62,7 @@ func (*Empty) Descriptor() ([]byte, []int) {
 // A list of devices.
 type DeviceList struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Devices       []*types.Device        `protobuf:"bytes,1,rep,name=devices,proto3" json:"devices,omitempty"`
+	Devices       []*Device              `protobuf:"bytes,1,rep,name=devices,proto3" json:"devices,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -97,7 +97,7 @@ func (*DeviceList) Descriptor() ([]byte, []int) {
 	return file_service_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *DeviceList) GetDevices() []*types.Device {
+func (x *DeviceList) GetDevices() []*Device {
 	if x != nil {
 		return x.Devices
 	}
@@ -108,13 +108,13 @@ var File_service_proto protoreflect.FileDescriptor
 
 const file_service_proto_rawDesc = "" +
 	"\n" +
-	"\rservice.proto\x12\bservices\x1a\vtypes.proto\"\a\n" +
-	"\x05Empty\"5\n" +
+	"\rservice.proto\x12\x04pbuf\x1a\vtypes.proto\"\a\n" +
+	"\x05Empty\"4\n" +
 	"\n" +
-	"DeviceList\x12'\n" +
-	"\adevices\x18\x01 \x03(\v2\r.types.DeviceR\adevices2N\n" +
-	"\rPeerDiscovery\x12=\n" +
-	"\x14GetDiscoveredDevices\x12\x0f.services.Empty\x1a\x14.services.DeviceListB\x1eZ\x1calat/pkg/core/proto/servicesb\x06proto3"
+	"DeviceList\x12&\n" +
+	"\adevices\x18\x01 \x03(\v2\f.pbuf.DeviceR\adevices2F\n" +
+	"\rPeerDiscovery\x125\n" +
+	"\x14GetDiscoveredDevices\x12\v.pbuf.Empty\x1a\x10.pbuf.DeviceListB\x14Z\x12alat/pkg/core/pbufb\x06proto3"
 
 var (
 	file_service_proto_rawDescOnce sync.Once
@@ -128,16 +128,19 @@ func file_service_proto_rawDescGZIP() []byte {
 	return file_service_proto_rawDescData
 }
 
-var file_service_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
-var file_service_proto_goTypes = []any{
-	(*Empty)(nil),        // 0: services.Empty
-	(*DeviceList)(nil),   // 1: services.DeviceList
-	(*types.Device)(nil), // 2: types.Device
-}
+var (
+	file_service_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+	file_service_proto_goTypes  = []any{
+		(*Empty)(nil),      // 0: pbuf.Empty
+		(*DeviceList)(nil), // 1: pbuf.DeviceList
+		(*Device)(nil),     // 2: pbuf.Device
+	}
+)
+
 var file_service_proto_depIdxs = []int32{
-	2, // 0: services.DeviceList.devices:type_name -> types.Device
-	0, // 1: services.PeerDiscovery.GetDiscoveredDevices:input_type -> services.Empty
-	1, // 2: services.PeerDiscovery.GetDiscoveredDevices:output_type -> services.DeviceList
+	2, // 0: pbuf.DeviceList.devices:type_name -> pbuf.Device
+	0, // 1: pbuf.PeerDiscovery.GetDiscoveredDevices:input_type -> pbuf.Empty
+	1, // 2: pbuf.PeerDiscovery.GetDiscoveredDevices:output_type -> pbuf.DeviceList
 	2, // [2:3] is the sub-list for method output_type
 	1, // [1:2] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
@@ -150,6 +153,7 @@ func file_service_proto_init() {
 	if File_service_proto != nil {
 		return
 	}
+	file_types_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

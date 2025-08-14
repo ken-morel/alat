@@ -2,6 +2,10 @@ package app
 
 import "alat/pkg/core"
 
+func (app *App) GetAvailableAddresses() ([]core.DeviceAddress, error) {
+	return core.GetAvailableAddresses()
+}
+
 func (app *App) GetPairedDevices() []core.DeviceInfo {
 	return []core.DeviceInfo{
 		{
