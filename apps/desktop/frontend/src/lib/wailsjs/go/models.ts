@@ -1,12 +1,12 @@
 export namespace core {
 	
-	export class DeviceAddress {
+	export class Address {
 	    Port: number;
-	    IP: string;
+	    IP: number[];
 	    Phrase: string;
 	
 	    static createFrom(source: any = {}) {
-	        return new DeviceAddress(source);
+	        return new Address(source);
 	    }
 	
 	    constructor(source: any = {}) {
@@ -18,7 +18,7 @@ export namespace core {
 	}
 	export class DeviceInfo {
 	    Name: string;
-	    Address: DeviceAddress;
+	    Address: Address;
 	
 	    static createFrom(source: any = {}) {
 	        return new DeviceInfo(source);
@@ -27,7 +27,7 @@ export namespace core {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.Name = source["Name"];
-	        this.Address = this.convertValues(source["Address"], DeviceAddress);
+	        this.Address = this.convertValues(source["Address"], Address);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

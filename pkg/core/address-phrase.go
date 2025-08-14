@@ -3,11 +3,13 @@ package core
 import (
 	"fmt"
 	"net"
+	"net/http"
 )
 
 type Address struct {
-	Port uint16
-	IP   net.IP
+	Port   uint16
+	IP     net.IP
+	Phrase string
 }
 
 const AlatPort = 60000
@@ -31,15 +33,14 @@ var nouns = []string{
 	"castle", "tower", "bridge", "beacon", "shield", "sword", "arrow", "quill",
 }
 
-func (addr *Address) Phrase() (string, error) {
-	ip := addr.IP.To4()
+func AddressPhrase(ip net.IP, port uint16) (string, error) {
+	ip = ip.To4()
 	if ip == nil {
 		return "", fmt.Errorf("address is not a valid IPv4 address")
 	}
 
-	// An IPv4 address is 4 bytes. We use the last two, which are most likely
-	// to be unique on a local network.
-	first := int(addr.Port - AlatPort)
+	// TODO: Take more than justs the last two bytes
+	first := int(port - AlatPort)
 	second := int(ip[2])
 	third := int(ip[3])
 
@@ -50,11 +51,21 @@ func (addr *Address) Phrase() (string, error) {
 	return fmt.Sprintf("%s-%s-%s", color, adjective, noun), nil
 }
 
-func NewAdderss(ip net.IP, port uint16) Address {
-	return Address{
-		Port: port,
-		IP:   ip,
+func NewAdderss(ip net.IP, port uint16) (Address, error) {
+	phrase, err := AddressPhrase(ip, port)
+	if err != nil {
+		return Address{}, err
 	}
+	return Address{
+		Port:   port,
+		IP:     ip,
+		Phrase: phrase,
+	}, nil
+}
+
+func (addr *Address) Ping() (bool, error) {
+	http.NewRequest("GET", "http://localhost", nil)
+	return true, nil
 }
 
 func GetLocalAddresses() ([]Address, error) {
@@ -96,14 +107,13 @@ func GetLocalAddresses() ([]Address, error) {
 				continue
 			}
 			for offset := range 10 {
-				addr := NewAdderss(ip, uint16(offset+AlatPort))
-				phrase, err := addr.Phrase()
+				addr, err := NewAdderss(ip, uint16(offset+AlatPort))
 				if err != nil {
 					continue
 				}
 				found := false
 				for _, a := range addresses {
-					if p, e := a.Phrase(); e != nil || p == phrase {
+					if a.Phrase == addr.Phrase {
 						found = true
 						break
 					}

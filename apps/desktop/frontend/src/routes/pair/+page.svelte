@@ -5,7 +5,7 @@
 
   let {} = $props();
   let tdots: string = $state(".");
-  let addresses: core.DeviceAddress[] = $state([]);
+  let addresses: core.Address[] = $state([]);
   let error: string | null = $state(null);
 
   onMount(() => {
@@ -50,7 +50,7 @@
           <li class="w3-bar">
             <div class="w3-bar-item">
               <span class="w3-large">{addr.Phrase}</span><br />
-              <span>{addr.IP}</span>
+              <span>{addr.Port}@{addr.IP}</span>
             </div>
           </li>
         {/each}
