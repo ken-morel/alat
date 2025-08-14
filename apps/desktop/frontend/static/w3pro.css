@@ -62,7 +62,7 @@ abbr[title] {
 }
 b,
 strong {
-  font-weight: bolder;
+ class="w3-large w3-center"  font-weight: bolder;
 }
 dfn {
   font-style: italic;
