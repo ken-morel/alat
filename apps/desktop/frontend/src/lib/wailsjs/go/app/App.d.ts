@@ -7,3 +7,5 @@ export function GetAvailableAddresses():Promise<Array<core.Address>>;
 export function GetPairedDevices():Promise<Array<core.DeviceInfo>>;
 
 export function Run():Promise<void>;
+
+export function WasSetup():Promise<boolean>;

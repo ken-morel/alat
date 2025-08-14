@@ -63,9 +63,19 @@ func NewAdderss(ip net.IP, port uint16) (Address, error) {
 	}, nil
 }
 
-func (addr *Address) Ping() (bool, error) {
-	http.NewRequest("GET", "http://localhost", nil)
-	return true, nil
+func (addr *Address) String() string {
+	return fmt.Sprintf("%s:%d", addr.IP.String(), addr.Port)
+}
+
+func (addr *Address) Ping() bool {
+	res, err := http.Get("http://" + addr.String() + "/ping")
+	if err != nil {
+		return false
+	} else if res.Header.Get("Alat-Device") != "" {
+		return true
+	} else {
+		return false
+	}
 }
 
 func GetLocalAddresses() ([]Address, error) {
@@ -119,7 +129,9 @@ func GetLocalAddresses() ([]Address, error) {
 					}
 				}
 				if !found {
-					addresses = append(addresses, addr)
+					if addr.Ping() {
+						addresses = append(addresses, addr)
+					}
 				}
 			}
 

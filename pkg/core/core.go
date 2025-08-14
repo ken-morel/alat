@@ -5,3 +5,5 @@ package core
 func Init() int8 {
 	return 0
 }
+
+const AppID = "cm.rbs.alat"

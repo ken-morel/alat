@@ -13,3 +13,7 @@ export function GetPairedDevices() {
 export function Run() {
   return window['go']['app']['App']['Run']();
 }
+
+export function WasSetup() {
+  return window['go']['app']['App']['WasSetup']();
+}

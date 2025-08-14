@@ -2,8 +2,11 @@
 package app
 
 import (
+	"alat/apps/desktop/app/config"
+	"alat/pkg/core/server"
 	"context"
 	"embed"
+	"fmt"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -25,6 +28,11 @@ func NewApp(assets embed.FS) *App {
 // so we can call the runtime methods
 func (app *App) startup(ctx context.Context) {
 	app.ctx = ctx
+	server.Start()
+	err := config.Init()
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 }
 
 func (app *App) shutdown(ctx context.Context) {
