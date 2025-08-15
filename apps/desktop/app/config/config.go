@@ -95,9 +95,6 @@ func Init() error {
 			AutoStart:   false,
 			Theme:       "light",
 		}
-		if err := SaveConfig(&config); err != nil {
-			return fmt.Errorf("could not save initial config: %w", err)
-		}
 	}
 	return nil
 }

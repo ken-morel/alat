@@ -3,6 +3,7 @@
   import { GetConfig, SaveConfig } from "$lib/wailsjs/go/app/App";
   import { config, options } from "$lib/wailsjs/go/models";
   import Color from "$lib/color";
+  import { goto } from "$app/navigation";
 
   let cfg: config.Config | null = $state(null);
   let deviceColorHex = $state("");
@@ -28,7 +29,7 @@
   });
 
   async function save() {
-    if (cfg) {
+    if (pstate === "ready" && cfg) {
       const col = new Color(deviceColorHex);
       const { red, green, blue, opacity } = col;
       cfg.DeviceColor = new options.RGBA({
@@ -38,9 +39,9 @@
         a: opacity * 255,
       });
       await SaveConfig(cfg);
+      goto("/dashboard");
     }
   }
-
   // device name, device color,language, autostart, theme
 </script>
 
@@ -79,13 +80,33 @@
         <p class="hint">Choose a color</p>
       </div>
     </section>
-    <section>
+    <section class="lang">
       <label for="language"> Language </label>
-      <select class="w3-select">
-        <option>Francais</option>
-        <option>French</option>
-      </select>
+      <div class="options w3-container w3-row">
+        <span class="selected {cfg.Language}"></span>
+        <button
+          type="button"
+          class="option w3-input w3-button w3-large w3-col w3-half"
+          onclick={() => {
+            if (cfg) cfg.Language = "en-cm";
+          }}
+          style="border-color: {deviceColorHex}"
+        >
+          English
+        </button>
+        <button
+          type="button"
+          class="option w3-input w3-button w3-large w3-col w3-half"
+          onclick={() => {
+            if (cfg) cfg.Language = "fr-cm";
+          }}
+          style="border-color: {deviceColorHex}"
+        >
+          French
+        </button>
+      </div>
     </section>
+    <button class="save w3-button">Save</button>
   {:else}
     <p class="loading w3-large w3-center w3-opacity">Loading...</p>
   {/if}
@@ -99,6 +120,15 @@
     max-width: 700px
     padding: 30px
     transition: 1s
+    button.save
+      margin-top: 10px
+      width: 100%
+      font-size: x-large
+      color: theme.$text-primary !important
+      background-color: theme.$secondary-d3 !important
+  
+      &:hover
+        background-color: theme.$secondary-d2 !important
     section
       display: block
       border-bottom: 2px theme.$tertiary-d3 solid
@@ -106,8 +136,7 @@
       label
         font-size: xx-large
         color: theme.$text-primary
-      input,
-      select
+      input
         background-color: theme.$secondary-d3
         color: theme.$text-secondary
         font-size: x-large
@@ -129,4 +158,22 @@
           padding: 0px !important
           margin: 0px !important
           display: block
+    section.lang
+      div.options
+        position: relative
+        span.selected
+          position: absolute
+          top: 0
+          border: 3px theme.$primary solid
+          height: 100%
+          width: 50%
+          transition: 0.2s
+          &.en-cm
+            left: 0
+          &.fr-cm
+            left: 50%
+        button
+          color: theme.$text-primary !important
+          &:hover
+            background-color: theme.$secondary-d4 !important
 </style>
