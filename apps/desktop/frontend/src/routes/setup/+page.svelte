@@ -115,7 +115,7 @@
 <style lang="sass">
   @use '$lib/styles/theme'
   form
-    background-color: theme.$background-dark
+    background-color: theme.$background
     margin: auto
     max-width: 700px
     padding: 30px
@@ -125,10 +125,10 @@
       width: 100%
       font-size: x-large
       color: theme.$text-primary !important
-      background-color: theme.$secondary-d3 !important
+      background-color: theme.$primary-d3 !important
   
       &:hover
-        background-color: theme.$secondary-d2 !important
+        background-color: theme.$primary-d2 !important
     section
       display: block
       border-bottom: 2px theme.$tertiary-d3 solid
@@ -137,14 +137,14 @@
         font-size: xx-large
         color: theme.$text-primary
       input
-        background-color: theme.$secondary-d3
-        color: theme.$text-secondary
+        background-color: theme.$primary-d3
+        color: theme.$text-primary
         font-size: x-large
         margin-bottom: 0!important  
       p.hint
         margin-top: 0!important
         text-align: right
-        color: theme.$text-secondary
+        color: theme.$text-primary
     section.dname
       display: flex
       div.name
@@ -175,5 +175,5 @@
         button
           color: theme.$text-primary !important
           &:hover
-            background-color: theme.$secondary-d4 !important
+            background-color: theme.$primary-d4 !important
 </style>

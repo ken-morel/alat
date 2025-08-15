@@ -33,15 +33,15 @@
 @use '$lib/styles/theme'
 
 div.device-tile-container
-  $msep: 2px theme.$secondary-d2 solid
-  $mseph:  2px theme.$secondary solid
+  $msep: 2px theme.$border-dark solid
+  $mseph:  2px theme.$border-light solid
   display: flex
-  background-color: theme.$secondary-d3
+  background-color: theme.$primary-d3
   width: fit-content
   border: $msep
   &:hover
     border: $mseph
-    background-color: theme.$secondary-d2
+    background-color: theme.$primary-d2
     div.info
       border-left: $mseph
   div.profile

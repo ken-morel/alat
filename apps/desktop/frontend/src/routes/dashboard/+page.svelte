@@ -28,17 +28,17 @@
 @use '$lib/styles/theme'
 
 h2
-  background-color: theme.$secondary-d4
+  background-color: theme.$background
   margin: 0
-  border-color: theme.$border-light !important
+  border-color: theme.$border-dark !important
 section.connected-devices
-  background-color: theme.$secondary-d4
+  background-color: theme.$background
   div
     max-width: 800px
     margin: auto
     a
       max-width: 90%
-      background-color: theme.$secondary-d3
+      background-color: theme.$primary-d3
       margin: auto
     div.devices-list
       display: flex

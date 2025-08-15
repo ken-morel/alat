@@ -53,12 +53,15 @@ func (app *App) GetConfig() config.Config {
 }
 
 func (app *App) SaveConfig(cfg config.Config) error {
+	fmt.Println("Saving config", cfg)
 	err := config.SaveConfig(&cfg)
 	if err == nil {
 		config.SetupServer()
 		if !server.Running {
 			server.Start()
 		}
+	} else {
+		fmt.Println("Errror saving config", err)
 	}
 	return nil
 }

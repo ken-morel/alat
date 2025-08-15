@@ -60,6 +60,7 @@ func LoadConfig() error {
 }
 
 func SaveConfig(cfg *Config) error {
+	config = *cfg
 	filePath := GetMainConfigFile()
 	file, err := os.Create(filePath)
 	if err != nil {

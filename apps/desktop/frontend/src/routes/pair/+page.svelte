@@ -61,13 +61,13 @@
 <style lang="sass">
 @use "$lib/styles/theme"
 h2
-  background-color: theme.$secondary-d4
+  background-color: theme.$background
   margin: 0
 section
-  background-color: theme.$secondary-d4
+  background-color:  theme.$background
 section.devices-list-container
-  border-top: 2px theme.$secondary-d3 solid
-  border-bottom: 2px theme.$secondary-d3 solid
+  border-top: 2px theme.$primary-d3 solid
+  border-bottom: 2px theme.$primary-d3 solid
   padding: 30px
   div
     max-width: 800px
