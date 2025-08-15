@@ -10,6 +10,8 @@ function snakecase(name::String)
 end
 */
 
+import { options } from "./wailsjs/go/models";
+
 type StringMap = {
   [key: string]: string;
 };
@@ -30,6 +32,18 @@ export default class Color {
   black: number;
   ncol: string;
   valid: boolean;
+
+  static fromGO(col: options.RGBA): Color {
+    return Color.rgba(col.r, col.g, col.b, col.a / 255);
+  }
+  toGO() {
+    return new options.RGBA({
+      r: this.red,
+      g: this.green,
+      b: this.blue,
+      a: Math.round(this.opacity * 255),
+    });
+  }
 
   get blackness(): number {
     return 1 - this.lightness;

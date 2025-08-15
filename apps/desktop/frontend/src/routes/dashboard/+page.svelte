@@ -1,4 +1,6 @@
 <script lang="ts">
+  import DeviceTile from "$lib/components/DeviceTile.svelte";
+
   let { data } = $props();
   let { pairedDevicesPromise } = data;
 </script>
@@ -14,17 +16,7 @@
         </div>
       {:then pairedDevices}
         {#each pairedDevices as device}
-          <div class="device-tile">
-            <span class="logo">
-              <span></span>
-            </span>
-            <span class="info w3-panel">
-              <span class="name">{device.Name}</span>
-              <span class="address">
-                <pre>{device.Address.IP}@{device.Address.Port}</pre>
-              </span>
-            </span>
-          </div>
+          <DeviceTile deviceInfo={device} />
         {/each}
       {/await}
     </div>
@@ -55,35 +47,4 @@ section.connected-devices
       align-content: flex-start
       justify-content: space-evenly
       align-items: flex-start
-      div.device-tile
-        border: 2px theme.$secondary-d1 solid
-        background-color: theme.$secondary-d3
-        &:hover
-          border: 2px theme.$secondary solid
-          // background-color: theme.$secondary-d2
-          box-shadow: 0px 0px 15px rgba(theme.$secondary, 0.5)
-        margin: 5px
-        display: flex
-        max-width: 350px
-        span.logo
-          height: 100%
-          width: 100px
-          padding: 10px
-          span
-            display: inline-block
-            width: 100px
-            height: 100px
-            border-radius: 50%
-            background-color: theme.$tertiary
-        span.info
-          flex-grow: 1
-          margin-left: 20px
-          text-align: left
-          span.name
-            display: block
-            font-size: xx-large
-          span.address
-            display: block
-            margin: 0
-            padding: 0
 </style>

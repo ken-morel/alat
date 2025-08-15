@@ -4,6 +4,7 @@ package app
 import (
 	"alat/apps/desktop/app/config"
 	"alat/pkg/core"
+	"alat/pkg/core/device"
 	"alat/pkg/core/server"
 	"context"
 	"embed"
@@ -37,9 +38,10 @@ func (app *App) startup(ctx context.Context) {
 		server.Configure(server.ServerConfig{
 			DeviceName:  conf.DeviceName,
 			DeviceCode:  conf.DeviceCode,
-			DeviceType:  server.DeviceTypeDesktop,
+			DeviceType:  device.DeviceTypeDesktop,
 			DeviceColor: conf.DeviceColor,
 		})
+		server.Start()
 	}
 }
 

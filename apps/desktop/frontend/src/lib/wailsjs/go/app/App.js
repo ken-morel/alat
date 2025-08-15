@@ -6,10 +6,6 @@ export function GenerateDeviceCode() {
   return window['go']['app']['App']['GenerateDeviceCode']();
 }
 
-export function GetAvailableAddresses() {
-  return window['go']['app']['App']['GetAvailableAddresses']();
-}
-
 export function GetConfig() {
   return window['go']['app']['App']['GetConfig']();
 }
@@ -28,6 +24,10 @@ export function Run() {
 
 export function SaveConfig(arg1) {
   return window['go']['app']['App']['SaveConfig'](arg1);
+}
+
+export function SearchDevices() {
+  return window['go']['app']['App']['SearchDevices']();
 }
 
 export function WasSetup() {

@@ -54,7 +54,9 @@ func SearchDevices(channel chan<- device.DeviceInfo) error {
 				if !found {
 					info, err := GetDeviceInfo(addr)
 					if err != nil {
-						fmt.Println("Error during info", err)
+						if offset == 0 {
+							fmt.Println("Error during info", err)
+						}
 					} else {
 						channel <- device.NewDeviceInfo(addr, &info)
 					}

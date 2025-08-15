@@ -1,3 +1,24 @@
+export namespace address {
+	
+	export class Address {
+	    Port: number;
+	    IP: number[];
+	    Phrase: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new Address(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Port = source["Port"];
+	        this.IP = source["IP"];
+	        this.Phrase = source["Phrase"];
+	    }
+	}
+
+}
+
 export namespace config {
 	
 	export class Config {
@@ -43,27 +64,14 @@ export namespace config {
 
 }
 
-export namespace core {
+export namespace device {
 	
-	export class Address {
-	    Port: number;
-	    IP: number[];
-	    Phrase: string;
-	
-	    static createFrom(source: any = {}) {
-	        return new Address(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.Port = source["Port"];
-	        this.IP = source["IP"];
-	        this.Phrase = source["Phrase"];
-	    }
-	}
 	export class DeviceInfo {
+	    Address: address.Address;
 	    Name: string;
-	    Address: Address;
+	    Color: options.RGBA;
+	    Code: string;
+	    Type: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new DeviceInfo(source);
@@ -71,8 +79,11 @@ export namespace core {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Address = this.convertValues(source["Address"], address.Address);
 	        this.Name = source["Name"];
-	        this.Address = this.convertValues(source["Address"], Address);
+	        this.Color = this.convertValues(source["Color"], options.RGBA);
+	        this.Code = source["Code"];
+	        this.Type = source["Type"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
