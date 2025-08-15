@@ -18,8 +18,16 @@ export function GetPairedDevices() {
   return window['go']['app']['App']['GetPairedDevices']();
 }
 
+export function GetServices() {
+  return window['go']['app']['App']['GetServices']();
+}
+
 export function IsSetupComplete() {
   return window['go']['app']['App']['IsSetupComplete']();
+}
+
+export function RequestPair(arg1, arg2) {
+  return window['go']['app']['App']['RequestPair'](arg1, arg2);
 }
 
 export function Run() {

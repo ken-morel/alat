@@ -2,6 +2,7 @@
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
   import favicon from "$lib/assets/logo.svg";
+  import "$lib/styles/app.sass";
   import { IsSetupComplete } from "$lib/wailsjs/go/app/App";
   import { onMount } from "svelte";
 

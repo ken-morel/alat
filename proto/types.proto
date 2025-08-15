@@ -23,7 +23,6 @@ message ServiceList { repeated Service services = 1; }
 message Service {
   string name = 1;
   bool enabled = 2;
-  bool protected = 3;
 }
 
 message DeviceColor {

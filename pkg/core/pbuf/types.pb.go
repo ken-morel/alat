@@ -242,7 +242,6 @@ type Service struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Enabled       bool                   `protobuf:"varint,2,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	Protected     bool                   `protobuf:"varint,3,opt,name=protected,proto3" json:"protected,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -287,13 +286,6 @@ func (x *Service) GetName() string {
 func (x *Service) GetEnabled() bool {
 	if x != nil {
 		return x.Enabled
-	}
-	return false
-}
-
-func (x *Service) GetProtected() bool {
-	if x != nil {
-		return x.Protected
 	}
 	return false
 }
@@ -581,11 +573,10 @@ const file_types_proto_rawDesc = "" +
 	"\x02TV\x10\x02\x12\a\n" +
 	"\x03WEB\x10\x03\"8\n" +
 	"\vServiceList\x12)\n" +
-	"\bservices\x18\x01 \x03(\v2\r.pbuf.ServiceR\bservices\"U\n" +
+	"\bservices\x18\x01 \x03(\v2\r.pbuf.ServiceR\bservices\"7\n" +
 	"\aService\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x18\n" +
-	"\aenabled\x18\x02 \x01(\bR\aenabled\x12\x1c\n" +
-	"\tprotected\x18\x03 \x01(\bR\tprotected\"7\n" +
+	"\aenabled\x18\x02 \x01(\bR\aenabled\"7\n" +
 	"\vDeviceColor\x12\f\n" +
 	"\x01r\x18\x01 \x01(\rR\x01r\x12\f\n" +
 	"\x01g\x18\x02 \x01(\rR\x01g\x12\f\n" +

@@ -5,52 +5,79 @@
   let { pairedDevicesPromise } = data;
 </script>
 
-<h2 class="w3-jumbo w3-padding-64 w3-center w3-border-bottom">Welcome! 👋</h2>
-<section class="connected-devices w3-container">
-  <div>
-    <h3 class="w3-large w3-center w3-xxlarge">Connected devices</h3>
-    <div class="devices-list w3-center w3-container">
-      {#await pairedDevicesPromise}
-        <div class="loading-devices w3-xlarge w3-opacity">
-          loading devices...
-        </div>
-      {:then pairedDevices}
-        {#if pairedDevices.length === 0}
-          <div>
-            <h2 class="w3-opacity">No paired device. For now</h2>
+<div class="dashboard-container">
+  <h2 class="welcome-header">Welcome! 👋</h2>
+  <section class="connected-devices">
+    <div class="content-wrapper">
+      <h3 class="section-title">Connected devices</h3>
+      <div class="devices-list">
+        {#await pairedDevicesPromise}
+          <div class="loading-text">
+            loading devices...
           </div>
-        {:else}
-          {#each pairedDevices as pair}
-            <DeviceTile deviceInfo={pair.DeviceInfo} />
-          {/each}
-        {/if}
-      {/await}
+        {:then pairedDevices}
+          {#if pairedDevices.length === 0}
+            <div class="no-devices-message">
+              <h2>No paired device. For now</h2>
+            </div>
+          {:else}
+            {#each pairedDevices as pair}
+              <DeviceTile deviceInfo={pair.DeviceInfo} />
+            {/each}
+          {/if}
+        {/await}
+      </div>
+      <a href="/pair" class="btn btn-primary pair-button">Pair a device</a>
     </div>
-    <a href="/pair" class="w3-button w3-block w3-margin-top">Pair a device</a>
-  </div>
-</section>
+  </section>
+</div>
 
 <style lang="sass">
-@use '$lib/styles/theme'
+  @use '$lib/styles/theme'
 
-h2
-  background-color: theme.$background
-  margin: 0
-  border-color: theme.$border-dark !important
-section.connected-devices
-  background-color: theme.$background
-  div
+  .dashboard-container
     max-width: 800px
     margin: auto
-    a
-      max-width: 90%
-      background-color: theme.$primary-d3
-      margin: auto
-    div.devices-list
-      display: flex
-      flex-direction: row
-      flex-wrap: wrap
-      align-content: flex-start
-      justify-content: space-evenly
-      align-items: flex-start
+    padding: 2rem 1.5rem
+
+  .welcome-header
+    font-size: 4rem
+    font-weight: 200
+    text-align: center
+    padding: 3rem 0
+    border-bottom: 1px solid theme.$primary-d3
+    margin-bottom: 2rem
+
+  .section-title
+    font-size: 2rem
+    text-align: center
+    margin-bottom: 2rem
+
+  .devices-list
+    display: flex
+    flex-direction: row
+    flex-wrap: wrap
+    justify-content: center
+    gap: 1.5rem
+    min-height: 150px
+
+  .loading-text, .no-devices-message
+    display: flex
+    align-items: center
+    justify-content: center
+    width: 100%
+    font-size: 1.5rem
+    color: theme.$text-secondary
+    opacity: 0.7
+
+  .no-devices-message h2
+    font-weight: 300
+    color: theme.$text-secondary
+
+  .pair-button
+    display: block
+    width: 100%
+    max-width: 400px
+    margin: 2.5rem auto 0
+    text-align: center
 </style>

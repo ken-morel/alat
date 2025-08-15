@@ -4,7 +4,9 @@ package app
 import (
 	"alat/apps/desktop/app/config"
 	"alat/pkg/core"
+	"alat/pkg/core/device"
 	"alat/pkg/core/server"
+	"alat/pkg/core/service"
 	"context"
 	"embed"
 	"fmt"
@@ -60,6 +62,10 @@ func (app *App) AskDirectory() (path string, err error) {
 	return
 }
 
+func (app *App) GetServices() []service.Service {
+	return config.GetServices()
+}
+
 func (app *App) SaveConfig(cfg config.Config) error {
 	fmt.Println("Saving config", cfg)
 	err := config.SaveConfig(&cfg)
@@ -100,4 +106,8 @@ func (app *App) Run() error {
 			app,
 		},
 	})
+}
+
+func (app *App) RequestPair(deviceInfo device.DeviceInfo, services []service.Service) error {
+	return nil
 }

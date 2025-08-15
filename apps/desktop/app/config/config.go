@@ -5,6 +5,7 @@ import (
 	"alat/pkg/core"
 	"alat/pkg/core/device"
 	"alat/pkg/core/server"
+	"alat/pkg/core/service"
 	"alat/pkg/core/service/rcfile"
 	"fmt"
 	"log"
@@ -111,11 +112,21 @@ func Init() (err error) {
 	return err
 }
 
+func GetServices() []service.Service {
+	return []service.Service{
+		{
+			Name:    service.RCFile,
+			Enabled: config.Services.RCFile.Enabled,
+		},
+	}
+}
+
 func SetupServer() {
 	server.Configure(server.ServerConfig{
-		DeviceName:  config.DeviceName,
-		DeviceCode:  config.DeviceCode,
-		DeviceType:  device.DeviceTypeDesktop,
-		DeviceColor: config.DeviceColor,
+		DeviceName:     config.DeviceName,
+		DeviceCode:     config.DeviceCode,
+		DeviceType:     device.DeviceTypeDesktop,
+		DeviceColor:    config.DeviceColor,
+		DeviceServices: GetServices(),
 	})
 }

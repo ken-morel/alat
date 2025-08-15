@@ -1,5 +1,7 @@
 <script lang="ts">
   import DeviceTile from "$lib/components/DeviceTile.svelte";
+  import ServiceConfigModal from "$lib/components/ServiceConfigModal.svelte";
+  import { selectedDeviceForPairing } from "$lib/state";
   import { SearchDevices } from "$lib/wailsjs/go/app/App";
   import { device } from "$lib/wailsjs/go/models";
   import { onMount } from "svelte";
@@ -8,6 +10,10 @@
   let tdots: string = $state(".");
   let deviceInfos: device.DeviceInfo[] = $state([]);
   let error: string | null = $state(null);
+
+  function handleDeviceClick(info: device.DeviceInfo) {
+    selectedDeviceForPairing.set(info);
+  }
 
   onMount(() => {
     const tdotsInterval = setInterval(() => {
@@ -32,6 +38,8 @@
   });
 </script>
 
+<ServiceConfigModal />
+
 <h2 class="w3-center w3-xxlarge w3-padding-32">Connect a device</h2>
 
 <section class="w3-container devices-list-container">
@@ -50,7 +58,14 @@
       </div>
       <div class="device-list">
         {#each deviceInfos as info}
-          <DeviceTile deviceInfo={info} />
+          <div
+            onclick={() => handleDeviceClick(info)}
+            role="button"
+            tabindex="0"
+            onkeydown={null}
+          >
+            <DeviceTile deviceInfo={info} />
+          </div>
         {/each}
       </div>
     {/if}

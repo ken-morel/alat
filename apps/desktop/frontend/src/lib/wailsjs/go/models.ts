@@ -231,7 +231,6 @@ export namespace service {
 	export class Service {
 	    Name: string;
 	    Enabled: boolean;
-	    Protected: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new Service(source);
@@ -241,7 +240,6 @@ export namespace service {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.Name = source["Name"];
 	        this.Enabled = source["Enabled"];
-	        this.Protected = source["Protected"];
 	    }
 	}
 
