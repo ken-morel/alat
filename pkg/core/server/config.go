@@ -25,7 +25,7 @@ func Configure(conf ServerConfig) (err error) {
 	infoResponse, err = proto.Marshal(&pbuf.DeviceInfo{
 		Code: conf.DeviceCode,
 		Name: conf.DeviceName,
-		Type: pbuf.DeviceInfo_DeviceType(conf.DeviceType),
+		Type: pbuf.DeviceType(conf.DeviceType),
 		Color: &pbuf.DeviceColor{
 			R: uint32(conf.DeviceColor.R),
 			G: uint32(conf.DeviceColor.G),

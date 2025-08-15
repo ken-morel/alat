@@ -1,7 +1,7 @@
-# Alat
-
-![Animated logo](./logo/animated/logo.svg)
-
+<h1 style="text-align: center; font-size: xxx-large;">
+  <img src="./logo/animated/logo.svg" alt="Animated logo" style="display: inline;height: 1em;position: relative;top: 5px; right: -10px;" />
+  lat
+</h1>
 Alat is a cross-platform application that allows you to seamlessly connect and share data between your devices. Whether you're using a desktop computer, a mobile phone, or a tablet, Alat helps you stay connected and productive.
 
 ## How it Works

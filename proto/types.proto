@@ -18,21 +18,42 @@ message Device {
   string ip_address = 4;
 }
 
+message ServiceList { repeated Service services = 1; }
+
+message Service {
+  string name = 1;
+  bool enabled = 2;
+  bool protected = 3;
+}
+
 message DeviceColor {
   uint32 r = 1;
   uint32 g = 2;
   uint32 b = 3;
 }
-
+enum DeviceType {
+  DESKTOP = 0;
+  MOBILE = 1;
+  TV = 2;
+  WEB = 3;
+}
 message DeviceInfo {
   string code = 1;
   string name = 2;
-  enum DeviceType {
-    DESKTOP = 0;
-    MOBILE = 1;
-    TV = 2;
-    WEB = 3;
-  }
+
   DeviceType type = 3;
   DeviceColor color = 4;
+  repeated Service services = 5;
+}
+
+message PairRequest {
+  string token = 1;
+  Device device = 2;
+  repeated Service services = 3;
+}
+message PairResponse {
+  string token = 1;
+  Device device = 2;
+  bool accepted = 3;
+  repeated Service services = 4;
 }

@@ -3,6 +3,8 @@
 import {config} from '../models';
 import {device} from '../models';
 
+export function AskDirectory():Promise<string>;
+
 export function GenerateDeviceCode():Promise<string>;
 
 export function GetConfig():Promise<config.Config>;

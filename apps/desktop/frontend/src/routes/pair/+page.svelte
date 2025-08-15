@@ -32,7 +32,7 @@
   });
 </script>
 
-<h2 class="w3-center w3-xxlarge w3-padding-32">Pair a device</h2>
+<h2 class="w3-center w3-xxlarge w3-padding-32">Connect a device</h2>
 
 <section class="w3-container devices-list-container">
   <div>
@@ -46,7 +46,7 @@
       </div>
     {:else}
       <div class="title">
-        <h4>Select a device to pair with:</h4>
+        <h4>Select a device to connect to:</h4>
       </div>
       <div class="device-list">
         {#each deviceInfos as info}

@@ -21,6 +21,58 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type DeviceType int32
+
+const (
+	DeviceType_DESKTOP DeviceType = 0
+	DeviceType_MOBILE  DeviceType = 1
+	DeviceType_TV      DeviceType = 2
+	DeviceType_WEB     DeviceType = 3
+)
+
+// Enum value maps for DeviceType.
+var (
+	DeviceType_name = map[int32]string{
+		0: "DESKTOP",
+		1: "MOBILE",
+		2: "TV",
+		3: "WEB",
+	}
+	DeviceType_value = map[string]int32{
+		"DESKTOP": 0,
+		"MOBILE":  1,
+		"TV":      2,
+		"WEB":     3,
+	}
+)
+
+func (x DeviceType) Enum() *DeviceType {
+	p := new(DeviceType)
+	*p = x
+	return p
+}
+
+func (x DeviceType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (DeviceType) Descriptor() protoreflect.EnumDescriptor {
+	return file_types_proto_enumTypes[0].Descriptor()
+}
+
+func (DeviceType) Type() protoreflect.EnumType {
+	return &file_types_proto_enumTypes[0]
+}
+
+func (x DeviceType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use DeviceType.Descriptor instead.
+func (DeviceType) EnumDescriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{0}
+}
+
 type Device_DeviceType int32
 
 const (
@@ -57,11 +109,11 @@ func (x Device_DeviceType) String() string {
 }
 
 func (Device_DeviceType) Descriptor() protoreflect.EnumDescriptor {
-	return file_types_proto_enumTypes[0].Descriptor()
+	return file_types_proto_enumTypes[1].Descriptor()
 }
 
 func (Device_DeviceType) Type() protoreflect.EnumType {
-	return &file_types_proto_enumTypes[0]
+	return &file_types_proto_enumTypes[1]
 }
 
 func (x Device_DeviceType) Number() protoreflect.EnumNumber {
@@ -71,58 +123,6 @@ func (x Device_DeviceType) Number() protoreflect.EnumNumber {
 // Deprecated: Use Device_DeviceType.Descriptor instead.
 func (Device_DeviceType) EnumDescriptor() ([]byte, []int) {
 	return file_types_proto_rawDescGZIP(), []int{0, 0}
-}
-
-type DeviceInfo_DeviceType int32
-
-const (
-	DeviceInfo_DESKTOP DeviceInfo_DeviceType = 0
-	DeviceInfo_MOBILE  DeviceInfo_DeviceType = 1
-	DeviceInfo_TV      DeviceInfo_DeviceType = 2
-	DeviceInfo_WEB     DeviceInfo_DeviceType = 3
-)
-
-// Enum value maps for DeviceInfo_DeviceType.
-var (
-	DeviceInfo_DeviceType_name = map[int32]string{
-		0: "DESKTOP",
-		1: "MOBILE",
-		2: "TV",
-		3: "WEB",
-	}
-	DeviceInfo_DeviceType_value = map[string]int32{
-		"DESKTOP": 0,
-		"MOBILE":  1,
-		"TV":      2,
-		"WEB":     3,
-	}
-)
-
-func (x DeviceInfo_DeviceType) Enum() *DeviceInfo_DeviceType {
-	p := new(DeviceInfo_DeviceType)
-	*p = x
-	return p
-}
-
-func (x DeviceInfo_DeviceType) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (DeviceInfo_DeviceType) Descriptor() protoreflect.EnumDescriptor {
-	return file_types_proto_enumTypes[1].Descriptor()
-}
-
-func (DeviceInfo_DeviceType) Type() protoreflect.EnumType {
-	return &file_types_proto_enumTypes[1]
-}
-
-func (x DeviceInfo_DeviceType) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use DeviceInfo_DeviceType.Descriptor instead.
-func (DeviceInfo_DeviceType) EnumDescriptor() ([]byte, []int) {
-	return file_types_proto_rawDescGZIP(), []int{2, 0}
 }
 
 // Represents a device discovered on the network.
@@ -194,6 +194,110 @@ func (x *Device) GetIpAddress() string {
 	return ""
 }
 
+type ServiceList struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Services      []*Service             `protobuf:"bytes,1,rep,name=services,proto3" json:"services,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ServiceList) Reset() {
+	*x = ServiceList{}
+	mi := &file_types_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ServiceList) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ServiceList) ProtoMessage() {}
+
+func (x *ServiceList) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ServiceList.ProtoReflect.Descriptor instead.
+func (*ServiceList) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *ServiceList) GetServices() []*Service {
+	if x != nil {
+		return x.Services
+	}
+	return nil
+}
+
+type Service struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Enabled       bool                   `protobuf:"varint,2,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	Protected     bool                   `protobuf:"varint,3,opt,name=protected,proto3" json:"protected,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Service) Reset() {
+	*x = Service{}
+	mi := &file_types_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Service) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Service) ProtoMessage() {}
+
+func (x *Service) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Service.ProtoReflect.Descriptor instead.
+func (*Service) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *Service) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Service) GetEnabled() bool {
+	if x != nil {
+		return x.Enabled
+	}
+	return false
+}
+
+func (x *Service) GetProtected() bool {
+	if x != nil {
+		return x.Protected
+	}
+	return false
+}
+
 type DeviceColor struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	R             uint32                 `protobuf:"varint,1,opt,name=r,proto3" json:"r,omitempty"`
@@ -205,7 +309,7 @@ type DeviceColor struct {
 
 func (x *DeviceColor) Reset() {
 	*x = DeviceColor{}
-	mi := &file_types_proto_msgTypes[1]
+	mi := &file_types_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -217,7 +321,7 @@ func (x *DeviceColor) String() string {
 func (*DeviceColor) ProtoMessage() {}
 
 func (x *DeviceColor) ProtoReflect() protoreflect.Message {
-	mi := &file_types_proto_msgTypes[1]
+	mi := &file_types_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -230,7 +334,7 @@ func (x *DeviceColor) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeviceColor.ProtoReflect.Descriptor instead.
 func (*DeviceColor) Descriptor() ([]byte, []int) {
-	return file_types_proto_rawDescGZIP(), []int{1}
+	return file_types_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *DeviceColor) GetR() uint32 {
@@ -258,15 +362,16 @@ type DeviceInfo struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Code          string                 `protobuf:"bytes,1,opt,name=code,proto3" json:"code,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Type          DeviceInfo_DeviceType  `protobuf:"varint,3,opt,name=type,proto3,enum=pbuf.DeviceInfo_DeviceType" json:"type,omitempty"`
+	Type          DeviceType             `protobuf:"varint,3,opt,name=type,proto3,enum=pbuf.DeviceType" json:"type,omitempty"`
 	Color         *DeviceColor           `protobuf:"bytes,4,opt,name=color,proto3" json:"color,omitempty"`
+	Services      []*Service             `protobuf:"bytes,5,rep,name=services,proto3" json:"services,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *DeviceInfo) Reset() {
 	*x = DeviceInfo{}
-	mi := &file_types_proto_msgTypes[2]
+	mi := &file_types_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -278,7 +383,7 @@ func (x *DeviceInfo) String() string {
 func (*DeviceInfo) ProtoMessage() {}
 
 func (x *DeviceInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_types_proto_msgTypes[2]
+	mi := &file_types_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -291,7 +396,7 @@ func (x *DeviceInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeviceInfo.ProtoReflect.Descriptor instead.
 func (*DeviceInfo) Descriptor() ([]byte, []int) {
-	return file_types_proto_rawDescGZIP(), []int{2}
+	return file_types_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *DeviceInfo) GetCode() string {
@@ -308,16 +413,151 @@ func (x *DeviceInfo) GetName() string {
 	return ""
 }
 
-func (x *DeviceInfo) GetType() DeviceInfo_DeviceType {
+func (x *DeviceInfo) GetType() DeviceType {
 	if x != nil {
 		return x.Type
 	}
-	return DeviceInfo_DESKTOP
+	return DeviceType_DESKTOP
 }
 
 func (x *DeviceInfo) GetColor() *DeviceColor {
 	if x != nil {
 		return x.Color
+	}
+	return nil
+}
+
+func (x *DeviceInfo) GetServices() []*Service {
+	if x != nil {
+		return x.Services
+	}
+	return nil
+}
+
+type PairRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	Device        *Device                `protobuf:"bytes,2,opt,name=device,proto3" json:"device,omitempty"`
+	Services      []*Service             `protobuf:"bytes,3,rep,name=services,proto3" json:"services,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PairRequest) Reset() {
+	*x = PairRequest{}
+	mi := &file_types_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PairRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PairRequest) ProtoMessage() {}
+
+func (x *PairRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PairRequest.ProtoReflect.Descriptor instead.
+func (*PairRequest) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *PairRequest) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
+func (x *PairRequest) GetDevice() *Device {
+	if x != nil {
+		return x.Device
+	}
+	return nil
+}
+
+func (x *PairRequest) GetServices() []*Service {
+	if x != nil {
+		return x.Services
+	}
+	return nil
+}
+
+type PairResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	Device        *Device                `protobuf:"bytes,2,opt,name=device,proto3" json:"device,omitempty"`
+	Accepted      bool                   `protobuf:"varint,3,opt,name=accepted,proto3" json:"accepted,omitempty"`
+	Services      []*Service             `protobuf:"bytes,4,rep,name=services,proto3" json:"services,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PairResponse) Reset() {
+	*x = PairResponse{}
+	mi := &file_types_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PairResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PairResponse) ProtoMessage() {}
+
+func (x *PairResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PairResponse.ProtoReflect.Descriptor instead.
+func (*PairResponse) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *PairResponse) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
+func (x *PairResponse) GetDevice() *Device {
+	if x != nil {
+		return x.Device
+	}
+	return nil
+}
+
+func (x *PairResponse) GetAccepted() bool {
+	if x != nil {
+		return x.Accepted
+	}
+	return false
+}
+
+func (x *PairResponse) GetServices() []*Service {
+	if x != nil {
+		return x.Services
 	}
 	return nil
 }
@@ -339,17 +579,33 @@ const file_types_proto_rawDesc = "" +
 	"\n" +
 	"\x06MOBILE\x10\x01\x12\x06\n" +
 	"\x02TV\x10\x02\x12\a\n" +
-	"\x03WEB\x10\x03\"7\n" +
+	"\x03WEB\x10\x03\"8\n" +
+	"\vServiceList\x12)\n" +
+	"\bservices\x18\x01 \x03(\v2\r.pbuf.ServiceR\bservices\"U\n" +
+	"\aService\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x18\n" +
+	"\aenabled\x18\x02 \x01(\bR\aenabled\x12\x1c\n" +
+	"\tprotected\x18\x03 \x01(\bR\tprotected\"7\n" +
 	"\vDeviceColor\x12\f\n" +
 	"\x01r\x18\x01 \x01(\rR\x01r\x12\f\n" +
 	"\x01g\x18\x02 \x01(\rR\x01g\x12\f\n" +
-	"\x01b\x18\x03 \x01(\rR\x01b\"\xc6\x01\n" +
+	"\x01b\x18\x03 \x01(\rR\x01b\"\xae\x01\n" +
 	"\n" +
 	"DeviceInfo\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\tR\x04code\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\x12/\n" +
-	"\x04type\x18\x03 \x01(\x0e2\x1b.pbuf.DeviceInfo.DeviceTypeR\x04type\x12'\n" +
-	"\x05color\x18\x04 \x01(\v2\x11.pbuf.DeviceColorR\x05color\"6\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12$\n" +
+	"\x04type\x18\x03 \x01(\x0e2\x10.pbuf.DeviceTypeR\x04type\x12'\n" +
+	"\x05color\x18\x04 \x01(\v2\x11.pbuf.DeviceColorR\x05color\x12)\n" +
+	"\bservices\x18\x05 \x03(\v2\r.pbuf.ServiceR\bservices\"t\n" +
+	"\vPairRequest\x12\x14\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\x12$\n" +
+	"\x06device\x18\x02 \x01(\v2\f.pbuf.DeviceR\x06device\x12)\n" +
+	"\bservices\x18\x03 \x03(\v2\r.pbuf.ServiceR\bservices\"\x91\x01\n" +
+	"\fPairResponse\x12\x14\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\x12$\n" +
+	"\x06device\x18\x02 \x01(\v2\f.pbuf.DeviceR\x06device\x12\x1a\n" +
+	"\baccepted\x18\x03 \x01(\bR\baccepted\x12)\n" +
+	"\bservices\x18\x04 \x03(\v2\r.pbuf.ServiceR\bservices*6\n" +
 	"\n" +
 	"DeviceType\x12\v\n" +
 	"\aDESKTOP\x10\x00\x12\n" +
@@ -371,23 +627,33 @@ func file_types_proto_rawDescGZIP() []byte {
 }
 
 var file_types_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_types_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_types_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_types_proto_goTypes = []any{
-	(Device_DeviceType)(0),     // 0: pbuf.Device.DeviceType
-	(DeviceInfo_DeviceType)(0), // 1: pbuf.DeviceInfo.DeviceType
-	(*Device)(nil),             // 2: pbuf.Device
-	(*DeviceColor)(nil),        // 3: pbuf.DeviceColor
-	(*DeviceInfo)(nil),         // 4: pbuf.DeviceInfo
+	(DeviceType)(0),        // 0: pbuf.DeviceType
+	(Device_DeviceType)(0), // 1: pbuf.Device.DeviceType
+	(*Device)(nil),         // 2: pbuf.Device
+	(*ServiceList)(nil),    // 3: pbuf.ServiceList
+	(*Service)(nil),        // 4: pbuf.Service
+	(*DeviceColor)(nil),    // 5: pbuf.DeviceColor
+	(*DeviceInfo)(nil),     // 6: pbuf.DeviceInfo
+	(*PairRequest)(nil),    // 7: pbuf.PairRequest
+	(*PairResponse)(nil),   // 8: pbuf.PairResponse
 }
 var file_types_proto_depIdxs = []int32{
-	0, // 0: pbuf.Device.type:type_name -> pbuf.Device.DeviceType
-	1, // 1: pbuf.DeviceInfo.type:type_name -> pbuf.DeviceInfo.DeviceType
-	3, // 2: pbuf.DeviceInfo.color:type_name -> pbuf.DeviceColor
-	3, // [3:3] is the sub-list for method output_type
-	3, // [3:3] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	1, // 0: pbuf.Device.type:type_name -> pbuf.Device.DeviceType
+	4, // 1: pbuf.ServiceList.services:type_name -> pbuf.Service
+	0, // 2: pbuf.DeviceInfo.type:type_name -> pbuf.DeviceType
+	5, // 3: pbuf.DeviceInfo.color:type_name -> pbuf.DeviceColor
+	4, // 4: pbuf.DeviceInfo.services:type_name -> pbuf.Service
+	2, // 5: pbuf.PairRequest.device:type_name -> pbuf.Device
+	4, // 6: pbuf.PairRequest.services:type_name -> pbuf.Service
+	2, // 7: pbuf.PairResponse.device:type_name -> pbuf.Device
+	4, // 8: pbuf.PairResponse.services:type_name -> pbuf.Service
+	9, // [9:9] is the sub-list for method output_type
+	9, // [9:9] is the sub-list for method input_type
+	9, // [9:9] is the sub-list for extension type_name
+	9, // [9:9] is the sub-list for extension extendee
+	0, // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_types_proto_init() }
@@ -401,7 +667,7 @@ func file_types_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_types_proto_rawDesc), len(file_types_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   3,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

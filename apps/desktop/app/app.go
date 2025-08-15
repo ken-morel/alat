@@ -12,6 +12,7 @@ import (
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 // App struct
@@ -50,6 +51,13 @@ func (app *App) IsSetupComplete() bool {
 
 func (app *App) GetConfig() config.Config {
 	return config.GetConfig()
+}
+
+func (app *App) AskDirectory() (path string, err error) {
+	path, err = runtime.OpenDirectoryDialog(app.ctx, runtime.OpenDialogOptions{
+		Title: "Choose directory",
+	})
+	return
 }
 
 func (app *App) SaveConfig(cfg config.Config) error {

@@ -21,6 +21,36 @@ export namespace address {
 
 export namespace config {
 	
+	export class ServicesConfig {
+	    RCFile: rcfile.ServiceConfig;
+	
+	    static createFrom(source: any = {}) {
+	        return new ServicesConfig(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.RCFile = this.convertValues(source["RCFile"], rcfile.ServiceConfig);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class Config {
 	    DeviceName: string;
 	    DeviceColor: options.RGBA;
@@ -28,6 +58,7 @@ export namespace config {
 	    Language: string;
 	    AutoStart: boolean;
 	    Theme: string;
+	    Services: ServicesConfig;
 	
 	    static createFrom(source: any = {}) {
 	        return new Config(source);
@@ -41,6 +72,7 @@ export namespace config {
 	        this.Language = source["Language"];
 	        this.AutoStart = source["AutoStart"];
 	        this.Theme = source["Theme"];
+	        this.Services = this.convertValues(source["Services"], ServicesConfig);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -125,6 +157,27 @@ export namespace options {
 	        this.g = source["g"];
 	        this.b = source["b"];
 	        this.a = source["a"];
+	    }
+	}
+
+}
+
+export namespace rcfile {
+	
+	export class ServiceConfig {
+	    Enabled: boolean;
+	    Destination: string;
+	    FileMaxSize: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new ServiceConfig(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Enabled = source["Enabled"];
+	        this.Destination = source["Destination"];
+	        this.FileMaxSize = source["FileMaxSize"];
 	    }
 	}
 

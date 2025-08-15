@@ -5,6 +5,7 @@ import (
 	"alat/pkg/core"
 	"alat/pkg/core/device"
 	"alat/pkg/core/server"
+	"alat/pkg/core/service/rcfile"
 	"fmt"
 	"log"
 	"os"
@@ -15,13 +16,18 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+type ServicesConfig struct {
+	RCFile rcfile.ServiceConfig `yaml:"rcfile"`
+}
+
 type Config struct {
-	DeviceName  string       `yaml:"deviceName"`
-	DeviceColor options.RGBA `yaml:"deviceColor"`
-	DeviceCode  string       `yaml:"deviceCode"`
-	Language    string       `yaml:"language"`
-	AutoStart   bool         `yaml:"autoStart"`
-	Theme       string       `yaml:"theme"`
+	DeviceName  string         `yaml:"deviceName"`
+	DeviceColor options.RGBA   `yaml:"deviceColor"`
+	DeviceCode  string         `yaml:"deviceCode"`
+	Language    string         `yaml:"language"`
+	AutoStart   bool           `yaml:"autoStart"`
+	Theme       string         `yaml:"theme"`
+	Services    ServicesConfig `yaml:"services"`
 }
 
 var (

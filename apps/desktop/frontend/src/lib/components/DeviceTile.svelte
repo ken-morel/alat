@@ -53,11 +53,14 @@ div.device-tile-container
       padding-top: calc(50% - 12px)
   div.info
     border-left: $msep
-    padding-left: 20px
-    padding-right: 20px
+    padding-left: 10px
+    padding-right: 10px
+    text-align: right
     h5
       font-size: xx-large
     code
       font-size: small
+      background-color: #8888
+      padding: 2px 4px
 
 </style>
