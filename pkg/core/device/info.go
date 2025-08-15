@@ -9,11 +9,11 @@ import (
 )
 
 type DeviceInfo struct {
-	Address address.Address
-	Name    string
-	Color   options.RGBA
-	Code    string
-	Type    DeviceType
+	Address address.Address `yaml:"address"`
+	Name    string          `yaml:"name"`
+	Color   options.RGBA    `yaml:"color"`
+	Code    string          `yaml:"code"`
+	Type    DeviceType      `yaml:"type"`
 }
 
 type DeviceType int

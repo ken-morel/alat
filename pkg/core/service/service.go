@@ -10,7 +10,7 @@ const (
 )
 
 type Service struct {
-	Name      ServiceName
-	Enabled   bool
-	Protected bool
+	Name      ServiceName `yaml:"name"`
+	Enabled   bool        `yaml:"enabled"`
+	Protected bool        `yaml:"protected"`
 }

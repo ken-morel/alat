@@ -7,9 +7,9 @@ import (
 )
 
 type Address struct {
-	Port   uint16
-	IP     net.IP
-	Phrase string
+	Port   uint16 `yaml:"port"`
+	IP     net.IP `yaml:"ip"`
+	Phrase string `yaml:"phrase"`
 }
 
 const AlatPort = 60000

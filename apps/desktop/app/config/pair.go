@@ -2,6 +2,7 @@ package config
 
 import (
 	"alat/pkg/core/pair"
+	"fmt"
 	"os"
 	"path"
 
@@ -13,14 +14,16 @@ func GetPairsConfigFile() string {
 }
 
 func GetPairedDevices() ([]pair.Pair, error) {
+	fmt.Println("Inner")
 	var devices []pair.Pair
 	var err error
 	path := GetPairsConfigFile()
 	file, err := os.Open(path)
+	fmt.Println("Opened the file")
 	if err != nil {
 		return devices, err
 	}
-	err = yaml.NewDecoder(file).Decode(devices)
+	err = yaml.NewDecoder(file).Decode(&devices)
 	return devices, err
 }
 

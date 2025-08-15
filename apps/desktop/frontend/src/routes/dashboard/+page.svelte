@@ -17,7 +17,7 @@
       {:then pairedDevices}
         {#if pairedDevices.length === 0}
           <div>
-            <h2>No device for now...</h2>
+            <h2 class="w3-opacity">No paired device. For now</h2>
           </div>
         {:else}
           {#each pairedDevices as pair}

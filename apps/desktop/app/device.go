@@ -21,7 +21,8 @@ func (app *App) SearchDevices() []device.DeviceInfo {
 func (app *App) GetPairedDevices() ([]pair.Pair, error) {
 	var pairs []pair.Pair
 	var err error
+	fmt.Println("Getting paired devices")
 	pairs, err = config.GetPairedDevices()
-	fmt.Println("Returning paired devices")
+	fmt.Println("Returning paired devices", pairs)
 	return pairs, err
 }
