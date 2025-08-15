@@ -7,15 +7,10 @@ import (
 	"net/http"
 )
 
-func handlePing(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("Alat-Device", "true")
-	w.WriteHeader(200)
-}
-
 func startServer() {
 	fmt.Println("Creating server")
 	server := http.NewServeMux()
-	server.HandleFunc("/ping", handlePing)
+	server.HandleFunc("/alat-info", handleInfo)
 	http.Handle("/", server)
 	srv := &http.Server{
 		Addr:    "192.168.1.192:60000",

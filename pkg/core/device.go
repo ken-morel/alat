@@ -1,10 +1,10 @@
 package core
 
+import (
+	"alat/pkg/core/address"
+)
+
 type DeviceInfo struct {
 	Name    string
-	Address Address
-}
-
-func GetAvailableAddresses() ([]Address, error) {
-	return GetLocalAddresses()
+	Address address.Address
 }

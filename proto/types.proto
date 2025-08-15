@@ -17,3 +17,22 @@ message Device {
   DeviceType type = 3;
   string ip_address = 4;
 }
+
+message DeviceColor {
+  uint32 r = 1;
+  uint32 g = 2;
+  uint32 b = 3;
+}
+
+message DeviceInfo {
+  string code = 1;
+  string name = 2;
+  enum DeviceType {
+    DESKTOP = 0;
+    MOBILE = 1;
+    TV = 2;
+    WEB = 3;
+  }
+  DeviceType type = 3;
+  DeviceColor color = 4;
+}

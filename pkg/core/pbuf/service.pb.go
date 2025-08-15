@@ -7,12 +7,11 @@
 package pbuf
 
 import (
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
-
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -128,15 +127,12 @@ func file_service_proto_rawDescGZIP() []byte {
 	return file_service_proto_rawDescData
 }
 
-var (
-	file_service_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
-	file_service_proto_goTypes  = []any{
-		(*Empty)(nil),      // 0: pbuf.Empty
-		(*DeviceList)(nil), // 1: pbuf.DeviceList
-		(*Device)(nil),     // 2: pbuf.Device
-	}
-)
-
+var file_service_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_service_proto_goTypes = []any{
+	(*Empty)(nil),      // 0: pbuf.Empty
+	(*DeviceList)(nil), // 1: pbuf.DeviceList
+	(*Device)(nil),     // 2: pbuf.Device
+}
 var file_service_proto_depIdxs = []int32{
 	2, // 0: pbuf.DeviceList.devices:type_name -> pbuf.Device
 	0, // 1: pbuf.PeerDiscovery.GetDiscoveredDevices:input_type -> pbuf.Empty

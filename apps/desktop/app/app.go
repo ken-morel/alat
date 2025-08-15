@@ -29,10 +29,17 @@ func NewApp(assets embed.FS) *App {
 // so we can call the runtime methods
 func (app *App) startup(ctx context.Context) {
 	app.ctx = ctx
-	server.Start()
 	err := config.Init()
 	if err != nil {
 		fmt.Println(err.Error())
+	} else {
+		conf := config.GetConfig()
+		server.Configure(server.ServerConfig{
+			DeviceName:  conf.DeviceName,
+			DeviceCode:  conf.DeviceCode,
+			DeviceType:  server.DeviceTypeDesktop,
+			DeviceColor: conf.DeviceColor,
+		})
 	}
 }
 

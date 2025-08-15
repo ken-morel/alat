@@ -1,9 +1,9 @@
-package core
+// Package address stores address specific cod3
+package address
 
 import (
 	"fmt"
 	"net"
-	"net/http"
 )
 
 type Address struct {
@@ -65,81 +65,4 @@ func NewAdderss(ip net.IP, port uint16) (Address, error) {
 
 func (addr *Address) String() string {
 	return fmt.Sprintf("%s:%d", addr.IP.String(), addr.Port)
-}
-
-func (addr *Address) Ping() bool {
-	res, err := http.Get("http://" + addr.String() + "/ping")
-	if err != nil {
-		return false
-	} else if res.Header.Get("Alat-Device") != "" {
-		return true
-	} else {
-		return false
-	}
-}
-
-func GetLocalAddresses() ([]Address, error) {
-	var addresses []Address
-	interfaces, err := net.Interfaces()
-	if err != nil {
-		return nil, err
-	}
-	for _, iface := range interfaces {
-		// Skip loopback and down interfaces
-		if iface.Flags&net.FlagLoopback != 0 || iface.Flags&net.FlagUp == 0 {
-			continue
-		}
-		addrs, err := iface.Addrs()
-		if err != nil {
-			fmt.Println("Error getting interfaces addresses", err.Error())
-			continue
-		}
-		for _, rawAddr := range addrs {
-			var ip net.IP
-
-			switch v := rawAddr.(type) {
-			case *net.IPNet:
-				ip = v.IP
-			case *net.IPAddr:
-				ip = v.IP
-			}
-
-			if ip == nil || ip.IsLoopback() {
-				continue
-			}
-
-			ip = ip.To4()
-			if ip == nil {
-				continue // Skip IPv6 addresses
-			}
-
-			if !ip.IsPrivate() {
-				continue
-			}
-			for offset := range 10 {
-				addr, err := NewAdderss(ip, uint16(offset+AlatPort))
-				if err != nil {
-					continue
-				}
-				found := false
-				for _, a := range addresses {
-					if a.Phrase == addr.Phrase {
-						found = true
-						break
-					}
-				}
-				if !found {
-					if addr.Ping() {
-						addresses = append(addresses, addr)
-					}
-				}
-			}
-
-		}
-	}
-
-	if len(addresses) == 0 {
-		return nil, fmt.Errorf("no suitable local network addresses found")
-	}
-	return addresses, nil
 }
