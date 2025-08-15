@@ -4,6 +4,9 @@ export namespace config {
 	    DeviceName: string;
 	    DeviceColor: options.RGBA;
 	    DeviceCode: string;
+	    Language: string;
+	    AutoStart: boolean;
+	    Theme: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Config(source);
@@ -14,6 +17,9 @@ export namespace config {
 	        this.DeviceName = source["DeviceName"];
 	        this.DeviceColor = this.convertValues(source["DeviceColor"], options.RGBA);
 	        this.DeviceCode = source["DeviceCode"];
+	        this.Language = source["Language"];
+	        this.AutoStart = source["AutoStart"];
+	        this.Theme = source["Theme"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
