@@ -3,6 +3,7 @@ package app
 
 import (
 	"alat/apps/desktop/app/config"
+	"alat/pkg/core"
 	"alat/pkg/core/server"
 	"context"
 	"embed"
@@ -74,7 +75,7 @@ func (app *App) Run() error {
 		OnStartup:  app.startup,
 		OnShutdown: app.shutdown,
 		SingleInstanceLock: &options.SingleInstanceLock{
-			UniqueId:               "cm.rbs.engon.alat",
+			UniqueId:               core.AppID,
 			OnSecondInstanceLaunch: app.onSecondInstanceLaunch,
 		},
 

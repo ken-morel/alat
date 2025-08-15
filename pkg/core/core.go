@@ -6,4 +6,4 @@ func Init() int8 {
 	return 0
 }
 
-const AppID = "cm.rbs.alat"
+const AppID = "com.github.ken-morel.alat"
