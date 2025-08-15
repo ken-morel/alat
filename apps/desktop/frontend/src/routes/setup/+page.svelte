@@ -9,7 +9,7 @@
   let pstate: "loading" | "ready" = $state("loading");
 
   onMount(async () => {
-    await new Promise((r) => setTimeout(r, 2000));
+    await new Promise((r) => setTimeout(r, 200));
     cfg = await GetConfig();
     if (cfg) {
       const { r, g, b, a } = cfg.DeviceColor;
@@ -46,13 +46,13 @@
 
 <h1 class="w3-center w3-xxlarge w3-padding-32">Device Setup</h1>
 
-{#if pstate == "ready" && cfg}
-  <form
-    onsubmit={(e) => {
-      e.preventDefault();
-      save();
-    }}
-  >
+<form
+  onsubmit={(e) => {
+    e.preventDefault();
+    save();
+  }}
+>
+  {#if pstate == "ready" && cfg}
     <section class="dname">
       <div class="name">
         <label for="dname">Device name</label>
@@ -61,9 +61,10 @@
           name="dname"
           bind:value={cfg.DeviceName}
           class="w3-input"
+          style="border-color: {deviceColorHex}"
         />
         <p class="hint">
-          Right click or press <kbd>Win + Period</kbd> to enter emoji
+          Right click or press <kbd class="">Win + Period</kbd> to enter emoji
         </p>
       </div>
       <div class="dcolor">
@@ -78,10 +79,17 @@
         <p class="hint">Choose a color</p>
       </div>
     </section>
-  </form>
-{:else}
-  <p>Loading...</p>
-{/if}
+    <section>
+      <label for="language"> Language </label>
+      <select class="w3-select">
+        <option>Francais</option>
+        <option>French</option>
+      </select>
+    </section>
+  {:else}
+    <p class="loading w3-large w3-center w3-opacity">Loading...</p>
+  {/if}
+</form>
 
 <style lang="sass">
   @use '$lib/styles/theme'
@@ -90,16 +98,17 @@
     margin: auto
     max-width: 700px
     padding: 30px
+    transition: 1s
     section
       display: block
-      border-bottom: 2px theme.$tertiary-d1 solid
+      border-bottom: 2px theme.$tertiary-d3 solid
       padding: 10px
       label
         font-size: xx-large
         color: theme.$text-primary
-      input
+      input,
+      select
         background-color: theme.$secondary-d3
-        border-color: theme.$primary-d2
         color: theme.$text-secondary
         font-size: x-large
         margin-bottom: 0!important  
@@ -115,9 +124,9 @@
         text-align: left
         margin-left: 20px
         input
-          height: 52px
-          width: 52px
-          padding: 0px
-          margin: 0px
+          height: 53px
+          width: 53px
+          padding: 0px !important
+          margin: 0px !important
           display: block
 </style>
