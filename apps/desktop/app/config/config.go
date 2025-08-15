@@ -11,7 +11,6 @@ import (
 	"os"
 	"path"
 
-	"github.com/google/uuid"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"gopkg.in/yaml.v3"
 )
@@ -84,16 +83,7 @@ func GetConfig() Config {
 	return config
 }
 
-func GenerateDeviceCode() string {
-	return uuid.NewString()
-}
-
-func Init() error {
-	AlatConfigDir = GetConfigDir()
-	if err := os.MkdirAll(AlatConfigDir, 0750); err != nil {
-		return fmt.Errorf("could not create config directory: %w", err)
-	}
-
+func InitConfig() error {
 	if err := LoadConfig(); err != nil {
 		hostname, _ := os.Hostname()
 		config = Config{
@@ -106,6 +96,19 @@ func Init() error {
 		}
 	}
 	return nil
+}
+
+func Init() (err error) {
+	AlatConfigDir = GetConfigDir()
+	if err = os.MkdirAll(AlatConfigDir, 0750); err != nil {
+		return fmt.Errorf("could not create config directory: %w", err)
+	}
+	err = InitConfig()
+	if err != nil {
+		return err
+	}
+	err = InitPair()
+	return err
 }
 
 func SetupServer() {

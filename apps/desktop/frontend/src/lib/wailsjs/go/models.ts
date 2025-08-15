@@ -162,6 +162,49 @@ export namespace options {
 
 }
 
+export namespace pair {
+	
+	export class Pair {
+	    DeviceInfo: device.DeviceInfo;
+	    Token: string;
+	    OldToken: string;
+	    Services: service.Service[];
+	    ExposingServices: service.Service[];
+	
+	    static createFrom(source: any = {}) {
+	        return new Pair(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.DeviceInfo = this.convertValues(source["DeviceInfo"], device.DeviceInfo);
+	        this.Token = source["Token"];
+	        this.OldToken = source["OldToken"];
+	        this.Services = this.convertValues(source["Services"], service.Service);
+	        this.ExposingServices = this.convertValues(source["ExposingServices"], service.Service);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+
+}
+
 export namespace rcfile {
 	
 	export class ServiceConfig {
@@ -178,6 +221,27 @@ export namespace rcfile {
 	        this.Enabled = source["Enabled"];
 	        this.Destination = source["Destination"];
 	        this.FileMaxSize = source["FileMaxSize"];
+	    }
+	}
+
+}
+
+export namespace service {
+	
+	export class Service {
+	    Name: string;
+	    Enabled: boolean;
+	    Protected: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new Service(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Name = source["Name"];
+	        this.Enabled = source["Enabled"];
+	        this.Protected = source["Protected"];
 	    }
 	}
 

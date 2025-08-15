@@ -6,9 +6,10 @@ import (
 	"alat/pkg/core/service"
 )
 
-type PairedDevice struct {
-	DeviceInfo device.DeviceInfo
-	Token      string
-	OldToken   string
-	Services   []service.Service
+type Pair struct {
+	DeviceInfo       device.DeviceInfo `yaml:"deviceinfo"`
+	Token            string            `yaml:"token"`
+	OldToken         string            `yaml:"oldtoken"`
+	Services         []service.Service `yaml:"services"`
+	ExposingServices []service.Service `yaml:"exposingservices"`
 }

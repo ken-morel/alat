@@ -15,9 +15,15 @@
           loading devices...
         </div>
       {:then pairedDevices}
-        {#each pairedDevices as device}
-          <DeviceTile deviceInfo={device} />
-        {/each}
+        {#if pairedDevices.length === 0}
+          <div>
+            <h2>No device for now...</h2>
+          </div>
+        {:else}
+          {#each pairedDevices as pair}
+            <DeviceTile deviceInfo={pair.DeviceInfo} />
+          {/each}
+        {/if}
       {/await}
     </div>
     <a href="/pair" class="w3-button w3-block w3-margin-top">Pair a device</a>

@@ -1,12 +1,11 @@
 package app
 
 import (
-	"alat/pkg/core/address"
+	"alat/apps/desktop/app/config"
 	"alat/pkg/core/client"
 	"alat/pkg/core/device"
-	"net"
-
-	"github.com/wailsapp/wails/v2/pkg/options"
+	"alat/pkg/core/pair"
+	"fmt"
 )
 
 func (app *App) SearchDevices() []device.DeviceInfo {
@@ -19,22 +18,10 @@ func (app *App) SearchDevices() []device.DeviceInfo {
 	return infos
 }
 
-func (app *App) GetPairedDevices() []device.DeviceInfo {
-	return []device.DeviceInfo{
-		{
-			Name: "jealomy",
-			Address: address.Address{
-				Port: 307,
-				IP:   net.IP{192, 168, 1, 1},
-			},
-			Color: options.RGBA{
-				R: 29,
-				G: 49,
-				B: 100,
-				A: 1,
-			},
-			Code: "showig awfioanfuiofunpiaondf",
-			Type: device.DeviceTypeTV,
-		},
-	}
+func (app *App) GetPairedDevices() ([]pair.Pair, error) {
+	var pairs []pair.Pair
+	var err error
+	pairs, err = config.GetPairedDevices()
+	fmt.Println("Returning paired devices")
+	return pairs, err
 }
