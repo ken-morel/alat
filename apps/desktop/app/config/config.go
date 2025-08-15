@@ -3,6 +3,8 @@ package config
 
 import (
 	"alat/pkg/core"
+	"alat/pkg/core/device"
+	"alat/pkg/core/server"
 	"fmt"
 	"log"
 	"os"
@@ -97,4 +99,13 @@ func Init() error {
 		}
 	}
 	return nil
+}
+
+func SetupServer() {
+	server.Configure(server.ServerConfig{
+		DeviceName:  config.DeviceName,
+		DeviceCode:  config.DeviceCode,
+		DeviceType:  device.DeviceTypeDesktop,
+		DeviceColor: config.DeviceColor,
+	})
 }

@@ -7,6 +7,8 @@ import (
 	"net/http"
 )
 
+var Running bool = false
+
 func startServer() {
 	fmt.Println("Creating server")
 	server := http.NewServeMux()
@@ -17,7 +19,9 @@ func startServer() {
 		Handler: server,
 	}
 	fmt.Println("server listening")
+	Running = true
 	log.Fatal(srv.ListenAndServe())
+	Running = false
 }
 
 func Start() {

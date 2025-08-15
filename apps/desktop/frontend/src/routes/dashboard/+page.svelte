@@ -20,7 +20,7 @@
         {/each}
       {/await}
     </div>
-    <a href="/pair" class="w3-button w3-block">Pair a device</a>
+    <a href="/pair" class="w3-button w3-block w3-margin-top">Pair a device</a>
   </div>
 </section>
 

@@ -16,7 +16,9 @@
 
     SearchDevices()
       .then((result: device.DeviceInfo[]) => {
-        if (result) deviceInfos = result;
+        setTimeout(() => {
+          if (result) deviceInfos = result;
+        }, 1500);
       })
       .catch((err: Error) => {
         error =
@@ -64,12 +66,20 @@ h2
 section
   background-color: theme.$secondary-d4
 section.devices-list-container
+  border-top: 2px theme.$secondary-d3 solid
+  border-bottom: 2px theme.$secondary-d3 solid
+  padding: 30px
   div
     max-width: 800px
     margin: auto
     div.title
       text-align: center
-    div.devices-list
+    div.device-list
       display: flex
+      flex-direction: row
+      flex-wrap: wrap
+      align-content: flex-start
+      justify-content: space-evenly
+      align-items: flex-start
 
 </style>

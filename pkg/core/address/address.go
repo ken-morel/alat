@@ -16,7 +16,7 @@ const AlatPort = 60000
 
 var colors = []string{
 	"red", "green", "blue", "orange", "indigo",
-	"purple", "vermillion", "yellow", "magenta", "cyan",
+	"purple", "yellow", "magenta", "cyan",
 }
 
 var adjectives = []string{
@@ -40,15 +40,18 @@ func AddressPhrase(ip net.IP, port uint16) (string, error) {
 	}
 
 	// TODO: Take more than justs the last two bytes
-	first := int(port - AlatPort)
+	first := int(port-AlatPort) - 1
 	second := int(ip[2])
 	third := int(ip[3])
 
-	color := colors[first%len(colors)]
+	color := ""
+	if first >= 0 {
+		color = colors[first%len(colors)] + "-"
+	}
 	adjective := adjectives[second%len(adjectives)]
 	noun := nouns[third%len(nouns)]
 
-	return fmt.Sprintf("%s-%s-%s", color, adjective, noun), nil
+	return fmt.Sprintf("%s%s-%s", color, adjective, noun), nil
 }
 
 func NewAdderss(ip net.IP, port uint16) (Address, error) {

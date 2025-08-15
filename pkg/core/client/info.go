@@ -21,6 +21,7 @@ func GetDeviceInfo(addr address.Address) (info pbuf.DeviceInfo, err error) {
 		return
 	}
 	_, err = fmt.Sscanf(res.Header.Get("Content-Length"), "%d", &contentLength)
+	fmt.Println("content length: ", contentLength)
 	if err != nil {
 		return
 	} else if contentLength < 10 || contentLength > 500 {
@@ -29,10 +30,8 @@ func GetDeviceInfo(addr address.Address) (info pbuf.DeviceInfo, err error) {
 		return
 	}
 	data := make([]byte, contentLength)
-	_, err = res.Body.Read(data)
-	if err != nil {
-		return
-	}
+	res.Body.Read(data)
+
 	err = proto.Unmarshal(data, &info)
 	return
 }

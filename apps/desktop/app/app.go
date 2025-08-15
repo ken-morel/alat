@@ -4,7 +4,6 @@ package app
 import (
 	"alat/apps/desktop/app/config"
 	"alat/pkg/core"
-	"alat/pkg/core/device"
 	"alat/pkg/core/server"
 	"context"
 	"embed"
@@ -26,22 +25,16 @@ func NewApp(assets embed.FS) *App {
 	return &App{assets: assets}
 }
 
-// startup is called when the app starts. The context is saved
-// so we can call the runtime methods
 func (app *App) startup(ctx context.Context) {
 	app.ctx = ctx
 	err := config.Init()
 	if err != nil {
 		fmt.Println(err.Error())
 	} else {
-		conf := config.GetConfig()
-		server.Configure(server.ServerConfig{
-			DeviceName:  conf.DeviceName,
-			DeviceCode:  conf.DeviceCode,
-			DeviceType:  device.DeviceTypeDesktop,
-			DeviceColor: conf.DeviceColor,
-		})
-		server.Start()
+		if config.Ready {
+			config.SetupServer()
+			server.Start()
+		}
 	}
 }
 
@@ -51,19 +44,23 @@ func (app *App) shutdown(ctx context.Context) {
 func (app *App) onSecondInstanceLaunch(secondInstanceData options.SecondInstanceData) {
 }
 
-// IsSetupComplete checks if the application has been configured.
 func (app *App) IsSetupComplete() bool {
 	return config.Ready
 }
 
-// GetConfig returns the current application configuration.
 func (app *App) GetConfig() config.Config {
 	return config.GetConfig()
 }
 
-// SaveConfig saves the application configuration.
 func (app *App) SaveConfig(cfg config.Config) error {
-	return config.SaveConfig(&cfg)
+	err := config.SaveConfig(&cfg)
+	if err == nil {
+		config.SetupServer()
+		if !server.Running {
+			server.Start()
+		}
+	}
+	return nil
 }
 
 // GenerateDeviceCode generates a new unique device code.
