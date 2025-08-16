@@ -50,5 +50,19 @@ func (app *App) doSendFile(path string, device pair.Pair) {
 
 func (app *App) SetupServices() {
 	conf := config.GetConfig().Services
-	rcfile.Init(conf.RCFile)
+	rcfile.Init(conf.RCFile, app.onFileReceive)
+}
+
+func (app *App) onFileReceive(channel chan *rcfile.ReceiveFileStatus, name string, size int) {
+	if size == 0 {
+		return
+	}
+	percent := float32(0.0)
+	for status := range channel {
+		if status.Percent-percent > float32(1000000.0)/float32(size) {
+			percent = status.Percent
+			runtime.WindowExecJS(app.ctx, fmt.Sprintf("window.downloadCallback('%s', %f);", name, percent))
+		}
+	}
+	runtime.WindowExecJS(app.ctx, fmt.Sprintf("window.downloadCallback('%s', 100)", name))
 }

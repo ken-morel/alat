@@ -9,6 +9,14 @@ type ServiceConfig struct {
 	FileMaxSize uint64 `yaml:"filemaxsize"`
 }
 
+type FileReceiveHandler func(chan *ReceiveFileStatus, string, int)
+
+type ReceiveFileStatus struct {
+	Finished bool
+	Error    error
+	Percent  float32
+}
+
 const ServiceName = "rcfile"
 
 var config ServiceConfig = ServiceConfig{
@@ -16,9 +24,12 @@ var config ServiceConfig = ServiceConfig{
 }
 var Ready bool = false
 
-func Init(conf ServiceConfig) error {
+var recvHandle FileReceiveHandler
+
+func Init(conf ServiceConfig, handle FileReceiveHandler) error {
 	config = conf
 	Ready = true
 	fmt.Println("Initializing rcfile service: ", conf)
+	recvHandle = handle
 	return nil
 }

@@ -55,19 +55,37 @@ func HandleSendRequest(w http.ResponseWriter, r *http.Request) {
 	buffer := make([]byte, 1024)
 	received := 0
 	fmt.Println("Copying chunks")
+	channel := make(chan *ReceiveFileStatus)
+	go recvHandle(channel, fileName, fileSize)
 	for received < fileSize {
 		size, _ := r.Body.Read(buffer)
 		if size == 0 {
 			break
 		}
 		received += size
-		fmt.Printf("Received %d of %d", received, fileSize)
+		channel <- &ReceiveFileStatus{
+			Finished: false,
+			Error:    nil,
+			Percent:  float32(received) / float32(fileSize) * 100.0,
+		}
 		_, err = output.Write(buffer[0:size])
 		if err != nil {
 			http.Error(w, "Could not write to local file: "+err.Error(), 500)
+			channel <- &ReceiveFileStatus{
+				Finished: true,
+				Error:    err,
+				Percent:  float32(received) / float32(fileSize) * 100.0,
+			}
+			close(channel)
 			return
 		}
 	}
+	channel <- &ReceiveFileStatus{
+		Finished: true,
+		Error:    nil,
+		Percent:  float32(received) / float32(fileSize) * 100.0,
+	}
+	close(channel)
 	w.WriteHeader(200)
 	fmt.Println("File received succesfully")
 }
