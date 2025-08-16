@@ -245,6 +245,8 @@ export namespace pbuf {
 	    type?: number;
 	    color?: DeviceColor;
 	    services?: Service[];
+	    ip?: string;
+	    port?: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new DeviceInfo(source);
@@ -257,6 +259,8 @@ export namespace pbuf {
 	        this.type = source["type"];
 	        this.color = this.convertValues(source["color"], DeviceColor);
 	        this.services = this.convertValues(source["services"], Service);
+	        this.ip = source["ip"];
+	        this.port = source["port"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

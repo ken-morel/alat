@@ -27,5 +27,8 @@ message DeviceInfo {
   DeviceType type = 3;
   DeviceColor color = 4;
   repeated Service services = 5;
+
+  string ip = 6;
+  uint32 port = 7;
 }
 

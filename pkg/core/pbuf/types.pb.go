@@ -7,11 +7,12 @@
 package pbuf
 
 import (
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -192,6 +193,8 @@ type DeviceInfo struct {
 	Type          DeviceType             `protobuf:"varint,3,opt,name=type,proto3,enum=pbuf.DeviceType" json:"type,omitempty"`
 	Color         *DeviceColor           `protobuf:"bytes,4,opt,name=color,proto3" json:"color,omitempty"`
 	Services      []*Service             `protobuf:"bytes,5,rep,name=services,proto3" json:"services,omitempty"`
+	Ip            string                 `protobuf:"bytes,6,opt,name=ip,proto3" json:"ip,omitempty"`
+	Port          uint32                 `protobuf:"varint,7,opt,name=port,proto3" json:"port,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -261,6 +264,20 @@ func (x *DeviceInfo) GetServices() []*Service {
 	return nil
 }
 
+func (x *DeviceInfo) GetIp() string {
+	if x != nil {
+		return x.Ip
+	}
+	return ""
+}
+
+func (x *DeviceInfo) GetPort() uint32 {
+	if x != nil {
+		return x.Port
+	}
+	return 0
+}
+
 var File_types_proto protoreflect.FileDescriptor
 
 const file_types_proto_rawDesc = "" +
@@ -272,14 +289,16 @@ const file_types_proto_rawDesc = "" +
 	"\vDeviceColor\x12\f\n" +
 	"\x01r\x18\x01 \x01(\rR\x01r\x12\f\n" +
 	"\x01g\x18\x02 \x01(\rR\x01g\x12\f\n" +
-	"\x01b\x18\x03 \x01(\rR\x01b\"\xae\x01\n" +
+	"\x01b\x18\x03 \x01(\rR\x01b\"\xd2\x01\n" +
 	"\n" +
 	"DeviceInfo\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\tR\x04code\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12$\n" +
 	"\x04type\x18\x03 \x01(\x0e2\x10.pbuf.DeviceTypeR\x04type\x12'\n" +
 	"\x05color\x18\x04 \x01(\v2\x11.pbuf.DeviceColorR\x05color\x12)\n" +
-	"\bservices\x18\x05 \x03(\v2\r.pbuf.ServiceR\bservices*6\n" +
+	"\bservices\x18\x05 \x03(\v2\r.pbuf.ServiceR\bservices\x12\x0e\n" +
+	"\x02ip\x18\x06 \x01(\tR\x02ip\x12\x12\n" +
+	"\x04port\x18\a \x01(\rR\x04port*6\n" +
 	"\n" +
 	"DeviceType\x12\v\n" +
 	"\aDESKTOP\x10\x00\x12\n" +
@@ -300,14 +319,16 @@ func file_types_proto_rawDescGZIP() []byte {
 	return file_types_proto_rawDescData
 }
 
-var file_types_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_types_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
-var file_types_proto_goTypes = []any{
-	(DeviceType)(0),     // 0: pbuf.DeviceType
-	(*Service)(nil),     // 1: pbuf.Service
-	(*DeviceColor)(nil), // 2: pbuf.DeviceColor
-	(*DeviceInfo)(nil),  // 3: pbuf.DeviceInfo
-}
+var (
+	file_types_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+	file_types_proto_msgTypes  = make([]protoimpl.MessageInfo, 3)
+	file_types_proto_goTypes   = []any{
+		(DeviceType)(0),     // 0: pbuf.DeviceType
+		(*Service)(nil),     // 1: pbuf.Service
+		(*DeviceColor)(nil), // 2: pbuf.DeviceColor
+		(*DeviceInfo)(nil),  // 3: pbuf.DeviceInfo
+	}
+)
 var file_types_proto_depIdxs = []int32{
 	0, // 0: pbuf.DeviceInfo.type:type_name -> pbuf.DeviceType
 	2, // 1: pbuf.DeviceInfo.color:type_name -> pbuf.DeviceColor

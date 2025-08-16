@@ -9,8 +9,8 @@ import (
 
 type ServerConfig struct {
 	DeviceInfo     device.DeviceInfo
-	OnPairRequest  func(*pbuf.PairRequest)
-	OnPairResponse func(*pbuf.PairResponse)
+	OnPairRequest  func(*pbuf.PairRequest) int
+	OnPairResponse func(*pbuf.PairResponse) int
 }
 
 var (

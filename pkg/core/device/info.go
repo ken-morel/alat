@@ -34,6 +34,8 @@ func (d *DeviceInfo) ToPBuf() (pbuf.DeviceInfo, error) {
 			B: uint32(d.Color.B),
 		},
 		Services: services,
+		Ip:       d.Address.IP.String(),
+		Port:     uint32(d.Address.Port),
 	}, nil
 }
 

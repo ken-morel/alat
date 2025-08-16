@@ -23,8 +23,7 @@ func handlePairRequest(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 		return
 	}
-	w.WriteHeader(200)
-	config.OnPairRequest(&request)
+	w.WriteHeader(config.OnPairRequest(&request))
 }
 
 func handlePairResponse(w http.ResponseWriter, r *http.Request) {
@@ -42,6 +41,5 @@ func handlePairResponse(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 		return
 	}
-	w.WriteHeader(200)
-	config.OnPairResponse(&response)
+	w.WriteHeader(config.OnPairResponse(&response))
 }

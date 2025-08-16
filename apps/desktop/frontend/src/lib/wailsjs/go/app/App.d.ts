@@ -16,9 +16,9 @@ export function GetPairedDevices():Promise<Array<pair.Pair>>;
 
 export function GetServices():Promise<Array<service.Service>>;
 
-export function HandlePairRequest(arg1:pbuf.PairRequest):Promise<void>;
+export function HandlePairRequest(arg1:pbuf.PairRequest):Promise<number>;
 
-export function HandlePairResponse(arg1:pbuf.PairResponse):Promise<void>;
+export function HandlePairResponse(arg1:pbuf.PairResponse):Promise<number>;
 
 export function IsSetupComplete():Promise<boolean>;
 

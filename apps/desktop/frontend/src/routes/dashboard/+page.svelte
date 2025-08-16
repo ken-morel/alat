@@ -12,9 +12,7 @@
       <h3 class="section-title">Connected devices</h3>
       <div class="devices-list">
         {#await pairedDevicesPromise}
-          <div class="loading-text">
-            loading devices...
-          </div>
+          <div class="loading-text">loading devices...</div>
         {:then pairedDevices}
           {#if pairedDevices.length === 0}
             <div class="no-devices-message">
@@ -59,7 +57,6 @@
     flex-wrap: wrap
     justify-content: center
     gap: 1.5rem
-    min-height: 150px
 
   .loading-text, .no-devices-message
     display: flex
