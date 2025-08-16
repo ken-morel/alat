@@ -15,6 +15,7 @@ func (app *App) SearchDevices() []device.DeviceInfo {
 	for info := range channel {
 		infos = append(infos, info)
 	}
+	fmt.Println("Searched devices, got:", infos)
 	return infos
 }
 

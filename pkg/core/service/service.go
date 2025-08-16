@@ -25,7 +25,7 @@ func (s *Service) ToPBuf() pbuf.Service {
 
 func FromPBuf(pb *pbuf.Service) Service {
 	return Service{
-		Name:    ServiceName(pb.Name),
-		Enabled: pb.Enabled,
+		Name:    ServiceName(pb.GetName()),
+		Enabled: pb.GetEnabled(),
 	}
 }

@@ -18,17 +18,17 @@ import (
 func (app *App) HandlePairRequest(req *pbuf.PairRequest) int {
 	fmt.Println("Pair request received", req)
 	go func() {
-		ip := net.ParseIP(req.Device.Ip)
+		ip := net.ParseIP(req.GetDevice().GetIp())
 		if ip == nil {
 			runtime.MessageDialog(app.ctx, runtime.MessageDialogOptions{
 				Type:    runtime.ErrorDialog,
 				Title:   "Error",
-				Message: "Invalid connection request received. The sender sent his wrong address: " + req.Device.Ip,
+				Message: "Invalid connection request received. The sender sent his wrong address: " + req.GetDevice().GetIp(),
 			})
 			return
 		}
 		ip = ip.To4()
-		addr, err := address.NewAdderss(ip, uint16(req.Device.Port))
+		addr, err := address.NewAdderss(ip, uint16(req.GetDevice().GetPort()))
 		if err != nil {
 			runtime.MessageDialog(app.ctx, runtime.MessageDialogOptions{
 				Type:    runtime.ErrorDialog,
@@ -40,12 +40,12 @@ func (app *App) HandlePairRequest(req *pbuf.PairRequest) int {
 		res, err := runtime.MessageDialog(app.ctx, runtime.MessageDialogOptions{
 			Type:    runtime.QuestionDialog,
 			Title:   "Connection request received",
-			Message: fmt.Sprintf("Device named %s would like to connect to this device", req.GetDevice().Name),
+			Message: fmt.Sprintf("Device named %s would like to connect to this device", req.GetDevice().GetName()),
 		})
 		if err != nil || res == "No" {
-			client.SendPairResponse(addr, req.Token, false, []service.Service{})
+			client.SendPairResponse(addr, req.GetToken(), false, []service.Service{})
 		} else {
-			acc, err := client.SendPairResponse(addr, req.Token, true, device.ThisDeviceInfo.Services)
+			acc, err := client.SendPairResponse(addr, req.GetToken(), true, device.ThisDeviceInfo.Services)
 			if acc {
 				runtime.MessageDialog(app.ctx, runtime.MessageDialogOptions{
 					Type:    runtime.InfoDialog,
@@ -74,7 +74,7 @@ func (app *App) HandlePairResponse(res *pbuf.PairResponse) int {
 	var pPair *PendingPair
 	var pIdx int
 	for idx, onePair := range app.pandingPairs {
-		if onePair.Token == res.Token {
+		if onePair.Token == res.GetToken() {
 			pPair = &onePair
 			pIdx = idx
 			break
@@ -89,9 +89,9 @@ func (app *App) HandlePairResponse(res *pbuf.PairResponse) int {
 		return 404
 	} else {
 		app.pandingPairs = slices.Delete(app.pandingPairs, pIdx, pIdx+1)
-		if res.Accepted {
+		if res.GetAccepted() {
 			var services []service.Service
-			for _, srv := range res.Services {
+			for _, srv := range res.GetServices() {
 				services = append(services, service.FromPBuf(srv))
 			}
 			config.AddPairedDevice(pair.Pair{
@@ -104,14 +104,14 @@ func (app *App) HandlePairResponse(res *pbuf.PairResponse) int {
 			go runtime.MessageDialog(app.ctx, runtime.MessageDialogOptions{
 				Type:    runtime.InfoDialog,
 				Title:   "Connection succesfull",
-				Message: res.Device.Name + " was succesfully connected",
+				Message: res.GetDevice().GetName() + " was succesfully connected",
 			})
 			return 200
 		} else {
 			go runtime.MessageDialog(app.ctx, runtime.MessageDialogOptions{
 				Type:    runtime.InfoDialog,
 				Title:   "Connection declined",
-				Message: res.Device.Name + " refused to connect",
+				Message: res.GetDevice().GetName() + " refused to connect",
 			})
 			return 200
 		}

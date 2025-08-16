@@ -50,16 +50,18 @@ const (
 
 func NewDeviceInfo(addr address.Address, info *pbuf.DeviceInfo) DeviceInfo {
 	var services []service.Service
-	for _, src := range info.Services {
+	for _, src := range info.GetServices() {
 		services = append(services, service.FromPBuf(src))
 	}
+
 	return DeviceInfo{
 		Address: addr,
-		Name:    info.Name,
+		Name:    info.GetName(),
 		Color: options.RGBA{
-			R: uint8(info.Color.R),
-			G: uint8(info.Color.R),
-			B: uint8(info.Color.B),
+			R: uint8(info.Color.GetR()),
+			G: uint8(info.Color.GetG()),
+			B: uint8(info.Color.GetB()),
+			A: 255,
 		},
 		Code:     info.Code,
 		Type:     DeviceType(info.Type.Number()),

@@ -87,6 +87,7 @@ func (app *App) SaveConfig(cfg config.Config) error {
 	fmt.Println("Saving config", cfg)
 	err := config.SaveConfig(&cfg)
 	if err == nil {
+		config.SetupDevice()
 		app.setupServer()
 		if !server.Running {
 			server.Start()
