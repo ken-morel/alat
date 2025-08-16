@@ -4,9 +4,7 @@ package app
 import (
 	"alat/apps/desktop/app/config"
 	"alat/pkg/core"
-	"alat/pkg/core/client"
 	"alat/pkg/core/device"
-	"alat/pkg/core/pair"
 	"alat/pkg/core/server"
 	"alat/pkg/core/service"
 	"context"
@@ -125,27 +123,4 @@ func (app *App) Run() error {
 			app,
 		},
 	})
-}
-
-func (app *App) RequestPair(deviceInfo device.DeviceInfo, services []service.Service) error {
-	token := pair.GeneratePairToken()
-	res, err := client.SendPairRequest(
-		deviceInfo.Address,
-		token,
-		services,
-	)
-	if err != nil {
-		return err
-	}
-
-	if res {
-		app.pandingPairs = append(app.pandingPairs, PendingPair{
-			Device:   deviceInfo,
-			Token:    token,
-			Services: services,
-		})
-		return fmt.Errorf("pairing request pending by device")
-	} else {
-		return fmt.Errorf("pairing request rejected by device")
-	}
 }

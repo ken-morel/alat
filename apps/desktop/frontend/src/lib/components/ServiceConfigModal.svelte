@@ -80,11 +80,13 @@
       <p>
         Device Code: {$selectedDeviceForPairing.Code}<br />
         Address: <code>{$selectedDeviceForPairing.Address.Phrase}</code>
-        Supports:
-        {#each $selectedDeviceForPairing.Services as othersService}
-          <mark>{othersService.Name}</mark>
-        {/each}
       </p>
+      <ul>
+        <h5>Supports</h5>
+        {#each $selectedDeviceForPairing.Services as othersService}
+          <li>{othersService.Name}</li>
+        {/each}
+      </ul>
 
       <form method="dialog" onsubmit={acceptPair}>
         <div class="form-group">
@@ -144,6 +146,7 @@ h3
 
 p
   color: theme.$text-secondary
+ul
   margin-bottom: 2rem
 
 .form-group

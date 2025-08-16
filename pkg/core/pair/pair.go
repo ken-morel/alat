@@ -4,7 +4,8 @@ package pair
 import (
 	"alat/pkg/core/device"
 	"alat/pkg/core/service"
-	"crypto/rand"
+
+	"github.com/google/uuid"
 )
 
 type Pair struct {
@@ -16,7 +17,6 @@ type Pair struct {
 }
 
 func GeneratePairToken() string {
-	data := make([]byte, 255)
-	rand.Read(data)
-	return string(data)
+	token, _ := uuid.NewUUID()
+	return token.String()
 }
