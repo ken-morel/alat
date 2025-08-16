@@ -10,6 +10,10 @@ export function GenerateDeviceCode() {
   return window['go']['app']['App']['GenerateDeviceCode']();
 }
 
+export function GetAndSendFiles(arg1) {
+  return window['go']['app']['App']['GetAndSendFiles'](arg1);
+}
+
 export function GetConfig() {
   return window['go']['app']['App']['GetConfig']();
 }
@@ -48,6 +52,10 @@ export function SaveConfig(arg1) {
 
 export function SearchDevices() {
   return window['go']['app']['App']['SearchDevices']();
+}
+
+export function SetupServices() {
+  return window['go']['app']['App']['SetupServices']();
 }
 
 export function WasSetup() {

@@ -1,6 +1,8 @@
 // Package rcfile: Stores api and cliend info for the sendfile service
 package rcfile
 
+import "fmt"
+
 type ServiceConfig struct {
 	Enabled     bool   `yaml:"enabled"`
 	Destination string `yaml:"destination"`
@@ -9,13 +11,14 @@ type ServiceConfig struct {
 
 const ServiceName = "rcfile"
 
-var Config ServiceConfig = ServiceConfig{
+var config ServiceConfig = ServiceConfig{
 	Enabled: false,
 }
 var Ready bool = false
 
 func Init(conf ServiceConfig) error {
-	Config = conf
+	config = conf
 	Ready = true
+	fmt.Println("Initializing rcfile service: ", conf)
 	return nil
 }

@@ -3,7 +3,14 @@
   import { ICONS } from "$lib";
   import Color from "$lib/color";
   import { selectedPairedDevice } from "$lib/state";
+  import { GetAndSendFiles } from "$lib/wailsjs/go/app/App";
   import { onMount } from "svelte";
+  import { get } from "svelte/store";
+
+  function sendFile() {
+    let device = get(selectedPairedDevice);
+    if (device) GetAndSendFiles(device);
+  }
 
   let supportsRCfile = $state(false);
   onMount(() => {
@@ -54,7 +61,9 @@
         <span></span>
         <h3>Send file</h3>
         <span></span>
-        <button type="button" class="w3-button">Choose file</button>
+        <button type="button" class="w3-button" onclick={sendFile}
+          >Choose file</button
+        >
       </div>
     </section>
   {/if}
