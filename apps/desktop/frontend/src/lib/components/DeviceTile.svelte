@@ -4,6 +4,7 @@
 
   export let deviceInfo: device.DeviceInfo;
   const NAMES = ["DESKTOP", "MOBILE", "TV", "WEB"];
+  const ICONS = ["🖳", "📱", "📺", "🕸"];
 
   let color = Color.fromGO(deviceInfo.Color);
   // name, color, addressname, address, type
@@ -16,7 +17,7 @@
       style="background-color: {color.toHexString()};"
       title={deviceInfo.Code}
     >
-      {NAMES[deviceInfo.Type]}
+      {ICONS[deviceInfo.Type]}
     </span>
   </div>
   <div class="info">
@@ -50,7 +51,8 @@ div.device-tile-container
       height: 100px
       width: 100px
       text-align: center
-      padding-top: calc(50% - 12px)
+      padding-top: calc(50% - 30px)
+      font-size: 60px
   div.info
     border-left: $msep
     padding-left: 10px
