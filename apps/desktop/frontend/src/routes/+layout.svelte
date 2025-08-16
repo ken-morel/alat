@@ -23,6 +23,6 @@
   <a class="w3-button" href="/">Home</a>
   <a class="w3-button" href="/setup">Setup</a>
 </header>
-<div class="w3-padding-16"></div>
+<div class="w3-padding-32"></div>
 
 {@render children?.()}

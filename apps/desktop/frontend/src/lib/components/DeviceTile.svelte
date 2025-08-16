@@ -1,11 +1,9 @@
 <script lang="ts">
   import Color from "$lib/color";
   import { device } from "$lib/wailsjs/go/models";
+  import { ICONS } from "$lib";
 
   export let deviceInfo: device.DeviceInfo;
-  const NAMES = ["DESKTOP", "MOBILE", "TV", "WEB"];
-  const ICONS = ["🖳", "📱", "📺", "🕸"];
-
   let color = Color.fromGO(deviceInfo.Color);
   // name, color, addressname, address, type
 </script>
