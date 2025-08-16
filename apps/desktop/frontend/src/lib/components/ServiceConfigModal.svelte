@@ -48,9 +48,9 @@
       await RequestPair($selectedDeviceForPairing, services);
       // On success, close the dialog
       closeDialog();
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      error = "Failed to send pair request. Please try again.";
+      error = "Failed to send pair request. Please try again." + err.toString();
     } finally {
       submitting = false;
     }
