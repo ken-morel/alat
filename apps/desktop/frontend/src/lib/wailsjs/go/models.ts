@@ -104,6 +104,7 @@ export namespace device {
 	    Color: options.RGBA;
 	    Code: string;
 	    Type: number;
+	    Services: service.Service[];
 	
 	    static createFrom(source: any = {}) {
 	        return new DeviceInfo(source);
@@ -116,6 +117,7 @@ export namespace device {
 	        this.Color = this.convertValues(source["Color"], options.RGBA);
 	        this.Code = source["Code"];
 	        this.Type = source["Type"];
+	        this.Services = this.convertValues(source["Services"], service.Service);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -182,6 +184,149 @@ export namespace pair {
 	        this.OldToken = source["OldToken"];
 	        this.Services = this.convertValues(source["Services"], service.Service);
 	        this.ExposingServices = this.convertValues(source["ExposingServices"], service.Service);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+
+}
+
+export namespace pbuf {
+	
+	export class DeviceColor {
+	    r?: number;
+	    g?: number;
+	    b?: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new DeviceColor(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.r = source["r"];
+	        this.g = source["g"];
+	        this.b = source["b"];
+	    }
+	}
+	export class Service {
+	    name?: string;
+	    enabled?: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new Service(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.name = source["name"];
+	        this.enabled = source["enabled"];
+	    }
+	}
+	export class DeviceInfo {
+	    code?: string;
+	    name?: string;
+	    type?: number;
+	    color?: DeviceColor;
+	    services?: Service[];
+	
+	    static createFrom(source: any = {}) {
+	        return new DeviceInfo(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.code = source["code"];
+	        this.name = source["name"];
+	        this.type = source["type"];
+	        this.color = this.convertValues(source["color"], DeviceColor);
+	        this.services = this.convertValues(source["services"], Service);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class PairRequest {
+	    token?: string;
+	    device?: DeviceInfo;
+	    services?: Service[];
+	
+	    static createFrom(source: any = {}) {
+	        return new PairRequest(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.token = source["token"];
+	        this.device = this.convertValues(source["device"], DeviceInfo);
+	        this.services = this.convertValues(source["services"], Service);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class PairResponse {
+	    token?: string;
+	    device?: DeviceInfo;
+	    accepted?: boolean;
+	    services?: Service[];
+	
+	    static createFrom(source: any = {}) {
+	        return new PairResponse(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.token = source["token"];
+	        this.device = this.convertValues(source["device"], DeviceInfo);
+	        this.accepted = source["accepted"];
+	        this.services = this.convertValues(source["services"], Service);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

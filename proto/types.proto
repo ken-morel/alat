@@ -29,14 +29,3 @@ message DeviceInfo {
   repeated Service services = 5;
 }
 
-message PairRequest {
-  string token = 1;
-  DeviceInfo device = 2;
-  repeated Service services = 3;
-}
-message PairResponse {
-  string token = 1;
-  DeviceInfo device = 2;
-  bool accepted = 3;
-  repeated Service services = 4;
-}

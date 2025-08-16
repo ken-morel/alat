@@ -3,6 +3,7 @@
 import {config} from '../models';
 import {pair} from '../models';
 import {service} from '../models';
+import {pbuf} from '../models';
 import {device} from '../models';
 
 export function AskDirectory():Promise<string>;
@@ -14,6 +15,10 @@ export function GetConfig():Promise<config.Config>;
 export function GetPairedDevices():Promise<Array<pair.Pair>>;
 
 export function GetServices():Promise<Array<service.Service>>;
+
+export function HandlePairRequest(arg1:pbuf.PairRequest):Promise<void>;
+
+export function HandlePairResponse(arg1:pbuf.PairResponse):Promise<void>;
 
 export function IsSetupComplete():Promise<boolean>;
 

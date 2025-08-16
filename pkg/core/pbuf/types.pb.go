@@ -7,12 +7,11 @@
 package pbuf
 
 import (
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
-
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -262,134 +261,6 @@ func (x *DeviceInfo) GetServices() []*Service {
 	return nil
 }
 
-type PairRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
-	Device        *DeviceInfo            `protobuf:"bytes,2,opt,name=device,proto3" json:"device,omitempty"`
-	Services      []*Service             `protobuf:"bytes,3,rep,name=services,proto3" json:"services,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *PairRequest) Reset() {
-	*x = PairRequest{}
-	mi := &file_types_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *PairRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*PairRequest) ProtoMessage() {}
-
-func (x *PairRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_types_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use PairRequest.ProtoReflect.Descriptor instead.
-func (*PairRequest) Descriptor() ([]byte, []int) {
-	return file_types_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *PairRequest) GetToken() string {
-	if x != nil {
-		return x.Token
-	}
-	return ""
-}
-
-func (x *PairRequest) GetDevice() *DeviceInfo {
-	if x != nil {
-		return x.Device
-	}
-	return nil
-}
-
-func (x *PairRequest) GetServices() []*Service {
-	if x != nil {
-		return x.Services
-	}
-	return nil
-}
-
-type PairResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
-	Device        *DeviceInfo            `protobuf:"bytes,2,opt,name=device,proto3" json:"device,omitempty"`
-	Accepted      bool                   `protobuf:"varint,3,opt,name=accepted,proto3" json:"accepted,omitempty"`
-	Services      []*Service             `protobuf:"bytes,4,rep,name=services,proto3" json:"services,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *PairResponse) Reset() {
-	*x = PairResponse{}
-	mi := &file_types_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *PairResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*PairResponse) ProtoMessage() {}
-
-func (x *PairResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_types_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use PairResponse.ProtoReflect.Descriptor instead.
-func (*PairResponse) Descriptor() ([]byte, []int) {
-	return file_types_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *PairResponse) GetToken() string {
-	if x != nil {
-		return x.Token
-	}
-	return ""
-}
-
-func (x *PairResponse) GetDevice() *DeviceInfo {
-	if x != nil {
-		return x.Device
-	}
-	return nil
-}
-
-func (x *PairResponse) GetAccepted() bool {
-	if x != nil {
-		return x.Accepted
-	}
-	return false
-}
-
-func (x *PairResponse) GetServices() []*Service {
-	if x != nil {
-		return x.Services
-	}
-	return nil
-}
-
 var File_types_proto protoreflect.FileDescriptor
 
 const file_types_proto_rawDesc = "" +
@@ -408,16 +279,7 @@ const file_types_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12$\n" +
 	"\x04type\x18\x03 \x01(\x0e2\x10.pbuf.DeviceTypeR\x04type\x12'\n" +
 	"\x05color\x18\x04 \x01(\v2\x11.pbuf.DeviceColorR\x05color\x12)\n" +
-	"\bservices\x18\x05 \x03(\v2\r.pbuf.ServiceR\bservices\"x\n" +
-	"\vPairRequest\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token\x12(\n" +
-	"\x06device\x18\x02 \x01(\v2\x10.pbuf.DeviceInfoR\x06device\x12)\n" +
-	"\bservices\x18\x03 \x03(\v2\r.pbuf.ServiceR\bservices\"\x95\x01\n" +
-	"\fPairResponse\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token\x12(\n" +
-	"\x06device\x18\x02 \x01(\v2\x10.pbuf.DeviceInfoR\x06device\x12\x1a\n" +
-	"\baccepted\x18\x03 \x01(\bR\baccepted\x12)\n" +
-	"\bservices\x18\x04 \x03(\v2\r.pbuf.ServiceR\bservices*6\n" +
+	"\bservices\x18\x05 \x03(\v2\r.pbuf.ServiceR\bservices*6\n" +
 	"\n" +
 	"DeviceType\x12\v\n" +
 	"\aDESKTOP\x10\x00\x12\n" +
@@ -438,31 +300,23 @@ func file_types_proto_rawDescGZIP() []byte {
 	return file_types_proto_rawDescData
 }
 
-var (
-	file_types_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-	file_types_proto_msgTypes  = make([]protoimpl.MessageInfo, 5)
-	file_types_proto_goTypes   = []any{
-		(DeviceType)(0),      // 0: pbuf.DeviceType
-		(*Service)(nil),      // 1: pbuf.Service
-		(*DeviceColor)(nil),  // 2: pbuf.DeviceColor
-		(*DeviceInfo)(nil),   // 3: pbuf.DeviceInfo
-		(*PairRequest)(nil),  // 4: pbuf.PairRequest
-		(*PairResponse)(nil), // 5: pbuf.PairResponse
-	}
-)
+var file_types_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_types_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_types_proto_goTypes = []any{
+	(DeviceType)(0),     // 0: pbuf.DeviceType
+	(*Service)(nil),     // 1: pbuf.Service
+	(*DeviceColor)(nil), // 2: pbuf.DeviceColor
+	(*DeviceInfo)(nil),  // 3: pbuf.DeviceInfo
+}
 var file_types_proto_depIdxs = []int32{
 	0, // 0: pbuf.DeviceInfo.type:type_name -> pbuf.DeviceType
 	2, // 1: pbuf.DeviceInfo.color:type_name -> pbuf.DeviceColor
 	1, // 2: pbuf.DeviceInfo.services:type_name -> pbuf.Service
-	3, // 3: pbuf.PairRequest.device:type_name -> pbuf.DeviceInfo
-	1, // 4: pbuf.PairRequest.services:type_name -> pbuf.Service
-	3, // 5: pbuf.PairResponse.device:type_name -> pbuf.DeviceInfo
-	1, // 6: pbuf.PairResponse.services:type_name -> pbuf.Service
-	7, // [7:7] is the sub-list for method output_type
-	7, // [7:7] is the sub-list for method input_type
-	7, // [7:7] is the sub-list for extension type_name
-	7, // [7:7] is the sub-list for extension extendee
-	0, // [0:7] is the sub-list for field type_name
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_types_proto_init() }
@@ -476,7 +330,7 @@ func file_types_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_types_proto_rawDesc), len(file_types_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   5,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

@@ -22,6 +22,14 @@ export function GetServices() {
   return window['go']['app']['App']['GetServices']();
 }
 
+export function HandlePairRequest(arg1) {
+  return window['go']['app']['App']['HandlePairRequest'](arg1);
+}
+
+export function HandlePairResponse(arg1) {
+  return window['go']['app']['App']['HandlePairResponse'](arg1);
+}
+
 export function IsSetupComplete() {
   return window['go']['app']['App']['IsSetupComplete']();
 }

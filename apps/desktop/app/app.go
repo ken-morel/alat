@@ -4,7 +4,9 @@ package app
 import (
 	"alat/apps/desktop/app/config"
 	"alat/pkg/core"
+	"alat/pkg/core/client"
 	"alat/pkg/core/device"
+	"alat/pkg/core/pair"
 	"alat/pkg/core/server"
 	"alat/pkg/core/service"
 	"context"
@@ -19,8 +21,15 @@ import (
 
 // App struct
 type App struct {
-	ctx    context.Context
-	assets embed.FS
+	ctx          context.Context
+	assets       embed.FS
+	pandingPairs []PendingPair
+}
+
+type PendingPair struct {
+	Device   device.DeviceInfo
+	Token    string
+	Services []service.Service
 }
 
 // NewApp creates a new App application struct
@@ -35,10 +44,20 @@ func (app *App) startup(ctx context.Context) {
 		fmt.Println(err.Error())
 	} else {
 		if config.Ready {
-			config.SetupServer()
+			config.SetupDevice()
+			app.setupServer()
 			server.Start()
 		}
 	}
+}
+
+func (app *App) setupServer() {
+	fmt.Println("Seting up server with info", device.ThisDeviceInfo)
+	server.Configure(&server.ServerConfig{
+		DeviceInfo:     device.ThisDeviceInfo,
+		OnPairRequest:  app.HandlePairRequest,
+		OnPairResponse: app.HandlePairResponse,
+	})
 }
 
 func (app *App) shutdown(ctx context.Context) {
@@ -70,7 +89,7 @@ func (app *App) SaveConfig(cfg config.Config) error {
 	fmt.Println("Saving config", cfg)
 	err := config.SaveConfig(&cfg)
 	if err == nil {
-		config.SetupServer()
+		app.setupServer()
 		if !server.Running {
 			server.Start()
 		}
@@ -109,27 +128,24 @@ func (app *App) Run() error {
 }
 
 func (app *App) RequestPair(deviceInfo device.DeviceInfo, services []service.Service) error {
-	localConfig := config.GetConfig()
-	localDeviceInfo := device.DeviceInfo{
-		Name: localConfig.DeviceName,
-		Code: localConfig.DeviceCode,
-		Type: device.Desktop,
-		// Address will be empty here, which is fine for the request payload.
-	}
-
-	res, err := client.RequestPair(localDeviceInfo, deviceInfo, services)
+	token := pair.GeneratePairToken()
+	res, err := client.SendPairRequest(
+		deviceInfo.Address,
+		token,
+		services,
+	)
 	if err != nil {
 		return err
 	}
 
-	if res.Accepted {
-		newPair := pair.Pair{
-			DeviceInfo: deviceInfo,
-			Token:      res.Token,
-			Services:   services,
-		}
-		return config.AddPairedDevice(newPair)
+	if res {
+		app.pandingPairs = append(app.pandingPairs, PendingPair{
+			Device:   deviceInfo,
+			Token:    token,
+			Services: services,
+		})
+		return fmt.Errorf("pairing request pending by device")
+	} else {
+		return fmt.Errorf("pairing request rejected by device")
 	}
-
-	return fmt.Errorf("pairing request rejected by device")
 }

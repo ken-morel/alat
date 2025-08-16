@@ -12,6 +12,28 @@ service Pairing {
   rpc RequestPair(PairRequest) returns (PairResponse);
 }
 
+
+message PairRequest {
+  string token = 1;
+  DeviceInfo device = 2;
+  repeated Service services = 3;
+}
+message PairResponse {
+  string token = 1;
+  DeviceInfo device = 2;
+  bool accepted = 3;
+  repeated Service services = 4;
+}
+
+
+// The main service for discovering and managing peers.
+service PeerDiscovery {
+  // Retrieves a list of all discovered devices.
+  rpc GetDiscoveredDevices(Empty) returns (DeviceList);
+}
+
 // A message representing no parameters.
 message Empty {}
 
+// A list of devices.
+message DeviceList { repeated pbuf.DeviceInfo devices = 1; }

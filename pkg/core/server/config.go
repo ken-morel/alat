@@ -2,20 +2,24 @@ package server
 
 import (
 	"alat/pkg/core/device"
+	"alat/pkg/core/pbuf"
 
 	"google.golang.org/protobuf/proto"
 )
 
 type ServerConfig struct {
-	DeviceInfo device.DeviceInfo
+	DeviceInfo     device.DeviceInfo
+	OnPairRequest  func(*pbuf.PairRequest)
+	OnPairResponse func(*pbuf.PairResponse)
 }
 
 var (
-	config       ServerConfig
+	config       *ServerConfig
 	infoResponse []byte
 )
 
-func Configure(conf ServerConfig) (err error) {
+func Configure(conf *ServerConfig) (err error) {
+	config = conf
 	inf, err := conf.DeviceInfo.ToPBuf()
 	if err != nil {
 		return err

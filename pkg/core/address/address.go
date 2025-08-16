@@ -69,3 +69,7 @@ func NewAdderss(ip net.IP, port uint16) (Address, error) {
 func (addr *Address) String() string {
 	return fmt.Sprintf("%s:%d", addr.IP.String(), addr.Port)
 }
+
+func GetThisAddress() (Address, error) {
+	return NewAdderss(net.IPv4(192, 168, 1, 192), AlatPort)
+}

@@ -17,6 +17,7 @@
 
   selectedDeviceForPairing.subscribe((device) => {
     if (device && dialog) {
+      console.log(device);
       dialog.showModal();
       // Reset state when modal opens
       submitting = false;
@@ -58,7 +59,7 @@
   onMount(() => {
     GetServices().then((appServices: service.Service[]) => {
       // Initialize services, ensuring 'Enabled' is a boolean
-      services = appServices.map(s => {
+      services = appServices.map((s) => {
         s.Enabled = s.Enabled || false;
         return s;
       });
@@ -68,11 +69,22 @@
 
 <svelte:window on:keydown={handleKeydown} />
 
-<dialog bind:this={dialog} onclose={closeDialog} onclick={(e) => e.target === dialog && closeDialog()}>
+<dialog
+  bind:this={dialog}
+  onclose={closeDialog}
+  onclick={(e) => e.target === dialog && closeDialog()}
+>
   {#if $selectedDeviceForPairing}
     <div class="modal-content">
       <h3>Configure Services for {$selectedDeviceForPairing.Name}</h3>
-      <p>Device Code: {$selectedDeviceForPairing.Code}</p>
+      <p>
+        Device Code: {$selectedDeviceForPairing.Code}<br />
+        Address: <code>{$selectedDeviceForPairing.Address.Phrase}</code>
+        Supports:
+        {#each $selectedDeviceForPairing.Services as othersService}
+          <mark>{othersService.Name}</mark>
+        {/each}
+      </p>
 
       <form method="dialog" onsubmit={acceptPair}>
         <div class="form-group">
@@ -89,7 +101,12 @@
         {/if}
 
         <div class="modal-actions">
-          <button type="button" class="btn" onclick={closeDialog} disabled={submitting}>
+          <button
+            type="button"
+            class="btn"
+            onclick={closeDialog}
+            disabled={submitting}
+          >
             Cancel
           </button>
           <button type="submit" class="btn btn-primary" disabled={submitting}>

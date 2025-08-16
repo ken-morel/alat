@@ -31,23 +31,22 @@ func GetPairedDevices() ([]pair.Pair, error) {
 }
 
 func AddPairedDevice(newDevice pair.Pair) error {
-
-devices, err := GetPairedDevices()
+	devices, err := GetPairedDevices()
 	if err != nil {
 		return err
 	}
 
 	// Check if device is already paired
-	for _, d := range devices {
+	for idx, d := range devices {
 		if d.DeviceInfo.Code == newDevice.DeviceInfo.Code {
 			// TODO: Handle updating existing device instead of just returning
 			fmt.Printf("Device %s is already paired.\n", newDevice.DeviceInfo.Name)
+			devices[idx] = newDevice
 			return nil
 		}
 	}
 
-
-devices = append(devices, newDevice)
+	devices = append(devices, newDevice)
 
 	path := GetPairsConfigFile()
 	file, err := os.Create(path)
@@ -62,7 +61,6 @@ devices = append(devices, newDevice)
 	return enc.Encode(devices)
 }
 
-
 func InitPair() (err error) {
 	path := GetPairsConfigFile()
 	_, err = os.Stat(path)
@@ -72,10 +70,11 @@ func InitPair() (err error) {
 			return err
 		}
 		defer file.Close()
-		
+
 		enc := yaml.NewEncoder(file)
 		defer enc.Close()
 		return enc.Encode([]pair.Pair{})
 	}
 	return
 }
+

@@ -4,6 +4,7 @@ package pair
 import (
 	"alat/pkg/core/device"
 	"alat/pkg/core/service"
+	"crypto/rand"
 )
 
 type Pair struct {
@@ -12,4 +13,10 @@ type Pair struct {
 	OldToken         string            `yaml:"oldtoken"`
 	Services         []service.Service `yaml:"services"`
 	ExposingServices []service.Service `yaml:"exposingservices"`
+}
+
+func GeneratePairToken() string {
+	data := make([]byte, 255)
+	rand.Read(data)
+	return string(data)
 }

@@ -3,8 +3,8 @@ package config
 
 import (
 	"alat/pkg/core"
+	"alat/pkg/core/address"
 	"alat/pkg/core/device"
-	"alat/pkg/core/server"
 	"alat/pkg/core/service"
 	"alat/pkg/core/service/rcfile"
 	"fmt"
@@ -93,7 +93,7 @@ func InitConfig() error {
 			DeviceCode:  GenerateDeviceCode(),
 			Language:    "en-cm",
 			AutoStart:   false,
-			Theme:       "light",
+			Theme:       "dark",
 		}
 	}
 	return nil
@@ -121,12 +121,18 @@ func GetServices() []service.Service {
 	}
 }
 
-func SetupServer() {
-	server.Configure(server.ServerConfig{
-		DeviceName:     config.DeviceName,
-		DeviceCode:     config.DeviceCode,
-		DeviceType:     device.DeviceTypeDesktop,
-		DeviceColor:    config.DeviceColor,
-		DeviceServices: GetServices(),
-	})
+func SetupDevice() (err error) {
+	address, err := address.GetThisAddress()
+	if err != nil {
+		return
+	}
+	device.ThisDeviceInfo = device.DeviceInfo{
+		Address:  address,
+		Name:     config.DeviceName,
+		Color:    config.DeviceColor,
+		Code:     config.DeviceCode,
+		Type:     device.DeviceTypeDesktop,
+		Services: GetServices(),
+	}
+	return
 }
