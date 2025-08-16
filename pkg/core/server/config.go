@@ -2,19 +2,12 @@ package server
 
 import (
 	"alat/pkg/core/device"
-	"alat/pkg/core/pbuf"
-	"alat/pkg/core/service"
 
-	"github.com/wailsapp/wails/v2/pkg/options"
 	"google.golang.org/protobuf/proto"
 )
 
 type ServerConfig struct {
-	DeviceName     string
-	DeviceCode     string
-	DeviceColor    options.RGBA
-	DeviceType     device.DeviceType
-	DeviceServices []service.Service
+	DeviceInfo device.DeviceInfo
 }
 
 var (
@@ -23,21 +16,10 @@ var (
 )
 
 func Configure(conf ServerConfig) (err error) {
-	var services []*pbuf.Service
-	for _, srv := range conf.DeviceServices {
-		pb := srv.ToPBuf()
-		services = append(services, &pb)
+	inf, err := conf.DeviceInfo.ToPBuf()
+	if err != nil {
+		return err
 	}
-	infoResponse, err = proto.Marshal(&pbuf.DeviceInfo{
-		Code: conf.DeviceCode,
-		Name: conf.DeviceName,
-		Type: pbuf.DeviceType(conf.DeviceType),
-		Color: &pbuf.DeviceColor{
-			R: uint32(conf.DeviceColor.R),
-			G: uint32(conf.DeviceColor.G),
-			B: uint32(conf.DeviceColor.B),
-		},
-		Services: services,
-	})
-	return
+	infoResponse, err = proto.Marshal(&inf)
+	return err
 }

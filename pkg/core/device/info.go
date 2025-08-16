@@ -4,16 +4,37 @@ package device
 import (
 	"alat/pkg/core/address"
 	"alat/pkg/core/pbuf"
+	"alat/pkg/core/service"
 
 	"github.com/wailsapp/wails/v2/pkg/options"
 )
 
 type DeviceInfo struct {
-	Address address.Address `yaml:"address"`
-	Name    string          `yaml:"name"`
-	Color   options.RGBA    `yaml:"color"`
-	Code    string          `yaml:"code"`
-	Type    DeviceType      `yaml:"type"`
+	Address  address.Address   `yaml:"address"`
+	Name     string            `yaml:"name"`
+	Color    options.RGBA      `yaml:"color"`
+	Code     string            `yaml:"code"`
+	Type     DeviceType        `yaml:"type"`
+	Services []service.Service `yaml:"services"`
+}
+
+func (d *DeviceInfo) ToPBuf() (pbuf.DeviceInfo, error) {
+	var services []*pbuf.Service
+	for _, srv := range d.Services {
+		pb := srv.ToPBuf()
+		services = append(services, &pb)
+	}
+	return pbuf.DeviceInfo{
+		Code: d.Code,
+		Name: d.Name,
+		Type: pbuf.DeviceType(d.Type),
+		Color: &pbuf.DeviceColor{
+			R: uint32(d.Color.R),
+			G: uint32(d.Color.G),
+			B: uint32(d.Color.B),
+		},
+		Services: services,
+	}, nil
 }
 
 type DeviceType int
@@ -37,4 +58,10 @@ func NewDeviceInfo(addr address.Address, info *pbuf.DeviceInfo) DeviceInfo {
 		Code: info.Code,
 		Type: DeviceType(info.Type.Number()),
 	}
+}
+
+var ThisDeviceInfo DeviceInfo
+
+func SetThisDeviceInfo(d DeviceInfo) {
+	ThisDeviceInfo = d
 }

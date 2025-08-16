@@ -6,14 +6,12 @@ import "types.proto";
 
 option go_package = "alat/pkg/core/pbuf";
 
-// The main service for discovering and managing peers.
-service PeerDiscovery {
-  // Retrieves a list of all discovered devices.
-  rpc GetDiscoveredDevices(Empty) returns (DeviceList);
+
+// Service for handling pairing requests.
+service Pairing {
+  rpc RequestPair(PairRequest) returns (PairResponse);
 }
 
 // A message representing no parameters.
 message Empty {}
 
-// A list of devices.
-message DeviceList { repeated pbuf.Device devices = 1; }

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { selectedDeviceForPairing } from "$lib/state";
-  import { GetServices } from "$lib/wailsjs/go/app/App";
+  import { GetServices, RequestPair } from "$lib/wailsjs/go/app/App";
   import { service } from "$lib/wailsjs/go/models";
   import { onMount } from "svelte";
 
@@ -12,10 +12,15 @@
 
   let dialog: HTMLDialogElement;
   let services: service.Service[] = $state([]);
+  let submitting = $state(false);
+  let error = $state<string | null>(null);
 
   selectedDeviceForPairing.subscribe((device) => {
     if (device && dialog) {
       dialog.showModal();
+      // Reset state when modal opens
+      submitting = false;
+      error = null;
     } else if (dialog) {
       dialog.close();
     }
@@ -30,19 +35,40 @@
       closeDialog();
     }
   }
-  function acceptPair(e: SubmitEvent) {
-    e.preventDefault();
+
+  async function acceptPair(event: SubmitEvent) {
+    event.preventDefault();
+    if (!$selectedDeviceForPairing) return;
+
+    submitting = true;
+    error = null;
+
+    try {
+      await RequestPair($selectedDeviceForPairing, services);
+      // On success, close the dialog
+      closeDialog();
+    } catch (err) {
+      console.error(err);
+      error = "Failed to send pair request. Please try again.";
+    } finally {
+      submitting = false;
+    }
   }
+
   onMount(() => {
     GetServices().then((appServices: service.Service[]) => {
-      services = appServices;
+      // Initialize services, ensuring 'Enabled' is a boolean
+      services = appServices.map(s => {
+        s.Enabled = s.Enabled || false;
+        return s;
+      });
     });
   });
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
 
-<dialog bind:this={dialog} onclose={closeDialog} onclick={() => dialog.close()}>
+<dialog bind:this={dialog} onclose={closeDialog} onclick={(e) => e.target === dialog && closeDialog()}>
   {#if $selectedDeviceForPairing}
     <div class="modal-content">
       <h3>Configure Services for {$selectedDeviceForPairing.Name}</h3>
@@ -50,19 +76,29 @@
 
       <form method="dialog" onsubmit={acceptPair}>
         <div class="form-group">
-          {#each services as service, idx}
+          {#each services as serviceItem}
             <label>
-              <input type="checkbox" />
-              <span>{SERVICES[service.Name]}</span>
+              <input type="checkbox" bind:checked={serviceItem.Enabled} />
+              <span>{SERVICES[serviceItem.Name] || serviceItem.Name}</span>
             </label>
           {/each}
         </div>
 
+        {#if error}
+          <p class="error-message">{error}</p>
+        {/if}
+
         <div class="modal-actions">
-          <button type="button" class="btn" onclick={closeDialog}>
+          <button type="button" class="btn" onclick={closeDialog} disabled={submitting}>
             Cancel
           </button>
-          <button type="submit" class="btn btn-primary"> Connect </button>
+          <button type="submit" class="btn btn-primary" disabled={submitting}>
+            {#if submitting}
+              Connecting...
+            {:else}
+              Connect
+            {/if}
+          </button>
         </div>
       </form>
     </div>
@@ -96,7 +132,9 @@ p
 .form-group
   margin-bottom: 1.5rem
   display: flex
-  align-items: center
+  flex-direction: column
+  align-items: flex-start
+  gap: 1rem
 
   label
     display: flex
@@ -126,6 +164,10 @@ p
 
   &:hover
     background-color: theme.$primary-d1
+  
+  &:disabled
+    opacity: 0.6
+    cursor: not-allowed
 
 .btn-primary
   background-color: theme.$primary
@@ -133,5 +175,10 @@ p
 
   &:hover
     background-color: theme.$primary-l1
+
+.error-message
+  color: #f44336 // Standard error color
+  margin-top: 1rem
+  text-align: center
 
 </style>

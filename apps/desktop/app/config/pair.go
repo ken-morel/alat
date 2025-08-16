@@ -14,18 +14,54 @@ func GetPairsConfigFile() string {
 }
 
 func GetPairedDevices() ([]pair.Pair, error) {
-	fmt.Println("Inner")
 	var devices []pair.Pair
-	var err error
 	path := GetPairsConfigFile()
 	file, err := os.Open(path)
-	fmt.Println("Opened the file")
 	if err != nil {
 		return devices, err
 	}
+	defer file.Close()
+
 	err = yaml.NewDecoder(file).Decode(&devices)
-	return devices, err
+	if err != nil {
+		// If the file is empty, Decode returns an error. We can treat this as an empty list.
+		return []pair.Pair{}, nil
+	}
+	return devices, nil
 }
+
+func AddPairedDevice(newDevice pair.Pair) error {
+
+devices, err := GetPairedDevices()
+	if err != nil {
+		return err
+	}
+
+	// Check if device is already paired
+	for _, d := range devices {
+		if d.DeviceInfo.Code == newDevice.DeviceInfo.Code {
+			// TODO: Handle updating existing device instead of just returning
+			fmt.Printf("Device %s is already paired.\n", newDevice.DeviceInfo.Name)
+			return nil
+		}
+	}
+
+
+devices = append(devices, newDevice)
+
+	path := GetPairsConfigFile()
+	file, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	enc := yaml.NewEncoder(file)
+	defer enc.Close()
+
+	return enc.Encode(devices)
+}
+
 
 func InitPair() (err error) {
 	path := GetPairsConfigFile()
@@ -35,9 +71,11 @@ func InitPair() (err error) {
 		if err != nil {
 			return err
 		}
+		defer file.Close()
+		
 		enc := yaml.NewEncoder(file)
 		defer enc.Close()
-		enc.Encode([]pair.Pair{})
+		return enc.Encode([]pair.Pair{})
 	}
 	return
 }

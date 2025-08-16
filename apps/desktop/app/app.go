@@ -109,5 +109,27 @@ func (app *App) Run() error {
 }
 
 func (app *App) RequestPair(deviceInfo device.DeviceInfo, services []service.Service) error {
-	return nil
+	localConfig := config.GetConfig()
+	localDeviceInfo := device.DeviceInfo{
+		Name: localConfig.DeviceName,
+		Code: localConfig.DeviceCode,
+		Type: device.Desktop,
+		// Address will be empty here, which is fine for the request payload.
+	}
+
+	res, err := client.RequestPair(localDeviceInfo, deviceInfo, services)
+	if err != nil {
+		return err
+	}
+
+	if res.Accepted {
+		newPair := pair.Pair{
+			DeviceInfo: deviceInfo,
+			Token:      res.Token,
+			Services:   services,
+		}
+		return config.AddPairedDevice(newPair)
+	}
+
+	return fmt.Errorf("pairing request rejected by device")
 }
