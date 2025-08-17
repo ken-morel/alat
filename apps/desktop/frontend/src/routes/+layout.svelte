@@ -3,7 +3,7 @@
   import { page } from "$app/stores";
   import favicon from "$lib/assets/logo.svg";
   import "$lib/styles/app.sass";
-  import { WasSetup } from "$lib/wailsjs/go/app/App";
+  import { IsSetupComplete, WasSetup } from "$lib/wailsjs/go/app/App";
   import { onMount } from "svelte";
   import { writable, type Writable } from "svelte/store";
 
@@ -11,7 +11,13 @@
 
   onMount(async () => {
     const isSetup = await WasSetup();
-    if (!isSetup && $page.url.pathname !== "/setup") {
+    const ready = await IsSetupComplete();
+    if (
+      !isSetup &&
+      !ready &&
+      $page.url.pathname !== "/setup" &&
+      $page.url.pathname == "/"
+    ) {
       await goto("/setup");
     }
   });

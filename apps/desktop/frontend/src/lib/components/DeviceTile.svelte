@@ -33,7 +33,8 @@
     <div class="services">
       {#each services as service}
         <span
-          style:color={service.Enabled ? "lightgreen" : "lightred"}
+          style:color={service.Enabled ? "lightgreen" : "red"}
+          style:display="block"
           title={service.Name}>{service.Name}</span
         >
       {/each}
