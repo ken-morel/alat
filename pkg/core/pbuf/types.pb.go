@@ -7,12 +7,11 @@
 package pbuf
 
 import (
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
-
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -319,16 +318,14 @@ func file_types_proto_rawDescGZIP() []byte {
 	return file_types_proto_rawDescData
 }
 
-var (
-	file_types_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-	file_types_proto_msgTypes  = make([]protoimpl.MessageInfo, 3)
-	file_types_proto_goTypes   = []any{
-		(DeviceType)(0),     // 0: pbuf.DeviceType
-		(*Service)(nil),     // 1: pbuf.Service
-		(*DeviceColor)(nil), // 2: pbuf.DeviceColor
-		(*DeviceInfo)(nil),  // 3: pbuf.DeviceInfo
-	}
-)
+var file_types_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_types_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_types_proto_goTypes = []any{
+	(DeviceType)(0),     // 0: pbuf.DeviceType
+	(*Service)(nil),     // 1: pbuf.Service
+	(*DeviceColor)(nil), // 2: pbuf.DeviceColor
+	(*DeviceInfo)(nil),  // 3: pbuf.DeviceInfo
+}
 var file_types_proto_depIdxs = []int32{
 	0, // 0: pbuf.DeviceInfo.type:type_name -> pbuf.DeviceType
 	2, // 1: pbuf.DeviceInfo.color:type_name -> pbuf.DeviceColor
