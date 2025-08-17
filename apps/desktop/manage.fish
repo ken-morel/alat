@@ -3,6 +3,10 @@
 function dev
     wails dev -tags webkit2_41 -v 2
 end
+function build-windows
+    wails build -v 2 -tags webkit2_41 -platform windows -nsis
+    # wails build -nsis -v 2 -tagswebkit2_41 -platform windows -skipembedcreate -skipbindings 
+end
 
 function help
     echo "Usage: ./manage.fish <command>"
@@ -17,6 +21,8 @@ switch "$argv[1]"
         help
     case dev
         dev
+    case build-windows
+        build-windows
     case ""
         echo "Error: No command specified."
         help

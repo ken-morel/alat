@@ -3,6 +3,7 @@ package server
 
 import (
 	"alat/pkg/core/service/rcfile"
+	"alat/pkg/core/service/sysinfo"
 	"fmt"
 	"log"
 	"net/http"
@@ -17,8 +18,10 @@ func startServer() {
 	server.HandleFunc("/alat-info", handleInfo)
 	server.HandleFunc("/pair/request", handlePairRequest)
 	server.HandleFunc("/pair/response", handlePairResponse)
-	server.HandleFunc("/rcfile/send", rcfile.HandleSendRequest)
-	http.Handle("/", server)
+
+	server.Handle("/rcfile/", http.StripPrefix("/rcfile", rcfile.NewRouter()))
+	server.Handle("/sysinfo/", http.StripPrefix("/sysinfo", sysinfo.NewRouter()))
+
 	srv := &http.Server{
 		Addr:    config.DeviceInfo.Address.String(),
 		Handler: server,

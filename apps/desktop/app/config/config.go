@@ -7,6 +7,7 @@ import (
 	"alat/pkg/core/device"
 	"alat/pkg/core/service"
 	"alat/pkg/core/service/rcfile"
+	"alat/pkg/core/service/sysinfo"
 	"fmt"
 	"log"
 	"os"
@@ -17,7 +18,8 @@ import (
 )
 
 type ServicesConfig struct {
-	RCFile rcfile.ServiceConfig `yaml:"rcfile"`
+	RCFile  rcfile.ServiceConfig  `yaml:"rcfile"`
+	SysInfo sysinfo.ServiceConfig `yaml:"sysinfo"`
 }
 
 type Config struct {
@@ -117,6 +119,10 @@ func GetServices() []service.Service {
 		{
 			Name:    service.RCFile,
 			Enabled: config.Services.RCFile.Enabled,
+		},
+		{
+			Name:    service.SysInfo,
+			Enabled: config.Services.SysInfo.Enabled,
 		},
 	}
 }

@@ -23,6 +23,7 @@ export namespace config {
 	
 	export class ServicesConfig {
 	    RCFile: rcfile.ServiceConfig;
+	    SysInfo: sysinfo.ServiceConfig;
 	
 	    static createFrom(source: any = {}) {
 	        return new ServicesConfig(source);
@@ -31,6 +32,7 @@ export namespace config {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.RCFile = this.convertValues(source["RCFile"], rcfile.ServiceConfig);
+	        this.SysInfo = this.convertValues(source["SysInfo"], sysinfo.ServiceConfig);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -209,6 +211,56 @@ export namespace pair {
 
 export namespace pbuf {
 	
+	export class Battery {
+	    current_capacity?: number;
+	    full_charged_capacity?: number;
+	    state?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new Battery(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.current_capacity = source["current_capacity"];
+	        this.full_charged_capacity = source["full_charged_capacity"];
+	        this.state = source["state"];
+	    }
+	}
+	export class CPUInfoStat {
+	    cpu?: number;
+	    vendor_id?: string;
+	    family?: string;
+	    model?: string;
+	    stepping?: number;
+	    physical_id?: string;
+	    core_id?: string;
+	    cores?: number;
+	    model_name?: string;
+	    mhz?: number;
+	    cache_size?: number;
+	    flags?: string[];
+	
+	    static createFrom(source: any = {}) {
+	        return new CPUInfoStat(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.cpu = source["cpu"];
+	        this.vendor_id = source["vendor_id"];
+	        this.family = source["family"];
+	        this.model = source["model"];
+	        this.stepping = source["stepping"];
+	        this.physical_id = source["physical_id"];
+	        this.core_id = source["core_id"];
+	        this.cores = source["cores"];
+	        this.model_name = source["model_name"];
+	        this.mhz = source["mhz"];
+	        this.cache_size = source["cache_size"];
+	        this.flags = source["flags"];
+	    }
+	}
 	export class DeviceColor {
 	    r?: number;
 	    g?: number;
@@ -281,6 +333,72 @@ export namespace pbuf {
 		    return a;
 		}
 	}
+	export class DiskUsageStat {
+	    path?: string;
+	    fstype?: string;
+	    total?: number;
+	    free?: number;
+	    used?: number;
+	    used_percent?: number;
+	    inodes_total?: number;
+	    inodes_used?: number;
+	    inodes_free?: number;
+	    inodes_used_percent?: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new DiskUsageStat(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.path = source["path"];
+	        this.fstype = source["fstype"];
+	        this.total = source["total"];
+	        this.free = source["free"];
+	        this.used = source["used"];
+	        this.used_percent = source["used_percent"];
+	        this.inodes_total = source["inodes_total"];
+	        this.inodes_used = source["inodes_used"];
+	        this.inodes_free = source["inodes_free"];
+	        this.inodes_used_percent = source["inodes_used_percent"];
+	    }
+	}
+	export class HostInfoStat {
+	    hostname?: string;
+	    uptime?: number;
+	    boot_time?: number;
+	    procs?: number;
+	    os?: string;
+	    platform?: string;
+	    platform_family?: string;
+	    platform_version?: string;
+	    kernel_version?: string;
+	    kernel_arch?: string;
+	    virtualization_system?: string;
+	    virtualization_role?: string;
+	    host_id?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new HostInfoStat(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.hostname = source["hostname"];
+	        this.uptime = source["uptime"];
+	        this.boot_time = source["boot_time"];
+	        this.procs = source["procs"];
+	        this.os = source["os"];
+	        this.platform = source["platform"];
+	        this.platform_family = source["platform_family"];
+	        this.platform_version = source["platform_version"];
+	        this.kernel_version = source["kernel_version"];
+	        this.kernel_arch = source["kernel_arch"];
+	        this.virtualization_system = source["virtualization_system"];
+	        this.virtualization_role = source["virtualization_role"];
+	        this.host_id = source["host_id"];
+	    }
+	}
 	export class PairRequest {
 	    token?: string;
 	    device?: DeviceInfo;
@@ -351,6 +469,67 @@ export namespace pbuf {
 		    return a;
 		}
 	}
+	
+	export class VirtualMemoryStat {
+	    total?: number;
+	    available?: number;
+	    used?: number;
+	    used_percent?: number;
+	    free?: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new VirtualMemoryStat(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.total = source["total"];
+	        this.available = source["available"];
+	        this.used = source["used"];
+	        this.used_percent = source["used_percent"];
+	        this.free = source["free"];
+	    }
+	}
+	export class SysInfo {
+	    host?: HostInfoStat;
+	    cpu?: CPUInfoStat[];
+	    cpu_usage?: number[];
+	    memory?: VirtualMemoryStat;
+	    disk?: DiskUsageStat;
+	    battery?: Battery[];
+	
+	    static createFrom(source: any = {}) {
+	        return new SysInfo(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.host = this.convertValues(source["host"], HostInfoStat);
+	        this.cpu = this.convertValues(source["cpu"], CPUInfoStat);
+	        this.cpu_usage = source["cpu_usage"];
+	        this.memory = this.convertValues(source["memory"], VirtualMemoryStat);
+	        this.disk = this.convertValues(source["disk"], DiskUsageStat);
+	        this.battery = this.convertValues(source["battery"], Battery);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 
 }
 
@@ -388,6 +567,23 @@ export namespace service {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.Name = source["Name"];
+	        this.Enabled = source["Enabled"];
+	    }
+	}
+
+}
+
+export namespace sysinfo {
+	
+	export class ServiceConfig {
+	    Enabled: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new ServiceConfig(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.Enabled = source["Enabled"];
 	    }
 	}

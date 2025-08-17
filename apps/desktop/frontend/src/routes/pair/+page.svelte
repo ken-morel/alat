@@ -22,9 +22,7 @@
 
     SearchDevices()
       .then((result: device.DeviceInfo[]) => {
-        setTimeout(() => {
-          if (result) deviceInfos = result;
-        }, 1500);
+        if (result) deviceInfos = result;
       })
       .catch((err: Error) => {
         error =
