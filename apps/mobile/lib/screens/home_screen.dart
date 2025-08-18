@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:alat/src/l10n/app_localizations.dart';
-import 'package:alat/src/providers/device_provider.dart';
+import 'package:alat/l10n/app_localizations.dart';
+import 'package:alat/providers/device_provider.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -47,3 +47,4 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
+

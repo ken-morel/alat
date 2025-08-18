@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:alat/src/api/api_bridge.dart';
+import 'package:alat/api/api_bridge.dart';
 
 class DeviceProvider with ChangeNotifier {
   final ApiBridge _apiBridge = ApiBridge();

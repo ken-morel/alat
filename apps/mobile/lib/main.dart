@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:alat/src/providers/device_provider.dart';
-import 'package:alat/src/providers/theme_provider.dart';
-import 'package:alat/src/screens/home_screen.dart';
-import 'package:alat/src/theme/theme.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:alat/providers/device_provider.dart';
+import 'package:alat/providers/theme_provider.dart';
+import 'package:alat/screens/home_screen.dart';
+import 'package:alat/theme/theme.dart';
+import 'package:alat/l10n/app_localizations.dart';
 
 void main() {
   runApp(

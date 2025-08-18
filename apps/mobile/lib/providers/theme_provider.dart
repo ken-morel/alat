@@ -1,7 +1,8 @@
+import 'package:alat/theme/theme.dart';
 import 'package:flutter/material.dart';
 
 class ThemeProvider with ChangeNotifier {
-  ThemeData _themeData = AppTheme.darkTheme;
+  final ThemeData _themeData = AppTheme.darkTheme;
 
   ThemeData get themeData => _themeData;
 
