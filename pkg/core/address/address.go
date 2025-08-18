@@ -13,7 +13,7 @@ type Address struct {
 }
 
 // AlatPort       ALAT
-const AlatPort = 52528
+const AlatPort = 52529 // change 8 -> 8
 
 var colors = []string{
 	"red", "green", "blue", "orange", "indigo",

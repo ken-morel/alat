@@ -40,6 +40,8 @@ switch "$argv[1]"
         dev
     case build
         build
+    case build_bridge
+        build_bridge
     case help
         help
     case ""

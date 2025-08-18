@@ -1,12 +1,13 @@
 // Package mobile_bridge will act as a bridge between Dart FFI and the Alat core.
-package mobile_bridge
+package main
 
 import (
+	"C"
 	"alat/pkg/core/client"
 	"alat/pkg/core/device"
 	"encoding/json"
-	"C"
 )
+import "fmt"
 
 //export SearchDevices
 func SearchDevices() *C.char {
@@ -26,4 +27,8 @@ func SearchDevices() *C.char {
 	}
 
 	return C.CString(string(jsonBytes))
+}
+
+func main() {
+	fmt.Println("Main running..., I don't know why?")
 }
