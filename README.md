@@ -2,62 +2,20 @@
   <img src="./logo/animated/logo.svg" alt="Animated logo" style="display: inline;height: 1em;position: relative;top: 5px; right: -10px;" />
   lat
 </h1>
-Alat is a cross-platform application that allows you to seamlessly connect and share data between your devices. Whether you're using a desktop computer, a mobile phone, or a tablet, Alat helps you stay connected and productive.
 
-## How it Works
+Alatis a set of services and applications aimed at prociding a seamless interface xommon to all devices to connect them together. It's work is greatly inspired from [kde xonnect], (though i don't think thet have any relationship).
 
-Alat uses a combination of technologies to discover and communicate with devices on your local network. It consists of the following components:
+For it to work, alat exposes features to paired decices through `services`, which you can configure and control.
 
-- **A core daemon** that runs on each device and handles the discovery and communication.
-- **A desktop application** for Windows, macOS, and Linux that allows you to manage your connected devices.
-- **A mobile application** for iOS and Android that provides the same functionality on the go.
-- **A server** that can be used for remote discovery and relay, allowing you to connect to your devices from anywhere in the world.
-
-## Features
-
-- **Automatic device discovery**: Alat automatically discovers other devices on your local network that are running the application.
-- **Cross-platform**: Alat works on Windows, macOS, Linux, iOS, and Android.
-- **Secure**: All communication between devices is encrypted.
-- **Open source**: Alat is open source and available on GitHub.
-
-## Getting Started
-
-If you're a developer and want to contribute to the project, here's how to get started:
-
-### 1. Install Protocol Buffers Compiler
-
-You need the `protoc` compiler to generate code from the `.proto` files.
-
-- **macOS:** `brew install protobuf`
-- **Linux:** `sudo apt-get install -y protobuf-compiler`
-- **Windows:** `choco install protoc` or download from the [official releases page](https://github.com/protocolbuffers/protobuf/releases).
-
-### 2. Generate Protocol Code
-
-Use the `manage.fish` script to generate the necessary Go and Dart code from the protocol definitions.
-
-```fish
-./manage.fish proto
-```
-
-This will:
-
-1. Install the necessary Go and Dart plugins.
-2. Generate Go code in `pkg/core/proto/`.
-3. Generate Dart code in `apps/mobile/lib/src/proto/`.
-
-You can see all available commands by running:
-
-```fish
-./manage.fish help
-```
-
-Now you are ready to start developing!
+Alat has like not even started it's development, and very breaking changes are expected.
 
 ## Contributing
 
-We welcome contributions from the community. If you'd like to contribute, please fork the repository and submit a pull request.
+Alat is simply a go workspace with a core package, and a wails desktop application built go, sveltekit, typescript and sass.
+A more detailed explanation of how the project works internally can be found in [./GEMINI.md] .
 
-## License
+## Building
 
-Alat is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.
+The app should be pretty easy to build, make sure you have go programming language installed, use it then to install wails cli(chech https://wails.io), then just build as a normal wails application or using the manage.fish's. Norice the dev commands are targeted for my device running ubuntu 25.04 on amd64.
+
+Thanks!
