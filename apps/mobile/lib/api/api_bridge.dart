@@ -3,32 +3,32 @@ import 'dart:ffi';
 import 'dart:io';
 import 'package:ffi/ffi.dart';
 
-// Define the signature of the Go function
-typedef SearchDevicesFunc = Pointer<Utf8> Function();
-// Define the Dart type for the function
-typedef SearchDevices = Pointer<Utf8> Function();
+class Binding<P, R> {
+  late final Pointer<Utf8> Function(Pointer<Utf8>) _func;
+  Binding(DynamicLibrary lib, String name) {
+    _func = lib
+        .lookup<NativeFunction<Pointer<Utf8> Function(Pointer<Utf8>)>>(name)
+        .asFunction();
+  }
+  R call(P args) {
+    final jsonString = jsonEncode(args);
+    final nativePointer = jsonString.toNativeUtf8();
+    final resultPtr = _func(nativePointer);
+    final result = resultPtr.toDartString();
+    return jsonDecode(result) as R;
+  }
+}
 
 class ApiBridge {
-  late final DynamicLibrary _lib;
-  late final Function searchDevices;
+  late final DynamicLibrary lib;
+
+  late final Binding<Map, List> searchDevices;
 
   ApiBridge() {
-    _lib = Platform.isAndroid
+    lib = Platform.isAndroid
         ? DynamicLibrary.open('libalat.so')
-        : DynamicLibrary.open('build/libalat.so'); // For Linux testing
+        : DynamicLibrary.open('build/libalat.so'); // for linux testing
 
-    final SearchDevices search = _lib
-        .lookup<NativeFunction<SearchDevicesFunc>>('SearchDevices')
-        .asFunction();
-
-    searchDevices = () {
-      final resultPtr = search();
-      final result = resultPtr.toDartString();
-      // Free the string allocated in Go
-      // Note: Go's CString allocates memory that needs to be freed.
-      // We will need to add a function to the Go bridge to free this memory.
-      // For now, we will ignore this to get the functionality working.
-      return jsonDecode(result);
-    };
+    searchDevices = Binding(lib, 'SearchDevices');
   }
 }

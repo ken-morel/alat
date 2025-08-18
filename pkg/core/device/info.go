@@ -10,12 +10,12 @@ import (
 )
 
 type DeviceInfo struct {
-	Address  address.Address   `yaml:"address"`
-	Name     string            `yaml:"name"`
-	Color    options.RGBA      `yaml:"color"`
-	Code     string            `yaml:"code"`
-	Type     DeviceType        `yaml:"type"`
-	Services []service.Service `yaml:"services"`
+	Address  address.Address   `yaml:"address" json:"address"`
+	Name     string            `yaml:"name" json:"name"`
+	Color    options.RGBA      `yaml:"color" json:"color"`
+	Code     string            `yaml:"code" json:"code"`
+	Type     DeviceType        `yaml:"type" json:"type"`
+	Services []service.Service `yaml:"services" json:"services"`
 }
 
 func (d *DeviceInfo) ToPBuf() (pbuf.DeviceInfo, error) {

@@ -14,7 +14,7 @@ class DeviceProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      _devices = await _apiBridge.searchDevices();
+      _devices = _apiBridge.searchDevices({});
     } catch (e) {
       // Handle error
       print('Error searching for devices: $e');

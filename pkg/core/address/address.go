@@ -7,13 +7,13 @@ import (
 )
 
 type Address struct {
-	Port   uint16 `yaml:"port"`
-	IP     net.IP `yaml:"ip"`
-	Phrase string `yaml:"phrase"`
+	Port   uint16 `yaml:"port" json:"port"`
+	IP     net.IP `yaml:"ip" json:"ip"`
+	Phrase string `yaml:"phrase" json:"phrase"`
 }
 
 // AlatPort       ALAT
-const AlatPort = 52529 // change 8 -> 8
+const AlatPort = 52528
 
 var colors = []string{
 	"red", "green", "blue", "orange", "indigo",

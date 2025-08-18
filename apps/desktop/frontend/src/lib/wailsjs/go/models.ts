@@ -1,9 +1,9 @@
 export namespace address {
 	
 	export class Address {
-	    Port: number;
-	    IP: number[];
-	    Phrase: string;
+	    port: number;
+	    ip: number[];
+	    phrase: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Address(source);
@@ -11,9 +11,9 @@ export namespace address {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.Port = source["Port"];
-	        this.IP = source["IP"];
-	        this.Phrase = source["Phrase"];
+	        this.port = source["port"];
+	        this.ip = source["ip"];
+	        this.phrase = source["phrase"];
 	    }
 	}
 
@@ -101,12 +101,12 @@ export namespace config {
 export namespace device {
 	
 	export class DeviceInfo {
-	    Address: address.Address;
-	    Name: string;
-	    Color: options.RGBA;
-	    Code: string;
-	    Type: number;
-	    Services: service.Service[];
+	    address: address.Address;
+	    name: string;
+	    color: options.RGBA;
+	    code: string;
+	    type: number;
+	    services: service.Service[];
 	
 	    static createFrom(source: any = {}) {
 	        return new DeviceInfo(source);
@@ -114,12 +114,12 @@ export namespace device {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.Address = this.convertValues(source["Address"], address.Address);
-	        this.Name = source["Name"];
-	        this.Color = this.convertValues(source["Color"], options.RGBA);
-	        this.Code = source["Code"];
-	        this.Type = source["Type"];
-	        this.Services = this.convertValues(source["Services"], service.Service);
+	        this.address = this.convertValues(source["address"], address.Address);
+	        this.name = source["name"];
+	        this.color = this.convertValues(source["color"], options.RGBA);
+	        this.code = source["code"];
+	        this.type = source["type"];
+	        this.services = this.convertValues(source["services"], service.Service);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -557,8 +557,8 @@ export namespace rcfile {
 export namespace service {
 	
 	export class Service {
-	    Name: string;
-	    Enabled: boolean;
+	    name: string;
+	    enabled: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new Service(source);
@@ -566,8 +566,8 @@ export namespace service {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.Name = source["Name"];
-	        this.Enabled = source["Enabled"];
+	        this.name = source["name"];
+	        this.enabled = source["enabled"];
 	    }
 	}
 

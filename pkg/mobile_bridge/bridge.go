@@ -10,7 +10,7 @@ import (
 import "fmt"
 
 //export SearchDevices
-func SearchDevices() *C.char {
+func SearchDevices(*C.char) *C.char {
 	channel := make(chan device.DeviceInfo)
 	var devices []device.DeviceInfo
 

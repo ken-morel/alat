@@ -11,8 +11,8 @@ const (
 )
 
 type Service struct {
-	Name    ServiceName `yaml:"name"`
-	Enabled bool        `yaml:"enabled"`
+	Name    ServiceName `yaml:"name" json:"name"`
+	Enabled bool        `yaml:"enabled" json:"enabled"`
 }
 
 func (s *Service) ToPBuf() pbuf.Service {
