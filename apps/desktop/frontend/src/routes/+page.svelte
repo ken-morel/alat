@@ -3,6 +3,7 @@
   import DeviceTile from "$lib/components/DeviceTile.svelte";
   import { selectedPairedDevice } from "$lib/state";
   import type { pair } from "$lib/wailsjs/go/models";
+  import { flip } from "svelte/animate";
   let { data } = $props();
   let { pairedDevicesPromise } = data;
   function handlePairClick(pair: pair.Pair) {
@@ -20,22 +21,24 @@
         {#await pairedDevicesPromise}
           <div class="loading-text">loading devices...</div>
         {:then pairedDevices}
-          {#if pairedDevices.length === 0}
+          {#each pairedDevices as pair (pair.Token)}
+            <div
+              animate:flip
+              onclick={() => handlePairClick(pair)}
+              role="button"
+              tabindex="0"
+              onkeydown={null}
+            >
+              <DeviceTile
+                deviceInfo={pair.DeviceInfo}
+                services={pair.Services}
+              />
+            </div>
+          {:else}
             <div class="no-devices-message">
               <h2>No paired device. For now</h2>
             </div>
-          {:else}
-            {#each pairedDevices as pair}
-              <div
-                onclick={() => handlePairClick(pair)}
-                role="button"
-                tabindex="0"
-                onkeydown={null}
-              >
-                <DeviceTile deviceInfo={pair.DeviceInfo} />
-              </div>
-            {/each}
-          {/if}
+          {/each}
         {/await}
       </div>
       <a href="/pair" class="btn btn-primary pair-button">Pair a device</a>

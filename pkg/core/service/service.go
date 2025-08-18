@@ -6,9 +6,8 @@ import "alat/pkg/core/pbuf"
 type ServiceName string
 
 const (
-	RCFile    ServiceName = "rcfile"
-	FsBrowse  ServiceName = "fsbrowse"
-	Clipboard ServiceName = "clipboard"
+	RCFile  ServiceName = "rcfile"
+	SysInfo ServiceName = "sysinfo"
 )
 
 type Service struct {

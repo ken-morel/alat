@@ -2,6 +2,7 @@
   import { rcfile } from "$lib/wailsjs/go/models";
   import { get, type Writable } from "svelte/store";
   import { AskDirectory } from "$lib/wailsjs/go/app/App";
+  import { slide } from "svelte/transition";
   const SIZES = {
     KB: 1024,
     MB: 1024 * 1024,
@@ -36,7 +37,7 @@
   <div class="enabling">
     <div class="check">
       <button
-        class="w3-button {enabled && 'enabled'}"
+        class={["w3-button", enabled && "enabled"]}
         aria-label="Status"
         type="button"
         onclick={() => (enabled = !enabled)}
@@ -51,7 +52,7 @@
       <p>
         File receive allows connected devices to send files to this device,
         disabling this will disable the feature globally. Currently
-        <code style="color: {enabled ? '#338844' : '#aa3333'};">
+        <code style:color|important={enabled ? "#338844" : "#aa3333"}>
           {#if enabled}
             enabled
           {:else}
@@ -61,49 +62,51 @@
       </p>
     </div>
   </div>
-  <div class="contents {enabled && 'show'}">
-    <div class="dest">
-      <label for="rcfile-dest">Destination</label>
-      <div>
-        <input
-          type="text"
-          class="w3-input"
-          bind:value={destination}
-          id="rcfile-dest"
-        />
-        <button type="button" class="w3-button" onclick={choosedir}
-          >Select</button
-        >
-      </div>
-      <p>The folder inwhich received files will be saved</p>
-    </div>
-    <summary class="maxsize">
-      <label for="maxsize">File max size</label>
-      <div>
-        <input
-          type="number"
-          class="w3-input"
-          accept="[0-9]"
-          id="rcfile-dest"
-          bind:value={maxSize}
-        />
+  {#if enabled}
+    <div transition:slide class="contents show">
+      <div class="dest">
+        <label for="rcfile-dest">Destination</label>
         <div>
-          {#each ["KB", "MB", "GB"] as thisUnit (thisUnit)}
-            <button
-              class="w3-button w3-bar-item {unit == thisUnit && 'selected'}"
-              type="button"
-              onclick={() => {
-                unit = thisUnit as "MB" | "KB" | "GB";
-              }}
-            >
-              {thisUnit}
-            </button>
-          {/each}
+          <input
+            type="text"
+            class="w3-input"
+            bind:value={destination}
+            id="rcfile-dest"
+          />
+          <button type="button" class="w3-button" onclick={choosedir}
+            >Select</button
+          >
         </div>
+        <p>The folder inwhich received files will be saved</p>
       </div>
-      <p>Choose a maximum size for received files, leave empty to disable.</p>
-    </summary>
-  </div>
+      <summary class="maxsize">
+        <label for="maxsize">File max size</label>
+        <div>
+          <input
+            type="number"
+            class="w3-input"
+            accept="[0-9]"
+            id="rcfile-dest"
+            bind:value={maxSize}
+          />
+          <div>
+            {#each ["KB", "MB", "GB"] as thisUnit (thisUnit)}
+              <button
+                class="w3-button w3-bar-item {unit == thisUnit && 'selected'}"
+                type="button"
+                onclick={() => {
+                  unit = thisUnit as "MB" | "KB" | "GB";
+                }}
+              >
+                {thisUnit}
+              </button>
+            {/each}
+          </div>
+        </div>
+        <p>Choose a maximum size for received files, leave empty to disable.</p>
+      </summary>
+    </div>
+  {/if}
 </div>
 
 <style lang="sass">

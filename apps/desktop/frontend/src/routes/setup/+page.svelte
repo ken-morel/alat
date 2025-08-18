@@ -1,29 +1,33 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { GetConfig, SaveConfig } from "$lib/wailsjs/go/app/App";
-  import { config, options, rcfile } from "$lib/wailsjs/go/models";
+  import { config, options, rcfile, sysinfo } from "$lib/wailsjs/go/models";
   import Color from "$lib/color";
   import { goto } from "$app/navigation";
   import RcFile from "./RCFile.svelte";
-  import { writable } from "svelte/store";
+  import { writable, type Writable } from "svelte/store";
+  import SysInfo from "./SysInfo.svelte";
+  import { fade } from "svelte/transition";
 
   let cfg: config.Config | null = $state(null);
   let deviceColorHex = $state("");
   let pstate: "loading" | "ready" = $state("loading");
-  let rfconf = writable<rcfile.ServiceConfig>(new rcfile.ServiceConfig());
-  rfconf.subscribe((val: rcfile.ServiceConfig) => {
-    if (cfg) cfg.Services.RCFile = val;
-  });
+  let rfconf: Writable<rcfile.ServiceConfig> | null = $state(null);
+  let sysconf: Writable<sysinfo.ServiceConfig> | null = $state(null);
 
   onMount(async () => {
-    await new Promise((r) => setTimeout(r, 200));
     cfg = await GetConfig();
-    rfconf.set(cfg.Services.RCFile);
-    if (cfg) {
-      const { r, g, b, a } = cfg.DeviceColor;
-      if (r + g + b > 10)
-        deviceColorHex = Color.rgba(r, g, b, a / 255).toHexString();
-    }
+    rfconf = writable(cfg.Services.RCFile);
+    rfconf.subscribe((val: rcfile.ServiceConfig | null) => {
+      if (cfg && val) cfg.Services.RCFile = val;
+    });
+    sysconf = writable(cfg.Services.SysInfo);
+    sysconf.subscribe((val: sysinfo.ServiceConfig | null) => {
+      if (cfg && val) cfg.Services.SysInfo = val;
+    });
+    const { r, g, b, a } = cfg.DeviceColor;
+    if (r + g + b > 10)
+      deviceColorHex = Color.rgba(r, g, b, a / 255).toHexString();
 
     if (deviceColorHex == "") {
       const colors = Object.values(Color.COLORS);
@@ -46,7 +50,7 @@
         a: opacity * 255,
       });
       SaveConfig(cfg).then(() => {
-        goto("/dashboard");
+        goto("/");
       });
     }
   }
@@ -55,14 +59,14 @@
 <div class="setup-container">
   <h1 class="page-title">Device Setup</h1>
 
-  <form
-    class="setup-form"
-    onsubmit={(e) => {
-      e.preventDefault();
-      save();
-    }}
-  >
-    {#if pstate == "ready" && cfg}
+  {#if pstate == "ready" && cfg}
+    <form
+      class="setup-form"
+      onsubmit={(e) => {
+        e.preventDefault();
+        save();
+      }}
+    >
       <section class="form-section">
         <article class="form-article device-name-color">
           <div class="form-group device-name">
@@ -91,7 +95,10 @@
         <article class="form-article">
           <label for="language">Language</label>
           <div class="language-options">
-            <span class="selected-lang {cfg.Language}" style="border-color: {deviceColorHex}"></span>
+            <span
+              class="selected-lang {cfg.Language}"
+              style="border-color: {deviceColorHex}"
+            ></span>
             <button
               type="button"
               class="lang-button"
@@ -117,26 +124,32 @@
       <section class="form-section">
         <h2 class="section-title">Services</h2>
         <p class="section-intro">
-          Services are the features of your device other devices can have access.
-          It could be file receiving, notification sending and more. It is
-          important for them to be configured at setup, but every time a device
-          will be connected you will need to select services you want it to
-          access. For more information, refer to
+          Services are the features of your device other devices can have
+          access. It could be file receiving, notification sending and more. It
+          is important for them to be configured at setup, but every time a
+          device will be connected you will need to select services you want it
+          to access. For more information, refer to
           <a href="/setup">Services documentation</a>.
         </p>
       </section>
 
+      {#if rfconf}
+        <section transition:fade class="form-section">
+          <RcFile cfg={rfconf} />
+        </section>
+      {/if}
+      {#if sysconf}
+        <section transition:fade class="form-section">
+          <SysInfo cfg={sysconf} />
+        </section>
+      {/if}
       <section class="form-section">
-        <RcFile cfg={rfconf} />
+        <button class="save-button btn btn-primary">Save</button>
       </section>
-    {:else}
-      <p class="loading-text">Loading...</p>
-    {/if}
-
-    <section class="form-section">
-      <button class="save-button btn btn-primary">Save</button>
-    </section>
-  </form>
+    </form>
+  {:else}
+    <p class="loading-text">Loading...</p>
+  {/if}
 </div>
 
 <style lang="sass">

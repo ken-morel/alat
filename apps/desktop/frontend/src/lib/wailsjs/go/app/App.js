@@ -18,12 +18,20 @@ export function GetConfig() {
   return window['go']['app']['App']['GetConfig']();
 }
 
+export function GetPairedDeviceSysInfo(arg1) {
+  return window['go']['app']['App']['GetPairedDeviceSysInfo'](arg1);
+}
+
 export function GetPairedDevices() {
   return window['go']['app']['App']['GetPairedDevices']();
 }
 
 export function GetServices() {
   return window['go']['app']['App']['GetServices']();
+}
+
+export function GetThisDeviceSysInfo() {
+  return window['go']['app']['App']['GetThisDeviceSysInfo']();
 }
 
 export function HandlePairRequest(arg1) {

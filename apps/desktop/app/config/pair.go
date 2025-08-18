@@ -36,10 +36,8 @@ func AddPairedDevice(newDevice pair.Pair) error {
 		return err
 	}
 
-	// Check if device is already paired
 	for idx, d := range devices {
 		if d.DeviceInfo.Code == newDevice.DeviceInfo.Code {
-			// TODO: Handle updating existing device instead of just returning
 			fmt.Printf("Device %s is already paired.\n", newDevice.DeviceInfo.Name)
 			devices[idx] = newDevice
 			return nil
@@ -77,4 +75,3 @@ func InitPair() (err error) {
 	}
 	return
 }
-

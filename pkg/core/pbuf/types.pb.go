@@ -277,6 +277,614 @@ func (x *DeviceInfo) GetPort() uint32 {
 	return 0
 }
 
+type HostInfoStat struct {
+	state                protoimpl.MessageState `protogen:"open.v1"`
+	Hostname             string                 `protobuf:"bytes,1,opt,name=hostname,proto3" json:"hostname,omitempty"`
+	Uptime               uint64                 `protobuf:"varint,2,opt,name=uptime,proto3" json:"uptime,omitempty"`
+	BootTime             uint64                 `protobuf:"varint,3,opt,name=boot_time,json=bootTime,proto3" json:"boot_time,omitempty"`
+	Procs                uint64                 `protobuf:"varint,4,opt,name=procs,proto3" json:"procs,omitempty"`
+	Os                   string                 `protobuf:"bytes,5,opt,name=os,proto3" json:"os,omitempty"`
+	Platform             string                 `protobuf:"bytes,6,opt,name=platform,proto3" json:"platform,omitempty"`
+	PlatformFamily       string                 `protobuf:"bytes,7,opt,name=platform_family,json=platformFamily,proto3" json:"platform_family,omitempty"`
+	PlatformVersion      string                 `protobuf:"bytes,8,opt,name=platform_version,json=platformVersion,proto3" json:"platform_version,omitempty"`
+	KernelVersion        string                 `protobuf:"bytes,9,opt,name=kernel_version,json=kernelVersion,proto3" json:"kernel_version,omitempty"`
+	KernelArch           string                 `protobuf:"bytes,10,opt,name=kernel_arch,json=kernelArch,proto3" json:"kernel_arch,omitempty"`
+	VirtualizationSystem string                 `protobuf:"bytes,11,opt,name=virtualization_system,json=virtualizationSystem,proto3" json:"virtualization_system,omitempty"`
+	VirtualizationRole   string                 `protobuf:"bytes,12,opt,name=virtualization_role,json=virtualizationRole,proto3" json:"virtualization_role,omitempty"`
+	HostId               string                 `protobuf:"bytes,13,opt,name=host_id,json=hostId,proto3" json:"host_id,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
+}
+
+func (x *HostInfoStat) Reset() {
+	*x = HostInfoStat{}
+	mi := &file_types_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *HostInfoStat) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HostInfoStat) ProtoMessage() {}
+
+func (x *HostInfoStat) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HostInfoStat.ProtoReflect.Descriptor instead.
+func (*HostInfoStat) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *HostInfoStat) GetHostname() string {
+	if x != nil {
+		return x.Hostname
+	}
+	return ""
+}
+
+func (x *HostInfoStat) GetUptime() uint64 {
+	if x != nil {
+		return x.Uptime
+	}
+	return 0
+}
+
+func (x *HostInfoStat) GetBootTime() uint64 {
+	if x != nil {
+		return x.BootTime
+	}
+	return 0
+}
+
+func (x *HostInfoStat) GetProcs() uint64 {
+	if x != nil {
+		return x.Procs
+	}
+	return 0
+}
+
+func (x *HostInfoStat) GetOs() string {
+	if x != nil {
+		return x.Os
+	}
+	return ""
+}
+
+func (x *HostInfoStat) GetPlatform() string {
+	if x != nil {
+		return x.Platform
+	}
+	return ""
+}
+
+func (x *HostInfoStat) GetPlatformFamily() string {
+	if x != nil {
+		return x.PlatformFamily
+	}
+	return ""
+}
+
+func (x *HostInfoStat) GetPlatformVersion() string {
+	if x != nil {
+		return x.PlatformVersion
+	}
+	return ""
+}
+
+func (x *HostInfoStat) GetKernelVersion() string {
+	if x != nil {
+		return x.KernelVersion
+	}
+	return ""
+}
+
+func (x *HostInfoStat) GetKernelArch() string {
+	if x != nil {
+		return x.KernelArch
+	}
+	return ""
+}
+
+func (x *HostInfoStat) GetVirtualizationSystem() string {
+	if x != nil {
+		return x.VirtualizationSystem
+	}
+	return ""
+}
+
+func (x *HostInfoStat) GetVirtualizationRole() string {
+	if x != nil {
+		return x.VirtualizationRole
+	}
+	return ""
+}
+
+func (x *HostInfoStat) GetHostId() string {
+	if x != nil {
+		return x.HostId
+	}
+	return ""
+}
+
+type CPUInfoStat struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Cpu           int32                  `protobuf:"varint,1,opt,name=cpu,proto3" json:"cpu,omitempty"`
+	VendorId      string                 `protobuf:"bytes,2,opt,name=vendor_id,json=vendorId,proto3" json:"vendor_id,omitempty"`
+	Family        string                 `protobuf:"bytes,3,opt,name=family,proto3" json:"family,omitempty"`
+	Model         string                 `protobuf:"bytes,4,opt,name=model,proto3" json:"model,omitempty"`
+	Stepping      int32                  `protobuf:"varint,5,opt,name=stepping,proto3" json:"stepping,omitempty"`
+	PhysicalId    string                 `protobuf:"bytes,6,opt,name=physical_id,json=physicalId,proto3" json:"physical_id,omitempty"`
+	CoreId        string                 `protobuf:"bytes,7,opt,name=core_id,json=coreId,proto3" json:"core_id,omitempty"`
+	Cores         int32                  `protobuf:"varint,8,opt,name=cores,proto3" json:"cores,omitempty"`
+	ModelName     string                 `protobuf:"bytes,9,opt,name=model_name,json=modelName,proto3" json:"model_name,omitempty"`
+	Mhz           float64                `protobuf:"fixed64,10,opt,name=mhz,proto3" json:"mhz,omitempty"`
+	CacheSize     int64                  `protobuf:"varint,11,opt,name=cache_size,json=cacheSize,proto3" json:"cache_size,omitempty"`
+	Flags         []string               `protobuf:"bytes,12,rep,name=flags,proto3" json:"flags,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CPUInfoStat) Reset() {
+	*x = CPUInfoStat{}
+	mi := &file_types_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CPUInfoStat) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CPUInfoStat) ProtoMessage() {}
+
+func (x *CPUInfoStat) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CPUInfoStat.ProtoReflect.Descriptor instead.
+func (*CPUInfoStat) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *CPUInfoStat) GetCpu() int32 {
+	if x != nil {
+		return x.Cpu
+	}
+	return 0
+}
+
+func (x *CPUInfoStat) GetVendorId() string {
+	if x != nil {
+		return x.VendorId
+	}
+	return ""
+}
+
+func (x *CPUInfoStat) GetFamily() string {
+	if x != nil {
+		return x.Family
+	}
+	return ""
+}
+
+func (x *CPUInfoStat) GetModel() string {
+	if x != nil {
+		return x.Model
+	}
+	return ""
+}
+
+func (x *CPUInfoStat) GetStepping() int32 {
+	if x != nil {
+		return x.Stepping
+	}
+	return 0
+}
+
+func (x *CPUInfoStat) GetPhysicalId() string {
+	if x != nil {
+		return x.PhysicalId
+	}
+	return ""
+}
+
+func (x *CPUInfoStat) GetCoreId() string {
+	if x != nil {
+		return x.CoreId
+	}
+	return ""
+}
+
+func (x *CPUInfoStat) GetCores() int32 {
+	if x != nil {
+		return x.Cores
+	}
+	return 0
+}
+
+func (x *CPUInfoStat) GetModelName() string {
+	if x != nil {
+		return x.ModelName
+	}
+	return ""
+}
+
+func (x *CPUInfoStat) GetMhz() float64 {
+	if x != nil {
+		return x.Mhz
+	}
+	return 0
+}
+
+func (x *CPUInfoStat) GetCacheSize() int64 {
+	if x != nil {
+		return x.CacheSize
+	}
+	return 0
+}
+
+func (x *CPUInfoStat) GetFlags() []string {
+	if x != nil {
+		return x.Flags
+	}
+	return nil
+}
+
+type VirtualMemoryStat struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`
+	Available     uint64                 `protobuf:"varint,2,opt,name=available,proto3" json:"available,omitempty"`
+	Used          uint64                 `protobuf:"varint,3,opt,name=used,proto3" json:"used,omitempty"`
+	UsedPercent   float64                `protobuf:"fixed64,4,opt,name=used_percent,json=usedPercent,proto3" json:"used_percent,omitempty"`
+	Free          uint64                 `protobuf:"varint,5,opt,name=free,proto3" json:"free,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *VirtualMemoryStat) Reset() {
+	*x = VirtualMemoryStat{}
+	mi := &file_types_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *VirtualMemoryStat) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*VirtualMemoryStat) ProtoMessage() {}
+
+func (x *VirtualMemoryStat) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use VirtualMemoryStat.ProtoReflect.Descriptor instead.
+func (*VirtualMemoryStat) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *VirtualMemoryStat) GetTotal() uint64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+func (x *VirtualMemoryStat) GetAvailable() uint64 {
+	if x != nil {
+		return x.Available
+	}
+	return 0
+}
+
+func (x *VirtualMemoryStat) GetUsed() uint64 {
+	if x != nil {
+		return x.Used
+	}
+	return 0
+}
+
+func (x *VirtualMemoryStat) GetUsedPercent() float64 {
+	if x != nil {
+		return x.UsedPercent
+	}
+	return 0
+}
+
+func (x *VirtualMemoryStat) GetFree() uint64 {
+	if x != nil {
+		return x.Free
+	}
+	return 0
+}
+
+type DiskUsageStat struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	Path              string                 `protobuf:"bytes,1,opt,name=path,proto3" json:"path,omitempty"`
+	Fstype            string                 `protobuf:"bytes,2,opt,name=fstype,proto3" json:"fstype,omitempty"`
+	Total             uint64                 `protobuf:"varint,3,opt,name=total,proto3" json:"total,omitempty"`
+	Free              uint64                 `protobuf:"varint,4,opt,name=free,proto3" json:"free,omitempty"`
+	Used              uint64                 `protobuf:"varint,5,opt,name=used,proto3" json:"used,omitempty"`
+	UsedPercent       float64                `protobuf:"fixed64,6,opt,name=used_percent,json=usedPercent,proto3" json:"used_percent,omitempty"`
+	InodesTotal       uint64                 `protobuf:"varint,7,opt,name=inodes_total,json=inodesTotal,proto3" json:"inodes_total,omitempty"`
+	InodesUsed        uint64                 `protobuf:"varint,8,opt,name=inodes_used,json=inodesUsed,proto3" json:"inodes_used,omitempty"`
+	InodesFree        uint64                 `protobuf:"varint,9,opt,name=inodes_free,json=inodesFree,proto3" json:"inodes_free,omitempty"`
+	InodesUsedPercent float64                `protobuf:"fixed64,10,opt,name=inodes_used_percent,json=inodesUsedPercent,proto3" json:"inodes_used_percent,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *DiskUsageStat) Reset() {
+	*x = DiskUsageStat{}
+	mi := &file_types_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DiskUsageStat) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DiskUsageStat) ProtoMessage() {}
+
+func (x *DiskUsageStat) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DiskUsageStat.ProtoReflect.Descriptor instead.
+func (*DiskUsageStat) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *DiskUsageStat) GetPath() string {
+	if x != nil {
+		return x.Path
+	}
+	return ""
+}
+
+func (x *DiskUsageStat) GetFstype() string {
+	if x != nil {
+		return x.Fstype
+	}
+	return ""
+}
+
+func (x *DiskUsageStat) GetTotal() uint64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+func (x *DiskUsageStat) GetFree() uint64 {
+	if x != nil {
+		return x.Free
+	}
+	return 0
+}
+
+func (x *DiskUsageStat) GetUsed() uint64 {
+	if x != nil {
+		return x.Used
+	}
+	return 0
+}
+
+func (x *DiskUsageStat) GetUsedPercent() float64 {
+	if x != nil {
+		return x.UsedPercent
+	}
+	return 0
+}
+
+func (x *DiskUsageStat) GetInodesTotal() uint64 {
+	if x != nil {
+		return x.InodesTotal
+	}
+	return 0
+}
+
+func (x *DiskUsageStat) GetInodesUsed() uint64 {
+	if x != nil {
+		return x.InodesUsed
+	}
+	return 0
+}
+
+func (x *DiskUsageStat) GetInodesFree() uint64 {
+	if x != nil {
+		return x.InodesFree
+	}
+	return 0
+}
+
+func (x *DiskUsageStat) GetInodesUsedPercent() float64 {
+	if x != nil {
+		return x.InodesUsedPercent
+	}
+	return 0
+}
+
+type Battery struct {
+	state               protoimpl.MessageState `protogen:"open.v1"`
+	CurrentCapacity     float64                `protobuf:"fixed64,1,opt,name=current_capacity,json=currentCapacity,proto3" json:"current_capacity,omitempty"`
+	FullChargedCapacity float64                `protobuf:"fixed64,2,opt,name=full_charged_capacity,json=fullChargedCapacity,proto3" json:"full_charged_capacity,omitempty"`
+	State               string                 `protobuf:"bytes,3,opt,name=state,proto3" json:"state,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
+}
+
+func (x *Battery) Reset() {
+	*x = Battery{}
+	mi := &file_types_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Battery) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Battery) ProtoMessage() {}
+
+func (x *Battery) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Battery.ProtoReflect.Descriptor instead.
+func (*Battery) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *Battery) GetCurrentCapacity() float64 {
+	if x != nil {
+		return x.CurrentCapacity
+	}
+	return 0
+}
+
+func (x *Battery) GetFullChargedCapacity() float64 {
+	if x != nil {
+		return x.FullChargedCapacity
+	}
+	return 0
+}
+
+func (x *Battery) GetState() string {
+	if x != nil {
+		return x.State
+	}
+	return ""
+}
+
+type SysInfo struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Host          *HostInfoStat          `protobuf:"bytes,1,opt,name=host,proto3" json:"host,omitempty"`
+	Cpu           []*CPUInfoStat         `protobuf:"bytes,2,rep,name=cpu,proto3" json:"cpu,omitempty"`
+	CpuUsage      []float64              `protobuf:"fixed64,3,rep,packed,name=cpu_usage,json=cpuUsage,proto3" json:"cpu_usage,omitempty"`
+	Memory        *VirtualMemoryStat     `protobuf:"bytes,4,opt,name=memory,proto3" json:"memory,omitempty"`
+	Disk          *DiskUsageStat         `protobuf:"bytes,5,opt,name=disk,proto3" json:"disk,omitempty"`
+	Battery       []*Battery             `protobuf:"bytes,6,rep,name=battery,proto3" json:"battery,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SysInfo) Reset() {
+	*x = SysInfo{}
+	mi := &file_types_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SysInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SysInfo) ProtoMessage() {}
+
+func (x *SysInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SysInfo.ProtoReflect.Descriptor instead.
+func (*SysInfo) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *SysInfo) GetHost() *HostInfoStat {
+	if x != nil {
+		return x.Host
+	}
+	return nil
+}
+
+func (x *SysInfo) GetCpu() []*CPUInfoStat {
+	if x != nil {
+		return x.Cpu
+	}
+	return nil
+}
+
+func (x *SysInfo) GetCpuUsage() []float64 {
+	if x != nil {
+		return x.CpuUsage
+	}
+	return nil
+}
+
+func (x *SysInfo) GetMemory() *VirtualMemoryStat {
+	if x != nil {
+		return x.Memory
+	}
+	return nil
+}
+
+func (x *SysInfo) GetDisk() *DiskUsageStat {
+	if x != nil {
+		return x.Disk
+	}
+	return nil
+}
+
+func (x *SysInfo) GetBattery() []*Battery {
+	if x != nil {
+		return x.Battery
+	}
+	return nil
+}
+
 var File_types_proto protoreflect.FileDescriptor
 
 const file_types_proto_rawDesc = "" +
@@ -297,7 +905,71 @@ const file_types_proto_rawDesc = "" +
 	"\x05color\x18\x04 \x01(\v2\x11.pbuf.DeviceColorR\x05color\x12)\n" +
 	"\bservices\x18\x05 \x03(\v2\r.pbuf.ServiceR\bservices\x12\x0e\n" +
 	"\x02ip\x18\x06 \x01(\tR\x02ip\x12\x12\n" +
-	"\x04port\x18\a \x01(\rR\x04port*6\n" +
+	"\x04port\x18\a \x01(\rR\x04port\"\xbc\x03\n" +
+	"\fHostInfoStat\x12\x1a\n" +
+	"\bhostname\x18\x01 \x01(\tR\bhostname\x12\x16\n" +
+	"\x06uptime\x18\x02 \x01(\x04R\x06uptime\x12\x1b\n" +
+	"\tboot_time\x18\x03 \x01(\x04R\bbootTime\x12\x14\n" +
+	"\x05procs\x18\x04 \x01(\x04R\x05procs\x12\x0e\n" +
+	"\x02os\x18\x05 \x01(\tR\x02os\x12\x1a\n" +
+	"\bplatform\x18\x06 \x01(\tR\bplatform\x12'\n" +
+	"\x0fplatform_family\x18\a \x01(\tR\x0eplatformFamily\x12)\n" +
+	"\x10platform_version\x18\b \x01(\tR\x0fplatformVersion\x12%\n" +
+	"\x0ekernel_version\x18\t \x01(\tR\rkernelVersion\x12\x1f\n" +
+	"\vkernel_arch\x18\n" +
+	" \x01(\tR\n" +
+	"kernelArch\x123\n" +
+	"\x15virtualization_system\x18\v \x01(\tR\x14virtualizationSystem\x12/\n" +
+	"\x13virtualization_role\x18\f \x01(\tR\x12virtualizationRole\x12\x17\n" +
+	"\ahost_id\x18\r \x01(\tR\x06hostId\"\xbc\x02\n" +
+	"\vCPUInfoStat\x12\x10\n" +
+	"\x03cpu\x18\x01 \x01(\x05R\x03cpu\x12\x1b\n" +
+	"\tvendor_id\x18\x02 \x01(\tR\bvendorId\x12\x16\n" +
+	"\x06family\x18\x03 \x01(\tR\x06family\x12\x14\n" +
+	"\x05model\x18\x04 \x01(\tR\x05model\x12\x1a\n" +
+	"\bstepping\x18\x05 \x01(\x05R\bstepping\x12\x1f\n" +
+	"\vphysical_id\x18\x06 \x01(\tR\n" +
+	"physicalId\x12\x17\n" +
+	"\acore_id\x18\a \x01(\tR\x06coreId\x12\x14\n" +
+	"\x05cores\x18\b \x01(\x05R\x05cores\x12\x1d\n" +
+	"\n" +
+	"model_name\x18\t \x01(\tR\tmodelName\x12\x10\n" +
+	"\x03mhz\x18\n" +
+	" \x01(\x01R\x03mhz\x12\x1d\n" +
+	"\n" +
+	"cache_size\x18\v \x01(\x03R\tcacheSize\x12\x14\n" +
+	"\x05flags\x18\f \x03(\tR\x05flags\"\x92\x01\n" +
+	"\x11VirtualMemoryStat\x12\x14\n" +
+	"\x05total\x18\x01 \x01(\x04R\x05total\x12\x1c\n" +
+	"\tavailable\x18\x02 \x01(\x04R\tavailable\x12\x12\n" +
+	"\x04used\x18\x03 \x01(\x04R\x04used\x12!\n" +
+	"\fused_percent\x18\x04 \x01(\x01R\vusedPercent\x12\x12\n" +
+	"\x04free\x18\x05 \x01(\x04R\x04free\"\xb1\x02\n" +
+	"\rDiskUsageStat\x12\x12\n" +
+	"\x04path\x18\x01 \x01(\tR\x04path\x12\x16\n" +
+	"\x06fstype\x18\x02 \x01(\tR\x06fstype\x12\x14\n" +
+	"\x05total\x18\x03 \x01(\x04R\x05total\x12\x12\n" +
+	"\x04free\x18\x04 \x01(\x04R\x04free\x12\x12\n" +
+	"\x04used\x18\x05 \x01(\x04R\x04used\x12!\n" +
+	"\fused_percent\x18\x06 \x01(\x01R\vusedPercent\x12!\n" +
+	"\finodes_total\x18\a \x01(\x04R\vinodesTotal\x12\x1f\n" +
+	"\vinodes_used\x18\b \x01(\x04R\n" +
+	"inodesUsed\x12\x1f\n" +
+	"\vinodes_free\x18\t \x01(\x04R\n" +
+	"inodesFree\x12.\n" +
+	"\x13inodes_used_percent\x18\n" +
+	" \x01(\x01R\x11inodesUsedPercent\"~\n" +
+	"\aBattery\x12)\n" +
+	"\x10current_capacity\x18\x01 \x01(\x01R\x0fcurrentCapacity\x122\n" +
+	"\x15full_charged_capacity\x18\x02 \x01(\x01R\x13fullChargedCapacity\x12\x14\n" +
+	"\x05state\x18\x03 \x01(\tR\x05state\"\xf6\x01\n" +
+	"\aSysInfo\x12&\n" +
+	"\x04host\x18\x01 \x01(\v2\x12.pbuf.HostInfoStatR\x04host\x12#\n" +
+	"\x03cpu\x18\x02 \x03(\v2\x11.pbuf.CPUInfoStatR\x03cpu\x12\x1b\n" +
+	"\tcpu_usage\x18\x03 \x03(\x01R\bcpuUsage\x12/\n" +
+	"\x06memory\x18\x04 \x01(\v2\x17.pbuf.VirtualMemoryStatR\x06memory\x12'\n" +
+	"\x04disk\x18\x05 \x01(\v2\x13.pbuf.DiskUsageStatR\x04disk\x12'\n" +
+	"\abattery\x18\x06 \x03(\v2\r.pbuf.BatteryR\abattery*6\n" +
 	"\n" +
 	"DeviceType\x12\v\n" +
 	"\aDESKTOP\x10\x00\x12\n" +
@@ -319,22 +991,33 @@ func file_types_proto_rawDescGZIP() []byte {
 }
 
 var file_types_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_types_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_types_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_types_proto_goTypes = []any{
-	(DeviceType)(0),     // 0: pbuf.DeviceType
-	(*Service)(nil),     // 1: pbuf.Service
-	(*DeviceColor)(nil), // 2: pbuf.DeviceColor
-	(*DeviceInfo)(nil),  // 3: pbuf.DeviceInfo
+	(DeviceType)(0),           // 0: pbuf.DeviceType
+	(*Service)(nil),           // 1: pbuf.Service
+	(*DeviceColor)(nil),       // 2: pbuf.DeviceColor
+	(*DeviceInfo)(nil),        // 3: pbuf.DeviceInfo
+	(*HostInfoStat)(nil),      // 4: pbuf.HostInfoStat
+	(*CPUInfoStat)(nil),       // 5: pbuf.CPUInfoStat
+	(*VirtualMemoryStat)(nil), // 6: pbuf.VirtualMemoryStat
+	(*DiskUsageStat)(nil),     // 7: pbuf.DiskUsageStat
+	(*Battery)(nil),           // 8: pbuf.Battery
+	(*SysInfo)(nil),           // 9: pbuf.SysInfo
 }
 var file_types_proto_depIdxs = []int32{
 	0, // 0: pbuf.DeviceInfo.type:type_name -> pbuf.DeviceType
 	2, // 1: pbuf.DeviceInfo.color:type_name -> pbuf.DeviceColor
 	1, // 2: pbuf.DeviceInfo.services:type_name -> pbuf.Service
-	3, // [3:3] is the sub-list for method output_type
-	3, // [3:3] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	4, // 3: pbuf.SysInfo.host:type_name -> pbuf.HostInfoStat
+	5, // 4: pbuf.SysInfo.cpu:type_name -> pbuf.CPUInfoStat
+	6, // 5: pbuf.SysInfo.memory:type_name -> pbuf.VirtualMemoryStat
+	7, // 6: pbuf.SysInfo.disk:type_name -> pbuf.DiskUsageStat
+	8, // 7: pbuf.SysInfo.battery:type_name -> pbuf.Battery
+	8, // [8:8] is the sub-list for method output_type
+	8, // [8:8] is the sub-list for method input_type
+	8, // [8:8] is the sub-list for extension type_name
+	8, // [8:8] is the sub-list for extension extendee
+	0, // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_types_proto_init() }
@@ -348,7 +1031,7 @@ func file_types_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_types_proto_rawDesc), len(file_types_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   3,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

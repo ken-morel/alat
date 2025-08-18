@@ -1,9 +1,12 @@
 <script lang="ts">
   import Color from "$lib/color";
-  import { device } from "$lib/wailsjs/go/models";
-  import { ICONS } from "$lib";
+  import { device, service } from "$lib/wailsjs/go/models";
+  import { ICONS, NAMES } from "$lib";
 
-  export let deviceInfo: device.DeviceInfo;
+  let {
+    services = undefined,
+    deviceInfo,
+  }: { deviceInfo: device.DeviceInfo; services?: service.Service[] } = $props();
   let color = Color.fromGO(deviceInfo.Color);
   // name, color, addressname, address, type
 </script>
@@ -26,6 +29,17 @@
       {deviceInfo.Address.Phrase}
     </code>
   </div>
+  {#if services}
+    <div class="services">
+      {#each services as service}
+        <span
+          style:color={service.Enabled ? "lightgreen" : "red"}
+          style:display="block"
+          title={service.Name}>{service.Name}</span
+        >
+      {/each}
+    </div>
+  {/if}
 </div>
 
 <style lang="sass">
@@ -62,5 +76,10 @@ div.device-tile-container
       font-size: small
       background-color: #8888
       padding: 2px 4px
+  div.services
+    border-left: $msep
+    padding: 5px 8px
+    color: theme.$text-primary
+    background-color: theme.$tertiary-d4
 
 </style>
