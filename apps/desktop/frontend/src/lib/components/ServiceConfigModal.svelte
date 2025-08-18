@@ -3,12 +3,7 @@
   import { GetServices, RequestPair } from "$lib/wailsjs/go/app/App";
   import { service } from "$lib/wailsjs/go/models";
   import { onMount } from "svelte";
-
-  const SERVICES: {
-    [key: string]: string;
-  } = {
-    rcfile: "Receive files",
-  };
+  import { SERVICES } from "$lib";
 
   let dialog: HTMLDialogElement;
   let services: service.Service[] = $state([]);

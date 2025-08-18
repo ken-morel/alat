@@ -9,11 +9,12 @@
   };
 
   let { cfg }: { cfg: Writable<rcfile.ServiceConfig> } = $props();
+  let start = get(cfg);
 
   let unit: "MB" | "KB" | "GB" = $state("KB");
-  let enabled: boolean = $state(true);
-  let maxSize: number = $state(0);
-  let destination: string = $state("");
+  let enabled: boolean = $state(start.Enabled);
+  let maxSize: number = $state(start.FileMaxSize / 1024);
+  let destination: string = $state(start.Destination);
   function choosedir() {
     AskDirectory().then((dirname) => (destination = dirname));
   }

@@ -44,6 +44,7 @@ func (app *App) startup(ctx context.Context) {
 		if config.Ready {
 			config.SetupDevice()
 			app.setupServer()
+			app.SetupServices()
 			server.Start()
 		}
 	}
@@ -87,6 +88,8 @@ func (app *App) SaveConfig(cfg config.Config) error {
 	fmt.Println("Saving config", cfg)
 	err := config.SaveConfig(&cfg)
 	if err == nil {
+		config.SetupDevice()
+		app.SetupServices()
 		app.setupServer()
 		if !server.Running {
 			server.Start()
