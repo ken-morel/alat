@@ -1,2 +1,11 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<script lang="ts">
+  import { goto } from "$app/navigation";
+  import { WasSetup } from "$lib/wailsjs/go/app/App";
+
+  WasSetup().then((setup) => {
+    if (setup) goto("/dashboard");
+    else goto("/setup");
+  });
+</script>
+
+<p class="w3-padding-64 w3-center w3-xxlarge">Redirecting you...</p>

@@ -1,19 +1,34 @@
 syntax = "proto3";
 
-package types;
+package pbuf;
 
-option go_package = "alat/pkg/core/proto/types";
+option go_package = "alat/pkg/core/pbuf";
 
-// Represents a device discovered on the network.
-message Device {
-  string id = 1;
-  string name = 2;
-  enum DeviceType {
-    DESKTOP = 0;
-    MOBILE = 1;
-    TV = 2;
-    WEB = 3;
-  }
-  DeviceType type = 3;
-  string ip_address = 4;
+message Service {
+  string name = 1;
+  bool enabled = 2;
 }
+
+message DeviceColor {
+  uint32 r = 1;
+  uint32 g = 2;
+  uint32 b = 3;
+}
+enum DeviceType {
+  DESKTOP = 0;
+  MOBILE = 1;
+  TV = 2;
+  WEB = 3;
+}
+message DeviceInfo {
+  string code = 1;
+  string name = 2;
+
+  DeviceType type = 3;
+  DeviceColor color = 4;
+  repeated Service services = 5;
+
+  string ip = 6;
+  uint32 port = 7;
+}
+

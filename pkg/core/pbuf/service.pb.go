@@ -4,10 +4,9 @@
 // 	protoc        v3.21.12
 // source: service.proto
 
-package services
+package pbuf
 
 import (
-	types "alat/pkg/core/proto/types"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -22,6 +21,134 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type PairRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	Device        *DeviceInfo            `protobuf:"bytes,2,opt,name=device,proto3" json:"device,omitempty"`
+	Services      []*Service             `protobuf:"bytes,3,rep,name=services,proto3" json:"services,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PairRequest) Reset() {
+	*x = PairRequest{}
+	mi := &file_service_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PairRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PairRequest) ProtoMessage() {}
+
+func (x *PairRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_service_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PairRequest.ProtoReflect.Descriptor instead.
+func (*PairRequest) Descriptor() ([]byte, []int) {
+	return file_service_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *PairRequest) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
+func (x *PairRequest) GetDevice() *DeviceInfo {
+	if x != nil {
+		return x.Device
+	}
+	return nil
+}
+
+func (x *PairRequest) GetServices() []*Service {
+	if x != nil {
+		return x.Services
+	}
+	return nil
+}
+
+type PairResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	Device        *DeviceInfo            `protobuf:"bytes,2,opt,name=device,proto3" json:"device,omitempty"`
+	Accepted      bool                   `protobuf:"varint,3,opt,name=accepted,proto3" json:"accepted,omitempty"`
+	Services      []*Service             `protobuf:"bytes,4,rep,name=services,proto3" json:"services,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PairResponse) Reset() {
+	*x = PairResponse{}
+	mi := &file_service_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PairResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PairResponse) ProtoMessage() {}
+
+func (x *PairResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_service_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PairResponse.ProtoReflect.Descriptor instead.
+func (*PairResponse) Descriptor() ([]byte, []int) {
+	return file_service_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *PairResponse) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
+func (x *PairResponse) GetDevice() *DeviceInfo {
+	if x != nil {
+		return x.Device
+	}
+	return nil
+}
+
+func (x *PairResponse) GetAccepted() bool {
+	if x != nil {
+		return x.Accepted
+	}
+	return false
+}
+
+func (x *PairResponse) GetServices() []*Service {
+	if x != nil {
+		return x.Services
+	}
+	return nil
+}
+
 // A message representing no parameters.
 type Empty struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -31,7 +158,7 @@ type Empty struct {
 
 func (x *Empty) Reset() {
 	*x = Empty{}
-	mi := &file_service_proto_msgTypes[0]
+	mi := &file_service_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -43,7 +170,7 @@ func (x *Empty) String() string {
 func (*Empty) ProtoMessage() {}
 
 func (x *Empty) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[0]
+	mi := &file_service_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -56,20 +183,20 @@ func (x *Empty) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Empty.ProtoReflect.Descriptor instead.
 func (*Empty) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{0}
+	return file_service_proto_rawDescGZIP(), []int{2}
 }
 
 // A list of devices.
 type DeviceList struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Devices       []*types.Device        `protobuf:"bytes,1,rep,name=devices,proto3" json:"devices,omitempty"`
+	Devices       []*DeviceInfo          `protobuf:"bytes,1,rep,name=devices,proto3" json:"devices,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *DeviceList) Reset() {
 	*x = DeviceList{}
-	mi := &file_service_proto_msgTypes[1]
+	mi := &file_service_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -81,7 +208,7 @@ func (x *DeviceList) String() string {
 func (*DeviceList) ProtoMessage() {}
 
 func (x *DeviceList) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[1]
+	mi := &file_service_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -94,10 +221,10 @@ func (x *DeviceList) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeviceList.ProtoReflect.Descriptor instead.
 func (*DeviceList) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{1}
+	return file_service_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *DeviceList) GetDevices() []*types.Device {
+func (x *DeviceList) GetDevices() []*DeviceInfo {
 	if x != nil {
 		return x.Devices
 	}
@@ -108,13 +235,24 @@ var File_service_proto protoreflect.FileDescriptor
 
 const file_service_proto_rawDesc = "" +
 	"\n" +
-	"\rservice.proto\x12\bservices\x1a\vtypes.proto\"\a\n" +
-	"\x05Empty\"5\n" +
+	"\rservice.proto\x12\x04pbuf\x1a\vtypes.proto\"x\n" +
+	"\vPairRequest\x12\x14\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\x12(\n" +
+	"\x06device\x18\x02 \x01(\v2\x10.pbuf.DeviceInfoR\x06device\x12)\n" +
+	"\bservices\x18\x03 \x03(\v2\r.pbuf.ServiceR\bservices\"\x95\x01\n" +
+	"\fPairResponse\x12\x14\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\x12(\n" +
+	"\x06device\x18\x02 \x01(\v2\x10.pbuf.DeviceInfoR\x06device\x12\x1a\n" +
+	"\baccepted\x18\x03 \x01(\bR\baccepted\x12)\n" +
+	"\bservices\x18\x04 \x03(\v2\r.pbuf.ServiceR\bservices\"\a\n" +
+	"\x05Empty\"8\n" +
 	"\n" +
-	"DeviceList\x12'\n" +
-	"\adevices\x18\x01 \x03(\v2\r.types.DeviceR\adevices2N\n" +
-	"\rPeerDiscovery\x12=\n" +
-	"\x14GetDiscoveredDevices\x12\x0f.services.Empty\x1a\x14.services.DeviceListB\x1eZ\x1calat/pkg/core/proto/servicesb\x06proto3"
+	"DeviceList\x12*\n" +
+	"\adevices\x18\x01 \x03(\v2\x10.pbuf.DeviceInfoR\adevices2?\n" +
+	"\aPairing\x124\n" +
+	"\vRequestPair\x12\x11.pbuf.PairRequest\x1a\x12.pbuf.PairResponse2F\n" +
+	"\rPeerDiscovery\x125\n" +
+	"\x14GetDiscoveredDevices\x12\v.pbuf.Empty\x1a\x10.pbuf.DeviceListB\x14Z\x12alat/pkg/core/pbufb\x06proto3"
 
 var (
 	file_service_proto_rawDescOnce sync.Once
@@ -128,21 +266,30 @@ func file_service_proto_rawDescGZIP() []byte {
 	return file_service_proto_rawDescData
 }
 
-var file_service_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_service_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_service_proto_goTypes = []any{
-	(*Empty)(nil),        // 0: services.Empty
-	(*DeviceList)(nil),   // 1: services.DeviceList
-	(*types.Device)(nil), // 2: types.Device
+	(*PairRequest)(nil),  // 0: pbuf.PairRequest
+	(*PairResponse)(nil), // 1: pbuf.PairResponse
+	(*Empty)(nil),        // 2: pbuf.Empty
+	(*DeviceList)(nil),   // 3: pbuf.DeviceList
+	(*DeviceInfo)(nil),   // 4: pbuf.DeviceInfo
+	(*Service)(nil),      // 5: pbuf.Service
 }
 var file_service_proto_depIdxs = []int32{
-	2, // 0: services.DeviceList.devices:type_name -> types.Device
-	0, // 1: services.PeerDiscovery.GetDiscoveredDevices:input_type -> services.Empty
-	1, // 2: services.PeerDiscovery.GetDiscoveredDevices:output_type -> services.DeviceList
-	2, // [2:3] is the sub-list for method output_type
-	1, // [1:2] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	4, // 0: pbuf.PairRequest.device:type_name -> pbuf.DeviceInfo
+	5, // 1: pbuf.PairRequest.services:type_name -> pbuf.Service
+	4, // 2: pbuf.PairResponse.device:type_name -> pbuf.DeviceInfo
+	5, // 3: pbuf.PairResponse.services:type_name -> pbuf.Service
+	4, // 4: pbuf.DeviceList.devices:type_name -> pbuf.DeviceInfo
+	0, // 5: pbuf.Pairing.RequestPair:input_type -> pbuf.PairRequest
+	2, // 6: pbuf.PeerDiscovery.GetDiscoveredDevices:input_type -> pbuf.Empty
+	1, // 7: pbuf.Pairing.RequestPair:output_type -> pbuf.PairResponse
+	3, // 8: pbuf.PeerDiscovery.GetDiscoveredDevices:output_type -> pbuf.DeviceList
+	7, // [7:9] is the sub-list for method output_type
+	5, // [5:7] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_service_proto_init() }
@@ -150,15 +297,16 @@ func file_service_proto_init() {
 	if File_service_proto != nil {
 		return
 	}
+	file_types_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_service_proto_rawDesc), len(file_service_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   4,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   2,
 		},
 		GoTypes:           file_service_proto_goTypes,
 		DependencyIndexes: file_service_proto_depIdxs,

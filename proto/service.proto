@@ -1,10 +1,29 @@
 syntax = "proto3";
 
-package services;
+package pbuf;
 
 import "types.proto";
 
-option go_package = "alat/pkg/core/proto/services";
+option go_package = "alat/pkg/core/pbuf";
+
+
+// Service for handling pairing requests.
+service Pairing {
+  rpc RequestPair(PairRequest) returns (PairResponse);
+}
+
+
+message PairRequest {
+  string token = 1;
+  DeviceInfo device = 2;
+  repeated Service services = 3;
+}
+message PairResponse {
+  string token = 1;
+  DeviceInfo device = 2;
+  bool accepted = 3;
+  repeated Service services = 4;
+}
 
 // The main service for discovering and managing peers.
 service PeerDiscovery {
@@ -16,4 +35,4 @@ service PeerDiscovery {
 message Empty {}
 
 // A list of devices.
-message DeviceList { repeated types.Device devices = 1; }
+message DeviceList { repeated pbuf.DeviceInfo devices = 1; }
