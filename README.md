@@ -3,7 +3,7 @@
   lat
 </h1>
 
-Alatis a set of services and applications aimed at prociding a seamless interface xommon to all devices to connect them together. It's work is greatly inspired from [kde xonnect], (though i don't think thet have any relationship).
+Alat is a set of services and applications aimed at prociding a seamless interface common to all devices to connect them together. It's work is greatly inspired from [kde konnect], (though i don't think thet have any relationship).
 
 For it to work, alat exposes features to paired decices through `services`, which you can configure and control.
 
@@ -16,6 +16,6 @@ A more detailed explanation of how the project works internally can be found in 
 
 ## Building
 
-The app should be pretty easy to build, make sure you have go programming language installed, use it then to install wails cli(chech https://wails.io), then just build as a normal wails application or using the manage.fish's. Norice the dev commands are targeted for my device running ubuntu 25.04 on amd64.
+The app should be pretty easy to build, make sure you have go programming language installed, use it then to install wails cli(check <https://wails.io>), then just build as a normal wails application or using the manage.fish's. Norice the dev commands are targeted for my device running ubuntu 25.04 on amd64.
 
 Thanks!

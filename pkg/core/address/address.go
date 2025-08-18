@@ -14,16 +14,12 @@ type Address struct {
 
 const AlatPort = 60000
 
-var colors = []string{
-	"red", "green", "blue", "orange", "indigo",
-	"purple", "yellow", "magenta", "cyan",
-}
-
 var adjectives = []string{
 	"happy", "silly", "bouncy", "quick", "quiet", "sunny", "windy", "jolly",
 	"breezy", "clever", "daring", "fancy", "gentle", "lucky", "proud", "witty",
 	"brave", "calm", "eager", "fiery", "grand", "humble", "lively", "merry",
 	"noble", "placid", "regal", "sharp", "trusty", "vivid", "zesty", "amber",
+	"red", "green", "blue", "orange", "indigo", "purple", "yellow", "magenta",
 }
 
 var nouns = []string{
