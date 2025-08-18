@@ -3,6 +3,9 @@
   lat
 </h1>
 
+[![wakatime](https://wakatime.com/badge/github/ken-morel/alat.svg)](https://wakatime.com/badge/github/ken-morel/alat)
+
+
 Alatis a set of services and applications aimed at prociding a seamless interface xommon to all devices to connect them together. It's work is greatly inspired from [kde xonnect], (though i don't think thet have any relationship).
 
 For it to work, alat exposes features to paired decices through `services`, which you can configure and control.
