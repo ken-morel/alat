@@ -36,15 +36,18 @@ func AddPairedDevice(newDevice pair.Pair) error {
 		return err
 	}
 
+	alreadyPaired := false
 	for idx, d := range devices {
 		if d.DeviceInfo.Code == newDevice.DeviceInfo.Code {
 			fmt.Printf("Device %s is already paired.\n", newDevice.DeviceInfo.Name)
 			devices[idx] = newDevice
-			return nil
+			alreadyPaired = true
 		}
 	}
 
-	devices = append(devices, newDevice)
+	if !alreadyPaired {
+		devices = append(devices, newDevice)
+	}
 
 	path := GetPairsConfigFile()
 	file, err := os.Create(path)

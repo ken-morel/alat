@@ -102,6 +102,7 @@ func InitConfig() error {
 }
 
 func Init() (err error) {
+	Ready = false
 	AlatConfigDir = GetConfigDir()
 	if err = os.MkdirAll(AlatConfigDir, 0750); err != nil {
 		return fmt.Errorf("could not create config directory: %w", err)
@@ -110,6 +111,7 @@ func Init() (err error) {
 	if err != nil {
 		return err
 	}
+	Ready = true
 	err = InitPair()
 	return err
 }

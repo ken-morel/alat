@@ -2,10 +2,11 @@
 
 Just listing services exposed, for reference
 
-- [ ] First batch
-  - [ ] `rcfile`
-  - [ ] `fsbrowse`
-  - [ ] `clipboard`
+- [x] `rcfile`
+- [x] `sysinfo`
+- [ ] `fsbrowse`
+- [ ] `clipboard`
+- [ ] `notification`
 
 ## Tod
 
@@ -34,3 +35,11 @@ Let the allowed device replace clipboard data.
 ## Ideas from friends
 
 - **Screen**: permit the user to access the other's screen, via screen shots, .... Casting.
+
+### sysinfo
+
+Access system information like battery, memory and cpu usages.
+
+### notification
+
+Permits device to send this device notifications.

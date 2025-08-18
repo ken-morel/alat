@@ -3,21 +3,15 @@
   import { page } from "$app/stores";
   import favicon from "$lib/assets/logo.svg";
   import "$lib/styles/app.sass";
-  import { IsSetupComplete, WasSetup } from "$lib/wailsjs/go/app/App";
+  import { IsSetupComplete } from "$lib/wailsjs/go/app/App";
   import { onMount } from "svelte";
   import { writable, type Writable } from "svelte/store";
 
   let { children } = $props();
 
   onMount(async () => {
-    const isSetup = await WasSetup();
     const ready = await IsSetupComplete();
-    if (
-      !isSetup &&
-      !ready &&
-      $page.url.pathname !== "/setup" &&
-      $page.url.pathname == "/"
-    ) {
+    if (!ready && $page.url.pathname !== "/setup") {
       await goto("/setup");
     }
   });
@@ -61,7 +55,7 @@
 </svelte:head>
 <header class="w3-bar w3-top">
   <a class="w3-button w3-bar-item" href="/">Home</a>
-  <a class="w3-button w3-bar-item" href="/setup">Setup</a>
+  <a class="w3-button w3-bar-item" href="/setup">Settings</a>
 
   {#if $downloadPercent}
     <span class="w3-bar-item w3-right w3-small w3-opacity">

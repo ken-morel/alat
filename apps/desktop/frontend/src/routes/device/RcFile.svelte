@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { selectedPairedDevice } from "$lib/state";
   import { GetAndSendFiles } from "$lib/wailsjs/go/app/App";
   import type { pair } from "$lib/wailsjs/go/models";
 

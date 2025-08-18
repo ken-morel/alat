@@ -37,5 +37,3 @@ export function SaveConfig(arg1:config.Config):Promise<void>;
 export function SearchDevices():Promise<Array<device.DeviceInfo>>;
 
 export function SetupServices():Promise<void>;
-
-export function WasSetup():Promise<boolean>;

@@ -5,8 +5,8 @@
   import { selectedPairedDevice } from "$lib/state";
   import { onMount } from "svelte";
   import RcFile from "./RcFile.svelte";
-  import SysInfo from "./SysInfo.svelte";
   import type { pair } from "$lib/wailsjs/go/models";
+  import BatteryInfo from "./BatteryInfo.svelte";
 
   function supports(name: string, device: pair.Pair | null): boolean {
     if (!device) return false;
@@ -35,6 +35,11 @@
         >{ICONS[device.DeviceInfo.Type]}</span
       >
       <span class="name">{device.DeviceInfo.Name}</span>
+      {#if supportsSysInfo}
+        <span class="battery">
+          <BatteryInfo {device} />
+        </span>
+      {/if}
     </div>
     <div>
       <ul>
@@ -55,9 +60,6 @@
   </section>
   <section class="service-container">
     <RcFile enabled={supportsRCfile} {device} />
-  </section>
-  <section class="service-container">
-    <SysInfo enabled={supportsSysInfo} {device} />
   </section>
 {:else}
   {#await goto("/")}
@@ -81,5 +83,12 @@ section.hero
 section.service-container
   border-top: 1px theme.$border-dark solid
   padding: 32px
+
+div.profile
+  display: flex
+
+span.battery 
+  border-left: 1px theme.$border-dark solid
+  margin-left: 10px
 
 </style>

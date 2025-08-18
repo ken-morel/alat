@@ -14,6 +14,7 @@ import (
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+	"github.com/wailsapp/wails/v2/pkg/options/linux"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
@@ -107,7 +108,7 @@ func (app *App) GenerateDeviceCode() string {
 
 func (app *App) Run() error {
 	return wails.Run(&options.App{
-		Title:  "desktop",
+		Title:  "Alat desktop",
 		Width:  800,
 		Height: 600,
 		AssetServer: &assetserver.Options{
@@ -120,6 +121,12 @@ func (app *App) Run() error {
 		SingleInstanceLock: &options.SingleInstanceLock{
 			UniqueId:               core.AppID,
 			OnSecondInstanceLaunch: app.onSecondInstanceLaunch,
+		},
+		MaxHeight:                600,
+		MaxWidth:                 800,
+		EnableDefaultContextMenu: true,
+		Linux: &linux.Options{
+			WindowIsTranslucent: true,
 		},
 
 		Bind: []any{

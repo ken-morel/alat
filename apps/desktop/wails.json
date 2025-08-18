@@ -1,8 +1,12 @@
 {
-  "$schema": "https://wails.io/schemas/config.v2.json",
+  "$schema": "./wails.schema.json",
   "info": {
-    "productName": "Alat",
-    "copyright": "Copyright 2025 Engon Ken Morel",
+    "companyName": "ken-morel",
+    "productVersion": "0.1.0",
+    "comments": "Link your devices, connect your workspace",
+    "fileAssociations": [],
+    "productName": "Alat desktop",
+    "copyright": "Copyright (c) 2025 Engon Ken Morel. All Rights Reserved.",
     "protocols": [
       {
         "scheme": "alat",
@@ -22,5 +26,9 @@
   "author": {
     "name": "Engon Ken Morel",
     "email": "engonken8@gmail.com"
-  }
+  },
+  "reloaddirs": "../../pkg",
+  "devServer": "localhost:34115",
+  "nsisType": "single",
+  "obfuscated": true
 }

@@ -13,7 +13,6 @@
 </script>
 
 <div class="dashboard-container">
-  <h2 class="welcome-header">Welcome! 👋</h2>
   <section class="connected-devices">
     <div class="content-wrapper">
       <h3 class="section-title">Connected devices</h3>

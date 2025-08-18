@@ -65,7 +65,3 @@ export function SearchDevices() {
 export function SetupServices() {
   return window['go']['app']['App']['SetupServices']();
 }
-
-export function WasSetup() {
-  return window['go']['app']['App']['WasSetup']();
-}
