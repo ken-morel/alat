@@ -26,6 +26,23 @@ The desktop application, built with Wails and Svelte, is the primary reference i
 -   **Client:** It includes client-side logic (`pkg/core/client`) to discover other devices, manage pairing, and consume services from paired devices.
 -   **Configuration:** It manages all device and service configurations, storing them in a local configuration directory (`~/.config/alat`).
 
+### Mobile App (`apps/mobile`)
+
+The mobile application is built with Flutter. It is currently under development and will implement the same client and server P2P functionality as the desktop app.
+
+-   **UI:** The app uses the `provider` package for state management and is set up for internationalization with support for English and French.
+-   **Theming:** It features a dark theme consistent with the desktop application.
+-   **Go Bridge:** A placeholder Go package (`pkg/mobile_bridge`) has been created to facilitate communication between the Dart frontend and the Go `alat` core via FFI.
+
 ### Headless Server (`apps/server`)
 
 This application is intended to run a headless `alat` node, likely for devices without a graphical interface. It is currently a placeholder and not the primary focus.
+
+## Development Scripts (`manage.fish`)
+
+The root `manage.fish` script is the main entry point for common development tasks. It can be used to orchestrate builds, generate code, and run the different applications.
+
+-   `./manage.fish proto`: Compiles protobuf files (`.proto`) into Go and Dart code.
+-   `./manage.fish desktop <command>`: Delegates to the desktop app's specific `manage.fish` script.
+-   `./manage.fish mobile <command>`: Delegates to the mobile app's specific `manage.fish` script. For example, `./manage.fish mobile dev` will run the Flutter app in development mode.
+-   `./manage.fish server <command>`: Delegates to the server app's `manage.fish` script.
