@@ -11,7 +11,7 @@
   function supports(name: string, device: pair.Pair | null): boolean {
     if (!device) return false;
     for (let service of device.Services) {
-      if (service.Name == name) return service.Enabled;
+      if (service.name == name) return service.enabled;
     }
     return false;
   }
@@ -31,10 +31,10 @@
     <div class="profile">
       <span
         class="logo"
-        style="color: {Color.fromGO(device.DeviceInfo.Color).toHexString()};"
-        >{ICONS[device.DeviceInfo.Type]}</span
+        style="color: {Color.fromGO(device.DeviceInfo.color).toHexString()};"
+        >{ICONS[device.DeviceInfo.type]}</span
       >
-      <span class="name">{device.DeviceInfo.Name}</span>
+      <span class="name">{device.DeviceInfo.name}</span>
       {#if supportsSysInfo}
         <span class="battery">
           <BatteryInfo {device} />
@@ -46,13 +46,13 @@
         <li>
           <span>Address: </span>
           <span>
-            <code>{device.DeviceInfo.Address.Phrase}</code>
+            <code>{device.DeviceInfo.address.phrase}</code>
           </span>
         </li>
         <li>
           <span>IP Address: </span>
           <span>
-            <code>{device.DeviceInfo.Address.IP}</code>
+            <code>{device.DeviceInfo.address.ip}</code>
           </span>
         </li>
       </ul>
