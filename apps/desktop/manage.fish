@@ -7,12 +7,17 @@ function build-windows
     wails build -v 2 -tags webkit2_41 -platform windows -nsis
 end
 
+function build
+    wails build -v 2 -tags webkit2_41
+end
+
 function help
     echo "Usage: ./manage.fish <command>"
     echo ""
     echo "Commands:"
     echo "  dev              - Start the development server."
     echo "  build-windows    - Builds windows binaries."
+    echo "  build    - Builds windows binaries."
     echo "  help             - Shows this help message."
 end
 
@@ -23,6 +28,8 @@ switch "$argv[1]"
         dev
     case build-windows
         build-windows
+    case build
+        build
     case ""
         echo "Error: No command specified."
         help

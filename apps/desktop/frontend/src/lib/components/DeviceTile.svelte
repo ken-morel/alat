@@ -7,7 +7,7 @@
     services = undefined,
     deviceInfo,
   }: { deviceInfo: device.DeviceInfo; services?: service.Service[] } = $props();
-  let color = Color.fromGO(deviceInfo.Color);
+  let color = Color.fromGO(deviceInfo.color);
   // name, color, addressname, address, type
 </script>
 
@@ -16,26 +16,26 @@
     <span
       class="image"
       style="background-color: {color.toHexString()};"
-      title={deviceInfo.Code}
+      title={deviceInfo.code}
     >
-      {ICONS[deviceInfo.Type]}
+      {ICONS[deviceInfo.type]}
     </span>
   </div>
   <div class="info">
-    <h5>{deviceInfo.Name}</h5>
+    <h5>{deviceInfo.name}</h5>
     <code
-      title={deviceInfo.Address.IP + ":" + deviceInfo.Address.Port.toString()}
+      title={deviceInfo.address.ip + ":" + deviceInfo.address.port.toString()}
     >
-      {deviceInfo.Address.Phrase}
+      {deviceInfo.address.phrase}
     </code>
   </div>
   {#if services}
     <div class="services">
       {#each services as service}
         <span
-          style:color={service.Enabled ? "lightgreen" : "red"}
+          style:color={service.enabled ? "lightgreen" : "red"}
           style:display="block"
-          title={service.Name}>{service.Name}</span
+          title={service.name}>{service.name}</span
         >
       {/each}
     </div>

@@ -30,5 +30,5 @@
   "reloaddirs": "../../pkg",
   "devServer": "localhost:34115",
   "nsisType": "single",
-  "obfuscated": true
+  "obfuscated": false
 }

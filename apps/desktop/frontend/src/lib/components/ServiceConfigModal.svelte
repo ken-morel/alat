@@ -55,7 +55,7 @@
     GetServices().then((appServices: service.Service[]) => {
       // Initialize services, ensuring 'Enabled' is a boolean
       services = appServices.map((s) => {
-        s.Enabled = s.Enabled || false;
+        s.enabled = s.enabled || false;
         return s;
       });
     });
@@ -71,15 +71,15 @@
 >
   {#if $selectedDeviceForPairing}
     <div class="modal-content">
-      <h3>Configure Services for {$selectedDeviceForPairing.Name}</h3>
+      <h3>Configure Services for {$selectedDeviceForPairing.name}</h3>
       <p>
-        Device Code: {$selectedDeviceForPairing.Code}<br />
-        Address: <code>{$selectedDeviceForPairing.Address.Phrase}</code>
+        Device Code: {$selectedDeviceForPairing.code}<br />
+        Address: <code>{$selectedDeviceForPairing.address.phrase}</code>
       </p>
       <ul>
         <h5>Supports</h5>
-        {#each $selectedDeviceForPairing.Services as othersService}
-          <li>{othersService.Name}</li>
+        {#each $selectedDeviceForPairing.services as othersService}
+          <li>{othersService.name}</li>
         {/each}
       </ul>
 
@@ -87,8 +87,8 @@
         <div class="form-group">
           {#each services as serviceItem}
             <label>
-              <input type="checkbox" bind:checked={serviceItem.Enabled} />
-              <span>{SERVICES[serviceItem.Name] || serviceItem.Name}</span>
+              <input type="checkbox" bind:checked={serviceItem.enabled} />
+              <span>{SERVICES[serviceItem.name] || serviceItem.name}</span>
             </label>
           {/each}
         </div>

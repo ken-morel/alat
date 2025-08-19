@@ -10,6 +10,7 @@ import (
 	"alat/pkg/core/service/sysinfo"
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"path"
 
@@ -130,12 +131,13 @@ func GetServices() []service.Service {
 }
 
 func SetupDevice() (err error) {
-	address, err := address.GetThisAddress()
+	addr, err := address.GetThisAddress()
 	if err != nil {
 		return
 	}
+	addr.IP = net.ParseIP("0.0.0.0")
 	device.ThisDeviceInfo = device.DeviceInfo{
-		Address:  address,
+		Address:  addr,
 		Name:     config.DeviceName,
 		Color:    config.DeviceColor,
 		Code:     config.DeviceCode,
