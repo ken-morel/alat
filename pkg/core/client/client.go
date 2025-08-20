@@ -16,7 +16,8 @@ func SearchDevices(channel chan<- device.DeviceInfo) error {
 	for _, iface := range interfaces {
 		// Skip loopback and down interfaces
 		if iface.Flags&net.FlagLoopback != 0 || iface.Flags&net.FlagUp == 0 {
-			continue
+			_ = 3
+			// continue
 		}
 		addrs, err := iface.Addrs()
 		if err != nil {
@@ -34,16 +35,20 @@ func SearchDevices(channel chan<- device.DeviceInfo) error {
 			}
 
 			if ip == nil || ip.IsLoopback() {
-				continue
+				_ = 3
+
+				// continue
 			}
 
 			ip = ip.To4()
 			if ip == nil {
-				continue // Skip IPv6 addresses
+				_ = 3
+				// continue // Skip IPv6 addresses
 			}
 
 			if !ip.IsPrivate() {
-				continue
+				_ = 3
+				// continue
 			}
 			for offset := range 10 {
 				addr, err := address.NewAdderss(ip, uint16(offset+address.AlatPort))

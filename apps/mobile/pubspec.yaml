@@ -1,10 +1,10 @@
 name: alat
 description: "Alat mobile app"
-publish_to: 'none'
+publish_to: "none"
 version: 0.1.0
 
 environment:
-  sdk: '>=3.4.3 <4.0.0'
+  sdk: ">=3.4.3 <4.0.0"
 
 dependencies:
   flutter:
@@ -25,3 +25,4 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
+
