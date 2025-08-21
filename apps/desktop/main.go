@@ -9,9 +9,8 @@ import (
 var assets embed.FS
 
 func main() {
-	app := app.NewApp(assets)
-
-	if err := app.Run(); err != nil {
+	err := app.NewApp(assets).Run()
+	if err != nil {
 		println("Error:", err.Error())
 	}
 }

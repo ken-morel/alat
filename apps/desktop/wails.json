@@ -1,34 +1,29 @@
 {
-  "$schema": "./wails.schema.json",
-  "info": {
-    "companyName": "ken-morel",
-    "productVersion": "0.1.0",
-    "comments": "Link your devices, connect your workspace",
-    "fileAssociations": [],
-    "productName": "Alat desktop",
-    "copyright": "Copyright (c) 2025 Engon Ken Morel. All Rights Reserved.",
-    "protocols": [
-      {
-        "scheme": "alat",
-        "description": "Alat device link",
-        "role": "Viewer"
-      }
-    ]
-  },
-  "name": "Alat desktop",
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "reloaddirs": "../../pkg/core",
+  "name": "desktop",
   "outputfilename": "alat-desktop",
   "frontend:install": "bun install",
   "frontend:build": "bun run build",
   "frontend:dev:watcher": "bun run dev",
   "frontend:dev:serverUrl": "http://localhost:5173",
-  "wailsjsdir": "./frontend/src/lib",
-  "frontend:dir": "frontend",
+  "nsisType": "single",
+  "info": {
+    "companyName": "Engon Ken Morel",
+    "productName": "Alat desktop",
+    "productVersion": "0.1.0",
+    "copyright": "Copyright (c) 2025 Engon Ken Morel. All Rights Reserved.",
+    "comments": "Alat desktop client",
+    "protocols": [
+      {
+        "scheme": "alat",
+        "description": "Alat device link or service path",
+        "role": "Viewer"
+      }
+    ]
+  },
   "author": {
     "name": "Engon Ken Morel",
     "email": "engonken8@gmail.com"
-  },
-  "reloaddirs": "../../pkg",
-  "devServer": "localhost:34115",
-  "nsisType": "single",
-  "obfuscated": false
+  }
 }

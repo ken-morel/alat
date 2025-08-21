@@ -1,3 +1,0 @@
-# alat
-
-Alat mobile app

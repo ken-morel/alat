@@ -41,7 +41,6 @@ function proto
     echo "Protobuf generation complete."
 end
 
-
 # Command dispatcher
 switch "$argv[1]"
     case proto
