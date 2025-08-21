@@ -6,14 +6,9 @@
 
 @import "@skeletonlabs/skeleton";
 @import "@skeletonlabs/skeleton/optional/presets";
-@import "@skeletonlabs/skeleton/themes/nosh";
+
+@import "./alat";
 
 @source '../node_modules/@skeletonlabs/skeleton-svelte/dist';
 
 @import "@fontsource/open-sans";
-
-[data-theme="nosh"] {
-  --heading-font-family: "Open Sans", sans-serif;
-  --base-font-family: "Open Sans", sans-serif;
-  --anchor-font-family: "inherit";
-}
