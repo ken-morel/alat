@@ -1,0 +1,1 @@
+A discoverer is owned by a [[Node]] And is to manage other nodes discovery. It creates a [[Discovery Server]] which permits other devices to discover it and [[Discoverer]] which discovers other devices.
