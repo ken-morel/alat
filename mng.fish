@@ -14,29 +14,10 @@ function help
 end
 
 function proto
-    echo "Installing protobuf generators..."
-    # Install the Go generator if not already installed
-    go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-    # Install the Dart generator if not already installed
-    dart pub global activate protoc_plugin
+    # go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 
-    # Add Go and Dart plugins to the PATH for this session
-    fish_add_path (go env GOPATH)/bin
-    fish_add_path $HOME/.pub-cache/bin
-
-    echo "Generating Go code..."
-    if not test -e pkg/core/pbuf
-        echo "Creating pkg/core/pbuf folder"
-        mkdir pkg/core/pbuf
-    end
-    protoc --proto_path=proto --go_out=pkg/core/pbuf --go_opt=paths=source_relative \
-        proto/types.proto proto/service.proto
-
-    echo "Generating Dart code..."
-    # Create the output directory if it doesn't exist
-    mkdir -p apps/mobile/lib/src/api/pbuf
-    protoc --proto_path=proto --dart_out=apps/mobile/lib/src/api/pbuf \
-        proto/types.proto proto/service.proto
+    protoc --proto_path=pkg/pbuf --go_out=pkg/pbuf --go_opt=paths=source_relative \
+        pkg/pbuf/*.proto
 
     echo "Protobuf generation complete."
 end

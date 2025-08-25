@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package pbuf;
+
+option go_package = "alat/pkg/pbuf";
+
+message DeviceInfo {
+  string id = 1;
+  string name = 2;
+  string type = 3;
+}
+
+message PairingSession {
+  DeviceInfo initiator = 1;
+  DeviceInfo responder = 2;
+  bytes token = 3;
+}
+
+message PairedDevice {
+  bytes certificate = 1;
+  bytes token = 2;
+}
+
+service Pairing {
+  rpc InitiatePairing(DeviceInfo) returns (PairingSession);
+  rpc FinalizePairing(PairingSession) returns (PairedDevice);
+}
