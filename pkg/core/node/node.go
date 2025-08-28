@@ -23,3 +23,5 @@ func (n *Node) SetDetails(details *device.Details) {
 	n.device = details
 	n.PairManager.SetInfo(details.GetInfo())
 }
+
+func NewNode()
