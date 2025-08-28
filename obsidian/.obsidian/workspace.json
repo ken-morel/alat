@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Peer Manager.md",
+                "file": "Node.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Peer Manager"
+              "title": "Node"
             }
           },
           {
@@ -349,14 +349,14 @@
   "active": "beb950d1bfed2499",
   "lastOpenFiles": [
     "Peer Storage.md",
+    "Node.md",
+    "Peer Manager.md",
     "Server.md",
     "Service Registery.md",
     "Service.md",
-    "Node.md",
     "Discovery Manager.md",
     "Device Certificate.md",
     "Paired Device.md",
-    "Peer Manager.md",
     "create a link.md"
   ]
 }

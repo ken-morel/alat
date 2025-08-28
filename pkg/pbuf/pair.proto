@@ -4,10 +4,22 @@ package pbuf;
 
 option go_package = "alat/pkg/pbuf";
 
+message Color {
+  uint32 r = 1;
+  uint32 g = 2;
+  uint32 b = 3;
+}
+enum DeviceType {
+  Mobile = 0;
+  Desktop = 1;
+  TV = 2;
+  Unknown = 3;
+};
 message DeviceInfo {
   string id = 1;
   string name = 2;
-  string type = 3;
+  DeviceType type = 3;
+  Color color = 4;
 }
 
 message PairingSession {
@@ -21,7 +33,15 @@ message PairedDevice {
   bytes token = 2;
 }
 
+message PairRequest {
+  string token = 1;
+  DeviceInfo info = 2;
+}
+message PairResponse {
+  string token = 1;
+  DeviceInfo info = 2;
+}
+
 service Pairing {
-  rpc InitiatePairing(DeviceInfo) returns (PairingSession);
-  rpc FinalizePairing(PairingSession) returns (PairedDevice);
+  rpc RequestPair(PairRequest) returns (PairResponse);
 }
