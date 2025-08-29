@@ -11,7 +11,7 @@ import (
 )
 
 type Node struct {
-	Storage     storage.NodeStorage
+	Storage     *storage.NodeStorage
 	PairManager *pair.PairManager
 	discovery   *discovery.Manager
 	device      *device.Details
@@ -19,9 +19,28 @@ type Node struct {
 	server      *transport.Server
 }
 
-func (n *Node) SetDetails(details *device.Details) {
-	n.device = details
-	n.PairManager.SetInfo(details.GetInfo())
+func NewNode(registry *service.Registry, store *storage.NodeStorage, details *device.Details) (*Node, error) {
+	mamager, err := pair.NewManager(store, details)
+	if err != nil {
+		return nil, err
+	}
+	server := transport.NewServer(registry, mamager)
+	discoveryManager, err := discovery.NewManager()
+	if err != nil {
+		return nil, err
+	}
+
+	return &Node{
+		server:      server,
+		device:      details,
+		services:    registry,
+		Storage:     store,
+		PairManager: mamager,
+		discovery:   discoveryManager,
+	}, nil
 }
 
-func NewNode()
+func (n *Node) SetDetails(details *device.Details) {
+	n.device = details
+	n.PairManager.SetDetails(details)
+}

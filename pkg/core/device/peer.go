@@ -24,10 +24,3 @@ type PairedDevice struct {
 	Certificate security.Certificate
 	Token       security.PairToken
 }
-
-func (d *PairedDevice) ToPBUF() *pbuf.PairedDevice {
-	return &pbuf.PairedDevice{
-		Certificate: d.Certificate[:],
-		Token:       d.Token[:],
-	}
-}

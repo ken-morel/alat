@@ -22,22 +22,22 @@ func (info *Info) ToPBUF() *pbuf.DeviceInfo {
 type DeviceType string
 
 const (
-	MobileDevice  DeviceType = "mobile"
-	DesktopDevice DeviceType = "desktop"
-	TVDevice      DeviceType = "tv"
-	UnknownDevice DeviceType = "unknown"
+	MobileDevice      DeviceType = "mobile"
+	DesktopDevice     DeviceType = "desktop"
+	TVDevice          DeviceType = "tv"
+	UnspecifiedDevice DeviceType = "unspecified"
 )
 
 func (t DeviceType) ToPBUF() pbuf.DeviceType {
 	switch t {
 	case MobileDevice:
-		return pbuf.DeviceType_Mobile
+		return pbuf.DeviceType_DEVICE_TYPE_MOBILE
 	case DesktopDevice:
-		return pbuf.DeviceType_Desktop
+		return pbuf.DeviceType_DEVICE_TYPE_DESKTOP
 	case TVDevice:
-		return pbuf.DeviceType_TV
+		return pbuf.DeviceType_DEVICE_TYPE_TV
 	default:
-		return pbuf.DeviceType_Unknown
+		return pbuf.DeviceType_DEVICE_TYPE_UNSPECIFIED
 	}
 }
 
@@ -49,14 +49,14 @@ func PbufToColor(pbufColor *pbuf.Color) *Color {
 
 func PbufToDType(pbType *pbuf.DeviceType) DeviceType {
 	switch pbType {
-	case pbuf.DeviceType_Desktop.Enum():
+	case pbuf.DeviceType_DEVICE_TYPE_DESKTOP.Enum():
 		return DesktopDevice
-	case pbuf.DeviceType_Mobile.Enum():
+	case pbuf.DeviceType_DEVICE_TYPE_MOBILE.Enum():
 		return MobileDevice
-	case pbuf.DeviceType_TV.Enum():
+	case pbuf.DeviceType_DEVICE_TYPE_TV.Enum():
 		return TVDevice
 	default:
-		return UnknownDevice
+		return UnspecifiedDevice
 	}
 }
 

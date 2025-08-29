@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package pbuf;
+package pbuf.v1;
 
 option go_package = "alat/pkg/pbuf";
 
@@ -10,13 +10,20 @@ message Color {
   uint32 b = 3;
 }
 enum DeviceType {
-  Mobile = 0;
-  Desktop = 1;
-  TV = 2;
-  Unknown = 3;
-};
+  DEVICE_TYPE_UNSPECIFIED = 0;
+  DEVICE_TYPE_MOBILE = 1;
+  DEVICE_TYPE_DESKTOP = 2;
+  DEVICE_TYPE_TV = 3;
+}
 message DeviceInfo {
   string id = 1;
+  string name = 2;
+  DeviceType type = 3;
+  Color color = 4;
+}
+
+message DeviceDetails {
+  bytes certificate = 1;
   string name = 2;
   DeviceType type = 3;
   Color color = 4;
@@ -28,20 +35,24 @@ message PairingSession {
   bytes token = 3;
 }
 
-message PairedDevice {
-  bytes certificate = 1;
-  bytes token = 2;
-}
-
-message PairRequest {
+message RequestPairRequest {
   string token = 1;
   DeviceInfo info = 2;
+  bytes certificate = 3;
 }
-message PairResponse {
+message RequestPairResponse {
   string token = 1;
-  DeviceInfo info = 2;
+  bool accepted = 2;
+  DeviceInfo info = 3;
+  bytes certificate = 4;
 }
 
-service Pairing {
-  rpc RequestPair(PairRequest) returns (PairResponse);
+message GetDetailsRequest {}
+message GetDetailsResponse {
+  DeviceDetails details = 1;
+}
+
+service AlatService {
+  rpc RequestPair(RequestPairRequest) returns (RequestPairResponse);
+  rpc GetDetails(GetDetailsRequest) returns (GetDetailsResponse);
 }

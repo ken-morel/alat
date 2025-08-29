@@ -1,12 +1,24 @@
 package device
 
-import "alat/pkg/core/security"
+import (
+	"alat/pkg/core/security"
+	"alat/pkg/pbuf"
+)
 
 type Details struct {
 	Color       Color
 	Name        string
 	Type        DeviceType
 	Certificate security.Certificate
+}
+
+func (d *Details) ToPBUF() *pbuf.DeviceDetails {
+	return &pbuf.DeviceDetails{
+		Certificate: d.Certificate[:],
+		Name:        d.Name,
+		Type:        d.Type.ToPBUF(),
+		Color:       d.Color.ToPBUF(),
+	}
 }
 
 func (d *Details) GetInfo() *Info {

@@ -12,3 +12,7 @@ const (
 )
 
 type PairCallback func(event Event, device *device.PairedDevice)
+
+func (p *PairManager) OnPeerEvent(call PairCallback) {
+	p.callbacks = append(p.callbacks, call)
+}

@@ -9,14 +9,27 @@ import (
 type PairManager struct {
 	storage       *storage.NodeStorage
 	callbacks     []PairCallback
-	pairedDevices map[string]*device.PairedDevice
-	info          *device.Info
+	pairedDevices []device.PairedDevice
+	details       *device.Details
 }
 
-func (p *PairManager) SetInfo(info *device.Info) {
-	p.info = info
+func (p *PairManager) DeviceDetails() *device.Details {
+	return p.details
 }
 
-func (p *PairManager) OnPeerEvent(call PairCallback) {
-	p.callbacks = append(p.callbacks, call)
+func (p *PairManager) SetDetails(details *device.Details) {
+	p.details = details
+}
+
+func NewManager(stor *storage.NodeStorage, details *device.Details) (*PairManager, error) {
+	paired, err := (*stor).GetPaired()
+	if err != nil {
+		return nil, err
+	}
+	return &PairManager{
+		storage:       stor,
+		callbacks:     nil,
+		pairedDevices: paired,
+		details:       details,
+	}, nil
 }
