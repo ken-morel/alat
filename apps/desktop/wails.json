@@ -1,6 +1,7 @@
 {
   "$schema": "https://wails.io/schemas/config.v2.json",
   "reloaddirs": "../../pkg/core",
+  "wailsjsdir": "frontend/src/lib/wails",
   "name": "desktop",
   "outputfilename": "alat-desktop",
   "frontend:install": "bun install",

@@ -20,11 +20,11 @@ type Node struct {
 }
 
 func NewNode(registry *service.Registry, store *storage.NodeStorage, details *device.Details) (*Node, error) {
-	mamager, err := pair.NewManager(store, details)
+	manager, err := pair.NewManager(store, details)
 	if err != nil {
 		return nil, err
 	}
-	server := transport.NewServer(registry, mamager)
+	server := transport.NewServer(registry, manager)
 	discoveryManager, err := discovery.NewManager()
 	if err != nil {
 		return nil, err
@@ -35,7 +35,7 @@ func NewNode(registry *service.Registry, store *storage.NodeStorage, details *de
 		device:      details,
 		services:    registry,
 		Storage:     store,
-		PairManager: mamager,
+		PairManager: manager,
 		discovery:   discoveryManager,
 	}, nil
 }

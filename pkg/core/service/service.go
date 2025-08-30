@@ -9,6 +9,7 @@ type (
 
 const (
 	FileSystem ServiceName = "filesystem"
+	Clipboard  ServiceName = "clipboard"
 )
 
 type Service interface {
