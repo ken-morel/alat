@@ -1,8 +1,4 @@
-// This file acts as a simple, reactive store for the setup wizard's state.
-// By using `$state`, any component that imports and uses these variables
-// will automatically update when their values change.
+import { writable } from "svelte/store";
 
-export const wizardState = {
-  nextUrl: $state<string | null>(null),
-  prevUrl: $state<string | null>(null),
-};
+export const nextUrl = writable<string | null>(null);
+export const prevUrl = writable<string | null>(null);

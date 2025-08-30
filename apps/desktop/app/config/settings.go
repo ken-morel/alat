@@ -65,14 +65,19 @@ type ServiceSettings struct {
 	FolderSync         FolderSyncSettings         `yaml:"folderSync"`
 }
 
+func DefaultAppSettings() *AppSettings {
+	defaultName, _ := os.Hostname()
+	return &AppSettings{
+		SetupComplete: false,
+		DeviceName:    defaultName,
+		DeviceColor:   "#000000",
+	}
+}
+
 func LoadAppSettings() (*AppSettings, error) {
 	p := path.Join(configDir, "settings.yml")
 
-	defaults := &AppSettings{
-		SetupComplete: false,
-		DeviceName:    "",
-		DeviceColor:   "#000000",
-	}
+	defaults := DefaultAppSettings()
 
 	data, err := os.ReadFile(p)
 	if err != nil {

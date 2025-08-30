@@ -6,6 +6,26 @@ export function ConfigReady() {
   return window['go']['app']['App']['ConfigReady']();
 }
 
+export function GetAlatColors() {
+  return window['go']['app']['App']['GetAlatColors']();
+}
+
 export function Run() {
   return window['go']['app']['App']['Run']();
+}
+
+export function SettingsGetDeviceColor() {
+  return window['go']['app']['App']['SettingsGetDeviceColor']();
+}
+
+export function SettingsGetDeviceName() {
+  return window['go']['app']['App']['SettingsGetDeviceName']();
+}
+
+export function SettingsSetDeviceColor(arg1) {
+  return window['go']['app']['App']['SettingsSetDeviceColor'](arg1);
+}
+
+export function SettingsSetDeviceName(arg1) {
+  return window['go']['app']['App']['SettingsSetDeviceName'](arg1);
 }
