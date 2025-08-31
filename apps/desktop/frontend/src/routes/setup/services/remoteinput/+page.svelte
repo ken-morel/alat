@@ -1,6 +1,7 @@
 <script lang="ts">
   import { nextUrl, prevUrl } from "../../wizard.svelte";
   import { SettingsSetRemoteInputSettings } from "$lib/wails/wailsjs/go/app/App";
+  import { createCheckbox, createSlider, createSwitch } from "@melt-ui/svelte";
 
   let { data } = $props();
 
@@ -9,7 +10,34 @@
 
   let settings = $state(data.settings);
 
+  const {
+    elements: { root: enabledSwitch, thumb: enabledThumb },
+    states: { checked: enabledChecked },
+  } = createSwitch({
+    defaultChecked: settings.Enabled,
+  });
+
+  const {
+    elements: { root: naturalScrollingCheckbox, input: naturalScrollingInput },
+    states: { checked: naturalScrollingChecked },
+  } = createCheckbox({
+    defaultChecked: settings.NaturalScrolling,
+  });
+
+  const {
+    elements: { root: slider, range, thumb },
+    states: { value },
+  } = createSlider({
+    defaultValue: [settings.MouseSensitivity],
+    max: 5,
+    min: 0.1,
+    step: 0.1,
+  });
+
   $effect(() => {
+    settings.Enabled = $enabledChecked;
+    settings.NaturalScrolling = $naturalScrollingChecked;
+    settings.MouseSensitivity = $value[0];
     return () => {
       SettingsSetRemoteInputSettings(settings).catch((err: any) => {
         console.error("Failed to save remote input settings:", err);
@@ -29,7 +57,9 @@
   <div class="space-y-4">
     <div class="flex items-center justify-between">
       <label for="enabled" class="font-medium">Enable Remote Input</label>
-      <input id="enabled" type="checkbox" class="checkbox" bind:checked={settings.Enabled} />
+      <button use:enabledSwitch class="switch">
+        <span use:enabledThumb />
+      </button>
     </div>
 
     {#if settings.Enabled}
@@ -38,26 +68,18 @@
           <label for="natural-scrolling" class="font-medium"
             >Natural Scrolling</label
           >
-          <input
-            id="natural-scrolling"
-            type="checkbox"
-            class="checkbox"
-            bind:checked={settings.NaturalScrolling}
-          />
+          <button class="checkbox" use:naturalScrollingCheckbox>
+            <input use:naturalScrollingInput />
+          </button>
         </div>
         <div class="space-y-2">
           <label for="mouse-sensitivity" class="font-medium"
             >Mouse Sensitivity ({settings.MouseSensitivity})</label
           >
-          <input
-            id="mouse-sensitivity"
-            type="range"
-            class="slider"
-            min="0.1"
-            max="5"
-            step="0.1"
-            bind:value={settings.MouseSensitivity}
-          />
+          <span use:slider class="slider">
+            <span use:range />
+            <span use:thumb />
+          </span>
         </div>
       </div>
     {/if}

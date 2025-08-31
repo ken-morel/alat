@@ -1,11 +1,28 @@
 <script lang="ts">
   import { nextUrl, prevUrl } from "../../wizard.svelte";
-  import { WindowSetLightTheme } from "$lib/wails/wailsjs/runtime";
   import {
     AskFileSharingDestDirectory,
     SettingsSetFileSharingSettings,
   } from "$lib/wails/wailsjs/go/app/App";
-  WindowSetLightTheme();
+  import { createButton, createCheckbox, createSlider } from "@melt-ui/svelte";
+
+  const {
+    elements: { root: browseButton },
+  } = createButton();
+  const {
+    elements: { root: checkbox, input },
+    states: { checked },
+  } = createCheckbox({
+    defaultChecked: data.settings.AskBeforeReceiving,
+  });
+  const {
+    elements: { root: slider, range, thumb },
+    states: { value },
+  } = createSlider({
+    defaultValue: [data.settings.MaxFileSizeMB],
+    max: 10240,
+    min: 1,
+  });
 
   let { data } = $props();
 
@@ -22,6 +39,8 @@
   }
 
   $effect(() => {
+    settings.AskBeforeReceiving = $checked;
+    settings.MaxFileSizeMB = $value[0];
     return () => {
       SettingsSetFileSharingSettings(settings).catch((err: any) => {
         console.error("Failed to save file sharing settings:", err);
@@ -51,17 +70,16 @@
           bind:value={settings.DefaultDownloadLocation}
           readonly
         />
-        <button class="btn" onclick={selectDirectory}>Browse</button>
+        <button class="btn" use:browseButton on:click={selectDirectory}
+          >Browse</button
+        >
       </div>
     </div>
 
     <div class="flex items-center gap-2">
-      <input
-        id="ask-before-receiving"
-        type="checkbox"
-        class="checkbox"
-        bind:checked={settings.AskBeforeReceiving}
-      />
+      <button class="checkbox" use:checkbox>
+        <input use:input />
+      </button>
       <label for="ask-before-receiving" class="font-medium"
         >Ask before receiving files</label
       >
@@ -71,14 +89,10 @@
       <label for="max-file-size" class="font-medium"
         >Max File Size ({settings.MaxFileSizeMB} MB)</label
       >
-      <input
-        id="max-file-size"
-        type="range"
-        class="slider"
-        min="1"
-        max="10240"
-        bind:value={settings.MaxFileSizeMB}
-      />
+      <span use:slider class="slider">
+        <span use:range />
+        <span use:thumb />
+      </span>
     </div>
   </div>
 </div>

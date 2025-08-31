@@ -1,6 +1,7 @@
 <script lang="ts">
   import { nextUrl, prevUrl } from "../../wizard.svelte";
   import { SettingsSetFolderSyncSettings } from "$lib/wails/wailsjs/go/app/App";
+  import { createSwitch } from "@melt-ui/svelte";
 
   let { data } = $props();
 
@@ -9,7 +10,15 @@
 
   let settings = $state(data.settings);
 
+  const {
+    elements: { root: enabledSwitch, thumb: enabledThumb },
+    states: { checked: enabledChecked },
+  } = createSwitch({
+    defaultChecked: settings.Enabled,
+  });
+
   $effect(() => {
+    settings.Enabled = $enabledChecked;
     return () => {
       SettingsSetFolderSyncSettings(settings).catch((err: any) => {
         console.error("Failed to save folder sync settings:", err);
@@ -29,7 +38,9 @@
   <div class="space-y-4">
     <div class="flex items-center justify-between">
       <label for="enabled" class="font-medium">Enable Folder Sync</label>
-      <input id="enabled" type="checkbox" class="checkbox" bind:checked={settings.Enabled} />
+      <button use:enabledSwitch class="switch">
+        <span use:enabledThumb />
+      </button>
     </div>
   </div>
 </div>
