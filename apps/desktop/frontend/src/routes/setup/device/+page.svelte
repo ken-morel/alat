@@ -13,7 +13,7 @@
   let error: string | null = $state(null);
 
   prevUrl.set("/setup");
-  nextUrl.set("/setup/appearance");
+  nextUrl.set("/setup/services");
 
   $effect(() => {
     deviceName = deviceName.trim();

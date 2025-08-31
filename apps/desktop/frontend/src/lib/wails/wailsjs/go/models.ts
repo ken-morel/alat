@@ -23,3 +23,24 @@ export namespace color {
 
 }
 
+export namespace config {
+	
+	export class FileSharingSettings {
+	    DefaultDownloadLocation: string;
+	    AskBeforeReceiving: boolean;
+	    MaxFileSizeMB: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new FileSharingSettings(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.DefaultDownloadLocation = source["DefaultDownloadLocation"];
+	        this.AskBeforeReceiving = source["AskBeforeReceiving"];
+	        this.MaxFileSizeMB = source["MaxFileSizeMB"];
+	    }
+	}
+
+}
+
