@@ -33,6 +33,51 @@ func (app *App) SettingsSetFileSharingSettings(s config.FileSharingSettings) err
 	return config.SaveServiceSettings(app.serviceSettings)
 }
 
+func (app *App) SettingsGetUniversalClipboardSettings() config.UniversalClipboardSettings {
+	return app.serviceSettings.UniversalClipboard
+}
+
+func (app *App) SettingsSetUniversalClipboardSettings(s config.UniversalClipboardSettings) error {
+	app.serviceSettings.UniversalClipboard = s
+	return config.SaveServiceSettings(app.serviceSettings)
+}
+
+func (app *App) SettingsGetNotificationSyncSettings() config.NotificationSyncSettings {
+	return app.serviceSettings.NotificationSync
+}
+
+func (app *App) SettingsSetNotificationSyncSettings(s config.NotificationSyncSettings) error {
+	app.serviceSettings.NotificationSync = s
+	return config.SaveServiceSettings(app.serviceSettings)
+}
+
+func (app *App) SettingsGetMediaControlSettings() config.MediaControlSettings {
+	return app.serviceSettings.MediaControl
+}
+
+func (app *App) SettingsSetMediaControlSettings(s config.MediaControlSettings) error {
+	app.serviceSettings.MediaControl = s
+	return config.SaveServiceSettings(app.serviceSettings)
+}
+
+func (app *App) SettingsGetRemoteInputSettings() config.RemoteInputSettings {
+	return app.serviceSettings.RemoteInput
+}
+
+func (app *App) SettingsSetRemoteInputSettings(s config.RemoteInputSettings) error {
+	app.serviceSettings.RemoteInput = s
+	return config.SaveServiceSettings(app.serviceSettings)
+}
+
+func (app *App) SettingsGetFolderSyncSettings() config.FolderSyncSettings {
+	return app.serviceSettings.FolderSync
+}
+
+func (app *App) SettingsSetFolderSyncSettings(s config.FolderSyncSettings) error {
+	app.serviceSettings.FolderSync = s
+	return config.SaveServiceSettings(app.serviceSettings)
+}
+
 func (app *App) AskFileSharingDestDirectory() string {
 	dest, _ := rt.OpenDirectoryDialog(app.ctx, rt.OpenDialogOptions{
 		Title: "Choose a location to save shared files",

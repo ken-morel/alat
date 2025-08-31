@@ -30,6 +30,26 @@ export function SettingsGetFileSharingSettings() {
   return window['go']['app']['App']['SettingsGetFileSharingSettings']();
 }
 
+export function SettingsGetFolderSyncSettings() {
+  return window['go']['app']['App']['SettingsGetFolderSyncSettings']();
+}
+
+export function SettingsGetMediaControlSettings() {
+  return window['go']['app']['App']['SettingsGetMediaControlSettings']();
+}
+
+export function SettingsGetNotificationSyncSettings() {
+  return window['go']['app']['App']['SettingsGetNotificationSyncSettings']();
+}
+
+export function SettingsGetRemoteInputSettings() {
+  return window['go']['app']['App']['SettingsGetRemoteInputSettings']();
+}
+
+export function SettingsGetUniversalClipboardSettings() {
+  return window['go']['app']['App']['SettingsGetUniversalClipboardSettings']();
+}
+
 export function SettingsSetDeviceColor(arg1) {
   return window['go']['app']['App']['SettingsSetDeviceColor'](arg1);
 }
@@ -40,4 +60,24 @@ export function SettingsSetDeviceName(arg1) {
 
 export function SettingsSetFileSharingSettings(arg1) {
   return window['go']['app']['App']['SettingsSetFileSharingSettings'](arg1);
+}
+
+export function SettingsSetFolderSyncSettings(arg1) {
+  return window['go']['app']['App']['SettingsSetFolderSyncSettings'](arg1);
+}
+
+export function SettingsSetMediaControlSettings(arg1) {
+  return window['go']['app']['App']['SettingsSetMediaControlSettings'](arg1);
+}
+
+export function SettingsSetNotificationSyncSettings(arg1) {
+  return window['go']['app']['App']['SettingsSetNotificationSyncSettings'](arg1);
+}
+
+export function SettingsSetRemoteInputSettings(arg1) {
+  return window['go']['app']['App']['SettingsSetRemoteInputSettings'](arg1);
+}
+
+export function SettingsSetUniversalClipboardSettings(arg1) {
+  return window['go']['app']['App']['SettingsSetUniversalClipboardSettings'](arg1);
 }

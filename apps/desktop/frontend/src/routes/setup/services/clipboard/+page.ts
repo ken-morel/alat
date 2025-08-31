@@ -1,0 +1,11 @@
+import { SettingsGetUniversalClipboardSettings } from "$lib/wails/wailsjs/go/app/App";
+import type { config } from "$lib/wails/wailsjs/go/models";
+
+export const load = async (): Promise<{
+  settings: config.UniversalClipboardSettings;
+}> => {
+  const settings = await SettingsGetUniversalClipboardSettings();
+  return {
+    settings,
+  };
+};

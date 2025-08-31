@@ -9,7 +9,7 @@
 
   let { data } = $props();
 
-  nextUrl.set(null);
+  nextUrl.set("/setup/services/clipboard");
   prevUrl.set("/setup/services");
 
   let settings = $state(data.settings);

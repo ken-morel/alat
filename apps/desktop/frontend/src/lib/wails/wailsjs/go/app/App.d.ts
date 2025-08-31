@@ -17,8 +17,28 @@ export function SettingsGetDeviceName():Promise<string>;
 
 export function SettingsGetFileSharingSettings():Promise<config.FileSharingSettings>;
 
+export function SettingsGetFolderSyncSettings():Promise<config.FolderSyncSettings>;
+
+export function SettingsGetMediaControlSettings():Promise<config.MediaControlSettings>;
+
+export function SettingsGetNotificationSyncSettings():Promise<config.NotificationSyncSettings>;
+
+export function SettingsGetRemoteInputSettings():Promise<config.RemoteInputSettings>;
+
+export function SettingsGetUniversalClipboardSettings():Promise<config.UniversalClipboardSettings>;
+
 export function SettingsSetDeviceColor(arg1:string):Promise<void>;
 
 export function SettingsSetDeviceName(arg1:string):Promise<void>;
 
 export function SettingsSetFileSharingSettings(arg1:config.FileSharingSettings):Promise<void>;
+
+export function SettingsSetFolderSyncSettings(arg1:config.FolderSyncSettings):Promise<void>;
+
+export function SettingsSetMediaControlSettings(arg1:config.MediaControlSettings):Promise<void>;
+
+export function SettingsSetNotificationSyncSettings(arg1:config.NotificationSyncSettings):Promise<void>;
+
+export function SettingsSetRemoteInputSettings(arg1:config.RemoteInputSettings):Promise<void>;
+
+export function SettingsSetUniversalClipboardSettings(arg1:config.UniversalClipboardSettings):Promise<void>;
