@@ -1,4 +1,4 @@
-import { WindowReloadApp } from "$lib/wailsjs/runtime/runtime";
+import { WindowReloadApp } from "$lib/wails/wailsjs/runtime/runtime";
 
 export async function handleError() {
   WindowReloadApp();

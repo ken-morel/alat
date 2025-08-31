@@ -50,7 +50,13 @@ message GetDetailsResponse {
   DeviceDetails details = 1;
 }
 
+message GetInfoRequest {}
+message GetInfoResponse {
+  DeviceInfo info = 1;
+}
+
 service AlatService {
   rpc RequestPair(RequestPairRequest) returns (RequestPairResponse);
   rpc GetDetails(GetDetailsRequest) returns (GetDetailsResponse);
+  rpc GetInfo(GetInfoRequest) returns (GetInfoResponse);
 }

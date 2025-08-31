@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from "$app/state";
   import { Navigation } from "@skeletonlabs/skeleton-svelte";
   import AlatLogo from "$lib/assets/logo.svg";
 
@@ -10,20 +11,37 @@
 <div class="">
   <Navigation.Rail>
     {#snippet header()}
-      <Navigation.Tile title="About alat" classes="bg-primary-700">
+      <Navigation.Tile
+        selected={page.url.pathname == "/about"}
+        title="About alat"
+        classes="bg-primary-700"
+      >
         <img src={AlatLogo} alt="Alat Logo" />
       </Navigation.Tile>
     {/snippet}
     {#snippet tiles()}
-      <Navigation.Tile label="Dashboard" href="/dashboard">
+      <Navigation.Tile
+        selected={page.url.pathname == "/dashboard"}
+        label="Dashboard"
+        href="/dashboard"
+      >
         <IconDashboard />
       </Navigation.Tile>
-      <Navigation.Tile label="Devices" href="devices">
+      <Navigation.Tile
+        selected={page.url.pathname == "/pair"}
+        label="Devices"
+        href="/pair"
+      >
         <IconDevices />
       </Navigation.Tile>
     {/snippet}
     {#snippet footer()}
-      <Navigation.Tile labelExpanded="Settings" href="/setup" title="Setup">
+      <Navigation.Tile
+        selected={page.url.pathname.startsWith("/setup")}
+        labelExpanded="Settings"
+        href="/setup"
+        title="Setup"
+      >
         <IconSettings />
       </Navigation.Tile>
     {/snippet}

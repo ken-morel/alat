@@ -46,6 +46,12 @@ func (s *Server) GetDetails(ctx context.Context, req *pbuf.GetDetailsRequest) (*
 	}, nil
 }
 
+func (s *Server) GetInfo(ctx context.Context, req *pbuf.GetInfoRequest) (*pbuf.GetInfoResponse, error) {
+	return &pbuf.GetInfoResponse{
+		Info: s.PairManager.DeviceDetails().GetInfo().ToPBUF(),
+	}, nil
+}
+
 func (s *Server) Start() error {
 	lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", discovery.DefaultPort))
 	if err != nil {

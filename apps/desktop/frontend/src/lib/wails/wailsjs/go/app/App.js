@@ -14,12 +14,28 @@ export function GetAlatColors() {
   return window['go']['app']['App']['GetAlatColors']();
 }
 
+export function GetFoundDevices() {
+  return window['go']['app']['App']['GetFoundDevices']();
+}
+
 export function GetNodeStatus() {
   return window['go']['app']['App']['GetNodeStatus']();
 }
 
+export function GetPairedDevices() {
+  return window['go']['app']['App']['GetPairedDevices']();
+}
+
+export function IsSearchingDevices() {
+  return window['go']['app']['App']['IsSearchingDevices']();
+}
+
 export function Run() {
   return window['go']['app']['App']['Run']();
+}
+
+export function SearchDevices() {
+  return window['go']['app']['App']['SearchDevices']();
 }
 
 export function SettingsGetDeviceColor() {

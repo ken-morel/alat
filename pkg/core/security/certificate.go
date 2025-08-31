@@ -3,6 +3,7 @@ package security
 import (
 	"crypto"
 	"crypto/rand"
+	"encoding/hex"
 )
 
 type Certificate [2048]byte
@@ -17,5 +18,5 @@ func GenerateCertificate() (Certificate, error) {
 }
 
 func (cert *Certificate) ID() string {
-	return string(crypto.SHA256.New().Sum(cert[:]))
+	return hex.EncodeToString(crypto.SHA256.New().Sum(cert[:]))
 }

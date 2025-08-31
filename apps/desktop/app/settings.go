@@ -88,6 +88,7 @@ func (app *App) AskFileSharingDestDirectory() string {
 }
 
 func (app *App) SettingsSetSetupComplete(complete bool) error {
+	rt.WindowReloadApp(app.ctx)
 	app.settings.SetupComplete = complete
 	if app.node != nil && !app.node.GetStatus().DiscoveryRunning && !app.node.GetStatus().ServerRunning {
 		fmt.Println("Node is not running, starting")

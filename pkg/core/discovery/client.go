@@ -3,6 +3,7 @@ package discovery
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/grandcat/zeroconf"
 )
@@ -22,20 +23,29 @@ func NewDiscoverer() (*Discoverer, error) {
 	return &Discoverer{
 		resolver: resolver,
 		Entries:  nil,
-	}, nil
+	},
+	nil
 }
 
 func (d *Discoverer) Start() error {
 	if d.Running {
+		fmt.Println("Discoverer Already running not spawning new instance")
 		return nil
+	} else {
+		fmt.Println("Starting discoverer since not already running")
 	}
 	entries := make(chan *zeroconf.ServiceEntry)
 	stopChan := make(chan struct{})
+	
+	if d.Entries != nil {
+		clear(d.Entries)
+	}
 	d.stopChan = stopChan
-	clear(d.Entries)
 	go func() {
 		d.Running = true
-		ctx, cancel := context.WithCancel(context.Background())
+		fmt.Println("Started")
+		ctime := time.Now()
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 		go func() {
 			<-stopChan
 			cancel()
@@ -44,20 +54,24 @@ func (d *Discoverer) Start() error {
 			for entry := range entries {
 				d.Entries = append(d.Entries, entry)
 			}
+			d.Running = false
+			fmt.Println("Stopped after", time.Since(ctime))
 		}()
+		fmt.Println("browsing for services...")
 		err := d.resolver.Browse(ctx, "_alat._tcp", "local.", entries)
+		fmt.Println("Browse finished")
 		if err != nil {
 			fmt.Printf("Failed to browse: %s\n", err.Error())
 		}
-		d.Running = false
-		close(entries)
+
+		// close(entries)
 	}()
 	return nil
 }
 
 func (d *Discoverer) Stop() {
-	if d.Running {
+	if d.Running && d.stopChan != nil {
 		close(d.stopChan)
+		d.stopChan = nil
 	}
 }
-

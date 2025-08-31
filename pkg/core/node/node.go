@@ -40,6 +40,10 @@ func NewNode(registry *service.Registry, store *storage.NodeStorage, details *de
 	}, nil
 }
 
+func (n *Node) GetDiscoverer() discovery.Discoverer {
+	return *n.discovery.Discoverer
+}
+
 func (n *Node) SetDetails(details *device.Details) {
 	n.device = details
 	n.PairManager.SetDetails(details)

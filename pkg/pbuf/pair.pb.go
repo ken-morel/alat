@@ -521,6 +521,86 @@ func (x *GetDetailsResponse) GetDetails() *DeviceDetails {
 	return nil
 }
 
+type GetInfoRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetInfoRequest) Reset() {
+	*x = GetInfoRequest{}
+	mi := &file_pair_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetInfoRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetInfoRequest) ProtoMessage() {}
+
+func (x *GetInfoRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pair_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetInfoRequest.ProtoReflect.Descriptor instead.
+func (*GetInfoRequest) Descriptor() ([]byte, []int) {
+	return file_pair_proto_rawDescGZIP(), []int{8}
+}
+
+type GetInfoResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Info          *DeviceInfo            `protobuf:"bytes,1,opt,name=info,proto3" json:"info,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetInfoResponse) Reset() {
+	*x = GetInfoResponse{}
+	mi := &file_pair_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetInfoResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetInfoResponse) ProtoMessage() {}
+
+func (x *GetInfoResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pair_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetInfoResponse.ProtoReflect.Descriptor instead.
+func (*GetInfoResponse) Descriptor() ([]byte, []int) {
+	return file_pair_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *GetInfoResponse) GetInfo() *DeviceInfo {
+	if x != nil {
+		return x.Info
+	}
+	return nil
+}
+
 var File_pair_proto protoreflect.FileDescriptor
 
 const file_pair_proto_rawDesc = "" +
@@ -555,17 +635,21 @@ const file_pair_proto_rawDesc = "" +
 	"\vcertificate\x18\x04 \x01(\fR\vcertificate\"\x13\n" +
 	"\x11GetDetailsRequest\"F\n" +
 	"\x12GetDetailsResponse\x120\n" +
-	"\adetails\x18\x01 \x01(\v2\x16.pbuf.v1.DeviceDetailsR\adetails*n\n" +
+	"\adetails\x18\x01 \x01(\v2\x16.pbuf.v1.DeviceDetailsR\adetails\"\x10\n" +
+	"\x0eGetInfoRequest\":\n" +
+	"\x0fGetInfoResponse\x12'\n" +
+	"\x04info\x18\x01 \x01(\v2\x13.pbuf.v1.DeviceInfoR\x04info*n\n" +
 	"\n" +
 	"DeviceType\x12\x1b\n" +
 	"\x17DEVICE_TYPE_UNSPECIFIED\x10\x00\x12\x16\n" +
 	"\x12DEVICE_TYPE_MOBILE\x10\x01\x12\x17\n" +
 	"\x13DEVICE_TYPE_DESKTOP\x10\x02\x12\x12\n" +
-	"\x0eDEVICE_TYPE_TV\x10\x032\x9e\x01\n" +
+	"\x0eDEVICE_TYPE_TV\x10\x032\xdc\x01\n" +
 	"\vAlatService\x12H\n" +
 	"\vRequestPair\x12\x1b.pbuf.v1.RequestPairRequest\x1a\x1c.pbuf.v1.RequestPairResponse\x12E\n" +
 	"\n" +
-	"GetDetails\x12\x1a.pbuf.v1.GetDetailsRequest\x1a\x1b.pbuf.v1.GetDetailsResponseB\x0fZ\ralat/pkg/pbufb\x06proto3"
+	"GetDetails\x12\x1a.pbuf.v1.GetDetailsRequest\x1a\x1b.pbuf.v1.GetDetailsResponse\x12<\n" +
+	"\aGetInfo\x12\x17.pbuf.v1.GetInfoRequest\x1a\x18.pbuf.v1.GetInfoResponseB\x0fZ\ralat/pkg/pbufb\x06proto3"
 
 var (
 	file_pair_proto_rawDescOnce sync.Once
@@ -580,7 +664,7 @@ func file_pair_proto_rawDescGZIP() []byte {
 }
 
 var file_pair_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_pair_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_pair_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_pair_proto_goTypes = []any{
 	(DeviceType)(0),             // 0: pbuf.v1.DeviceType
 	(*Color)(nil),               // 1: pbuf.v1.Color
@@ -591,6 +675,8 @@ var file_pair_proto_goTypes = []any{
 	(*RequestPairResponse)(nil), // 6: pbuf.v1.RequestPairResponse
 	(*GetDetailsRequest)(nil),   // 7: pbuf.v1.GetDetailsRequest
 	(*GetDetailsResponse)(nil),  // 8: pbuf.v1.GetDetailsResponse
+	(*GetInfoRequest)(nil),      // 9: pbuf.v1.GetInfoRequest
+	(*GetInfoResponse)(nil),     // 10: pbuf.v1.GetInfoResponse
 }
 var file_pair_proto_depIdxs = []int32{
 	0,  // 0: pbuf.v1.DeviceInfo.type:type_name -> pbuf.v1.DeviceType
@@ -602,15 +688,18 @@ var file_pair_proto_depIdxs = []int32{
 	2,  // 6: pbuf.v1.RequestPairRequest.info:type_name -> pbuf.v1.DeviceInfo
 	2,  // 7: pbuf.v1.RequestPairResponse.info:type_name -> pbuf.v1.DeviceInfo
 	3,  // 8: pbuf.v1.GetDetailsResponse.details:type_name -> pbuf.v1.DeviceDetails
-	5,  // 9: pbuf.v1.AlatService.RequestPair:input_type -> pbuf.v1.RequestPairRequest
-	7,  // 10: pbuf.v1.AlatService.GetDetails:input_type -> pbuf.v1.GetDetailsRequest
-	6,  // 11: pbuf.v1.AlatService.RequestPair:output_type -> pbuf.v1.RequestPairResponse
-	8,  // 12: pbuf.v1.AlatService.GetDetails:output_type -> pbuf.v1.GetDetailsResponse
-	11, // [11:13] is the sub-list for method output_type
-	9,  // [9:11] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+	2,  // 9: pbuf.v1.GetInfoResponse.info:type_name -> pbuf.v1.DeviceInfo
+	5,  // 10: pbuf.v1.AlatService.RequestPair:input_type -> pbuf.v1.RequestPairRequest
+	7,  // 11: pbuf.v1.AlatService.GetDetails:input_type -> pbuf.v1.GetDetailsRequest
+	9,  // 12: pbuf.v1.AlatService.GetInfo:input_type -> pbuf.v1.GetInfoRequest
+	6,  // 13: pbuf.v1.AlatService.RequestPair:output_type -> pbuf.v1.RequestPairResponse
+	8,  // 14: pbuf.v1.AlatService.GetDetails:output_type -> pbuf.v1.GetDetailsResponse
+	10, // 15: pbuf.v1.AlatService.GetInfo:output_type -> pbuf.v1.GetInfoResponse
+	13, // [13:16] is the sub-list for method output_type
+	10, // [10:13] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_pair_proto_init() }
@@ -624,7 +713,7 @@ func file_pair_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pair_proto_rawDesc), len(file_pair_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   8,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

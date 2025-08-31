@@ -67,8 +67,7 @@
       </div>
     {:else}
       <div class="flex items-center space-x-4">
-        <!-- Server Status -->
-        <div class="flex items-center space-x-1">
+        <div class="chip flex items-center space-x-1">
           <IconBolt class="h-5 w-5 {serverStatusColor}" />
           <span class="text-sm {serverStatusColor}">{serverStatusText}</span>
         </div>
