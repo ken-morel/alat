@@ -1,6 +1,8 @@
 // Package color stores easy identifiable colors
 package color
 
+import "alat/pkg/pbuf"
+
 type Color struct {
 	Name string
 	Hex  string
@@ -30,4 +32,30 @@ var Colors = []Color{
 	{"White", "#FFFFFF", 255, 255, 255},
 	{"Brown", "#A52A2A", 165, 42, 42},
 	{"Gold", "#FFD700", 255, 215, 0},
+}
+
+var DefaultColor = &Colors[0]
+
+func (c *Color) ToPBUF() *pbuf.Color {
+	return &pbuf.Color{
+		Name: c.Name,
+	}
+}
+
+func FromPBUF(pb *pbuf.Color) *Color {
+	for _, c := range Colors {
+		if c.Name == pb.Name {
+			return &c
+		}
+	}
+	return DefaultColor
+}
+
+func FromString(nameOrHex string) *Color {
+	for _, col := range Colors {
+		if col.Name == nameOrHex || col.Hex == nameOrHex {
+			return &col
+		}
+	}
+	return DefaultColor
 }

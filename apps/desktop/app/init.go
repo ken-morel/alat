@@ -1,10 +1,8 @@
 package app
 
 import (
-	"alat/apps/desktop/app/config"
 	"context"
 	"embed"
-	"fmt"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -13,28 +11,14 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
 )
 
-// NewApp creates a new App application struct
 func NewApp(fs embed.FS) *App {
 	return &App{assets: fs}
 }
 
 func (app *App) startup(ctx context.Context) {
 	app.ctx = ctx
-	err := config.Init()
-	if err != nil {
-		fmt.Println("Failed to initialize config:", err)
-	}
-	app.settings, err = config.LoadAppSettings()
-	if err != nil {
-		fmt.Println("Failed to load app settings:", err)
-	}
-	app.serviceSettings, err = config.LoadServiceSettings()
-	if err != nil {
-		fmt.Println("Failed to load service settings:", err)
-	}
-	app.nodeStore, err = config.GetNodeStorage()
-	if err != nil {
-		fmt.Println("Failed to initialize node storage:", err)
+	if app.initConfig() {
+		app.initNode()
 	}
 }
 

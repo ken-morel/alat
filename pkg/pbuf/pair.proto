@@ -5,9 +5,7 @@ package pbuf.v1;
 option go_package = "alat/pkg/pbuf";
 
 message Color {
-  uint32 r = 1;
-  uint32 g = 2;
-  uint32 b = 3;
+  string name = 1;
 }
 enum DeviceType {
   DEVICE_TYPE_UNSPECIFIED = 0;

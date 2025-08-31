@@ -11,3 +11,9 @@ func (r *Registry) Register(service Service) {
 func (r *Registry) GetService(name ServiceName) Service {
 	return r.services[name]
 }
+
+func NewRegistery() *Registry {
+	return &Registry{
+		services: make(map[ServiceName]Service),
+	}
+}

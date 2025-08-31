@@ -8,13 +8,15 @@ import (
 )
 
 func (s *Server) Stop() {
+	s.Running = false
 	if s.zero != nil {
 		s.zero.Shutdown()
 	}
 }
 
 type Server struct {
-	zero *zeroconf.Server
+	zero    *zeroconf.Server
+	Running bool
 }
 
 func (s *Server) Start(port int) error {
@@ -22,8 +24,10 @@ func (s *Server) Start(port int) error {
 	if err != nil {
 		return err
 	}
+	s.Running = true
 	s.zero, err = zeroconf.Register(hostname, "_alat._tcp", "local.", port, []string{"txtv=0", "lo=1", "la=2"}, nil)
 	if err != nil {
+		s.Running = false
 		return fmt.Errorf("failed to register mdns server: %w", err)
 	}
 	return nil

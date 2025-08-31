@@ -1,12 +1,15 @@
 // Package device: holds peer related things
 package device
 
-import "alat/pkg/pbuf"
+import (
+	"alat/pkg/core/device/color"
+	"alat/pkg/pbuf"
+)
 
 type Info struct {
 	ID    string
 	Name  string
-	Color Color
+	Color color.Color
 	Type  DeviceType
 }
 
@@ -41,10 +44,8 @@ func (t DeviceType) ToPBUF() pbuf.DeviceType {
 	}
 }
 
-func PbufToColor(pbufColor *pbuf.Color) *Color {
-	return &Color{
-		uint8(pbufColor.GetR()), uint8(pbufColor.GetG()), uint8(pbufColor.GetB()),
-	}
+func PbufToColor(pbufColor *pbuf.Color) *color.Color {
+	return color.FromPBUF(pbufColor)
 }
 
 func PbufToDType(pbType *pbuf.DeviceType) DeviceType {

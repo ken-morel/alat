@@ -44,3 +44,20 @@ func (n *Node) SetDetails(details *device.Details) {
 	n.device = details
 	n.PairManager.SetDetails(details)
 }
+
+func (n *Node) Start() error {
+	err := n.discovery.Server.Start(discovery.DefaultPort)
+	if err != nil {
+		return err
+	}
+	err = n.server.Start()
+	if err != nil {
+		return err
+	}
+	return err
+}
+
+func (n *Node) Stop() {
+	n.server.Stop()
+	n.discovery.Stop()
+}

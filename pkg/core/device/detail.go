@@ -1,12 +1,13 @@
 package device
 
 import (
+	"alat/pkg/core/device/color"
 	"alat/pkg/core/security"
 	"alat/pkg/pbuf"
 )
 
 type Details struct {
-	Color       Color
+	Color       color.Color
 	Name        string
 	Type        DeviceType
 	Certificate security.Certificate

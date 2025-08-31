@@ -75,9 +75,7 @@ func (DeviceType) EnumDescriptor() ([]byte, []int) {
 
 type Color struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	R             uint32                 `protobuf:"varint,1,opt,name=r,proto3" json:"r,omitempty"`
-	G             uint32                 `protobuf:"varint,2,opt,name=g,proto3" json:"g,omitempty"`
-	B             uint32                 `protobuf:"varint,3,opt,name=b,proto3" json:"b,omitempty"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -112,25 +110,11 @@ func (*Color) Descriptor() ([]byte, []int) {
 	return file_pair_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Color) GetR() uint32 {
+func (x *Color) GetName() string {
 	if x != nil {
-		return x.R
+		return x.Name
 	}
-	return 0
-}
-
-func (x *Color) GetG() uint32 {
-	if x != nil {
-		return x.G
-	}
-	return 0
-}
-
-func (x *Color) GetB() uint32 {
-	if x != nil {
-		return x.B
-	}
-	return 0
+	return ""
 }
 
 type DeviceInfo struct {
@@ -542,11 +526,9 @@ var File_pair_proto protoreflect.FileDescriptor
 const file_pair_proto_rawDesc = "" +
 	"\n" +
 	"\n" +
-	"pair.proto\x12\apbuf.v1\"1\n" +
-	"\x05Color\x12\f\n" +
-	"\x01r\x18\x01 \x01(\rR\x01r\x12\f\n" +
-	"\x01g\x18\x02 \x01(\rR\x01g\x12\f\n" +
-	"\x01b\x18\x03 \x01(\rR\x01b\"\x7f\n" +
+	"pair.proto\x12\apbuf.v1\"\x1b\n" +
+	"\x05Color\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\"\x7f\n" +
 	"\n" +
 	"DeviceInfo\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +

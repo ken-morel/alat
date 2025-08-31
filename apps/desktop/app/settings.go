@@ -2,6 +2,7 @@ package app
 
 import (
 	"alat/apps/desktop/app/config"
+	"alat/pkg/core/device/color"
 
 	rt "github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -16,11 +17,11 @@ func (app *App) SettingsSetDeviceName(name string) error {
 }
 
 func (app *App) SettingsGetDeviceColor() string {
-	return app.settings.DeviceColor
+	return app.settings.DeviceColor.Name
 }
 
-func (app *App) SettingsSetDeviceColor(color string) error {
-	app.settings.DeviceColor = color
+func (app *App) SettingsSetDeviceColor(col string) error {
+	app.settings.DeviceColor = *color.FromString(col)
 	return config.SaveAppSettings(app.settings)
 }
 

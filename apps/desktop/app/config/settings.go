@@ -1,6 +1,8 @@
 package config
 
 import (
+	"alat/pkg/core/device/color"
+	"alat/pkg/core/security"
 	"os"
 	"path"
 
@@ -8,9 +10,10 @@ import (
 )
 
 type AppSettings struct {
-	SetupComplete bool   `yaml:"setupComplete"`
-	DeviceName    string `yaml:"deviceName"`
-	DeviceColor   string `yaml:"deviceColor"`
+	SetupComplete bool                 `yaml:"setupComplete"`
+	DeviceName    string               `yaml:"deviceName"`
+	DeviceColor   color.Color          `yaml:"deviceColor"`
+	Certificate   security.Certificate `yaml:"certificate,omitempty"`
 }
 
 type FileSharingSettings struct {
@@ -67,10 +70,12 @@ type ServiceSettings struct {
 
 func DefaultAppSettings() *AppSettings {
 	defaultName, _ := os.Hostname()
+	cert, _ := security.GenerateCertificate()
 	return &AppSettings{
 		SetupComplete: false,
 		DeviceName:    defaultName,
-		DeviceColor:   "#000000",
+		DeviceColor:   color.Colors[0],
+		Certificate:   cert,
 	}
 }
 
