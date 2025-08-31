@@ -2,14 +2,6 @@
   import { slide } from "svelte/transition";
   import { page } from "$app/stores";
   import { nextUrl, prevUrl } from "./wizard.svelte";
-  import { createButton } from "@melt-ui/svelte";
-
-  const {
-    elements: { root: backButton },
-  } = createButton();
-  const {
-    elements: { root: nextButton },
-  } = createButton();
 
   let { children } = $props();
 
@@ -43,11 +35,11 @@
       class:justify-end={!$prevUrl}
     >
       {#if $prevUrl}
-        <a href={$prevUrl} class="btn" use:backButton>Back</a>
+        <a href={$prevUrl} class="btn">Back</a>
       {/if}
 
       {#if $nextUrl}
-        <a href={$nextUrl} class="btn variant-filled" use:nextButton>Next</a>
+        <a href={$nextUrl} class="btn variant-filled">Next</a>
       {/if}
     </footer>
   </div>
