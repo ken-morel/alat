@@ -41,4 +41,6 @@ export function SettingsSetNotificationSyncSettings(arg1:config.NotificationSync
 
 export function SettingsSetRemoteInputSettings(arg1:config.RemoteInputSettings):Promise<void>;
 
+export function SettingsSetSetupComplete(arg1:boolean):Promise<void>;
+
 export function SettingsSetUniversalClipboardSettings(arg1:config.UniversalClipboardSettings):Promise<void>;

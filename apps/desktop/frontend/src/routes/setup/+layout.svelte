@@ -5,12 +5,8 @@
 
   let { children } = $props();
 
-  $effect(() => {
-    return () => {
-      nextUrl.set(null);
-      prevUrl.set(null);
-    };
-  });
+  nextUrl.set(null);
+  prevUrl.set(null);
 </script>
 
 <div class="h-screen w-screen grid place-items-center">

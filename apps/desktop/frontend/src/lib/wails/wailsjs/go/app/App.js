@@ -78,6 +78,10 @@ export function SettingsSetRemoteInputSettings(arg1) {
   return window['go']['app']['App']['SettingsSetRemoteInputSettings'](arg1);
 }
 
+export function SettingsSetSetupComplete(arg1) {
+  return window['go']['app']['App']['SettingsSetSetupComplete'](arg1);
+}
+
 export function SettingsSetUniversalClipboardSettings(arg1) {
   return window['go']['app']['App']['SettingsSetUniversalClipboardSettings'](arg1);
 }

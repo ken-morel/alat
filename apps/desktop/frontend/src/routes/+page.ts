@@ -1,11 +1,7 @@
 import { ConfigReady } from "$lib/wails/wailsjs/go/app/App";
-
-export const prerender = true;
-export const ssr = false;
+import { redirect } from "@sveltejs/kit";
 
 export const load = async () => {
   const ready = await ConfigReady();
-  return {
-    ready,
-  };
+  throw redirect(300, ready ? "/dashboard" : "/setup");
 };

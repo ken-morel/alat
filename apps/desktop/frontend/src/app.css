@@ -11,3 +11,10 @@
 @source "../node_modules/@skeletonlabs/skeleton-svelte/dist";
 
 @import "@fontsource/open-sans";
+
+body {
+  height: 100%;
+}
+html {
+  height: 100%;
+}

@@ -84,3 +84,8 @@ func (app *App) AskFileSharingDestDirectory() string {
 	})
 	return dest
 }
+
+func (app *App) SettingsSetSetupComplete(complete bool) error {
+	app.settings.SetupComplete = complete
+	return config.SaveAppSettings(app.settings)
+}

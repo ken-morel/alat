@@ -40,7 +40,7 @@ func (app *App) startup(ctx context.Context) {
 
 func (app *App) Run() error {
 	return wails.Run(&options.App{
-		Title:  "desktop",
+		Title:  "Alat desktop",
 		Width:  800,
 		Height: 600,
 		AssetServer: &assetserver.Options{
@@ -54,7 +54,6 @@ func (app *App) Run() error {
 		},
 		MinWidth:      800,
 		MinHeight:     600,
-		Menu:          app.menu(),
 		OnBeforeClose: app.beforeClose,
 		SingleInstanceLock: &options.SingleInstanceLock{
 			UniqueId:               "cm.engon.alat",

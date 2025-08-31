@@ -29,8 +29,12 @@
 	"dependencies": {
 		"@fontsource/open-sans": "^5.2.6",
 		"@inlang/paraglide-js": "^2.0.0",
+		"@lucide/svelte": "^0.542.0",
 		"@skeletonlabs/skeleton": "^3.2.0",
+		"bits-ui": "^2.9.4",
 		"lucide-svelte": "^0.542.0",
-		"melt": "^0.39.0"
+		"melt": "^0.39.0",
+		"phosphor-svelte": "^3.0.1",
+		"tailwindcss-animate": "^1.0.7"
 	}
 }

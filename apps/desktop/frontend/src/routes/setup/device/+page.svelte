@@ -31,7 +31,7 @@
 </script>
 
 <div class="">
-  <h3 class="h3">Welcome to Alat</h3>
+  <h3 class="h3">Your device</h3>
   <p class="text-surface-500">Let's get your device set up.</p>
 </div>
 <div style:padding-top="20px"></div>
