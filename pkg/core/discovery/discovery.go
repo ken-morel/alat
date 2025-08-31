@@ -16,11 +16,9 @@ const (
 type Manager struct {
 	Discoverer *Discoverer
 	Server     *Server
-	Status     Status
 }
 
 func (m *Manager) Expose(port int) error {
-	m.Status = Exposing
 	m.Server.Start(port)
 	return nil
 }
@@ -32,7 +30,6 @@ func (m *Manager) Stop() {
 	if m.Discoverer != nil {
 		m.Discoverer.Stop()
 	}
-	m.Status = Stopped
 }
 
 func NewManager() (*Manager, error) {
@@ -44,6 +41,5 @@ func NewManager() (*Manager, error) {
 	return &Manager{
 		Discoverer: discoverer,
 		Server:     server,
-		Status:     Stopped,
 	}, nil
 }

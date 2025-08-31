@@ -13,7 +13,12 @@ func (app *App) ConfigReady() bool {
 }
 
 func (app *App) initConfig() bool {
+	fmt.Println("Initializing app")
 	err := config.Init()
+	fmt.Println("Initialized config, got")
+	if err != nil {
+		fmt.Printf("Error initializing config: %v\n", err)
+	}
 	okay := true
 	if err != nil {
 		okay = false
@@ -34,10 +39,12 @@ func (app *App) initConfig() bool {
 		okay = false
 		fmt.Println("Failed to initialize node storage:", err)
 	}
+	fmt.Println("Initialized app config")
 	return okay
 }
 
 func (app *App) initNode() error {
+	fmt.Println("Initializing node")
 	app.serviceRegistery = service.NewRegistery()
 	app.nodeDetails = &device.Details{
 		Color:       app.settings.DeviceColor,
@@ -48,6 +55,7 @@ func (app *App) initNode() error {
 
 	node, err := node.NewNode(app.serviceRegistery, &app.nodeStore, app.nodeDetails)
 	app.node = node
+	fmt.Println("Initialized node, got error: ", err)
 	return err
 }
 

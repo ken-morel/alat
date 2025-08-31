@@ -159,3 +159,22 @@ export namespace config {
 
 }
 
+export namespace node {
+	
+	export class Status {
+	    DiscoveryRunning: boolean;
+	    ServerRunning: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new Status(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.DiscoveryRunning = source["DiscoveryRunning"];
+	        this.ServerRunning = source["ServerRunning"];
+	    }
+	}
+
+}
+

@@ -1,4 +1,6 @@
 <script lang="ts">
 </script>
 
-<h2 class="h2">Hello</h2>
+<div class="p p-8 justify-center">
+  <h2 class="h2">Dashboard</h2>
+</div>

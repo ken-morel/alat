@@ -2,6 +2,7 @@
 package transport
 
 import (
+	"alat/pkg/core/discovery"
 	"alat/pkg/core/pair"
 	"alat/pkg/core/service"
 	"alat/pkg/pbuf"
@@ -46,7 +47,7 @@ func (s *Server) GetDetails(ctx context.Context, req *pbuf.GetDetailsRequest) (*
 }
 
 func (s *Server) Start() error {
-	lis, err := net.Listen("tcp", "0.0.0.0")
+	lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", discovery.DefaultPort))
 	if err != nil {
 		return fmt.Errorf("failed to listen: %w", err)
 	}

@@ -9,7 +9,7 @@
   prevUrl.set(null);
 </script>
 
-<div class="h-screen w-screen grid place-items-center">
+<div class="h-full w-screen grid place-items-center">
   <div
     class="card preset-filled-surface-100-900 border-[1px] border-surface-200-800 w-full max-w-lg"
   >

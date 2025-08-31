@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"embed"
+	"fmt"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -19,6 +20,13 @@ func (app *App) startup(ctx context.Context) {
 	app.ctx = ctx
 	if app.initConfig() {
 		app.initNode()
+		if app.settings.SetupComplete {
+			err := app.node.Start()
+			fmt.Println("Started node, got error: ", err)
+		} else {
+			fmt.Println("Not starting node, setup not complete")
+		}
+
 	}
 }
 

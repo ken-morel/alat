@@ -14,6 +14,10 @@ export function GetAlatColors() {
   return window['go']['app']['App']['GetAlatColors']();
 }
 
+export function GetNodeStatus() {
+  return window['go']['app']['App']['GetNodeStatus']();
+}
+
 export function Run() {
   return window['go']['app']['App']['Run']();
 }
