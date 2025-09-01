@@ -4,7 +4,7 @@ import (
 	"alat/apps/desktop/app/config"
 	"alat/pkg/core/device"
 	"alat/pkg/core/node"
-	"alat/pkg/core/service"
+	"alat/pkg/core/pair"
 	"fmt"
 )
 
@@ -45,15 +45,21 @@ func (app *App) initConfig() bool {
 
 func (app *App) initNode() error {
 	fmt.Println("Initializing node")
-	app.serviceRegistery = service.NewRegistery()
+	app.initServices()
 	app.nodeDetails = &device.Details{
 		Color:       app.settings.DeviceColor,
 		Name:        app.settings.DeviceName,
 		Type:        device.DesktopDevice,
 		Certificate: app.settings.Certificate,
 	}
+	pairManager, err := pair.NewManager(&app.nodeStore, app.nodeDetails)
+	if err != nil {
+		fmt.Println("Failed to initialize pair manager:", err)
+		return err
+	}
+	pairManager.OnPairRequest = app.handlePairRequest
 
-	node, err := node.NewNode(app.serviceRegistery, &app.nodeStore, app.nodeDetails)
+	node, err := node.NewNode(app.serviceRegistery, &app.nodeStore, app.nodeDetails, pairManager)
 	app.node = node
 	fmt.Println("Initialized node, got error: ", err)
 	return err

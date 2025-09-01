@@ -253,78 +253,17 @@ func (x *DeviceDetails) GetColor() *Color {
 	return nil
 }
 
-type PairingSession struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Initiator     *DeviceInfo            `protobuf:"bytes,1,opt,name=initiator,proto3" json:"initiator,omitempty"`
-	Responder     *DeviceInfo            `protobuf:"bytes,2,opt,name=responder,proto3" json:"responder,omitempty"`
-	Token         []byte                 `protobuf:"bytes,3,opt,name=token,proto3" json:"token,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *PairingSession) Reset() {
-	*x = PairingSession{}
-	mi := &file_pair_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *PairingSession) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*PairingSession) ProtoMessage() {}
-
-func (x *PairingSession) ProtoReflect() protoreflect.Message {
-	mi := &file_pair_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use PairingSession.ProtoReflect.Descriptor instead.
-func (*PairingSession) Descriptor() ([]byte, []int) {
-	return file_pair_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *PairingSession) GetInitiator() *DeviceInfo {
-	if x != nil {
-		return x.Initiator
-	}
-	return nil
-}
-
-func (x *PairingSession) GetResponder() *DeviceInfo {
-	if x != nil {
-		return x.Responder
-	}
-	return nil
-}
-
-func (x *PairingSession) GetToken() []byte {
-	if x != nil {
-		return x.Token
-	}
-	return nil
-}
-
 type RequestPairRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
-	Info          *DeviceInfo            `protobuf:"bytes,2,opt,name=info,proto3" json:"info,omitempty"`
-	Certificate   []byte                 `protobuf:"bytes,3,opt,name=certificate,proto3" json:"certificate,omitempty"`
+	Token         []byte                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	Details       *DeviceDetails         `protobuf:"bytes,2,opt,name=details,proto3" json:"details,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *RequestPairRequest) Reset() {
 	*x = RequestPairRequest{}
-	mi := &file_pair_proto_msgTypes[4]
+	mi := &file_pair_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -336,7 +275,7 @@ func (x *RequestPairRequest) String() string {
 func (*RequestPairRequest) ProtoMessage() {}
 
 func (x *RequestPairRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pair_proto_msgTypes[4]
+	mi := &file_pair_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -349,43 +288,36 @@ func (x *RequestPairRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RequestPairRequest.ProtoReflect.Descriptor instead.
 func (*RequestPairRequest) Descriptor() ([]byte, []int) {
-	return file_pair_proto_rawDescGZIP(), []int{4}
+	return file_pair_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *RequestPairRequest) GetToken() string {
+func (x *RequestPairRequest) GetToken() []byte {
 	if x != nil {
 		return x.Token
-	}
-	return ""
-}
-
-func (x *RequestPairRequest) GetInfo() *DeviceInfo {
-	if x != nil {
-		return x.Info
 	}
 	return nil
 }
 
-func (x *RequestPairRequest) GetCertificate() []byte {
+func (x *RequestPairRequest) GetDetails() *DeviceDetails {
 	if x != nil {
-		return x.Certificate
+		return x.Details
 	}
 	return nil
 }
 
 type RequestPairResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	Token         []byte                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
 	Accepted      bool                   `protobuf:"varint,2,opt,name=accepted,proto3" json:"accepted,omitempty"`
-	Info          *DeviceInfo            `protobuf:"bytes,3,opt,name=info,proto3" json:"info,omitempty"`
-	Certificate   []byte                 `protobuf:"bytes,4,opt,name=certificate,proto3" json:"certificate,omitempty"`
+	Details       *DeviceDetails         `protobuf:"bytes,3,opt,name=details,proto3" json:"details,omitempty"`
+	Reason        string                 `protobuf:"bytes,4,opt,name=reason,proto3" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *RequestPairResponse) Reset() {
 	*x = RequestPairResponse{}
-	mi := &file_pair_proto_msgTypes[5]
+	mi := &file_pair_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -397,7 +329,7 @@ func (x *RequestPairResponse) String() string {
 func (*RequestPairResponse) ProtoMessage() {}
 
 func (x *RequestPairResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pair_proto_msgTypes[5]
+	mi := &file_pair_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -410,14 +342,14 @@ func (x *RequestPairResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RequestPairResponse.ProtoReflect.Descriptor instead.
 func (*RequestPairResponse) Descriptor() ([]byte, []int) {
-	return file_pair_proto_rawDescGZIP(), []int{5}
+	return file_pair_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *RequestPairResponse) GetToken() string {
+func (x *RequestPairResponse) GetToken() []byte {
 	if x != nil {
 		return x.Token
 	}
-	return ""
+	return nil
 }
 
 func (x *RequestPairResponse) GetAccepted() bool {
@@ -427,18 +359,18 @@ func (x *RequestPairResponse) GetAccepted() bool {
 	return false
 }
 
-func (x *RequestPairResponse) GetInfo() *DeviceInfo {
+func (x *RequestPairResponse) GetDetails() *DeviceDetails {
 	if x != nil {
-		return x.Info
+		return x.Details
 	}
 	return nil
 }
 
-func (x *RequestPairResponse) GetCertificate() []byte {
+func (x *RequestPairResponse) GetReason() string {
 	if x != nil {
-		return x.Certificate
+		return x.Reason
 	}
-	return nil
+	return ""
 }
 
 type GetDetailsRequest struct {
@@ -449,7 +381,7 @@ type GetDetailsRequest struct {
 
 func (x *GetDetailsRequest) Reset() {
 	*x = GetDetailsRequest{}
-	mi := &file_pair_proto_msgTypes[6]
+	mi := &file_pair_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -461,7 +393,7 @@ func (x *GetDetailsRequest) String() string {
 func (*GetDetailsRequest) ProtoMessage() {}
 
 func (x *GetDetailsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pair_proto_msgTypes[6]
+	mi := &file_pair_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -474,7 +406,7 @@ func (x *GetDetailsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetDetailsRequest.ProtoReflect.Descriptor instead.
 func (*GetDetailsRequest) Descriptor() ([]byte, []int) {
-	return file_pair_proto_rawDescGZIP(), []int{6}
+	return file_pair_proto_rawDescGZIP(), []int{5}
 }
 
 type GetDetailsResponse struct {
@@ -486,7 +418,7 @@ type GetDetailsResponse struct {
 
 func (x *GetDetailsResponse) Reset() {
 	*x = GetDetailsResponse{}
-	mi := &file_pair_proto_msgTypes[7]
+	mi := &file_pair_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -498,7 +430,7 @@ func (x *GetDetailsResponse) String() string {
 func (*GetDetailsResponse) ProtoMessage() {}
 
 func (x *GetDetailsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pair_proto_msgTypes[7]
+	mi := &file_pair_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -511,7 +443,7 @@ func (x *GetDetailsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetDetailsResponse.ProtoReflect.Descriptor instead.
 func (*GetDetailsResponse) Descriptor() ([]byte, []int) {
-	return file_pair_proto_rawDescGZIP(), []int{7}
+	return file_pair_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *GetDetailsResponse) GetDetails() *DeviceDetails {
@@ -529,7 +461,7 @@ type GetInfoRequest struct {
 
 func (x *GetInfoRequest) Reset() {
 	*x = GetInfoRequest{}
-	mi := &file_pair_proto_msgTypes[8]
+	mi := &file_pair_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -541,7 +473,7 @@ func (x *GetInfoRequest) String() string {
 func (*GetInfoRequest) ProtoMessage() {}
 
 func (x *GetInfoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pair_proto_msgTypes[8]
+	mi := &file_pair_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -554,7 +486,7 @@ func (x *GetInfoRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetInfoRequest.ProtoReflect.Descriptor instead.
 func (*GetInfoRequest) Descriptor() ([]byte, []int) {
-	return file_pair_proto_rawDescGZIP(), []int{8}
+	return file_pair_proto_rawDescGZIP(), []int{7}
 }
 
 type GetInfoResponse struct {
@@ -566,7 +498,7 @@ type GetInfoResponse struct {
 
 func (x *GetInfoResponse) Reset() {
 	*x = GetInfoResponse{}
-	mi := &file_pair_proto_msgTypes[9]
+	mi := &file_pair_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -578,7 +510,7 @@ func (x *GetInfoResponse) String() string {
 func (*GetInfoResponse) ProtoMessage() {}
 
 func (x *GetInfoResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pair_proto_msgTypes[9]
+	mi := &file_pair_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -591,7 +523,7 @@ func (x *GetInfoResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetInfoResponse.ProtoReflect.Descriptor instead.
 func (*GetInfoResponse) Descriptor() ([]byte, []int) {
-	return file_pair_proto_rawDescGZIP(), []int{9}
+	return file_pair_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *GetInfoResponse) GetInfo() *DeviceInfo {
@@ -619,20 +551,15 @@ const file_pair_proto_rawDesc = "" +
 	"\vcertificate\x18\x01 \x01(\fR\vcertificate\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12'\n" +
 	"\x04type\x18\x03 \x01(\x0e2\x13.pbuf.v1.DeviceTypeR\x04type\x12$\n" +
-	"\x05color\x18\x04 \x01(\v2\x0e.pbuf.v1.ColorR\x05color\"\x8c\x01\n" +
-	"\x0ePairingSession\x121\n" +
-	"\tinitiator\x18\x01 \x01(\v2\x13.pbuf.v1.DeviceInfoR\tinitiator\x121\n" +
-	"\tresponder\x18\x02 \x01(\v2\x13.pbuf.v1.DeviceInfoR\tresponder\x12\x14\n" +
-	"\x05token\x18\x03 \x01(\fR\x05token\"u\n" +
+	"\x05color\x18\x04 \x01(\v2\x0e.pbuf.v1.ColorR\x05color\"\\\n" +
 	"\x12RequestPairRequest\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token\x12'\n" +
-	"\x04info\x18\x02 \x01(\v2\x13.pbuf.v1.DeviceInfoR\x04info\x12 \n" +
-	"\vcertificate\x18\x03 \x01(\fR\vcertificate\"\x92\x01\n" +
+	"\x05token\x18\x01 \x01(\fR\x05token\x120\n" +
+	"\adetails\x18\x02 \x01(\v2\x16.pbuf.v1.DeviceDetailsR\adetails\"\x91\x01\n" +
 	"\x13RequestPairResponse\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token\x12\x1a\n" +
-	"\baccepted\x18\x02 \x01(\bR\baccepted\x12'\n" +
-	"\x04info\x18\x03 \x01(\v2\x13.pbuf.v1.DeviceInfoR\x04info\x12 \n" +
-	"\vcertificate\x18\x04 \x01(\fR\vcertificate\"\x13\n" +
+	"\x05token\x18\x01 \x01(\fR\x05token\x12\x1a\n" +
+	"\baccepted\x18\x02 \x01(\bR\baccepted\x120\n" +
+	"\adetails\x18\x03 \x01(\v2\x16.pbuf.v1.DeviceDetailsR\adetails\x12\x16\n" +
+	"\x06reason\x18\x04 \x01(\tR\x06reason\"\x13\n" +
 	"\x11GetDetailsRequest\"F\n" +
 	"\x12GetDetailsResponse\x120\n" +
 	"\adetails\x18\x01 \x01(\v2\x16.pbuf.v1.DeviceDetailsR\adetails\"\x10\n" +
@@ -664,42 +591,39 @@ func file_pair_proto_rawDescGZIP() []byte {
 }
 
 var file_pair_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_pair_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_pair_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_pair_proto_goTypes = []any{
 	(DeviceType)(0),             // 0: pbuf.v1.DeviceType
 	(*Color)(nil),               // 1: pbuf.v1.Color
 	(*DeviceInfo)(nil),          // 2: pbuf.v1.DeviceInfo
 	(*DeviceDetails)(nil),       // 3: pbuf.v1.DeviceDetails
-	(*PairingSession)(nil),      // 4: pbuf.v1.PairingSession
-	(*RequestPairRequest)(nil),  // 5: pbuf.v1.RequestPairRequest
-	(*RequestPairResponse)(nil), // 6: pbuf.v1.RequestPairResponse
-	(*GetDetailsRequest)(nil),   // 7: pbuf.v1.GetDetailsRequest
-	(*GetDetailsResponse)(nil),  // 8: pbuf.v1.GetDetailsResponse
-	(*GetInfoRequest)(nil),      // 9: pbuf.v1.GetInfoRequest
-	(*GetInfoResponse)(nil),     // 10: pbuf.v1.GetInfoResponse
+	(*RequestPairRequest)(nil),  // 4: pbuf.v1.RequestPairRequest
+	(*RequestPairResponse)(nil), // 5: pbuf.v1.RequestPairResponse
+	(*GetDetailsRequest)(nil),   // 6: pbuf.v1.GetDetailsRequest
+	(*GetDetailsResponse)(nil),  // 7: pbuf.v1.GetDetailsResponse
+	(*GetInfoRequest)(nil),      // 8: pbuf.v1.GetInfoRequest
+	(*GetInfoResponse)(nil),     // 9: pbuf.v1.GetInfoResponse
 }
 var file_pair_proto_depIdxs = []int32{
 	0,  // 0: pbuf.v1.DeviceInfo.type:type_name -> pbuf.v1.DeviceType
 	1,  // 1: pbuf.v1.DeviceInfo.color:type_name -> pbuf.v1.Color
 	0,  // 2: pbuf.v1.DeviceDetails.type:type_name -> pbuf.v1.DeviceType
 	1,  // 3: pbuf.v1.DeviceDetails.color:type_name -> pbuf.v1.Color
-	2,  // 4: pbuf.v1.PairingSession.initiator:type_name -> pbuf.v1.DeviceInfo
-	2,  // 5: pbuf.v1.PairingSession.responder:type_name -> pbuf.v1.DeviceInfo
-	2,  // 6: pbuf.v1.RequestPairRequest.info:type_name -> pbuf.v1.DeviceInfo
-	2,  // 7: pbuf.v1.RequestPairResponse.info:type_name -> pbuf.v1.DeviceInfo
-	3,  // 8: pbuf.v1.GetDetailsResponse.details:type_name -> pbuf.v1.DeviceDetails
-	2,  // 9: pbuf.v1.GetInfoResponse.info:type_name -> pbuf.v1.DeviceInfo
-	5,  // 10: pbuf.v1.AlatService.RequestPair:input_type -> pbuf.v1.RequestPairRequest
-	7,  // 11: pbuf.v1.AlatService.GetDetails:input_type -> pbuf.v1.GetDetailsRequest
-	9,  // 12: pbuf.v1.AlatService.GetInfo:input_type -> pbuf.v1.GetInfoRequest
-	6,  // 13: pbuf.v1.AlatService.RequestPair:output_type -> pbuf.v1.RequestPairResponse
-	8,  // 14: pbuf.v1.AlatService.GetDetails:output_type -> pbuf.v1.GetDetailsResponse
-	10, // 15: pbuf.v1.AlatService.GetInfo:output_type -> pbuf.v1.GetInfoResponse
-	13, // [13:16] is the sub-list for method output_type
-	10, // [10:13] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	3,  // 4: pbuf.v1.RequestPairRequest.details:type_name -> pbuf.v1.DeviceDetails
+	3,  // 5: pbuf.v1.RequestPairResponse.details:type_name -> pbuf.v1.DeviceDetails
+	3,  // 6: pbuf.v1.GetDetailsResponse.details:type_name -> pbuf.v1.DeviceDetails
+	2,  // 7: pbuf.v1.GetInfoResponse.info:type_name -> pbuf.v1.DeviceInfo
+	4,  // 8: pbuf.v1.AlatService.RequestPair:input_type -> pbuf.v1.RequestPairRequest
+	6,  // 9: pbuf.v1.AlatService.GetDetails:input_type -> pbuf.v1.GetDetailsRequest
+	8,  // 10: pbuf.v1.AlatService.GetInfo:input_type -> pbuf.v1.GetInfoRequest
+	5,  // 11: pbuf.v1.AlatService.RequestPair:output_type -> pbuf.v1.RequestPairResponse
+	7,  // 12: pbuf.v1.AlatService.GetDetails:output_type -> pbuf.v1.GetDetailsResponse
+	9,  // 13: pbuf.v1.AlatService.GetInfo:output_type -> pbuf.v1.GetInfoResponse
+	11, // [11:14] is the sub-list for method output_type
+	8,  // [8:11] is the sub-list for method input_type
+	8,  // [8:8] is the sub-list for extension type_name
+	8,  // [8:8] is the sub-list for extension extendee
+	0,  // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_pair_proto_init() }
@@ -713,7 +637,7 @@ func file_pair_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pair_proto_rawDesc), len(file_pair_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   10,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

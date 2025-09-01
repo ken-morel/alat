@@ -2,8 +2,10 @@
 package transport
 
 import (
-	"alat/pkg/core/discovery"
+	"alat/pkg/core"
+	"alat/pkg/core/device"
 	"alat/pkg/core/pair"
+	"alat/pkg/core/security"
 	"alat/pkg/core/service"
 	"alat/pkg/pbuf"
 	"context"
@@ -30,13 +32,19 @@ func NewServer(registry *service.Registry, manager *pair.PairManager) *Server {
 }
 
 func (s *Server) RequestPair(ctx context.Context, req *pbuf.RequestPairRequest) (*pbuf.RequestPairResponse, error) {
-	fmt.Println("Pair request received: ", req)
-	// TODO: Insert some magick here
+	var accepted bool
+	var reason string
+	if s.PairManager.OnPairRequest != nil {
+		accepted, reason = s.PairManager.OnPairRequest((*security.PairToken)(req.GetToken()), device.PbufToDetails(req.GetDetails()))
+	} else {
+		accepted = false
+		reason = "App misconfigured, no pairing handler available"
+	}
 	return &pbuf.RequestPairResponse{
-		Token:       req.GetToken(),
-		Accepted:    false,
-		Info:        s.PairManager.DeviceDetails().GetInfo().ToPBUF(),
-		Certificate: s.PairManager.DeviceDetails().Certificate[:],
+		Token:    req.GetToken(),
+		Accepted: accepted,
+		Reason:   reason,
+		Details:  s.PairManager.DeviceDetails().ToPBUF(),
 	}, nil
 }
 
@@ -53,7 +61,7 @@ func (s *Server) GetInfo(ctx context.Context, req *pbuf.GetInfoRequest) (*pbuf.G
 }
 
 func (s *Server) Start() error {
-	lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", discovery.DefaultPort))
+	lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", core.AlatPort))
 	if err != nil {
 		return fmt.Errorf("failed to listen: %w", err)
 	}

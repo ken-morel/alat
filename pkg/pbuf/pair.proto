@@ -27,22 +27,15 @@ message DeviceDetails {
   Color color = 4;
 }
 
-message PairingSession {
-  DeviceInfo initiator = 1;
-  DeviceInfo responder = 2;
-  bytes token = 3;
-}
-
 message RequestPairRequest {
-  string token = 1;
-  DeviceInfo info = 2;
-  bytes certificate = 3;
+  bytes token = 1;
+  DeviceDetails details = 2;
 }
 message RequestPairResponse {
-  string token = 1;
+  bytes token = 1;
   bool accepted = 2;
-  DeviceInfo info = 3;
-  bytes certificate = 4;
+  DeviceDetails details = 3;
+  string reason = 4;
 }
 
 message GetDetailsRequest {}

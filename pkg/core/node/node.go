@@ -2,35 +2,25 @@
 package node
 
 import (
+	"alat/pkg/core"
 	"alat/pkg/core/device"
 	"alat/pkg/core/discovery"
 	"alat/pkg/core/pair"
 	"alat/pkg/core/service"
 	"alat/pkg/core/storage"
 	"alat/pkg/core/transport"
-	"sync"
-
-	"github.com/grandcat/zeroconf"
 )
 
 type Node struct {
-	Storage          *storage.NodeStorage
-	PairManager      *pair.PairManager
-	discovery        *discovery.Manager
-	device           *device.Details
-	services         *service.Registry
-	server           *transport.Server
-	foundDevices     []*zeroconf.ServiceEntry
-	foundDevicesLock sync.Mutex
-	searching        bool
-	searchingLock    sync.Mutex
+	Storage     *storage.NodeStorage
+	PairManager *pair.PairManager
+	discovery   *discovery.Manager
+	device      *device.Details
+	services    *service.Registry
+	server      *transport.Server
 }
 
-func NewNode(registry *service.Registry, store *storage.NodeStorage, details *device.Details) (*Node, error) {
-	manager, err := pair.NewManager(store, details)
-	if err != nil {
-		return nil, err
-	}
+func NewNode(registry *service.Registry, store *storage.NodeStorage, details *device.Details, manager *pair.PairManager) (*Node, error) {
 	server := transport.NewServer(registry, manager)
 	discoveryManager, err := discovery.NewManager()
 	if err != nil {
@@ -47,8 +37,8 @@ func NewNode(registry *service.Registry, store *storage.NodeStorage, details *de
 	}, nil
 }
 
-func (n *Node) GetDiscoverer() discovery.Discoverer {
-	return *n.discovery.Discoverer
+func (n *Node) GetDiscoverer() *discovery.Discoverer {
+	return n.discovery.Discoverer
 }
 
 func (n *Node) SetDetails(details *device.Details) {
@@ -57,7 +47,7 @@ func (n *Node) SetDetails(details *device.Details) {
 }
 
 func (n *Node) Start() error {
-	err := n.discovery.Server.Start(discovery.DefaultPort)
+	err := n.discovery.Server.Start(core.AlatPort)
 	if err != nil {
 		return err
 	}

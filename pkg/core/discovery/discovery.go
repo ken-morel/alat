@@ -1,11 +1,6 @@
 // Package discovery: handles mdns network discovery
 package discovery
 
-const (
-	// DefaultPort is the default port for the alat service.
-	DefaultPort = 12121
-)
-
 type Status int
 
 const (

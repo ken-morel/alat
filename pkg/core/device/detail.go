@@ -22,6 +22,15 @@ func (d *Details) ToPBUF() *pbuf.DeviceDetails {
 	}
 }
 
+func PbufToDetails(pb *pbuf.DeviceDetails) *Details {
+	return &Details{
+		Certificate: security.Certificate(pb.GetCertificate()),
+		Name:        pb.GetName(),
+		Type:        PbufToDType(pb.GetType()),
+		Color:       PbufToColor(pb.GetColor()),
+	}
+}
+
 func (d *Details) GetInfo() *Info {
 	return &Info{
 		ID:    d.Certificate.ID(),

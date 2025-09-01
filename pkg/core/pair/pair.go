@@ -3,14 +3,17 @@ package pair
 
 import (
 	"alat/pkg/core/device"
+	"alat/pkg/core/security"
 	"alat/pkg/core/storage"
 )
 
+type PairRequest struct{}
+
 type PairManager struct {
 	storage       *storage.NodeStorage
-	callbacks     []PairCallback
 	pairedDevices []device.PairedDevice
 	details       *device.Details
+	OnPairRequest func(*security.PairToken, *device.Details) (bool, string)
 }
 
 func (p *PairManager) DeviceDetails() *device.Details {
@@ -28,7 +31,6 @@ func NewManager(stor *storage.NodeStorage, details *device.Details) (*PairManage
 	}
 	return &PairManager{
 		storage:       stor,
-		callbacks:     nil,
 		pairedDevices: paired,
 		details:       details,
 	}, nil

@@ -2,7 +2,10 @@ package app
 
 import (
 	"alat/pkg/core/device"
+	"alat/pkg/core/security"
 	"fmt"
+
+	rt "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 func (app *App) SearchDevices() error {
@@ -17,4 +20,19 @@ func (app *App) GetFoundDevices() ([]*device.Info, error) {
 
 func (app *App) IsSearchingDevices() bool {
 	return app.node.SearchingDevices()
+}
+
+func (app *App) handlePairRequest(token *security.PairToken, details *device.Details) (bool, string) {
+	response, err := rt.MessageDialog(app.ctx, rt.MessageDialogOptions{
+		Type:    rt.QuestionDialog,
+		Title:   "Pair request",
+		Message: fmt.Sprintf("%s device '%s'(colored %s) want's to connect token: %s", details.Type, details.Name, details.Color.Name, details.Certificate.ID()[:5]),
+	})
+	if err != nil {
+		return false, "Failed to get user response"
+	} else if response == "yes" {
+		return true, ""
+	} else {
+		return false, "User rejected the pair request"
+	}
 }
