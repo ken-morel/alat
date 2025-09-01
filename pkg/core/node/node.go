@@ -22,6 +22,8 @@ type Node struct {
 	server           *transport.Server
 	foundDevices     []*zeroconf.ServiceEntry
 	foundDevicesLock sync.Mutex
+	searching        bool
+	searchingLock    sync.Mutex
 }
 
 func NewNode(registry *service.Registry, store *storage.NodeStorage, details *device.Details) (*Node, error) {
