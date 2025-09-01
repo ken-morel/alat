@@ -38,7 +38,7 @@ func (app *App) Run() error {
 		AssetServer: &assetserver.Options{
 			Assets: app.assets,
 		},
-		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 200},
+		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 100},
 		OnStartup:        app.startup,
 		OnShutdown:       app.shutdown,
 		Bind: []any{
@@ -52,10 +52,10 @@ func (app *App) Run() error {
 			OnSecondInstanceLaunch: app.onSecondInstance,
 		},
 		Windows: &windows.Options{
-			WindowIsTranslucent: true,
-			Theme:               windows.Dark,
-			BackdropType:        windows.Acrylic,
-			WindowClassName:     "cm.engon.alat",
+			WindowIsTranslucent:  true,
+			WebviewIsTransparent: true,
+			BackdropType:         windows.Acrylic,
+			WindowClassName:      "cm.engon.alat",
 		},
 		Linux: &linux.Options{
 			WindowIsTranslucent: true,
