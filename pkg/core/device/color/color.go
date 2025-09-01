@@ -42,13 +42,13 @@ func (c *Color) ToPBUF() *pbuf.Color {
 	}
 }
 
-func FromPBUF(pb *pbuf.Color) *Color {
+func FromPBUF(pb *pbuf.Color) Color {
 	for _, c := range Colors {
 		if c.Name == pb.Name {
-			return &c
+			return c
 		}
 	}
-	return DefaultColor
+	return *DefaultColor
 }
 
 func FromString(nameOrHex string) *Color {

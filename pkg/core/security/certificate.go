@@ -18,5 +18,7 @@ func GenerateCertificate() (Certificate, error) {
 }
 
 func (cert *Certificate) ID() string {
-	return hex.EncodeToString(crypto.SHA256.New().Sum(cert[:]))
+	hasher := crypto.SHA256.New()
+	hasher.Write(cert[:])
+	return hex.EncodeToString(hasher.Sum(nil))
 }

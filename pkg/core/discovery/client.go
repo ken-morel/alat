@@ -12,7 +12,6 @@ type Discoverer struct {
 	resolver *zeroconf.Resolver
 	Entries  []*zeroconf.ServiceEntry
 	Running  bool
-	stopChan chan<- struct{}
 }
 
 func NewDiscoverer() (*Discoverer, error) {
@@ -23,8 +22,7 @@ func NewDiscoverer() (*Discoverer, error) {
 	return &Discoverer{
 		resolver: resolver,
 		Entries:  nil,
-	},
-	nil
+	}, nil
 }
 
 func (d *Discoverer) Start() error {
@@ -35,25 +33,21 @@ func (d *Discoverer) Start() error {
 		fmt.Println("Starting discoverer since not already running")
 	}
 	entries := make(chan *zeroconf.ServiceEntry)
-	stopChan := make(chan struct{})
-	
+
 	if d.Entries != nil {
 		clear(d.Entries)
 	}
-	d.stopChan = stopChan
 	go func() {
 		d.Running = true
 		fmt.Println("Started")
 		ctime := time.Now()
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-		go func() {
-			<-stopChan
-			cancel()
-		}()
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
+
 		go func() {
 			for entry := range entries {
 				d.Entries = append(d.Entries, entry)
 			}
+			cancel()
 			d.Running = false
 			fmt.Println("Stopped after", time.Since(ctime))
 		}()
@@ -67,8 +61,4 @@ func (d *Discoverer) Start() error {
 		// close(entries)
 	}()
 	return nil
-}
-
-func (d *Discoverer) Stop() {
-	// This function is kept for API compatibility if needed, but does nothing.
 }

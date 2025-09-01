@@ -27,9 +27,6 @@ func (m *Manager) Stop() {
 	if m.Server != nil {
 		m.Server.Stop()
 	}
-	if m.Discoverer != nil {
-		m.Discoverer.Stop()
-	}
 }
 
 func NewManager() (*Manager, error) {

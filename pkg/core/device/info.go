@@ -28,6 +28,8 @@ const (
 	MobileDevice      DeviceType = "mobile"
 	DesktopDevice     DeviceType = "desktop"
 	TVDevice          DeviceType = "tv"
+	WebDevice         DeviceType = "web"
+	ArduinoDevice     DeviceType = "arduino"
 	UnspecifiedDevice DeviceType = "unspecified"
 )
 
@@ -44,17 +46,17 @@ func (t DeviceType) ToPBUF() pbuf.DeviceType {
 	}
 }
 
-func PbufToColor(pbufColor *pbuf.Color) *color.Color {
+func PbufToColor(pbufColor *pbuf.Color) color.Color {
 	return color.FromPBUF(pbufColor)
 }
 
-func PbufToDType(pbType *pbuf.DeviceType) DeviceType {
+func PbufToDType(pbType pbuf.DeviceType) DeviceType {
 	switch pbType {
-	case pbuf.DeviceType_DEVICE_TYPE_DESKTOP.Enum():
+	case pbuf.DeviceType_DEVICE_TYPE_DESKTOP:
 		return DesktopDevice
-	case pbuf.DeviceType_DEVICE_TYPE_MOBILE.Enum():
+	case pbuf.DeviceType_DEVICE_TYPE_MOBILE:
 		return MobileDevice
-	case pbuf.DeviceType_DEVICE_TYPE_TV.Enum():
+	case pbuf.DeviceType_DEVICE_TYPE_TV:
 		return TVDevice
 	default:
 		return UnspecifiedDevice
@@ -65,7 +67,7 @@ func PbufToInfo(pbufInfo *pbuf.DeviceInfo) *Info {
 	return &Info{
 		ID:    pbufInfo.Id,
 		Name:  pbufInfo.Name,
-		Color: *PbufToColor(pbufInfo.GetColor()),
-		Type:  PbufToDType(pbufInfo.GetType().Enum()),
+		Color: PbufToColor(pbufInfo.GetColor()),
+		Type:  PbufToDType(pbufInfo.GetType()),
 	}
 }

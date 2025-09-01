@@ -2,6 +2,7 @@
   import "../app.css";
   import Navigation from "./Navigation.svelte";
   import StatusBar from "./StatusBar.svelte";
+  import PairDialog from "./PairDialog.svelte";
   let { children, data } = $props();
 </script>
 
@@ -15,4 +16,5 @@
   <div class="h-16 w-full">
     <StatusBar />
   </div>
+  <PairDialog />
 </div>
