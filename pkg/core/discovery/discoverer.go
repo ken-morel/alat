@@ -78,7 +78,7 @@ func (d *Discoverer) StartDeviceSearch() error {
 				if entry == nil {
 					return
 				}
-				if entry.AddrIPv4 != nil && len(entry.AddrIPv4) > 0 {
+				if len(entry.AddrIPv4) > 0 { // also does nil check
 					info, err := transport.GetDeviceInfo(entry.AddrIPv4[0], entry.Port)
 					if err != nil {
 						fmt.Println("Error getting device info:", err)
@@ -97,7 +97,7 @@ func (d *Discoverer) StartDeviceSearch() error {
 	}()
 
 	fmt.Println("Browsing for services...")
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
 	err = resolver.Browse(ctx, "_alat._tcp", "local.", entries)

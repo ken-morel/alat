@@ -32,12 +32,28 @@ func (app *App) RequestPairingFoundDevice(deviceID string) (*RequestPairingResul
 	response, err := app.node.RequestPairFoundDevice(deviceID)
 	if err != nil {
 		fmt.Println("[js call] Failed to request pairing:", err)
+		go rt.MessageDialog(app.ctx, rt.MessageDialogOptions{
+			Type:    rt.ErrorDialog,
+			Title:   "Pairing error",
+			Message: err.Error(),
+		})
 		return nil, err
 	}
 	if response.GetAccepted() {
 		app.nodeStore.AddPaired(device.PairedDevice{
 			Certificate: security.Certificate(response.GetDetails().GetCertificate()),
 			Token:       security.PairToken(response.GetToken()),
+		})
+		go rt.MessageDialog(app.ctx, rt.MessageDialogOptions{
+			Type:    rt.InfoDialog,
+			Title:   "Pairing success",
+			Message: response.GetDetails().GetName() + " Succesfyly paired",
+		})
+	} else {
+		go rt.MessageDialog(app.ctx, rt.MessageDialogOptions{
+			Type:    rt.ErrorDialog,
+			Title:   "Pairing error",
+			Message: response.GetDetails().GetName() + " was not pair, reason: " + response.GetReason(),
 		})
 	}
 	return &RequestPairingResult{
@@ -54,7 +70,7 @@ func (app *App) handlePairRequest(token *security.PairToken, details *device.Det
 	})
 	if err != nil {
 		return false, "Failed to get user response"
-	} else if response == "yes" {
+	} else if response == "Yes" {
 		return true, ""
 	} else {
 		return false, "User rejected the pair request"

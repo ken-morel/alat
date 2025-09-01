@@ -21,7 +21,7 @@ func RequestPair(addr net.IP, port int, token *security.PairToken, details *devi
 	}
 	defer conn.Close()
 	client := pbuf.NewAlatServiceClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
 	resp, err := client.RequestPair(ctx, &pbuf.RequestPairRequest{
