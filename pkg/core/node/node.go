@@ -8,15 +8,20 @@ import (
 	"alat/pkg/core/service"
 	"alat/pkg/core/storage"
 	"alat/pkg/core/transport"
+	"sync"
+
+	"github.com/grandcat/zeroconf"
 )
 
 type Node struct {
-	Storage     *storage.NodeStorage
-	PairManager *pair.PairManager
-	discovery   *discovery.Manager
-	device      *device.Details
-	services    *service.Registry
-	server      *transport.Server
+	Storage          *storage.NodeStorage
+	PairManager      *pair.PairManager
+	discovery        *discovery.Manager
+	device           *device.Details
+	services         *service.Registry
+	server           *transport.Server
+	foundDevices     []*zeroconf.ServiceEntry
+	foundDevicesLock sync.Mutex
 }
 
 func NewNode(registry *service.Registry, store *storage.NodeStorage, details *device.Details) (*Node, error) {

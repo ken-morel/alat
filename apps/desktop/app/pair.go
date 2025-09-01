@@ -7,7 +7,7 @@ import (
 
 func (app *App) SearchDevices() error {
 	fmt.Println("[js call] Starting device search...")
-	app.node.StartDeviceSearch()
+	go app.node.StartDeviceSearch()
 	return nil
 }
 

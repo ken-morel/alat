@@ -70,8 +70,5 @@ func (d *Discoverer) Start() error {
 }
 
 func (d *Discoverer) Stop() {
-	if d.Running && d.stopChan != nil {
-		close(d.stopChan)
-		d.stopChan = nil
-	}
+	// This function is kept for API compatibility if needed, but does nothing.
 }
