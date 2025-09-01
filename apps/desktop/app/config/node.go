@@ -3,7 +3,6 @@ package config
 import (
 	"alat/pkg/core/device"
 	"alat/pkg/core/storage"
-	"fmt"
 	"os"
 	"path"
 
@@ -32,7 +31,6 @@ func (ns *YAMLNodeStorage) GetPaired() ([]device.PairedDevice, error) {
 }
 
 func (ns *YAMLNodeStorage) AddPaired(newDevice device.PairedDevice) error {
-	fmt.Println("Writing new paired device to node")
 	devices, err := ns.GetPaired()
 	if err != nil {
 		return err

@@ -51,13 +51,14 @@
     </div>
 
     <div class="flex min-w-0 flex-col">
-      <h3 class="h3 font-bold text-surface-700-200">
+      <h4 class="h4 font-bold text-surface-700-200">
         {device.Name}
-      </h3>
+      </h4>
       <p class="truncate text-sm text-surface-500-400" title={device.ID}>
-        {device.ID}
-        <br class="hr" />
-        <code>{foundDevice.IP}:{foundDevice.Port}</code>
+        {device.ID.slice(0, 15)}...
+        <small class="text-surface-700-300"
+          >{foundDevice.IP}:{foundDevice.Port}</small
+        >
       </p>
     </div>
   </article>

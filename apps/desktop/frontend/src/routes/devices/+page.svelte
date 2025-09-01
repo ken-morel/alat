@@ -38,7 +38,7 @@
   <div
     class="card preset-filled-surface-100-900 border-[1px] border-surface-200-800 w-full max-w-lg p-8"
   >
-    <h4 class="h4 text-surface-400-600">Searching devices</h4>
+    <header><h3 class="h3">Found devices</h3></header>
     <div>
       {#each devices as device}
         <FoundDeviceTile

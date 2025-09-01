@@ -31,9 +31,9 @@
         <IconDashboard />
       </Navigation.Tile>
       <Navigation.Tile
-        selected={page.url.pathname == "/pair"}
+        selected={page.url.pathname == "/devices"}
         label="Devices"
-        href="/pair"
+        href="/devices"
       >
         <IconDevices />
       </Navigation.Tile>

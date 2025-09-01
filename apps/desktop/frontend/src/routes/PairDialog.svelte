@@ -20,7 +20,6 @@
 <script lang="ts">
   import { Dialog } from "bits-ui";
   import { Check, X } from "lucide-svelte";
-  import FoundDeviceTile from "$lib/components/tiles/FoundDeviceTile.svelte";
 
   function handleDecline() {
     if (!options) return;

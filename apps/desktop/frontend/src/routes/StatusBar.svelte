@@ -1,5 +1,8 @@
 <script lang="ts">
-  import { GetNodeStatus } from "$lib/wails/wailsjs/go/app/App";
+  import {
+    GetNodeStatus,
+    GetPairedDevices,
+  } from "$lib/wails/wailsjs/go/app/App";
   import type { node } from "$lib/wails/wailsjs/go/models";
   import { AppBar, ProgressRing } from "@skeletonlabs/skeleton-svelte";
   import { onMount } from "svelte";
@@ -17,12 +20,20 @@
   let discoveryStatusText: string = $state("Discovery Status: Unknown");
   let serverStatusColor: string = $state("text-surface-400-500"); // Default gray
   let discoveryStatusColor: string = $state("text-surface-400-500"); // Default gray
+  let numberOfPairedDevices: number = $state(0);
 
   onMount(() => {
     const interval = setInterval(() => {
       GetNodeStatus().then((stat) => {
         status = stat;
         updateStatusDisplay(stat);
+      });
+      GetPairedDevices().then((dev) => {
+        if (dev) {
+          numberOfPairedDevices = dev.length;
+        } else {
+          numberOfPairedDevices = 0;
+        }
       });
     }, 1000);
     return () => clearInterval(interval);
@@ -76,6 +87,12 @@
           <IconMagnifyingGlass class="h-5 w-5 {discoveryStatusColor}" />
           <span class="text-sm {discoveryStatusColor}"
             >{discoveryStatusText}</span
+          >
+        </div>
+        <div class="flex items-center space-x-1">
+          <span class="h-5 w-5">{numberOfPairedDevices}</span>
+          <span class="text-sm"
+            >Paired device{numberOfPairedDevices > 1 ? "s" : ""}</span
           >
         </div>
       </div>
