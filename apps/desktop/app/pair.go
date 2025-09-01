@@ -2,6 +2,7 @@ package app
 
 import (
 	"alat/pkg/core/device"
+	"alat/pkg/core/discovery"
 	"alat/pkg/core/security"
 	"fmt"
 
@@ -10,16 +11,39 @@ import (
 
 func (app *App) SearchDevices() error {
 	fmt.Println("[js call] Starting device search...")
-	go app.node.StartDeviceSearch()
+	go app.node.GetDiscoverer().StartDeviceSearch()
 	return nil
 }
 
-func (app *App) GetFoundDevices() ([]*device.Info, error) {
-	return app.node.GetFoundDevices()
+func (app *App) GetFoundDevices() []discovery.FoundDevice {
+	return app.node.GetDiscoverer().GetFoundDevices()
 }
 
 func (app *App) IsSearchingDevices() bool {
 	return app.node.SearchingDevices()
+}
+
+type RequestPairingResult struct {
+	Accepted bool
+	Message  string
+}
+
+func (app *App) RequestPairingFoundDevice(deviceID string) (*RequestPairingResult, error) {
+	response, err := app.node.RequestPairFoundDevice(deviceID)
+	if err != nil {
+		fmt.Println("[js call] Failed to request pairing:", err)
+		return nil, err
+	}
+	if response.GetAccepted() {
+		app.nodeStore.AddPaired(device.PairedDevice{
+			Certificate: security.Certificate(response.GetDetails().GetCertificate()),
+			Token:       security.PairToken(response.GetToken()),
+		})
+	}
+	return &RequestPairingResult{
+		Accepted: response.GetAccepted(),
+		Message:  response.GetReason(),
+	}, nil
 }
 
 func (app *App) handlePairRequest(token *security.PairToken, details *device.Details) (bool, string) {

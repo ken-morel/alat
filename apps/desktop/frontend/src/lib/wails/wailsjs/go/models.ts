@@ -1,3 +1,22 @@
+export namespace app {
+	
+	export class RequestPairingResult {
+	    Accepted: boolean;
+	    Message: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new RequestPairingResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Accepted = source["Accepted"];
+	        this.Message = source["Message"];
+	    }
+	}
+
+}
+
 export namespace color {
 	
 	export class Color {
@@ -210,6 +229,45 @@ export namespace device {
 	        this.Certificate = source["Certificate"];
 	        this.Token = source["Token"];
 	    }
+	}
+
+}
+
+export namespace discovery {
+	
+	export class FoundDevice {
+	    IP: number[];
+	    Port: number;
+	    Info: device.Info;
+	
+	    static createFrom(source: any = {}) {
+	        return new FoundDevice(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.IP = source["IP"];
+	        this.Port = source["Port"];
+	        this.Info = this.convertValues(source["Info"], device.Info);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 
 }

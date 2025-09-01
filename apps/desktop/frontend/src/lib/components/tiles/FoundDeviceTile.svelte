@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { device as dev } from "$lib/wails/wailsjs/go/models";
+  import type { discovery } from "$lib/wails/wailsjs/go/models";
   import {
     Tv,
     Smartphone,
@@ -12,13 +12,14 @@
   import type { MouseEventHandler } from "svelte/elements";
 
   let {
-    device,
+    device: foundDevice,
     onclick,
-  }: { device: dev.Info; onclick?: MouseEventHandler<HTMLDivElement> } =
-    $props();
+  }: {
+    device: discovery.FoundDevice;
+    onclick?: MouseEventHandler<HTMLDivElement>;
+  } = $props();
+  const device = foundDevice.Info;
 
-  // A map to select the icon component dynamically.
-  // This is cleaner than a long #if block in the markup.
   const iconMap: Record<DeviceType, typeof Tv> = {
     tv: Tv,
     mobile: Smartphone,
@@ -55,6 +56,8 @@
       </h3>
       <p class="truncate text-sm text-surface-500-400" title={device.ID}>
         {device.ID}
+        <br class="hr" />
+        <code>{foundDevice.IP}:{foundDevice.Port}</code>
       </p>
     </div>
   </article>

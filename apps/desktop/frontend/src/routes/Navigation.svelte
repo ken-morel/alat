@@ -1,3 +1,6 @@
+<script lang="ts" module>
+</script>
+
 <script lang="ts">
   import { page } from "$app/state";
   import { Navigation } from "@skeletonlabs/skeleton-svelte";

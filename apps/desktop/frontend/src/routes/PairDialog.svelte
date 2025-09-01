@@ -57,7 +57,6 @@
               will be able to access services you have enabled. You can manage
               permissions in <a href="/settings" class="anchor">Settings</a>.
             </p>
-            <FoundDeviceTile device={options.info} />
           </div>
           <div class="mt-6 flex justify-end space-x-2">
             <button

@@ -3,13 +3,14 @@
     GetFoundDevices,
     IsSearchingDevices as IsSearching,
     SearchDevices,
+    RequestPairingFoundDevice,
   } from "$lib/wails/wailsjs/go/app/App";
   import { onMount } from "svelte";
   import { ProgressRing } from "@skeletonlabs/skeleton-svelte";
-  import type { device } from "$lib/wails/wailsjs/go/models";
+  import { discovery, type device } from "$lib/wails/wailsjs/go/models";
   import FoundDeviceTile from "$lib/components/tiles/FoundDeviceTile.svelte";
   import { pairDialogOptions } from "../PairDialog.svelte";
-  let devices: device.Info[] = $state([]);
+  let devices: discovery.FoundDevice[] = $state([]);
   let isSearching: boolean = $state(false);
   async function startSearch() {
     await SearchDevices();
@@ -44,13 +45,11 @@
           {device}
           onclick={() => {
             pairDialogOptions.set({
-              info: device,
+              info: device.Info,
               accept: () => {
-                alert("Accepted" + device.Name);
+                RequestPairingFoundDevice(device.Info.ID);
               },
-              decline: () => {
-                alert("Declined" + device.Name);
-              },
+              decline: () => {},
             });
           }}
         />
