@@ -3,6 +3,7 @@ package node
 
 import (
 	"alat/pkg/core"
+	"alat/pkg/core/connected"
 	"alat/pkg/core/device"
 	"alat/pkg/core/discovery"
 	"alat/pkg/core/pair"
@@ -12,12 +13,14 @@ import (
 )
 
 type Node struct {
+	workerState workerState
 	Storage     *storage.NodeStorage
 	PairManager *pair.PairManager
 	discovery   *discovery.Manager
 	device      *device.Details
 	services    *service.Registry
 	server      *transport.Server
+	Connected   *connected.Manager
 }
 
 func NewNode(registry *service.Registry, store *storage.NodeStorage, details *device.Details, manager *pair.PairManager) (*Node, error) {
@@ -34,6 +37,8 @@ func NewNode(registry *service.Registry, store *storage.NodeStorage, details *de
 		Storage:     store,
 		PairManager: manager,
 		discovery:   discoveryManager,
+		Connected:   connected.NewManageer(manager, discoveryManager.Discoverer),
+		workerState: workerState{},
 	}, nil
 }
 
@@ -55,10 +60,12 @@ func (n *Node) Start() error {
 	if err != nil {
 		return err
 	}
-	return err
+	n.StartWorker()
+	return nil
 }
 
 func (n *Node) Stop() {
 	n.server.Stop()
 	n.discovery.Stop()
+	n.StopWorker()
 }

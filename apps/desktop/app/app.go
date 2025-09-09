@@ -2,15 +2,18 @@
 package app
 
 import (
+	"context"
+	"embed"
+
 	"alat/apps/desktop/app/config"
 	"alat/pkg/core/device"
 	"alat/pkg/core/device/color"
 	"alat/pkg/core/node"
 	"alat/pkg/core/service"
 	"alat/pkg/core/storage"
-	"context"
-	"embed"
 )
+
+// The app sourve code
 
 type App struct {
 	ctx              context.Context

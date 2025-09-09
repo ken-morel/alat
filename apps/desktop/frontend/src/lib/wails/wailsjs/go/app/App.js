@@ -14,6 +14,10 @@ export function GetAlatColors() {
   return window['go']['app']['App']['GetAlatColors']();
 }
 
+export function GetConnectedDevices() {
+  return window['go']['app']['App']['GetConnectedDevices']();
+}
+
 export function GetFoundDevices() {
   return window['go']['app']['App']['GetFoundDevices']();
 }
@@ -26,20 +30,12 @@ export function GetPairedDevices() {
   return window['go']['app']['App']['GetPairedDevices']();
 }
 
-export function IsSearchingDevices() {
-  return window['go']['app']['App']['IsSearchingDevices']();
-}
-
 export function RequestPairingFoundDevice(arg1) {
   return window['go']['app']['App']['RequestPairingFoundDevice'](arg1);
 }
 
 export function Run() {
   return window['go']['app']['App']['Run']();
-}
-
-export function SearchDevices() {
-  return window['go']['app']['App']['SearchDevices']();
 }
 
 export function SettingsGetDeviceColor() {

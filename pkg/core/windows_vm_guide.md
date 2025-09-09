@@ -36,34 +36,35 @@ After you have installed Tiny11 in the VM, perform these steps inside the Window
 
 This prevents the OS from downloading updates and growing in size.
 
-1.  Press `Win + R`, type `services.msc`, and press Enter.
-2.  Find the **Windows Update** service in the list.
-3.  Double-click it.
-4.  Change the "Startup type" to **Disabled**.
-5.  Click the **Stop** button to halt the service if it's running.
-6.  Navigate to the **Recovery** tab.
-7.  Set all three failure responses ("First failure", "Second failure", "Subsequent failures") to **"Take No Action"**.
-8.  Click **Apply** and **OK**.
+1. Press `Win + R`, type `services.msc`, and press Enter.
+2. Find the **Windows Update** service in the list.
+3. Double-click it.
+4. Change the "Startup type" to **Disabled**.
+5. Click the **Stop** button to halt the service if it's running.
+6. Navigate to the **Recovery** tab.
+7. Set all three failure responses ("First failure", "Second failure", "Subsequent failures") to **"Take No Action"**.
+8. Click **Apply** and **OK**.
 
 #### b. Disable the Page File
 
 The page file (`pagefile.sys`) is used as virtual RAM. Disabling it saves disk space equal to its size.
 
-1.  Open the Start Menu and search for "View advanced system settings".
-2.  On the **Advanced** tab, click the **Settings...** button under the "Performance" section.
-3.  In the new window, go to the **Advanced** tab.
-4.  Under the "Virtual memory" section, click **Change...**.
-5.  Uncheck the box for **"Automatically manage paging file size for all drives"**.
-6.  Select the **"No paging file"** radio button.
-7.  Click **Set**, then **OK**.
-8.  You will be prompted to restart the VM for the changes to take effect.
+1. Open the Start Menu and search for "View advanced system settings".
+2. On the **Advanced** tab, click the **Settings...** button under the "Performance" section.
+3. In the new window, go to the **Advanced** tab.
+4. Under the "Virtual memory" section, click **Change...**.
+5. Uncheck the box for **"Automatically manage paging file size for all drives"**.
+6. Select the **"No paging file"** radio button.
+7. Click **Set**, then **OK**.
+8. You will be prompted to restart the VM for the changes to take effect.
 
 #### c. Disable Hibernation
 
 The hibernation file (`hiberfil.sys`) reserves disk space equal to the VM's RAM.
 
-1.  Open **Command Prompt** or **PowerShell** as an Administrator.
-2.  Execute the following command:
+1. Open **Command Prompt** or **PowerShell** as an Administrator.
+2. Execute the following command:
+
     ```cmd
     powercfg /h off
     ```
@@ -72,8 +73,9 @@ The hibernation file (`hiberfil.sys`) reserves disk space equal to the VM's RAM.
 
 This built-in utility compresses the core operating system files, saving significant space.
 
-1.  Open **Command Prompt** or **PowerShell** as an Administrator.
-2.  Execute the following command:
+1. Open **Command Prompt** or **PowerShell** as an Administrator.
+2. Execute the following command:
+
     ```cmd
     compact.exe /CompactOS:always
     ```

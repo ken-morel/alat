@@ -35,3 +35,7 @@ func NewManager(stor *storage.NodeStorage, details *device.Details) (*PairManage
 		details:       details,
 	}, nil
 }
+
+func (p *PairManager) GetPairedDevices() []device.PairedDevice {
+	return p.pairedDevices
+}

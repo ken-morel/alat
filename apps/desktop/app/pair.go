@@ -1,26 +1,17 @@
 package app
 
 import (
+	"fmt"
+
 	"alat/pkg/core/device"
 	"alat/pkg/core/discovery"
 	"alat/pkg/core/security"
-	"fmt"
 
 	rt "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-func (app *App) SearchDevices() error {
-	fmt.Println("[js call] Starting device search...")
-	go app.node.GetDiscoverer().StartDeviceSearch()
-	return nil
-}
-
 func (app *App) GetFoundDevices() []discovery.FoundDevice {
 	return app.node.GetDiscoverer().GetFoundDevices()
-}
-
-func (app *App) IsSearchingDevices() bool {
-	return app.node.SearchingDevices()
 }
 
 type RequestPairingResult struct {

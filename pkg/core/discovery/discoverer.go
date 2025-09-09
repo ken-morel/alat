@@ -1,13 +1,14 @@
 package discovery
 
 import (
-	"alat/pkg/core/device"
-	"alat/pkg/core/transport"
 	"context"
 	"fmt"
 	"net"
 	"sync"
 	"time"
+
+	"alat/pkg/core/device"
+	"alat/pkg/core/transport"
 
 	"github.com/grandcat/zeroconf"
 )
@@ -96,7 +97,6 @@ func (d *Discoverer) StartDeviceSearch() error {
 		}
 	}()
 
-	fmt.Println("Browsing for services...")
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
@@ -108,7 +108,6 @@ func (d *Discoverer) StartDeviceSearch() error {
 	<-ctx.Done() // Wait for the context to be cancelled (timeout)
 	close(done)  // Safely signal the collector goroutine to exit
 	wg.Wait()    // Wait for the collector to finish
-	fmt.Println("Browse finished.")
 
 	d.foundDevicesLock.Lock()
 	d.foundDevices = foundDevices
