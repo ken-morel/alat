@@ -1,21 +1,21 @@
 <script lang="ts">
-  import { device, type connected } from "$lib/wails/wailsjs/go/models";
+  import type { connected } from "$lib/wails/wailsjs/go/models";
   import type { PageData } from "./$types";
   import { GetConnectedDevices } from "$lib/wails/wailsjs/go/app/App";
-  import {
-    Tv,
-    Smartphone,
-    Laptop,
-    LucideGhost,
-    Cpu,
-    Network,
-  } from "lucide-svelte";
-  import type { DeviceType } from "$lib/device";
+  import { connectedDevice } from "$lib/store";
+
+  import guessIcon from "$lib/icons";
 
   import { onMount } from "svelte";
+  import { goto } from "$app/navigation";
 
   let { data }: { data: PageData } = $props();
   let connectedDevices: connected.Connected[] = $state(data.connectedDevices);
+
+  function viewConnectedDevice(dev: connected.Connected) {
+    connectedDevice.set(dev);
+    goto("/dashboard/device");
+  }
   onMount(() => {
     const interval = setInterval(async () => {
       connectedDevices = (await GetConnectedDevices()) ?? [];
@@ -24,15 +24,6 @@
       clearInterval(interval);
     };
   });
-
-  const iconMap: Record<DeviceType, typeof Tv> = {
-    tv: Tv,
-    mobile: Smartphone,
-    desktop: Laptop,
-    arduino: Cpu,
-    web: Network,
-    unspecified: LucideGhost,
-  };
 </script>
 
 <div class="h-full w-full grid place-items-center">
@@ -45,6 +36,7 @@
     <article class="p-8">
       <div class="flex p-2">
         {#each connectedDevices as dev, i (i)}
+          {@const Icon = guessIcon(dev.Info.Type)}
           <div
             class="group card flex flex-col justify-between overflow-hidden rounded-lg
          bg-surface-100-900 ring-1 ring-surface-300/50 transition-all
@@ -55,17 +47,14 @@
             role="button"
             tabindex="0"
             onkeydown={() => null}
+            onclick={() => viewConnectedDevice(dev)}
           >
             <header class="h-1.5 bg-[var(--device-color)]"></header>
 
             <article class="flex flex-grow items-start gap-4 p-4">
               <div class="mt-1">
                 <!-- svelte-ignore svelte_component_deprecated -->
-                <svelte:component
-                  this={iconMap[dev.Info.Type as DeviceType] || LucideGhost}
-                  color={dev.Info.Color.Hex}
-                  class="h-16 w-16 opacity-80"
-                />
+                <Icon color={dev.Info.Color.Hex} class="h-16 w-16 opacity-80" />
               </div>
 
               <div class="flex min-w-0 flex-col">

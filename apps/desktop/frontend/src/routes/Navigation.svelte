@@ -4,6 +4,8 @@
 <script lang="ts">
   import { page } from "$app/state";
   import { Navigation } from "@skeletonlabs/skeleton-svelte";
+  import { connectedDevice } from "$lib/store";
+  import guessIcon from "$lib/icons";
   import AlatLogo from "$lib/assets/logo.svg";
 
   import IconDashboard from "@lucide/svelte/icons/hotel";
@@ -37,6 +39,16 @@
       >
         <IconDevices />
       </Navigation.Tile>
+      {#if $connectedDevice}
+        {@const Icon = guessIcon($connectedDevice.Info.Type)}
+        <Navigation.Tile
+          selected={page.url.pathname == "/dashboard/device"}
+          label={$connectedDevice.Info.Name}
+          href="/dashboard/device"
+        >
+          <Icon color={$connectedDevice.Info.Color.Hex} />
+        </Navigation.Tile>
+      {/if}
     {/snippet}
     {#snippet footer()}
       <Navigation.Tile
