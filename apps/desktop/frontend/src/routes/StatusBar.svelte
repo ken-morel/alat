@@ -27,7 +27,7 @@
           numberOfPairedDevices = 0;
         }
       });
-    }, 1000);
+    }, 500);
     return () => clearInterval(interval);
   });
 </script>

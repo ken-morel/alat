@@ -8,7 +8,8 @@
   import { discovery, type device } from "$lib/wails/wailsjs/go/models";
   import FoundDeviceTile from "$lib/components/tiles/FoundDeviceTile.svelte";
   import { pairDialogOptions } from "../PairDialog.svelte";
-  let devices: discovery.FoundDevice[] = $state([]);
+  let { data } = $props();
+  let devices: discovery.FoundDevice[] = $state(data.found);
 
   onMount(() => {
     const searchInterval = setInterval(() => {
@@ -17,7 +18,7 @@
           devices = found;
         }
       });
-    }, 100);
+    }, 500);
     return () => {
       clearInterval(searchInterval);
     };
@@ -29,7 +30,7 @@
     class="card preset-filled-surface-100-900 border-[1px] border-surface-200-800 w-full max-w-lg p-8"
   >
     <header><h3 class="h3">Found devices</h3></header>
-    <div>
+    <div class="pt-4">
       {#each devices as device}
         <FoundDeviceTile
           {device}

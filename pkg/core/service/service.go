@@ -10,10 +10,12 @@ type (
 const (
 	FileSystem ServiceName = "filesystem"
 	Clipboard  ServiceName = "clipboard"
+	SysInfo    ServiceName = "sysinfo"
 )
 
 type Service interface {
 	Name() ServiceName
 	Call(method string, params map[string]any) (any, error)
 	Permissions() []device.PermissionName
+	Enabled() bool
 }

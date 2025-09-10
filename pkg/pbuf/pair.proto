@@ -48,8 +48,39 @@ message GetInfoResponse {
   DeviceInfo info = 1;
 }
 
+message SysInfo {
+  string hostName = 1;
+  string os = 2;
+  string platform = 3;
+
+  int32 memTotal = 4;
+  int32 memUsed = 5;
+
+  int64 diskTotal = 6;
+  int64 diskUsed = 7;
+
+  bool batteryCharging = 8;
+  float batteryPercent = 9;
+
+  float cpuUsage = 10;
+}
+
+message GetSysInfoRequest {
+  bytes token = 1;
+  string id = 2;
+}
+message GetSysInfoResponse {
+  bool unauthorized = 1;
+  bool error = 2;
+  string msg = 3;
+  SysInfo info = 4;
+}
+
+
 service AlatService {
   rpc RequestPair(RequestPairRequest) returns (RequestPairResponse);
   rpc GetDetails(GetDetailsRequest) returns (GetDetailsResponse);
   rpc GetInfo(GetInfoRequest) returns (GetInfoResponse);
+  rpc GetSysInfo(GetSysInfoRequest) returns (GetSysInfoResponse);
 }
+
