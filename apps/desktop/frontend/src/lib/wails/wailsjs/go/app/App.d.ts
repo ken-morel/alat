@@ -26,7 +26,7 @@ export function RequestPairingFoundDevice(arg1:string):Promise<app.RequestPairin
 
 export function Run():Promise<void>;
 
-export function SettingsGetDeviceColor():Promise<string>;
+export function SettingsGetDeviceColorName():Promise<string>;
 
 export function SettingsGetDeviceName():Promise<string>;
 
@@ -42,7 +42,7 @@ export function SettingsGetRemoteInputSettings():Promise<config.RemoteInputSetti
 
 export function SettingsGetUniversalClipboardSettings():Promise<config.UniversalClipboardSettings>;
 
-export function SettingsSetDeviceColor(arg1:string):Promise<void>;
+export function SettingsSetDeviceColorName(arg1:string):Promise<void>;
 
 export function SettingsSetDeviceName(arg1:string):Promise<void>;
 

@@ -1,9 +1,10 @@
 package app
 
 import (
+	"fmt"
+
 	"alat/apps/desktop/app/config"
 	"alat/pkg/core/device/color"
-	"fmt"
 
 	rt "github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -17,13 +18,19 @@ func (app *App) SettingsSetDeviceName(name string) error {
 	return config.SaveAppSettings(app.settings)
 }
 
-func (app *App) SettingsGetDeviceColor() string {
+func (app *App) SettingsGetDeviceColorName() string {
 	return app.settings.DeviceColor.Name
 }
 
-func (app *App) SettingsSetDeviceColor(col string) error {
-	app.settings.DeviceColor = *color.FromString(col)
-	return config.SaveAppSettings(app.settings)
+func (app *App) SettingsSetDeviceColorName(colName string) error {
+	col := color.FromString(colName)
+	if col == nil {
+		return fmt.Errorf("color not registerred")
+	} else {
+
+		app.settings.DeviceColor = *col
+		return config.SaveAppSettings(app.settings)
+	}
 }
 
 func (app *App) SettingsGetFileSharingSettings() config.FileSharingSettings {

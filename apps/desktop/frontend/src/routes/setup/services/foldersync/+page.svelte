@@ -19,14 +19,4 @@
   bind:enabled={settings.Enabled}
   next="/setup/done"
   prev="/setup/services/remoteinput"
->
-  <div class="flex items-center justify-between">
-    <label for="enabled" class="font-medium">Enable Folder Sync</label>
-    <input
-      id="enabled"
-      type="checkbox"
-      class="checkbox"
-      bind:checked={settings.Enabled}
-    />
-  </div>
-</ServiceTile>
+></ServiceTile>

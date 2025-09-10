@@ -10,23 +10,15 @@
   // Icons from Skeleton's built-in icon library (or you can use your own)
   import IconBolt from "@lucide/svelte/icons/bolt"; // For server (running/not running)
   import IconMagnifyingGlass from "@lucide/svelte/icons/zoom-in"; // For discovery (running/not running)
-  import IconCheckCircle from "@lucide/svelte/icons/check"; // For active/running
-  import IconXCircle from "@lucide/svelte/icons/x"; // For inactive/stopped
+  import IconNode from "@lucide/svelte/icons/network";
 
   let status: node.Status | null = $state(null);
-  let serverStatusIcon: typeof IconCheckCircle | null = $state(null);
-  let discoveryStatusIcon: typeof IconCheckCircle | null = $state(null);
-  let serverStatusText: string = $state("Server Status: Unknown");
-  let discoveryStatusText: string = $state("Discovery Status: Unknown");
-  let serverStatusColor: string = $state("text-surface-400-500"); // Default gray
-  let discoveryStatusColor: string = $state("text-surface-400-500"); // Default gray
   let numberOfPairedDevices: number = $state(0);
 
   onMount(() => {
     const interval = setInterval(() => {
       GetNodeStatus().then((stat) => {
         status = stat;
-        updateStatusDisplay(stat);
       });
       GetPairedDevices().then((dev) => {
         if (dev) {
@@ -38,30 +30,6 @@
     }, 1000);
     return () => clearInterval(interval);
   });
-
-  function updateStatusDisplay(currentStatus: node.Status) {
-    // Update Server Status
-    if (currentStatus.ServerRunning) {
-      serverStatusText = "Server: Active";
-      serverStatusIcon = IconCheckCircle;
-      serverStatusColor = "text-success-500"; // Green for active
-    } else {
-      serverStatusText = "Server: Inactive";
-      serverStatusIcon = IconXCircle;
-      serverStatusColor = "text-error-500"; // Red for inactive
-    }
-
-    // Update Discovery Status
-    if (currentStatus.DiscoveryRunning) {
-      discoveryStatusText = "Discovery: Running";
-      discoveryStatusIcon = IconCheckCircle;
-      discoveryStatusColor = "text-success-500"; // Blue/Primary for searching
-    } else {
-      discoveryStatusText = "Discovery: Idle";
-      discoveryStatusIcon = IconXCircle;
-      discoveryStatusColor = "text-warning-500"; // Yellow/Warning for idle (not necessarily an error)
-    }
-  }
 </script>
 
 <AppBar base="h-16 w-full border-t border-surface-200-800 px-4">
@@ -79,21 +47,54 @@
     {:else}
       <div class="flex items-center space-x-4">
         <div class="chip flex items-center space-x-1">
-          <IconBolt class="h-5 w-5 {serverStatusColor}" />
-          <span class="text-sm {serverStatusColor}">{serverStatusText}</span>
+          <IconBolt
+            class="h-5 w-5 {status.ServerRunning
+              ? 'text-success-500'
+              : 'text-warning-500'}"
+          />
+          <span
+            class="text-sm {status.ServerRunning
+              ? 'text-success-500'
+              : 'text-warning-500'}"
+          >
+            Server: {status.ServerRunning ? "Running" : "Stalked"}
+          </span>
         </div>
 
-        <div class="flex items-center space-x-1">
-          <IconMagnifyingGlass class="h-5 w-5 {discoveryStatusColor}" />
-          <span class="text-sm {discoveryStatusColor}"
-            >{discoveryStatusText}</span
+        <div class="chip flex items-center space-x-1">
+          <IconMagnifyingGlass
+            class="h-5 w-5 {status.DiscoveryRunning
+              ? 'text-success-500'
+              : 'text-warning-500'}"
+          />
+          <span
+            class="text-sm {status.DiscoveryRunning
+              ? 'text-success-500'
+              : 'text-warning-500'}"
           >
+            {status.DiscoveryRunning ? "Device discoverable" : "Device hidden"}
+          </span>
         </div>
+
         <div class="flex items-center space-x-1">
           <span class="h-5 w-5">{numberOfPairedDevices}</span>
           <span class="text-sm"
             >Paired device{numberOfPairedDevices > 1 ? "s" : ""}</span
           >
+        </div>
+        <div class="chip flex items-center space-x-1">
+          <IconNode
+            class="h-5 w-5 {status.WorkerRunning
+              ? 'text-success-500'
+              : 'text-warning-500'}"
+          />
+          <span
+            class="text-sm {status.WorkerRunning
+              ? 'text-success-500'
+              : 'text-warning-500'}"
+          >
+            {status.WorkerRunning ? "Node running" : "Node stopped"}
+          </span>
         </div>
       </div>
     {/if}

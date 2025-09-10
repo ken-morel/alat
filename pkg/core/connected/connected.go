@@ -2,6 +2,8 @@
 package connected
 
 import (
+	"net"
+
 	"alat/pkg/core/device"
 	"alat/pkg/core/discovery"
 	"alat/pkg/core/pair"
@@ -10,6 +12,8 @@ import (
 type Connected struct {
 	Info         device.Info
 	PairedDevice device.PairedDevice
+	IP           net.IP
+	Port         int
 }
 type Manager struct {
 	devices     []Connected
@@ -36,12 +40,15 @@ func (m *Manager) RefreshConnections() error {
 				connected = append(connected, Connected{
 					Info:         found.Info,
 					PairedDevice: device,
+					IP:           found.IP,
+					Port:         found.Port,
 				})
 				break
 			}
 		}
 	}
 	clear(m.devices)
+	// fmt.Printf("There are %d found devices In %d found devices, and %d paired\n", len(connected), len(m.discoverer.GetFoundDevices()), len(m.pairManager.GetPairedDevices()))
 	m.devices = connected
 	return nil
 }

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { nextUrl, prevUrl } from "../wizard.svelte";
   import {
-    SettingsSetDeviceColor,
+    SettingsSetDeviceColorName,
     SettingsSetDeviceName,
   } from "$lib/wails/wailsjs/go/app/App";
   import type { PageData } from "./$types";
@@ -9,7 +9,7 @@
   const { data }: { data: PageData } = $props();
 
   let deviceName: string = $state(data.deviceName);
-  let deviceColor: string = $state(data.deviceColor);
+  let deviceColorName: string = $state(data.deviceColorName);
   let error: string | null = $state(null);
 
   prevUrl.set("/setup");
@@ -24,7 +24,7 @@
         console.error("Failed to set device name:", err);
       });
     }
-    SettingsSetDeviceColor(deviceColor).then((e) =>
+    SettingsSetDeviceColorName(deviceColorName).then((e) =>
       console.error("Failed setting device color: ", e),
     );
   });
@@ -56,11 +56,11 @@
       <button
         type="button"
         class="w-full aspect-square rounded-full transition-all"
-        class:ring-2={deviceColor === color.hex}
-        class:ring-primary-500={deviceColor === color.hex}
-        class:ring-offset-2={deviceColor === color.hex}
+        class:ring-2={deviceColorName === color.name}
+        class:ring-primary-500={deviceColorName === color.name}
+        class:ring-offset-2={deviceColorName === color.name}
         style="background-color: {color.hex};"
-        onclick={() => (deviceColor = color.hex)}
+        onclick={() => (deviceColorName = color.name)}
         aria-label="Select color {color.name}"
       ></button>
     {/each}

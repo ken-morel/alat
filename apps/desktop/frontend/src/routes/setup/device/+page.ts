@@ -1,21 +1,17 @@
 import {
   GetAlatColors,
-  SettingsGetDeviceColor,
+  SettingsGetDeviceColorName,
   SettingsGetDeviceName,
 } from "$lib/wails/wailsjs/go/app/App";
 import type { PageLoad } from "./$types";
 
-export const load: PageLoad = async (): Promise<{
-  deviceName: string;
-  deviceColor: string;
-  alatColors: { name: string; hex: string }[];
-}> => {
+export const load: PageLoad = async () => {
   const name = await SettingsGetDeviceName();
-  const deviceColor = await SettingsGetDeviceColor();
+  const deviceColorName = await SettingsGetDeviceColorName();
   const colors = await GetAlatColors();
   return {
     deviceName: name,
-    deviceColor,
+    deviceColorName,
     alatColors: colors.map((color) => ({
       name: color.Name,
       hex: color.Hex,

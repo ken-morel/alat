@@ -35,7 +35,9 @@
       {/if}
 
       {#if $nextUrl}
-        <a href={$nextUrl} class="btn variant-filled">Next</a>
+        <a href={$nextUrl} class="btn variant-filled"
+          >{$nextUrl == "/" ? "Complete" : "Next"}</a
+        >
       {/if}
     </footer>
   </div>

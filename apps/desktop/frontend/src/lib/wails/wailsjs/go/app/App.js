@@ -38,8 +38,8 @@ export function Run() {
   return window['go']['app']['App']['Run']();
 }
 
-export function SettingsGetDeviceColor() {
-  return window['go']['app']['App']['SettingsGetDeviceColor']();
+export function SettingsGetDeviceColorName() {
+  return window['go']['app']['App']['SettingsGetDeviceColorName']();
 }
 
 export function SettingsGetDeviceName() {
@@ -70,8 +70,8 @@ export function SettingsGetUniversalClipboardSettings() {
   return window['go']['app']['App']['SettingsGetUniversalClipboardSettings']();
 }
 
-export function SettingsSetDeviceColor(arg1) {
-  return window['go']['app']['App']['SettingsSetDeviceColor'](arg1);
+export function SettingsSetDeviceColorName(arg1) {
+  return window['go']['app']['App']['SettingsSetDeviceColorName'](arg1);
 }
 
 export function SettingsSetDeviceName(arg1) {

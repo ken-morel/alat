@@ -183,6 +183,8 @@ export namespace connected {
 	export class Connected {
 	    Info: device.Info;
 	    PairedDevice: device.PairedDevice;
+	    IP: number[];
+	    Port: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new Connected(source);
@@ -192,6 +194,8 @@ export namespace connected {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.Info = this.convertValues(source["Info"], device.Info);
 	        this.PairedDevice = this.convertValues(source["PairedDevice"], device.PairedDevice);
+	        this.IP = source["IP"];
+	        this.Port = source["Port"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -314,6 +318,7 @@ export namespace node {
 	export class Status {
 	    DiscoveryRunning: boolean;
 	    ServerRunning: boolean;
+	    WorkerRunning: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new Status(source);
@@ -323,6 +328,7 @@ export namespace node {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.DiscoveryRunning = source["DiscoveryRunning"];
 	        this.ServerRunning = source["ServerRunning"];
+	        this.WorkerRunning = source["WorkerRunning"];
 	    }
 	}
 

@@ -1,1 +1,1 @@
-<p class="p text-error-400">Setup page not found</p>
+<p class="p text-error-400">Error loading setup page.</p>
