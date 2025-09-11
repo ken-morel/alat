@@ -18,7 +18,7 @@
   }
   onMount(() => {
     const interval = setInterval(async () => {
-      connectedDevices = (await GetConnectedDevices()) ?? [];
+      connectedDevices = (await GetConnectedDevices()) || [];
     }, 500);
     return () => {
       clearInterval(interval);

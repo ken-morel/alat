@@ -1,11 +1,12 @@
 package app
 
 import (
+	"fmt"
+
 	"alat/apps/desktop/app/config"
 	"alat/pkg/core/device"
 	"alat/pkg/core/node"
 	"alat/pkg/core/pair"
-	"fmt"
 )
 
 func (app *App) ConfigReady() bool {

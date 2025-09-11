@@ -2,7 +2,6 @@
   import {
     GetConnectedDevices,
     GetNodeStatus,
-    GetPairedDevices,
   } from "$lib/wails/wailsjs/go/app/App";
   import type { node } from "$lib/wails/wailsjs/go/models";
   import { AppBar, ProgressRing } from "@skeletonlabs/skeleton-svelte";
@@ -23,7 +22,7 @@
       GetNodeStatus().then((stat) => {
         status = stat;
       });
-      GetPairedDevices().then((dev) => {
+      GetConnectedDevices().then((dev) => {
         if (dev) {
           numberOfConnectedDevices = dev.length;
         } else {
@@ -146,7 +145,8 @@ span.snippen
     width: 0px
     transition: width 0.4s
     overflow-x: hidden
+    opacity: 0
   &:hover span.label
     width: 120px
-    display: inline
+    opacity: 1
 </style>

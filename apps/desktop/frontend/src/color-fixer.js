@@ -158,5 +158,5 @@ function startColorConversion() {
   processNext();
 }
 
+startColorConversion();
 setInterval(startColorConversion, 10000);
-

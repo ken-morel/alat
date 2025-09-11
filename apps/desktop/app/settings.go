@@ -17,6 +17,10 @@ func (app *App) SettingsGetDeviceName() string {
 
 func (app *App) SettingsSetDeviceName(name string) error {
 	app.settings.DeviceName = name
+	err := app.updateNode()
+	if err != nil {
+		return err
+	}
 	return config.SaveAppSettings(app.settings)
 }
 
@@ -31,6 +35,10 @@ func (app *App) SettingsSetDeviceColorName(colName string) error {
 	} else {
 
 		app.settings.DeviceColor = *col
+		err := app.updateNode()
+		if err != nil {
+			return err
+		}
 		return config.SaveAppSettings(app.settings)
 	}
 }
@@ -53,6 +61,7 @@ func (app *App) SettingsSetSetupComplete(complete bool) error {
 	} else {
 		fmt.Println("Node is already running, not starting")
 	}
+
 	return config.SaveAppSettings(app.settings)
 }
 
