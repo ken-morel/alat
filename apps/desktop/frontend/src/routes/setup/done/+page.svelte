@@ -5,6 +5,7 @@
 
   prevUrl.set("/setup/services/foldersync");
   nextUrl.set("/");
+
   SettingsSetSetupComplete(true);
 </script>
 

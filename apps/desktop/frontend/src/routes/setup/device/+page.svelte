@@ -16,11 +16,10 @@
   nextUrl.set("/setup/services");
 
   $effect(() => {
-    deviceName = deviceName.trim();
     if (deviceName.length === 0) {
       error = "Device name cannot be empty.";
     } else {
-      SettingsSetDeviceName(deviceName).catch((err) => {
+      SettingsSetDeviceName(deviceName.trim()).catch((err) => {
         console.error("Failed to set device name:", err);
       });
     }

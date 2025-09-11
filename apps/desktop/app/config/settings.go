@@ -1,10 +1,12 @@
 package config
 
 import (
-	"alat/pkg/core/device/color"
-	"alat/pkg/core/security"
+	"math/rand"
 	"os"
 	"path"
+
+	"alat/pkg/core/device/color"
+	"alat/pkg/core/security"
 
 	"gopkg.in/yaml.v3"
 )
@@ -16,56 +18,12 @@ type AppSettings struct {
 	Certificate   security.Certificate `yaml:"certificate,omitempty"`
 }
 
-type FileSharingSettings struct {
-	DefaultDownloadLocation string `yaml:"defaultDownloadLocation"`
-	AskBeforeReceiving      bool   `yaml:"askBeforeReceiving"`
-	MaxFileSizeMB           int    `yaml:"maxFileSizeMB"`
+type SysInfoSettings struct {
+	Enabled      bool  `yaml:"enabled"`
+	CacheSeconds uint8 `yaml:"cacheseconds"`
 }
-
-type UniversalClipboardSettings struct {
-	Enabled                bool `yaml:"enabled"`
-	SyncText               bool `yaml:"syncText"`
-	SyncImages             bool `yaml:"syncImages"`
-	IgnorePasswordManagers bool `yaml:"ignorePasswordManagers"`
-}
-
-type NotificationSyncSettings struct {
-	Enabled      bool     `yaml:"enabled"`
-	AppWhitelist []string `yaml:"appWhitelist"`
-	AppBlacklist []string `yaml:"appBlacklist"`
-	QuickReplies bool     `yaml:"enableQuickReplies"`
-}
-
-type MediaControlSettings struct {
-	Enabled bool `yaml:"enabled"`
-}
-
-type RemoteInputSettings struct {
-	Enabled          bool    `yaml:"enabled"`
-	MouseSensitivity float64 `yaml:"mouseSensitivity"`
-	NaturalScrolling bool    `yaml:"naturalScrolling"`
-}
-
-type SyncedFolderEntry struct {
-	LocalPath        string   `yaml:"localPath"`
-	SyncDirection    string   `yaml:"syncDirection"`
-	ConflictStrategy string   `yaml:"conflictStrategy"`
-	IgnorePatterns   []string `yaml:"ignorePatterns"`
-}
-
-type FolderSyncSettings struct {
-	Enabled       bool                `yaml:"enabled"`
-	SyncedFolders []SyncedFolderEntry `yaml:"syncedFolders"`
-}
-
 type ServiceSettings struct {
-	DiscoveryEnabled   bool                       `yaml:"discoveryEnabled"`
-	FileSharing        FileSharingSettings        `yaml:"fileSharing"`
-	UniversalClipboard UniversalClipboardSettings `yaml:"universalClipboard"`
-	NotificationSync   NotificationSyncSettings   `yaml:"notificationSync"`
-	MediaControl       MediaControlSettings       `yaml:"mediaControl"`
-	RemoteInput        RemoteInputSettings        `yaml:"remoteInput"`
-	FolderSync         FolderSyncSettings         `yaml:"folderSync"`
+	SysInfo SysInfoSettings `yaml:"sysinfo"`
 }
 
 func DefaultAppSettings() *AppSettings {
@@ -74,7 +32,7 @@ func DefaultAppSettings() *AppSettings {
 	return &AppSettings{
 		SetupComplete: false,
 		DeviceName:    defaultName,
-		DeviceColor:   color.Colors[0],
+		DeviceColor:   color.Colors[rand.Int()%len(color.Colors)],
 		Certificate:   cert,
 	}
 }
@@ -108,42 +66,16 @@ func SaveAppSettings(settings *AppSettings) error {
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(p, data, 0644)
+	return os.WriteFile(p, data, 0o644)
 }
 
 func LoadServiceSettings() (*ServiceSettings, error) {
 	p := path.Join(configDir, "services.yml")
 
 	defaults := &ServiceSettings{
-		DiscoveryEnabled: true,
-		FileSharing: FileSharingSettings{
-			DefaultDownloadLocation: "", // Should be set by user or to a default path
-			AskBeforeReceiving:      true,
-			MaxFileSizeMB:           1024,
-		},
-		UniversalClipboard: UniversalClipboardSettings{
-			Enabled:                true,
-			SyncText:               true,
-			SyncImages:             false,
-			IgnorePasswordManagers: true,
-		},
-		NotificationSync: NotificationSyncSettings{
-			Enabled:      false,
-			AppWhitelist: []string{},
-			AppBlacklist: []string{},
-			QuickReplies: false,
-		},
-		MediaControl: MediaControlSettings{
-			Enabled: true,
-		},
-		RemoteInput: RemoteInputSettings{
-			Enabled:          false,
-			MouseSensitivity: 1.2,
-			NaturalScrolling: true,
-		},
-		FolderSync: FolderSyncSettings{
-			Enabled:       false,
-			SyncedFolders: []SyncedFolderEntry{},
+		SysInfoSettings{
+			Enabled:      true,
+			CacheSeconds: 10,
 		},
 	}
 
@@ -171,5 +103,5 @@ func SaveServiceSettings(settings *ServiceSettings) error {
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(p, data, 0644)
+	return os.WriteFile(p, data, 0o644)
 }

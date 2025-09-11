@@ -1,7 +1,7 @@
 <script lang="ts">
   import { nextUrl, prevUrl } from "../wizard.svelte";
   prevUrl.set("/setup/device");
-  nextUrl.set("/setup/services/fileshare");
+  nextUrl.set("/setup/services/sysinfo");
 </script>
 
 <div class="">

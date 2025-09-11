@@ -4,41 +4,50 @@ package sysinfo
 import (
 	"time"
 
-	"alat/pkg/core/device"
-	"alat/pkg/core/service"
 	"alat/pkg/pbuf"
 )
 
 type Config struct {
-	Enabled   bool          `yaml:"enabled"`
-	CacheTime time.Duration `yaml:"cachetime"`
+	Enabled   bool
+	CacheTime time.Duration
 }
+
 type Service struct {
-	Config   Config
-	Ready    bool
-	cache    pbuf.SysInfo
+	config   Config
+	ready    bool
+	cache    *pbuf.SysInfo
 	cacheAge time.Time
 }
 
-func (*Service) Name() service.ServiceName {
-	return service.SysInfo
-}
-
-func (*Service) Permissions() []device.PermissionName {
-	return nil
-}
-
 func (s *Service) Enabled() bool {
-	return s.Config.Enabled
+	return s.config.Enabled
 }
 
-func (s *Service) Call(method string, args map[string]any) (any, error) {
-	if method == "get" {
+func (s *Service) Get() (*pbuf.SysInfo, error) {
+	var cache *pbuf.SysInfo
+	var err error
+	if s.cache == nil || time.Since(s.cacheAge) > s.config.CacheTime {
+		cache, err = GetSysInfo()
+		s.cacheAge = time.Now()
+		if err != nil {
+			s.cache = nil
+			return nil, err
+		} else {
+			s.cache = cache
+		}
 	}
+	return s.cache, nil
+}
+
+func (s *Service) Configure(c Config) {
+	s.config = c
 }
 
 func CreateService(conf Config) Service {
 	return Service{
-		Config: conf,
+		cacheAge: time.Now(),
+		cache:    nil,
+		ready:    true,
+		config:   conf,
 	}
 }

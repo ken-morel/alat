@@ -35,6 +35,7 @@
 		"lucide-svelte": "^0.542.0",
 		"melt": "^0.39.0",
 		"phosphor-svelte": "^3.0.1",
+		"sass-embedded": "^1.92.1",
 		"tailwindcss-animate": "^1.0.7"
 	}
 }
