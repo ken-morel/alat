@@ -6,14 +6,14 @@
   import { onMount } from "svelte";
   import { ServiceGetFileSendStatus } from "$lib/wails/wailsjs/go/app/App";
   import type { filesend } from "$lib/wails/wailsjs/go/models";
+  import { Progress } from "@skeletonlabs/skeleton-svelte";
   let isOpen: boolean = $state(true);
   let status: filesend.FileTransfersStatus | null = $state(null);
   const popover = new Popover({
     onOpenChange: (value) => (isOpen = value),
   });
-  let tabIds = ["Hello", "World"];
-  const tabs = new Tabs({
-    value: tabIds[0],
+  const tabs = new Tabs<"sending" | "receiving">({
+    value: "sending",
   });
   let sendingPercent = $state(100);
   onMount(() => {
@@ -38,24 +38,64 @@
     </ProgressRing>
   </div>
 </div>
+{#snippet transferTab(devices: filesend.FileTransfersStatusDevice[])}
+  {#each devices as device (device.Device.ID)}
+    <div class="w-full card preset-outlined-surface-300-700">
+      <header>
+        <h5 class="h5">{device.Device.Name}</h5>
+        <Progress value={device.Percent} max={100} classes="bg-surface-300-700"
+        ></Progress>
+      </header>
+      <article>
+        {#each device.Transfers as transfer (transfer.FileName)}
+          <div>
+            {transfer.FileName.split("/").at(-1)}
+            <Progress value={transfer.Percent} max={100} />
+          </div>
+        {/each}
+      </article>
+    </div>
+  {/each}
+{/snippet}
 
 {#key isOpen}
   <div
     {...popover.content}
     in:scale={{ opacity: 0.5, duration: 200, start: 0.9 }}
-    class="preset-filled-surface-300-700 card"
+    class="preset-filled-surface-300-700 card w-[500px] h-[400px]"
   >
-    {#if status}
-      <div class="tabs">
-        <div {...tabs.getContent("sending")}>Sending</div>
-        <div {...tabs.getContent("receiving")}>Receiving</div>
-      </div>
-      <div {...tabs.triggerList}>
-        <button class="btn p-1" {...tabs.getTrigger("sending")}>Sending</button>
-        <button class="btn p-1" {...tabs.getTrigger("receiving")}
-          >Receiving</button
+    <div class="p-2">
+      {#if status}
+        <div
+          class="tab-buttons-container grid place-items-center w-full"
+          {...tabs.triggerList}
         >
-      </div>
-    {/if}
+          <div class="flex tab-buttons">
+            <button class="btn p-1" {...tabs.getTrigger("sending")}
+              >Sending</button
+            >
+            <button class="btn p-1" {...tabs.getTrigger("receiving")}>
+              Receiving
+            </button>
+          </div>
+          <hr class="hr" />
+        </div>
+
+        <div class="tabs grow">
+          <div {...tabs.getContent("sending")}>
+            {@render transferTab(status.Sending)}
+          </div>
+          <div {...tabs.getContent("receiving")}>
+            {@render transferTab(status.Receiving)}
+          </div>
+        </div>
+      {/if}
+    </div>
   </div>
 {/key}
+
+<style lang="sass">
+.tab-buttons
+  button[data-active]
+    background: var(--color-secondary-600)
+</style>
