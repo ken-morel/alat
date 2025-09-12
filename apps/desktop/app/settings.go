@@ -77,15 +77,19 @@ func (app *App) SettingsSetSysInfo(conf config.SysInfoSettings) error {
 	})
 	app.serviceSettings.SysInfo = conf
 
-	return config.SaveAppSettings(app.settings)
+	return config.SaveServiceSettings(app.serviceSettings)
 }
 
 func (app *App) SettingsGetFileSend() config.FileSendSettings {
-	return app.serviceSettings.FileTransfer
+	return app.serviceSettings.FileSend
 }
 
-func (app *App) SettingsSetFileTransfer(conf config.FileSendSettings) error {
+func (app *App) SettingsSetFileSend(conf config.FileSendSettings) error {
 	app.serviceRegistery.FileSend.Configure(filesend.Config{
-		Enabled: conf.Enabled,
+		Enabled:     conf.Enabled,
+		SaveFolder:  conf.SaveFolder,
+		FileMaxSize: uint32(conf.MaxSize),
 	})
+	app.serviceSettings.FileSend = conf
+	return config.SaveServiceSettings(app.serviceSettings)
 }

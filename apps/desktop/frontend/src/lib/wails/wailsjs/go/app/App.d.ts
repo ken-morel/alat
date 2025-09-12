@@ -35,11 +35,15 @@ export function SettingsGetDeviceColorName():Promise<string>;
 
 export function SettingsGetDeviceName():Promise<string>;
 
+export function SettingsGetFileSend():Promise<config.FileSendSettings>;
+
 export function SettingsGetSysInfo():Promise<config.SysInfoSettings>;
 
 export function SettingsSetDeviceColorName(arg1:string):Promise<void>;
 
 export function SettingsSetDeviceName(arg1:string):Promise<void>;
+
+export function SettingsSetFileSend(arg1:config.FileSendSettings):Promise<void>;
 
 export function SettingsSetSetupComplete(arg1:boolean):Promise<void>;
 

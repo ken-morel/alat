@@ -58,6 +58,22 @@ export namespace color {
 
 export namespace config {
 	
+	export class FileSendSettings {
+	    Enabled: boolean;
+	    MaxSize: number;
+	    SaveFolder: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new FileSendSettings(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Enabled = source["Enabled"];
+	        this.MaxSize = source["MaxSize"];
+	        this.SaveFolder = source["SaveFolder"];
+	    }
+	}
 	export class SysInfoSettings {
 	    Enabled: boolean;
 	    CacheSeconds: number;

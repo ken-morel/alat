@@ -72,6 +72,14 @@ func (s *Service) UpdateIncomingStatus(peerInfo *pbuf.DeviceInfo, status *FileTr
 	session.IncomingTransfers[status.Filename] = status
 }
 
+// UpdateOutgoingStatus updates the status of an outgoing file transfer.
+func (s *Service) UpdateOutgoingStatus(peerInfo *pbuf.DeviceInfo, status *FileTransferStatus) {
+	session := s.getOrCreateSession(peerInfo)
+	session.Lock()
+	defer session.Unlock()
+	session.OutgoingTransfers[status.Filename] = status
+}
+
 // GetSession returns the transfer session for a given peer ID.
 func (s *Service) GetSession(peerID string) (*PeerTransferSession, bool) {
 	s.sessionsMutex.RLock()

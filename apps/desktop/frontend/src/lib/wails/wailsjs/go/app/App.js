@@ -54,6 +54,10 @@ export function SettingsGetDeviceName() {
   return window['go']['app']['App']['SettingsGetDeviceName']();
 }
 
+export function SettingsGetFileSend() {
+  return window['go']['app']['App']['SettingsGetFileSend']();
+}
+
 export function SettingsGetSysInfo() {
   return window['go']['app']['App']['SettingsGetSysInfo']();
 }
@@ -64,6 +68,10 @@ export function SettingsSetDeviceColorName(arg1) {
 
 export function SettingsSetDeviceName(arg1) {
   return window['go']['app']['App']['SettingsSetDeviceName'](arg1);
+}
+
+export function SettingsSetFileSend(arg1) {
+  return window['go']['app']['App']['SettingsSetFileSend'](arg1);
 }
 
 export function SettingsSetSetupComplete(arg1) {

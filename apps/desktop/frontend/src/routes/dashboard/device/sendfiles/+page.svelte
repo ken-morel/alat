@@ -36,7 +36,7 @@
           Select files
         </button>
         <div class="bg-surface-50-950 w-full p-2">
-          {#each $sendingFiles as file (file.Path)}
+          {#each $sendingFiles as file, idx (file.Path)}
             <div
               transition:slide={{ duration: 100 }}
               class="flex flex-2 text-[12px] text-surface-800-200"
@@ -57,9 +57,13 @@
                 <CloseIcon size={20} color="var(--color-error-600-400)" />
               </button>
             </div>
-            <hr class="border-b-[1px] border-surface-300-700 w-full" />
+            {#if idx < $sendingFiles.length - 1}
+              <hr class="border-b-[1px] border-surface-300-700 w-full" />
+            {/if}
           {:else}
-            <div class="p-3 text-surface-300-700">No file selected</div>
+            <div transition:slide class="p-3 text-surface-300-700">
+              No file selected
+            </div>
           {/each}
         </div>
       </article>
