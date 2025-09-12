@@ -40,6 +40,7 @@ func GetSysInfo() (*pbuf.SysInfo, error) {
 		charge += 100.0 * (b.Current / b.Full) / count
 		charging = charging || b.State.Raw == battery.Charging
 	}
+	fmt.Println("Battery charging: ", charging, "Percent:", charge)
 
 	return &pbuf.SysInfo{
 		HostName:        hostInfo.Hostname,

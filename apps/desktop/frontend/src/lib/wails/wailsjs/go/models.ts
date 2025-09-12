@@ -217,3 +217,38 @@ export namespace node {
 
 }
 
+export namespace pbuf {
+	
+	export class SysInfo {
+	    hostName?: string;
+	    os?: string;
+	    platform?: string;
+	    memTotal?: number;
+	    memUsed?: number;
+	    diskTotal?: number;
+	    diskUsed?: number;
+	    batteryCharging?: boolean;
+	    batteryPercent?: number;
+	    cpuUsage?: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new SysInfo(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.hostName = source["hostName"];
+	        this.os = source["os"];
+	        this.platform = source["platform"];
+	        this.memTotal = source["memTotal"];
+	        this.memUsed = source["memUsed"];
+	        this.diskTotal = source["diskTotal"];
+	        this.diskUsed = source["diskUsed"];
+	        this.batteryCharging = source["batteryCharging"];
+	        this.batteryPercent = source["batteryPercent"];
+	        this.cpuUsage = source["cpuUsage"];
+	    }
+	}
+
+}
+

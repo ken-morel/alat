@@ -6,6 +6,7 @@ import {discovery} from '../models';
 import {node} from '../models';
 import {device} from '../models';
 import {app} from '../models';
+import {pbuf} from '../models';
 import {config} from '../models';
 
 export function AskFileSharingDestDirectory():Promise<string>;
@@ -25,6 +26,8 @@ export function GetPairedDevices():Promise<Array<device.PairedDevice>>;
 export function RequestPairingFoundDevice(arg1:string):Promise<app.RequestPairingResult>;
 
 export function Run():Promise<void>;
+
+export function ServiceSysInfoGet(arg1:connected.Connected):Promise<pbuf.SysInfo>;
 
 export function SettingsGetDeviceColorName():Promise<string>;
 

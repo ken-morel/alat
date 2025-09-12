@@ -73,6 +73,61 @@ func (DeviceType) EnumDescriptor() ([]byte, []int) {
 	return file_pair_proto_rawDescGZIP(), []int{0}
 }
 
+type ServiceCallStatus int32
+
+const (
+	ServiceCallStatus_SERVICE_CALL_STATUS_OK           ServiceCallStatus = 0
+	ServiceCallStatus_SERVICE_CALL_STATUS_ERROR        ServiceCallStatus = 1
+	ServiceCallStatus_SERVICE_CALL_STATUS_UNAUTHORIZED ServiceCallStatus = 2
+	ServiceCallStatus_SERVICE_CALL_STATUS_DISABLED     ServiceCallStatus = 3
+	ServiceCallStatus_SERVICE_CALL_STATUS_UNKNOWN      ServiceCallStatus = 4
+)
+
+// Enum value maps for ServiceCallStatus.
+var (
+	ServiceCallStatus_name = map[int32]string{
+		0: "SERVICE_CALL_STATUS_OK",
+		1: "SERVICE_CALL_STATUS_ERROR",
+		2: "SERVICE_CALL_STATUS_UNAUTHORIZED",
+		3: "SERVICE_CALL_STATUS_DISABLED",
+		4: "SERVICE_CALL_STATUS_UNKNOWN",
+	}
+	ServiceCallStatus_value = map[string]int32{
+		"SERVICE_CALL_STATUS_OK":           0,
+		"SERVICE_CALL_STATUS_ERROR":        1,
+		"SERVICE_CALL_STATUS_UNAUTHORIZED": 2,
+		"SERVICE_CALL_STATUS_DISABLED":     3,
+		"SERVICE_CALL_STATUS_UNKNOWN":      4,
+	}
+)
+
+func (x ServiceCallStatus) Enum() *ServiceCallStatus {
+	p := new(ServiceCallStatus)
+	*p = x
+	return p
+}
+
+func (x ServiceCallStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ServiceCallStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_pair_proto_enumTypes[1].Descriptor()
+}
+
+func (ServiceCallStatus) Type() protoreflect.EnumType {
+	return &file_pair_proto_enumTypes[1]
+}
+
+func (x ServiceCallStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ServiceCallStatus.Descriptor instead.
+func (ServiceCallStatus) EnumDescriptor() ([]byte, []int) {
+	return file_pair_proto_rawDescGZIP(), []int{1}
+}
+
 type Color struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
@@ -652,7 +707,6 @@ func (x *SysInfo) GetCpuUsage() float32 {
 type GetSysInfoRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Token         []byte                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
-	Id            string                 `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -694,19 +748,11 @@ func (x *GetSysInfoRequest) GetToken() []byte {
 	return nil
 }
 
-func (x *GetSysInfoRequest) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
 type GetSysInfoResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Unauthorized  bool                   `protobuf:"varint,1,opt,name=unauthorized,proto3" json:"unauthorized,omitempty"`
-	Error         bool                   `protobuf:"varint,2,opt,name=error,proto3" json:"error,omitempty"`
-	Msg           string                 `protobuf:"bytes,3,opt,name=msg,proto3" json:"msg,omitempty"`
-	Info          *SysInfo               `protobuf:"bytes,4,opt,name=info,proto3" json:"info,omitempty"`
+	Status        ServiceCallStatus      `protobuf:"varint,1,opt,name=status,proto3,enum=pbuf.v1.ServiceCallStatus" json:"status,omitempty"`
+	Msg           string                 `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
+	Info          *SysInfo               `protobuf:"bytes,3,opt,name=info,proto3" json:"info,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -741,18 +787,11 @@ func (*GetSysInfoResponse) Descriptor() ([]byte, []int) {
 	return file_pair_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *GetSysInfoResponse) GetUnauthorized() bool {
+func (x *GetSysInfoResponse) GetStatus() ServiceCallStatus {
 	if x != nil {
-		return x.Unauthorized
+		return x.Status
 	}
-	return false
-}
-
-func (x *GetSysInfoResponse) GetError() bool {
-	if x != nil {
-		return x.Error
-	}
-	return false
+	return ServiceCallStatus_SERVICE_CALL_STATUS_OK
 }
 
 func (x *GetSysInfoResponse) GetMsg() string {
@@ -813,21 +852,25 @@ const file_pair_proto_rawDesc = "" +
 	"\x0fbatteryCharging\x18\b \x01(\bR\x0fbatteryCharging\x12&\n" +
 	"\x0ebatteryPercent\x18\t \x01(\x02R\x0ebatteryPercent\x12\x1a\n" +
 	"\bcpuUsage\x18\n" +
-	" \x01(\x02R\bcpuUsage\"9\n" +
+	" \x01(\x02R\bcpuUsage\")\n" +
 	"\x11GetSysInfoRequest\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\fR\x05token\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\tR\x02id\"\x86\x01\n" +
-	"\x12GetSysInfoResponse\x12\"\n" +
-	"\funauthorized\x18\x01 \x01(\bR\funauthorized\x12\x14\n" +
-	"\x05error\x18\x02 \x01(\bR\x05error\x12\x10\n" +
-	"\x03msg\x18\x03 \x01(\tR\x03msg\x12$\n" +
-	"\x04info\x18\x04 \x01(\v2\x10.pbuf.v1.SysInfoR\x04info*n\n" +
+	"\x05token\x18\x01 \x01(\fR\x05token\"\x80\x01\n" +
+	"\x12GetSysInfoResponse\x122\n" +
+	"\x06status\x18\x01 \x01(\x0e2\x1a.pbuf.v1.ServiceCallStatusR\x06status\x12\x10\n" +
+	"\x03msg\x18\x02 \x01(\tR\x03msg\x12$\n" +
+	"\x04info\x18\x03 \x01(\v2\x10.pbuf.v1.SysInfoR\x04info*n\n" +
 	"\n" +
 	"DeviceType\x12\x1b\n" +
 	"\x17DEVICE_TYPE_UNSPECIFIED\x10\x00\x12\x16\n" +
 	"\x12DEVICE_TYPE_MOBILE\x10\x01\x12\x17\n" +
 	"\x13DEVICE_TYPE_DESKTOP\x10\x02\x12\x12\n" +
-	"\x0eDEVICE_TYPE_TV\x10\x032\xa3\x02\n" +
+	"\x0eDEVICE_TYPE_TV\x10\x03*\xb7\x01\n" +
+	"\x11ServiceCallStatus\x12\x1a\n" +
+	"\x16SERVICE_CALL_STATUS_OK\x10\x00\x12\x1d\n" +
+	"\x19SERVICE_CALL_STATUS_ERROR\x10\x01\x12$\n" +
+	" SERVICE_CALL_STATUS_UNAUTHORIZED\x10\x02\x12 \n" +
+	"\x1cSERVICE_CALL_STATUS_DISABLED\x10\x03\x12\x1f\n" +
+	"\x1bSERVICE_CALL_STATUS_UNKNOWN\x10\x042\xa3\x02\n" +
 	"\vAlatService\x12H\n" +
 	"\vRequestPair\x12\x1b.pbuf.v1.RequestPairRequest\x1a\x1c.pbuf.v1.RequestPairResponse\x12E\n" +
 	"\n" +
@@ -848,46 +891,48 @@ func file_pair_proto_rawDescGZIP() []byte {
 	return file_pair_proto_rawDescData
 }
 
-var file_pair_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_pair_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_pair_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_pair_proto_goTypes = []any{
 	(DeviceType)(0),             // 0: pbuf.v1.DeviceType
-	(*Color)(nil),               // 1: pbuf.v1.Color
-	(*DeviceInfo)(nil),          // 2: pbuf.v1.DeviceInfo
-	(*DeviceDetails)(nil),       // 3: pbuf.v1.DeviceDetails
-	(*RequestPairRequest)(nil),  // 4: pbuf.v1.RequestPairRequest
-	(*RequestPairResponse)(nil), // 5: pbuf.v1.RequestPairResponse
-	(*GetDetailsRequest)(nil),   // 6: pbuf.v1.GetDetailsRequest
-	(*GetDetailsResponse)(nil),  // 7: pbuf.v1.GetDetailsResponse
-	(*GetInfoRequest)(nil),      // 8: pbuf.v1.GetInfoRequest
-	(*GetInfoResponse)(nil),     // 9: pbuf.v1.GetInfoResponse
-	(*SysInfo)(nil),             // 10: pbuf.v1.SysInfo
-	(*GetSysInfoRequest)(nil),   // 11: pbuf.v1.GetSysInfoRequest
-	(*GetSysInfoResponse)(nil),  // 12: pbuf.v1.GetSysInfoResponse
+	(ServiceCallStatus)(0),      // 1: pbuf.v1.ServiceCallStatus
+	(*Color)(nil),               // 2: pbuf.v1.Color
+	(*DeviceInfo)(nil),          // 3: pbuf.v1.DeviceInfo
+	(*DeviceDetails)(nil),       // 4: pbuf.v1.DeviceDetails
+	(*RequestPairRequest)(nil),  // 5: pbuf.v1.RequestPairRequest
+	(*RequestPairResponse)(nil), // 6: pbuf.v1.RequestPairResponse
+	(*GetDetailsRequest)(nil),   // 7: pbuf.v1.GetDetailsRequest
+	(*GetDetailsResponse)(nil),  // 8: pbuf.v1.GetDetailsResponse
+	(*GetInfoRequest)(nil),      // 9: pbuf.v1.GetInfoRequest
+	(*GetInfoResponse)(nil),     // 10: pbuf.v1.GetInfoResponse
+	(*SysInfo)(nil),             // 11: pbuf.v1.SysInfo
+	(*GetSysInfoRequest)(nil),   // 12: pbuf.v1.GetSysInfoRequest
+	(*GetSysInfoResponse)(nil),  // 13: pbuf.v1.GetSysInfoResponse
 }
 var file_pair_proto_depIdxs = []int32{
 	0,  // 0: pbuf.v1.DeviceInfo.type:type_name -> pbuf.v1.DeviceType
-	1,  // 1: pbuf.v1.DeviceInfo.color:type_name -> pbuf.v1.Color
+	2,  // 1: pbuf.v1.DeviceInfo.color:type_name -> pbuf.v1.Color
 	0,  // 2: pbuf.v1.DeviceDetails.type:type_name -> pbuf.v1.DeviceType
-	1,  // 3: pbuf.v1.DeviceDetails.color:type_name -> pbuf.v1.Color
-	3,  // 4: pbuf.v1.RequestPairRequest.details:type_name -> pbuf.v1.DeviceDetails
-	3,  // 5: pbuf.v1.RequestPairResponse.details:type_name -> pbuf.v1.DeviceDetails
-	3,  // 6: pbuf.v1.GetDetailsResponse.details:type_name -> pbuf.v1.DeviceDetails
-	2,  // 7: pbuf.v1.GetInfoResponse.info:type_name -> pbuf.v1.DeviceInfo
-	10, // 8: pbuf.v1.GetSysInfoResponse.info:type_name -> pbuf.v1.SysInfo
-	4,  // 9: pbuf.v1.AlatService.RequestPair:input_type -> pbuf.v1.RequestPairRequest
-	6,  // 10: pbuf.v1.AlatService.GetDetails:input_type -> pbuf.v1.GetDetailsRequest
-	8,  // 11: pbuf.v1.AlatService.GetInfo:input_type -> pbuf.v1.GetInfoRequest
-	11, // 12: pbuf.v1.AlatService.GetSysInfo:input_type -> pbuf.v1.GetSysInfoRequest
-	5,  // 13: pbuf.v1.AlatService.RequestPair:output_type -> pbuf.v1.RequestPairResponse
-	7,  // 14: pbuf.v1.AlatService.GetDetails:output_type -> pbuf.v1.GetDetailsResponse
-	9,  // 15: pbuf.v1.AlatService.GetInfo:output_type -> pbuf.v1.GetInfoResponse
-	12, // 16: pbuf.v1.AlatService.GetSysInfo:output_type -> pbuf.v1.GetSysInfoResponse
-	13, // [13:17] is the sub-list for method output_type
-	9,  // [9:13] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+	2,  // 3: pbuf.v1.DeviceDetails.color:type_name -> pbuf.v1.Color
+	4,  // 4: pbuf.v1.RequestPairRequest.details:type_name -> pbuf.v1.DeviceDetails
+	4,  // 5: pbuf.v1.RequestPairResponse.details:type_name -> pbuf.v1.DeviceDetails
+	4,  // 6: pbuf.v1.GetDetailsResponse.details:type_name -> pbuf.v1.DeviceDetails
+	3,  // 7: pbuf.v1.GetInfoResponse.info:type_name -> pbuf.v1.DeviceInfo
+	1,  // 8: pbuf.v1.GetSysInfoResponse.status:type_name -> pbuf.v1.ServiceCallStatus
+	11, // 9: pbuf.v1.GetSysInfoResponse.info:type_name -> pbuf.v1.SysInfo
+	5,  // 10: pbuf.v1.AlatService.RequestPair:input_type -> pbuf.v1.RequestPairRequest
+	7,  // 11: pbuf.v1.AlatService.GetDetails:input_type -> pbuf.v1.GetDetailsRequest
+	9,  // 12: pbuf.v1.AlatService.GetInfo:input_type -> pbuf.v1.GetInfoRequest
+	12, // 13: pbuf.v1.AlatService.GetSysInfo:input_type -> pbuf.v1.GetSysInfoRequest
+	6,  // 14: pbuf.v1.AlatService.RequestPair:output_type -> pbuf.v1.RequestPairResponse
+	8,  // 15: pbuf.v1.AlatService.GetDetails:output_type -> pbuf.v1.GetDetailsResponse
+	10, // 16: pbuf.v1.AlatService.GetInfo:output_type -> pbuf.v1.GetInfoResponse
+	13, // 17: pbuf.v1.AlatService.GetSysInfo:output_type -> pbuf.v1.GetSysInfoResponse
+	14, // [14:18] is the sub-list for method output_type
+	10, // [10:14] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_pair_proto_init() }
@@ -900,7 +945,7 @@ func file_pair_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pair_proto_rawDesc), len(file_pair_proto_rawDesc)),
-			NumEnums:      1,
+			NumEnums:      2,
 			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,

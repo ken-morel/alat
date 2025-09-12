@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"alat/pkg/core/device"
-	"alat/pkg/core/transport"
+	"alat/pkg/core/transport/client"
 
 	"github.com/grandcat/zeroconf"
 )
@@ -80,7 +80,7 @@ func (d *Discoverer) StartDeviceSearch() error {
 					return
 				}
 				if len(entry.AddrIPv4) > 0 { // also does nil check
-					info, err := transport.GetDeviceInfo(entry.AddrIPv4[0], entry.Port)
+					info, err := client.GetDeviceInfo(entry.AddrIPv4[0], entry.Port)
 					if err != nil {
 						fmt.Println("Error getting device info:", err)
 						continue

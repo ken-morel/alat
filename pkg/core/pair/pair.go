@@ -16,6 +16,15 @@ type PairManager struct {
 	OnPairRequest func(*security.PairToken, *device.Details) (bool, string)
 }
 
+func (p *PairManager) IsTokenValid(token security.PairToken) bool {
+	for _, dev := range p.pairedDevices {
+		if dev.Token == token {
+			return true
+		}
+	}
+	return false
+}
+
 func (p *PairManager) DeviceDetails() *device.Details {
 	return p.details
 }

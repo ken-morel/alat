@@ -9,7 +9,7 @@ import (
 	"alat/pkg/core/pair"
 	"alat/pkg/core/service"
 	"alat/pkg/core/storage"
-	"alat/pkg/core/transport"
+	"alat/pkg/core/transport/server"
 )
 
 type Node struct {
@@ -19,12 +19,12 @@ type Node struct {
 	discovery   *discovery.Manager
 	device      *device.Details
 	services    *service.Registry
-	server      *transport.Server
+	server      *server.Server
 	Connected   *connected.Manager
 }
 
 func NewNode(registry *service.Registry, store *storage.NodeStorage, details *device.Details, manager *pair.PairManager) (*Node, error) {
-	server := transport.NewServer(registry, manager)
+	server := server.NewServer(registry, manager)
 	discoveryManager, err := discovery.NewManager()
 	if err != nil {
 		return nil, err

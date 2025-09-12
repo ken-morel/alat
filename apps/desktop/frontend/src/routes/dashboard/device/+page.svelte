@@ -1,6 +1,7 @@
 <script lang="ts">
   import { connectedDevice } from "$lib/store";
   import guessIcon from "$lib/icons";
+  import DeviceBattery from "$lib/components/DeviceBattery.svelte";
   let dev = $derived($connectedDevice);
 </script>
 
@@ -10,13 +11,20 @@
     <div
       class="card preset-filled-surface-100-900 border-[1px] border-surface-200-800 w-full max-w-lg"
     >
-      <header class="flex border-b border-surface-200-800 p-8">
-        <Icon size={50} color={dev.Info.Color.Hex} />
-        <h3 class="ml-8 h3">{dev.Info.Name}</h3>
+      <header class="">
+        <div class="flex p-4 border-b border-surface-200-800">
+          <div class="flex p-4">
+            <Icon size={50} color={dev.Info.Color.Hex} />
+            <h3 class="ml-8 h3">{dev.Info.Name}</h3>
+          </div>
+          <DeviceBattery {dev} />
+        </div>
+        <a
+          class="btn preset-filled-primary-700-300"
+          href="/dashboard/device/sendfiles">Send files</a
+        >
       </header>
-      <article class="p-8">
-        <button class="btn preset-filled-tertiary-300-700">Send files</button>
-      </article>
+      <article class="border-[1px] p-2 border-surface-200-800"></article>
     </div>
   {:else}
     <div class="card preset-filled-error-400-600 p-8">

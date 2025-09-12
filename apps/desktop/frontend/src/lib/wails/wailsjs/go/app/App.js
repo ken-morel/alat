@@ -38,6 +38,10 @@ export function Run() {
   return window['go']['app']['App']['Run']();
 }
 
+export function ServiceSysInfoGet(arg1) {
+  return window['go']['app']['App']['ServiceSysInfoGet'](arg1);
+}
+
 export function SettingsGetDeviceColorName() {
   return window['go']['app']['App']['SettingsGetDeviceColorName']();
 }

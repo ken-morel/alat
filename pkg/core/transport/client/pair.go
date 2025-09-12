@@ -1,13 +1,14 @@
-package transport
+package client
 
 import (
-	"alat/pkg/core/device"
-	"alat/pkg/core/security"
-	"alat/pkg/pbuf"
 	"context"
 	"fmt"
 	"net"
 	"time"
+
+	"alat/pkg/core/device"
+	"alat/pkg/core/security"
+	"alat/pkg/pbuf"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"

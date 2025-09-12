@@ -3,8 +3,10 @@ package app
 import (
 	"time"
 
+	"alat/pkg/core/connected"
 	"alat/pkg/core/service"
 	"alat/pkg/core/service/sysinfo"
+	"alat/pkg/pbuf"
 )
 
 func (app *App) initServices() error {
@@ -15,4 +17,8 @@ func (app *App) initServices() error {
 		}),
 	}
 	return nil
+}
+
+func (app *App) ServiceSysInfoGet(dev connected.Connected) (*pbuf.SysInfo, error) {
+	return dev.GetSysInfo()
 }

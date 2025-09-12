@@ -67,13 +67,18 @@ message SysInfo {
 
 message GetSysInfoRequest {
   bytes token = 1;
-  string id = 2;
+}
+enum ServiceCallStatus {
+ SERVICE_CALL_STATUS_OK = 0; 
+ SERVICE_CALL_STATUS_ERROR = 1; 
+ SERVICE_CALL_STATUS_UNAUTHORIZED = 2; 
+ SERVICE_CALL_STATUS_DISABLED = 3; 
+ SERVICE_CALL_STATUS_UNKNOWN = 4; 
 }
 message GetSysInfoResponse {
-  bool unauthorized = 1;
-  bool error = 2;
-  string msg = 3;
-  SysInfo info = 4;
+  ServiceCallStatus status = 1;
+  string msg = 2;
+  SysInfo info = 3;
 }
 
 

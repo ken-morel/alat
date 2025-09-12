@@ -1,10 +1,11 @@
 package node
 
 import (
-	"alat/pkg/core/security"
-	"alat/pkg/core/transport"
-	"alat/pkg/pbuf"
 	"fmt"
+
+	"alat/pkg/core/security"
+	"alat/pkg/core/transport/client"
+	"alat/pkg/pbuf"
 )
 
 func (n *Node) RequestPairFoundDevice(id string) (*pbuf.RequestPairResponse, error) {
@@ -14,7 +15,7 @@ func (n *Node) RequestPairFoundDevice(id string) (*pbuf.RequestPairResponse, err
 	}
 	for _, found := range n.discovery.Discoverer.GetFoundDevices() {
 		if found.Info.ID == id {
-			return transport.RequestPair(found.IP, found.Port, &pairToken, n.device)
+			return client.RequestPair(found.IP, found.Port, &pairToken, n.device)
 		}
 	}
 	return nil, fmt.Errorf("device with ID %s not found", id)
