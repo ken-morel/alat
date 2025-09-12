@@ -233,3 +233,98 @@ var AlatService_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "pair.proto",
 }
+
+const (
+	FileSendService_SendFile_FullMethodName = "/pbuf.v1.FileSendService/SendFile"
+)
+
+// FileSendServiceClient is the client API for FileSendService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type FileSendServiceClient interface {
+	SendFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[SendFileRequest, SendFileResponse], error)
+}
+
+type fileSendServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewFileSendServiceClient(cc grpc.ClientConnInterface) FileSendServiceClient {
+	return &fileSendServiceClient{cc}
+}
+
+func (c *fileSendServiceClient) SendFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[SendFileRequest, SendFileResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &FileSendService_ServiceDesc.Streams[0], FileSendService_SendFile_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[SendFileRequest, SendFileResponse]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type FileSendService_SendFileClient = grpc.ClientStreamingClient[SendFileRequest, SendFileResponse]
+
+// FileSendServiceServer is the server API for FileSendService service.
+// All implementations must embed UnimplementedFileSendServiceServer
+// for forward compatibility.
+type FileSendServiceServer interface {
+	SendFile(grpc.ClientStreamingServer[SendFileRequest, SendFileResponse]) error
+	mustEmbedUnimplementedFileSendServiceServer()
+}
+
+// UnimplementedFileSendServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedFileSendServiceServer struct{}
+
+func (UnimplementedFileSendServiceServer) SendFile(grpc.ClientStreamingServer[SendFileRequest, SendFileResponse]) error {
+	return status.Errorf(codes.Unimplemented, "method SendFile not implemented")
+}
+func (UnimplementedFileSendServiceServer) mustEmbedUnimplementedFileSendServiceServer() {}
+func (UnimplementedFileSendServiceServer) testEmbeddedByValue()                         {}
+
+// UnsafeFileSendServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to FileSendServiceServer will
+// result in compilation errors.
+type UnsafeFileSendServiceServer interface {
+	mustEmbedUnimplementedFileSendServiceServer()
+}
+
+func RegisterFileSendServiceServer(s grpc.ServiceRegistrar, srv FileSendServiceServer) {
+	// If the following call pancis, it indicates UnimplementedFileSendServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&FileSendService_ServiceDesc, srv)
+}
+
+func _FileSendService_SendFile_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(FileSendServiceServer).SendFile(&grpc.GenericServerStream[SendFileRequest, SendFileResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type FileSendService_SendFileServer = grpc.ClientStreamingServer[SendFileRequest, SendFileResponse]
+
+// FileSendService_ServiceDesc is the grpc.ServiceDesc for FileSendService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var FileSendService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "pbuf.v1.FileSendService",
+	HandlerType: (*FileSendServiceServer)(nil),
+	Methods:     []grpc.MethodDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "SendFile",
+			Handler:       _FileSendService_SendFile_Handler,
+			ClientStreams: true,
+		},
+	},
+	Metadata: "pair.proto",
+}

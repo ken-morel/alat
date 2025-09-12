@@ -808,6 +808,244 @@ func (x *GetSysInfoResponse) GetInfo() *SysInfo {
 	return nil
 }
 
+type FileMetadata struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Size          int64                  `protobuf:"varint,2,opt,name=size,proto3" json:"size,omitempty"`
+	Mode          int32                  `protobuf:"varint,3,opt,name=mode,proto3" json:"mode,omitempty"` // File permissions
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FileMetadata) Reset() {
+	*x = FileMetadata{}
+	mi := &file_pair_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FileMetadata) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FileMetadata) ProtoMessage() {}
+
+func (x *FileMetadata) ProtoReflect() protoreflect.Message {
+	mi := &file_pair_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FileMetadata.ProtoReflect.Descriptor instead.
+func (*FileMetadata) Descriptor() ([]byte, []int) {
+	return file_pair_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *FileMetadata) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *FileMetadata) GetSize() int64 {
+	if x != nil {
+		return x.Size
+	}
+	return 0
+}
+
+func (x *FileMetadata) GetMode() int32 {
+	if x != nil {
+		return x.Mode
+	}
+	return 0
+}
+
+type FileChunk struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Content       []byte                 `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FileChunk) Reset() {
+	*x = FileChunk{}
+	mi := &file_pair_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FileChunk) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FileChunk) ProtoMessage() {}
+
+func (x *FileChunk) ProtoReflect() protoreflect.Message {
+	mi := &file_pair_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FileChunk.ProtoReflect.Descriptor instead.
+func (*FileChunk) Descriptor() ([]byte, []int) {
+	return file_pair_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *FileChunk) GetContent() []byte {
+	if x != nil {
+		return x.Content
+	}
+	return nil
+}
+
+type SendFileRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Types that are valid to be assigned to Data:
+	//
+	//	*SendFileRequest_Metadata
+	//	*SendFileRequest_Chunk
+	Data          isSendFileRequest_Data `protobuf_oneof:"data"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SendFileRequest) Reset() {
+	*x = SendFileRequest{}
+	mi := &file_pair_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SendFileRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SendFileRequest) ProtoMessage() {}
+
+func (x *SendFileRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pair_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SendFileRequest.ProtoReflect.Descriptor instead.
+func (*SendFileRequest) Descriptor() ([]byte, []int) {
+	return file_pair_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *SendFileRequest) GetData() isSendFileRequest_Data {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+func (x *SendFileRequest) GetMetadata() *FileMetadata {
+	if x != nil {
+		if x, ok := x.Data.(*SendFileRequest_Metadata); ok {
+			return x.Metadata
+		}
+	}
+	return nil
+}
+
+func (x *SendFileRequest) GetChunk() *FileChunk {
+	if x != nil {
+		if x, ok := x.Data.(*SendFileRequest_Chunk); ok {
+			return x.Chunk
+		}
+	}
+	return nil
+}
+
+type isSendFileRequest_Data interface {
+	isSendFileRequest_Data()
+}
+
+type SendFileRequest_Metadata struct {
+	Metadata *FileMetadata `protobuf:"bytes,1,opt,name=metadata,proto3,oneof"`
+}
+
+type SendFileRequest_Chunk struct {
+	Chunk *FileChunk `protobuf:"bytes,2,opt,name=chunk,proto3,oneof"`
+}
+
+func (*SendFileRequest_Metadata) isSendFileRequest_Data() {}
+
+func (*SendFileRequest_Chunk) isSendFileRequest_Data() {}
+
+type SendFileResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Status        ServiceCallStatus      `protobuf:"varint,1,opt,name=status,proto3,enum=pbuf.v1.ServiceCallStatus" json:"status,omitempty"`
+	Msg           string                 `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SendFileResponse) Reset() {
+	*x = SendFileResponse{}
+	mi := &file_pair_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SendFileResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SendFileResponse) ProtoMessage() {}
+
+func (x *SendFileResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pair_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SendFileResponse.ProtoReflect.Descriptor instead.
+func (*SendFileResponse) Descriptor() ([]byte, []int) {
+	return file_pair_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *SendFileResponse) GetStatus() ServiceCallStatus {
+	if x != nil {
+		return x.Status
+	}
+	return ServiceCallStatus_SERVICE_CALL_STATUS_OK
+}
+
+func (x *SendFileResponse) GetMsg() string {
+	if x != nil {
+		return x.Msg
+	}
+	return ""
+}
+
 var File_pair_proto protoreflect.FileDescriptor
 
 const file_pair_proto_rawDesc = "" +
@@ -858,7 +1096,20 @@ const file_pair_proto_rawDesc = "" +
 	"\x12GetSysInfoResponse\x122\n" +
 	"\x06status\x18\x01 \x01(\x0e2\x1a.pbuf.v1.ServiceCallStatusR\x06status\x12\x10\n" +
 	"\x03msg\x18\x02 \x01(\tR\x03msg\x12$\n" +
-	"\x04info\x18\x03 \x01(\v2\x10.pbuf.v1.SysInfoR\x04info*n\n" +
+	"\x04info\x18\x03 \x01(\v2\x10.pbuf.v1.SysInfoR\x04info\"J\n" +
+	"\fFileMetadata\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
+	"\x04size\x18\x02 \x01(\x03R\x04size\x12\x12\n" +
+	"\x04mode\x18\x03 \x01(\x05R\x04mode\"%\n" +
+	"\tFileChunk\x12\x18\n" +
+	"\acontent\x18\x01 \x01(\fR\acontent\"z\n" +
+	"\x0fSendFileRequest\x123\n" +
+	"\bmetadata\x18\x01 \x01(\v2\x15.pbuf.v1.FileMetadataH\x00R\bmetadata\x12*\n" +
+	"\x05chunk\x18\x02 \x01(\v2\x12.pbuf.v1.FileChunkH\x00R\x05chunkB\x06\n" +
+	"\x04data\"X\n" +
+	"\x10SendFileResponse\x122\n" +
+	"\x06status\x18\x01 \x01(\x0e2\x1a.pbuf.v1.ServiceCallStatusR\x06status\x12\x10\n" +
+	"\x03msg\x18\x02 \x01(\tR\x03msg*n\n" +
 	"\n" +
 	"DeviceType\x12\x1b\n" +
 	"\x17DEVICE_TYPE_UNSPECIFIED\x10\x00\x12\x16\n" +
@@ -877,7 +1128,9 @@ const file_pair_proto_rawDesc = "" +
 	"GetDetails\x12\x1a.pbuf.v1.GetDetailsRequest\x1a\x1b.pbuf.v1.GetDetailsResponse\x12<\n" +
 	"\aGetInfo\x12\x17.pbuf.v1.GetInfoRequest\x1a\x18.pbuf.v1.GetInfoResponse\x12E\n" +
 	"\n" +
-	"GetSysInfo\x12\x1a.pbuf.v1.GetSysInfoRequest\x1a\x1b.pbuf.v1.GetSysInfoResponseB\x0fZ\ralat/pkg/pbufb\x06proto3"
+	"GetSysInfo\x12\x1a.pbuf.v1.GetSysInfoRequest\x1a\x1b.pbuf.v1.GetSysInfoResponse2T\n" +
+	"\x0fFileSendService\x12A\n" +
+	"\bSendFile\x12\x18.pbuf.v1.SendFileRequest\x1a\x19.pbuf.v1.SendFileResponse(\x01B\x0fZ\ralat/pkg/pbufb\x06proto3"
 
 var (
 	file_pair_proto_rawDescOnce sync.Once
@@ -892,7 +1145,7 @@ func file_pair_proto_rawDescGZIP() []byte {
 }
 
 var file_pair_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_pair_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_pair_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_pair_proto_goTypes = []any{
 	(DeviceType)(0),             // 0: pbuf.v1.DeviceType
 	(ServiceCallStatus)(0),      // 1: pbuf.v1.ServiceCallStatus
@@ -908,6 +1161,10 @@ var file_pair_proto_goTypes = []any{
 	(*SysInfo)(nil),             // 11: pbuf.v1.SysInfo
 	(*GetSysInfoRequest)(nil),   // 12: pbuf.v1.GetSysInfoRequest
 	(*GetSysInfoResponse)(nil),  // 13: pbuf.v1.GetSysInfoResponse
+	(*FileMetadata)(nil),        // 14: pbuf.v1.FileMetadata
+	(*FileChunk)(nil),           // 15: pbuf.v1.FileChunk
+	(*SendFileRequest)(nil),     // 16: pbuf.v1.SendFileRequest
+	(*SendFileResponse)(nil),    // 17: pbuf.v1.SendFileResponse
 }
 var file_pair_proto_depIdxs = []int32{
 	0,  // 0: pbuf.v1.DeviceInfo.type:type_name -> pbuf.v1.DeviceType
@@ -920,19 +1177,24 @@ var file_pair_proto_depIdxs = []int32{
 	3,  // 7: pbuf.v1.GetInfoResponse.info:type_name -> pbuf.v1.DeviceInfo
 	1,  // 8: pbuf.v1.GetSysInfoResponse.status:type_name -> pbuf.v1.ServiceCallStatus
 	11, // 9: pbuf.v1.GetSysInfoResponse.info:type_name -> pbuf.v1.SysInfo
-	5,  // 10: pbuf.v1.AlatService.RequestPair:input_type -> pbuf.v1.RequestPairRequest
-	7,  // 11: pbuf.v1.AlatService.GetDetails:input_type -> pbuf.v1.GetDetailsRequest
-	9,  // 12: pbuf.v1.AlatService.GetInfo:input_type -> pbuf.v1.GetInfoRequest
-	12, // 13: pbuf.v1.AlatService.GetSysInfo:input_type -> pbuf.v1.GetSysInfoRequest
-	6,  // 14: pbuf.v1.AlatService.RequestPair:output_type -> pbuf.v1.RequestPairResponse
-	8,  // 15: pbuf.v1.AlatService.GetDetails:output_type -> pbuf.v1.GetDetailsResponse
-	10, // 16: pbuf.v1.AlatService.GetInfo:output_type -> pbuf.v1.GetInfoResponse
-	13, // 17: pbuf.v1.AlatService.GetSysInfo:output_type -> pbuf.v1.GetSysInfoResponse
-	14, // [14:18] is the sub-list for method output_type
-	10, // [10:14] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	14, // 10: pbuf.v1.SendFileRequest.metadata:type_name -> pbuf.v1.FileMetadata
+	15, // 11: pbuf.v1.SendFileRequest.chunk:type_name -> pbuf.v1.FileChunk
+	1,  // 12: pbuf.v1.SendFileResponse.status:type_name -> pbuf.v1.ServiceCallStatus
+	5,  // 13: pbuf.v1.AlatService.RequestPair:input_type -> pbuf.v1.RequestPairRequest
+	7,  // 14: pbuf.v1.AlatService.GetDetails:input_type -> pbuf.v1.GetDetailsRequest
+	9,  // 15: pbuf.v1.AlatService.GetInfo:input_type -> pbuf.v1.GetInfoRequest
+	12, // 16: pbuf.v1.AlatService.GetSysInfo:input_type -> pbuf.v1.GetSysInfoRequest
+	16, // 17: pbuf.v1.FileSendService.SendFile:input_type -> pbuf.v1.SendFileRequest
+	6,  // 18: pbuf.v1.AlatService.RequestPair:output_type -> pbuf.v1.RequestPairResponse
+	8,  // 19: pbuf.v1.AlatService.GetDetails:output_type -> pbuf.v1.GetDetailsResponse
+	10, // 20: pbuf.v1.AlatService.GetInfo:output_type -> pbuf.v1.GetInfoResponse
+	13, // 21: pbuf.v1.AlatService.GetSysInfo:output_type -> pbuf.v1.GetSysInfoResponse
+	17, // 22: pbuf.v1.FileSendService.SendFile:output_type -> pbuf.v1.SendFileResponse
+	18, // [18:23] is the sub-list for method output_type
+	13, // [13:18] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_pair_proto_init() }
@@ -940,15 +1202,19 @@ func file_pair_proto_init() {
 	if File_pair_proto != nil {
 		return
 	}
+	file_pair_proto_msgTypes[14].OneofWrappers = []any{
+		(*SendFileRequest_Metadata)(nil),
+		(*SendFileRequest_Chunk)(nil),
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pair_proto_rawDesc), len(file_pair_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   12,
+			NumMessages:   16,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   2,
 		},
 		GoTypes:           file_pair_proto_goTypes,
 		DependencyIndexes: file_pair_proto_depIdxs,

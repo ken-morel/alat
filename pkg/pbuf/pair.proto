@@ -89,3 +89,29 @@ service AlatService {
   rpc GetSysInfo(GetSysInfoRequest) returns (GetSysInfoResponse);
 }
 
+message FileMetadata {
+  string name = 1;
+  int64 size = 2;
+  int32 mode = 3; // File permissions
+}
+
+message FileChunk {
+  bytes content = 1;
+}
+
+message SendFileRequest {
+  oneof data {
+    FileMetadata metadata = 1;
+    FileChunk chunk = 2;
+  }
+}
+
+message SendFileResponse {
+  ServiceCallStatus status = 1;
+  string msg = 2;
+}
+
+service FileSendService {
+  rpc SendFile(stream SendFileRequest) returns (SendFileResponse);
+}
+
