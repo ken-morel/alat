@@ -89,6 +89,15 @@ service AlatService {
   rpc GetSysInfo(GetSysInfoRequest) returns (GetSysInfoResponse);
 }
 
+service FileSendService {
+  rpc SendFile(stream SendFileRequest) returns (SendFileResponse);
+}
+
+message InitialSendFileRequest {
+  FileMetadata metadata = 1;
+  DeviceInfo sender_info = 2;
+}
+
 message FileMetadata {
   string name = 1;
   int64 size = 2;
@@ -101,7 +110,7 @@ message FileChunk {
 
 message SendFileRequest {
   oneof data {
-    FileMetadata metadata = 1;
+    InitialSendFileRequest initial_request = 1;
     FileChunk chunk = 2;
   }
 }
@@ -109,9 +118,5 @@ message SendFileRequest {
 message SendFileResponse {
   ServiceCallStatus status = 1;
   string msg = 2;
-}
-
-service FileSendService {
-  rpc SendFile(stream SendFileRequest) returns (SendFileResponse);
 }
 

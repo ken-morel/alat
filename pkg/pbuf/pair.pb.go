@@ -808,6 +808,58 @@ func (x *GetSysInfoResponse) GetInfo() *SysInfo {
 	return nil
 }
 
+type InitialSendFileRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Metadata      *FileMetadata          `protobuf:"bytes,1,opt,name=metadata,proto3" json:"metadata,omitempty"`
+	SenderInfo    *DeviceInfo            `protobuf:"bytes,2,opt,name=sender_info,json=senderInfo,proto3" json:"sender_info,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *InitialSendFileRequest) Reset() {
+	*x = InitialSendFileRequest{}
+	mi := &file_pair_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *InitialSendFileRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InitialSendFileRequest) ProtoMessage() {}
+
+func (x *InitialSendFileRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pair_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use InitialSendFileRequest.ProtoReflect.Descriptor instead.
+func (*InitialSendFileRequest) Descriptor() ([]byte, []int) {
+	return file_pair_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *InitialSendFileRequest) GetMetadata() *FileMetadata {
+	if x != nil {
+		return x.Metadata
+	}
+	return nil
+}
+
+func (x *InitialSendFileRequest) GetSenderInfo() *DeviceInfo {
+	if x != nil {
+		return x.SenderInfo
+	}
+	return nil
+}
+
 type FileMetadata struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
@@ -819,7 +871,7 @@ type FileMetadata struct {
 
 func (x *FileMetadata) Reset() {
 	*x = FileMetadata{}
-	mi := &file_pair_proto_msgTypes[12]
+	mi := &file_pair_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -831,7 +883,7 @@ func (x *FileMetadata) String() string {
 func (*FileMetadata) ProtoMessage() {}
 
 func (x *FileMetadata) ProtoReflect() protoreflect.Message {
-	mi := &file_pair_proto_msgTypes[12]
+	mi := &file_pair_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -844,7 +896,7 @@ func (x *FileMetadata) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FileMetadata.ProtoReflect.Descriptor instead.
 func (*FileMetadata) Descriptor() ([]byte, []int) {
-	return file_pair_proto_rawDescGZIP(), []int{12}
+	return file_pair_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *FileMetadata) GetName() string {
@@ -877,7 +929,7 @@ type FileChunk struct {
 
 func (x *FileChunk) Reset() {
 	*x = FileChunk{}
-	mi := &file_pair_proto_msgTypes[13]
+	mi := &file_pair_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -889,7 +941,7 @@ func (x *FileChunk) String() string {
 func (*FileChunk) ProtoMessage() {}
 
 func (x *FileChunk) ProtoReflect() protoreflect.Message {
-	mi := &file_pair_proto_msgTypes[13]
+	mi := &file_pair_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -902,7 +954,7 @@ func (x *FileChunk) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FileChunk.ProtoReflect.Descriptor instead.
 func (*FileChunk) Descriptor() ([]byte, []int) {
-	return file_pair_proto_rawDescGZIP(), []int{13}
+	return file_pair_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *FileChunk) GetContent() []byte {
@@ -916,7 +968,7 @@ type SendFileRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to Data:
 	//
-	//	*SendFileRequest_Metadata
+	//	*SendFileRequest_InitialRequest
 	//	*SendFileRequest_Chunk
 	Data          isSendFileRequest_Data `protobuf_oneof:"data"`
 	unknownFields protoimpl.UnknownFields
@@ -925,7 +977,7 @@ type SendFileRequest struct {
 
 func (x *SendFileRequest) Reset() {
 	*x = SendFileRequest{}
-	mi := &file_pair_proto_msgTypes[14]
+	mi := &file_pair_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -937,7 +989,7 @@ func (x *SendFileRequest) String() string {
 func (*SendFileRequest) ProtoMessage() {}
 
 func (x *SendFileRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pair_proto_msgTypes[14]
+	mi := &file_pair_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -950,7 +1002,7 @@ func (x *SendFileRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendFileRequest.ProtoReflect.Descriptor instead.
 func (*SendFileRequest) Descriptor() ([]byte, []int) {
-	return file_pair_proto_rawDescGZIP(), []int{14}
+	return file_pair_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *SendFileRequest) GetData() isSendFileRequest_Data {
@@ -960,10 +1012,10 @@ func (x *SendFileRequest) GetData() isSendFileRequest_Data {
 	return nil
 }
 
-func (x *SendFileRequest) GetMetadata() *FileMetadata {
+func (x *SendFileRequest) GetInitialRequest() *InitialSendFileRequest {
 	if x != nil {
-		if x, ok := x.Data.(*SendFileRequest_Metadata); ok {
-			return x.Metadata
+		if x, ok := x.Data.(*SendFileRequest_InitialRequest); ok {
+			return x.InitialRequest
 		}
 	}
 	return nil
@@ -982,15 +1034,15 @@ type isSendFileRequest_Data interface {
 	isSendFileRequest_Data()
 }
 
-type SendFileRequest_Metadata struct {
-	Metadata *FileMetadata `protobuf:"bytes,1,opt,name=metadata,proto3,oneof"`
+type SendFileRequest_InitialRequest struct {
+	InitialRequest *InitialSendFileRequest `protobuf:"bytes,1,opt,name=initial_request,json=initialRequest,proto3,oneof"`
 }
 
 type SendFileRequest_Chunk struct {
 	Chunk *FileChunk `protobuf:"bytes,2,opt,name=chunk,proto3,oneof"`
 }
 
-func (*SendFileRequest_Metadata) isSendFileRequest_Data() {}
+func (*SendFileRequest_InitialRequest) isSendFileRequest_Data() {}
 
 func (*SendFileRequest_Chunk) isSendFileRequest_Data() {}
 
@@ -1004,7 +1056,7 @@ type SendFileResponse struct {
 
 func (x *SendFileResponse) Reset() {
 	*x = SendFileResponse{}
-	mi := &file_pair_proto_msgTypes[15]
+	mi := &file_pair_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1016,7 +1068,7 @@ func (x *SendFileResponse) String() string {
 func (*SendFileResponse) ProtoMessage() {}
 
 func (x *SendFileResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pair_proto_msgTypes[15]
+	mi := &file_pair_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1029,7 +1081,7 @@ func (x *SendFileResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendFileResponse.ProtoReflect.Descriptor instead.
 func (*SendFileResponse) Descriptor() ([]byte, []int) {
-	return file_pair_proto_rawDescGZIP(), []int{15}
+	return file_pair_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *SendFileResponse) GetStatus() ServiceCallStatus {
@@ -1096,15 +1148,19 @@ const file_pair_proto_rawDesc = "" +
 	"\x12GetSysInfoResponse\x122\n" +
 	"\x06status\x18\x01 \x01(\x0e2\x1a.pbuf.v1.ServiceCallStatusR\x06status\x12\x10\n" +
 	"\x03msg\x18\x02 \x01(\tR\x03msg\x12$\n" +
-	"\x04info\x18\x03 \x01(\v2\x10.pbuf.v1.SysInfoR\x04info\"J\n" +
+	"\x04info\x18\x03 \x01(\v2\x10.pbuf.v1.SysInfoR\x04info\"\x81\x01\n" +
+	"\x16InitialSendFileRequest\x121\n" +
+	"\bmetadata\x18\x01 \x01(\v2\x15.pbuf.v1.FileMetadataR\bmetadata\x124\n" +
+	"\vsender_info\x18\x02 \x01(\v2\x13.pbuf.v1.DeviceInfoR\n" +
+	"senderInfo\"J\n" +
 	"\fFileMetadata\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
 	"\x04size\x18\x02 \x01(\x03R\x04size\x12\x12\n" +
 	"\x04mode\x18\x03 \x01(\x05R\x04mode\"%\n" +
 	"\tFileChunk\x12\x18\n" +
-	"\acontent\x18\x01 \x01(\fR\acontent\"z\n" +
-	"\x0fSendFileRequest\x123\n" +
-	"\bmetadata\x18\x01 \x01(\v2\x15.pbuf.v1.FileMetadataH\x00R\bmetadata\x12*\n" +
+	"\acontent\x18\x01 \x01(\fR\acontent\"\x91\x01\n" +
+	"\x0fSendFileRequest\x12J\n" +
+	"\x0finitial_request\x18\x01 \x01(\v2\x1f.pbuf.v1.InitialSendFileRequestH\x00R\x0einitialRequest\x12*\n" +
 	"\x05chunk\x18\x02 \x01(\v2\x12.pbuf.v1.FileChunkH\x00R\x05chunkB\x06\n" +
 	"\x04data\"X\n" +
 	"\x10SendFileResponse\x122\n" +
@@ -1145,26 +1201,27 @@ func file_pair_proto_rawDescGZIP() []byte {
 }
 
 var file_pair_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_pair_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
+var file_pair_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_pair_proto_goTypes = []any{
-	(DeviceType)(0),             // 0: pbuf.v1.DeviceType
-	(ServiceCallStatus)(0),      // 1: pbuf.v1.ServiceCallStatus
-	(*Color)(nil),               // 2: pbuf.v1.Color
-	(*DeviceInfo)(nil),          // 3: pbuf.v1.DeviceInfo
-	(*DeviceDetails)(nil),       // 4: pbuf.v1.DeviceDetails
-	(*RequestPairRequest)(nil),  // 5: pbuf.v1.RequestPairRequest
-	(*RequestPairResponse)(nil), // 6: pbuf.v1.RequestPairResponse
-	(*GetDetailsRequest)(nil),   // 7: pbuf.v1.GetDetailsRequest
-	(*GetDetailsResponse)(nil),  // 8: pbuf.v1.GetDetailsResponse
-	(*GetInfoRequest)(nil),      // 9: pbuf.v1.GetInfoRequest
-	(*GetInfoResponse)(nil),     // 10: pbuf.v1.GetInfoResponse
-	(*SysInfo)(nil),             // 11: pbuf.v1.SysInfo
-	(*GetSysInfoRequest)(nil),   // 12: pbuf.v1.GetSysInfoRequest
-	(*GetSysInfoResponse)(nil),  // 13: pbuf.v1.GetSysInfoResponse
-	(*FileMetadata)(nil),        // 14: pbuf.v1.FileMetadata
-	(*FileChunk)(nil),           // 15: pbuf.v1.FileChunk
-	(*SendFileRequest)(nil),     // 16: pbuf.v1.SendFileRequest
-	(*SendFileResponse)(nil),    // 17: pbuf.v1.SendFileResponse
+	(DeviceType)(0),                // 0: pbuf.v1.DeviceType
+	(ServiceCallStatus)(0),         // 1: pbuf.v1.ServiceCallStatus
+	(*Color)(nil),                  // 2: pbuf.v1.Color
+	(*DeviceInfo)(nil),             // 3: pbuf.v1.DeviceInfo
+	(*DeviceDetails)(nil),          // 4: pbuf.v1.DeviceDetails
+	(*RequestPairRequest)(nil),     // 5: pbuf.v1.RequestPairRequest
+	(*RequestPairResponse)(nil),    // 6: pbuf.v1.RequestPairResponse
+	(*GetDetailsRequest)(nil),      // 7: pbuf.v1.GetDetailsRequest
+	(*GetDetailsResponse)(nil),     // 8: pbuf.v1.GetDetailsResponse
+	(*GetInfoRequest)(nil),         // 9: pbuf.v1.GetInfoRequest
+	(*GetInfoResponse)(nil),        // 10: pbuf.v1.GetInfoResponse
+	(*SysInfo)(nil),                // 11: pbuf.v1.SysInfo
+	(*GetSysInfoRequest)(nil),      // 12: pbuf.v1.GetSysInfoRequest
+	(*GetSysInfoResponse)(nil),     // 13: pbuf.v1.GetSysInfoResponse
+	(*InitialSendFileRequest)(nil), // 14: pbuf.v1.InitialSendFileRequest
+	(*FileMetadata)(nil),           // 15: pbuf.v1.FileMetadata
+	(*FileChunk)(nil),              // 16: pbuf.v1.FileChunk
+	(*SendFileRequest)(nil),        // 17: pbuf.v1.SendFileRequest
+	(*SendFileResponse)(nil),       // 18: pbuf.v1.SendFileResponse
 }
 var file_pair_proto_depIdxs = []int32{
 	0,  // 0: pbuf.v1.DeviceInfo.type:type_name -> pbuf.v1.DeviceType
@@ -1177,24 +1234,26 @@ var file_pair_proto_depIdxs = []int32{
 	3,  // 7: pbuf.v1.GetInfoResponse.info:type_name -> pbuf.v1.DeviceInfo
 	1,  // 8: pbuf.v1.GetSysInfoResponse.status:type_name -> pbuf.v1.ServiceCallStatus
 	11, // 9: pbuf.v1.GetSysInfoResponse.info:type_name -> pbuf.v1.SysInfo
-	14, // 10: pbuf.v1.SendFileRequest.metadata:type_name -> pbuf.v1.FileMetadata
-	15, // 11: pbuf.v1.SendFileRequest.chunk:type_name -> pbuf.v1.FileChunk
-	1,  // 12: pbuf.v1.SendFileResponse.status:type_name -> pbuf.v1.ServiceCallStatus
-	5,  // 13: pbuf.v1.AlatService.RequestPair:input_type -> pbuf.v1.RequestPairRequest
-	7,  // 14: pbuf.v1.AlatService.GetDetails:input_type -> pbuf.v1.GetDetailsRequest
-	9,  // 15: pbuf.v1.AlatService.GetInfo:input_type -> pbuf.v1.GetInfoRequest
-	12, // 16: pbuf.v1.AlatService.GetSysInfo:input_type -> pbuf.v1.GetSysInfoRequest
-	16, // 17: pbuf.v1.FileSendService.SendFile:input_type -> pbuf.v1.SendFileRequest
-	6,  // 18: pbuf.v1.AlatService.RequestPair:output_type -> pbuf.v1.RequestPairResponse
-	8,  // 19: pbuf.v1.AlatService.GetDetails:output_type -> pbuf.v1.GetDetailsResponse
-	10, // 20: pbuf.v1.AlatService.GetInfo:output_type -> pbuf.v1.GetInfoResponse
-	13, // 21: pbuf.v1.AlatService.GetSysInfo:output_type -> pbuf.v1.GetSysInfoResponse
-	17, // 22: pbuf.v1.FileSendService.SendFile:output_type -> pbuf.v1.SendFileResponse
-	18, // [18:23] is the sub-list for method output_type
-	13, // [13:18] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+	15, // 10: pbuf.v1.InitialSendFileRequest.metadata:type_name -> pbuf.v1.FileMetadata
+	3,  // 11: pbuf.v1.InitialSendFileRequest.sender_info:type_name -> pbuf.v1.DeviceInfo
+	14, // 12: pbuf.v1.SendFileRequest.initial_request:type_name -> pbuf.v1.InitialSendFileRequest
+	16, // 13: pbuf.v1.SendFileRequest.chunk:type_name -> pbuf.v1.FileChunk
+	1,  // 14: pbuf.v1.SendFileResponse.status:type_name -> pbuf.v1.ServiceCallStatus
+	5,  // 15: pbuf.v1.AlatService.RequestPair:input_type -> pbuf.v1.RequestPairRequest
+	7,  // 16: pbuf.v1.AlatService.GetDetails:input_type -> pbuf.v1.GetDetailsRequest
+	9,  // 17: pbuf.v1.AlatService.GetInfo:input_type -> pbuf.v1.GetInfoRequest
+	12, // 18: pbuf.v1.AlatService.GetSysInfo:input_type -> pbuf.v1.GetSysInfoRequest
+	17, // 19: pbuf.v1.FileSendService.SendFile:input_type -> pbuf.v1.SendFileRequest
+	6,  // 20: pbuf.v1.AlatService.RequestPair:output_type -> pbuf.v1.RequestPairResponse
+	8,  // 21: pbuf.v1.AlatService.GetDetails:output_type -> pbuf.v1.GetDetailsResponse
+	10, // 22: pbuf.v1.AlatService.GetInfo:output_type -> pbuf.v1.GetInfoResponse
+	13, // 23: pbuf.v1.AlatService.GetSysInfo:output_type -> pbuf.v1.GetSysInfoResponse
+	18, // 24: pbuf.v1.FileSendService.SendFile:output_type -> pbuf.v1.SendFileResponse
+	20, // [20:25] is the sub-list for method output_type
+	15, // [15:20] is the sub-list for method input_type
+	15, // [15:15] is the sub-list for extension type_name
+	15, // [15:15] is the sub-list for extension extendee
+	0,  // [0:15] is the sub-list for field type_name
 }
 
 func init() { file_pair_proto_init() }
@@ -1202,8 +1261,8 @@ func file_pair_proto_init() {
 	if File_pair_proto != nil {
 		return
 	}
-	file_pair_proto_msgTypes[14].OneofWrappers = []any{
-		(*SendFileRequest_Metadata)(nil),
+	file_pair_proto_msgTypes[15].OneofWrappers = []any{
+		(*SendFileRequest_InitialRequest)(nil),
 		(*SendFileRequest_Chunk)(nil),
 	}
 	type x struct{}
@@ -1212,7 +1271,7 @@ func file_pair_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pair_proto_rawDesc), len(file_pair_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   16,
+			NumMessages:   17,
 			NumExtensions: 0,
 			NumServices:   2,
 		},

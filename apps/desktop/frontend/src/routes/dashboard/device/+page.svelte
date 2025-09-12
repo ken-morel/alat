@@ -27,7 +27,6 @@
           href="/dashboard/device/sendfiles">Send files</a
         >
       </header>
-      <article class="border-[1px] p-2 border-surface-200-800"></article>
     </div>
   {:else}
     <div class="card preset-filled-error-400-600 p-8">

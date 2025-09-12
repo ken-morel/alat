@@ -2,6 +2,7 @@
 package server
 
 import (
+	"alat/pkg/core/service/filesend"
 	"fmt"
 	"net"
 
@@ -37,7 +38,7 @@ func (s *Server) Start() error {
 	s.listener = lis
 	s.grpcServer = grpc.NewServer()
 	pbuf.RegisterAlatServiceServer(s.grpcServer, s)
-	pbuf.RegisterFileSendServiceServer(s.grpcServer, &FileSendServer{Service: &s.Services.FileSend})
+	pbuf.RegisterFileSendServiceServer(s.grpcServer, &filesend.FileSendServer{Service: &s.Services.FileSend})
 
 	fmt.Printf("Server listening at %v\n", lis.Addr())
 	go func() {

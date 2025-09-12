@@ -6,6 +6,7 @@ import (
 
 	"alat/apps/desktop/app/config"
 	"alat/pkg/core/device/color"
+	"alat/pkg/core/service/filesend"
 	"alat/pkg/core/service/sysinfo"
 
 	rt "github.com/wailsapp/wails/v2/pkg/runtime"
@@ -77,4 +78,14 @@ func (app *App) SettingsSetSysInfo(conf config.SysInfoSettings) error {
 	app.serviceSettings.SysInfo = conf
 
 	return config.SaveAppSettings(app.settings)
+}
+
+func (app *App) SettingsGetFileSend() config.FileSendSettings {
+	return app.serviceSettings.FileTransfer
+}
+
+func (app *App) SettingsSetFileTransfer(conf config.FileSendSettings) error {
+	app.serviceRegistery.FileSend.Configure(filesend.Config{
+		Enabled: conf.Enabled,
+	})
 }

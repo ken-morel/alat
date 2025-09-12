@@ -22,8 +22,14 @@ type SysInfoSettings struct {
 	Enabled      bool  `yaml:"enabled"`
 	CacheSeconds uint8 `yaml:"cacheseconds"`
 }
+type FileSendSettings struct {
+	Enabled    bool   `yaml:"enabled"`
+	MaxSize    uint64 `yaml:"maxsize"`
+	SaveFolder string `yaml:"savefolder"`
+}
 type ServiceSettings struct {
-	SysInfo SysInfoSettings `yaml:"sysinfo"`
+	SysInfo  SysInfoSettings `yaml:"sysinfo"`
+	FileSend FileSendSettings
 }
 
 func DefaultAppSettings() *AppSettings {
@@ -71,11 +77,17 @@ func SaveAppSettings(settings *AppSettings) error {
 
 func LoadServiceSettings() (*ServiceSettings, error) {
 	p := path.Join(configDir, "services.yml")
+	home, _ := os.UserHomeDir()
 
 	defaults := &ServiceSettings{
 		SysInfoSettings{
 			Enabled:      true,
 			CacheSeconds: 10,
+		},
+		FileSendSettings{
+			Enabled:    true,
+			MaxSize:    0,
+			SaveFolder: path.Join(home, "Downloads"),
 		},
 	}
 

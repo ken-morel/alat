@@ -120,7 +120,7 @@
         </span>
         <span class="count">{numberOfConnectedDevices}</span>
         <span class="label text-sm">
-          Active device{numberOfConnectedDevices > 1 ? "s" : ""} amongs
+          Active device{numberOfConnectedDevices > 1 ? "s" : ""}
         </span>
       </span>
     </div>
