@@ -3,7 +3,7 @@
   import { nextUrl, prevUrl } from "../wizard.svelte";
   import { Check } from "lucide-svelte";
 
-  prevUrl.set("/setup/services/foldersync");
+  prevUrl.set("/setup/services/sendfile");
   nextUrl.set("/");
 
   SettingsSetSetupComplete(true);

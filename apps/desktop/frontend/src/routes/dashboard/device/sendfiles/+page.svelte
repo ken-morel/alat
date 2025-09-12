@@ -2,9 +2,14 @@
   import { connectedDevice, sendingFiles } from "$lib/store";
   import UploadIcon from "@lucide/svelte/icons/upload";
   import CloseIcon from "@lucide/svelte/icons/x";
-  import { AskFilesSend } from "$lib/wails/wailsjs/go/app/App";
+  import {
+    AskFilesSend,
+    ServiceStartSendFilesToDevice,
+  } from "$lib/wails/wailsjs/go/app/App";
   import fsizeText from "$lib/fsize";
   import { slide } from "svelte/transition";
+  import { get } from "svelte/store";
+  import type { app } from "$lib/wails/wailsjs/go/models";
 
   const dev = connectedDevice;
 
@@ -16,6 +21,14 @@
         return selectedFiles.concat(files);
       });
     });
+  }
+  function sendFiles() {
+    const device = get(dev);
+    if (!device) return;
+    ServiceStartSendFilesToDevice(
+      device,
+      get(sendingFiles).map((f: app.SendFile) => f.Path),
+    );
   }
 </script>
 
@@ -68,8 +81,9 @@
         </div>
       </article>
       <footer class="px-10 pb-9">
-        <button class="btn w-full preset-filled-primary-600-400"
-          >Send files</button
+        <button
+          class="btn w-full preset-filled-primary-600-400"
+          onclick={sendFiles}>Send files</button
         >
       </footer>
     </div>

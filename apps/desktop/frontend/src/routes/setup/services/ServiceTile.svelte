@@ -45,7 +45,7 @@
 
   {#if enabled}
     <div transition:slide={{ duration: 100 }}>
-      <div class="space-y-2 border-l-2 border-surface-200-800 pl-4">
+      <div class="space-y-2 border-surface-200-800">
         {#if children}
           {@render children()}
         {:else}

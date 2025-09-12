@@ -6,6 +6,7 @@ import {connected} from '../models';
 import {discovery} from '../models';
 import {node} from '../models';
 import {device} from '../models';
+import {filesend} from '../models';
 import {pbuf} from '../models';
 import {config} from '../models';
 
@@ -28,6 +29,10 @@ export function GetPairedDevices():Promise<Array<device.PairedDevice>>;
 export function RequestPairingFoundDevice(arg1:string):Promise<app.RequestPairingResult>;
 
 export function Run():Promise<void>;
+
+export function ServiceGetFileSendStatus():Promise<filesend.FileTransfersStatus>;
+
+export function ServiceStartSendFilesToDevice(arg1:connected.Connected,arg2:Array<string>):Promise<void>;
 
 export function ServiceSysInfoGet(arg1:connected.Connected):Promise<pbuf.SysInfo>;
 

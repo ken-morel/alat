@@ -5,8 +5,8 @@
   import StatusBar from "./StatusBar.svelte";
   import PairDialog from "./PairDialog.svelte";
   import { ConfigReady } from "$lib/wails/wailsjs/go/app/App";
-  let { children } = $props();
   import { page } from "$app/stores";
+  let { children } = $props();
 </script>
 
 <div class="flex h-screen flex-col">

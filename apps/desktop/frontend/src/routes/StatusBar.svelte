@@ -13,6 +13,7 @@
   import IconMagnifyingGlass from "@lucide/svelte/icons/zoom-in"; // For discovery (running/not running)
   import IconNode from "@lucide/svelte/icons/network";
   import IconConnectedDevices from "@lucide/svelte/icons/laptop-minimal";
+  import FileSendStatus from "./FileSendStatus.svelte";
 
   let status: node.Status | null = $state(null);
   let numberOfConnectedDevices: number = $state(0);
@@ -124,6 +125,7 @@
         </span>
       </span>
     </div>
+    <FileSendStatus />
   {/snippet}
 </AppBar>
 

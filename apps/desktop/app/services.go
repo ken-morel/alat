@@ -5,6 +5,7 @@ import (
 
 	"alat/pkg/core/connected"
 	"alat/pkg/core/service"
+	"alat/pkg/core/service/filesend"
 	"alat/pkg/core/service/sysinfo"
 	"alat/pkg/pbuf"
 )
@@ -14,6 +15,11 @@ func (app *App) initServices() error {
 		SysInfo: sysinfo.CreateService(sysinfo.Config{
 			Enabled:   app.serviceSettings.SysInfo.Enabled,
 			CacheTime: time.Duration(app.serviceSettings.SysInfo.CacheSeconds) * time.Second,
+		}),
+		FileSend: filesend.CreateService(filesend.Config{
+			Enabled:     app.serviceSettings.FileSend.Enabled,
+			SaveFolder:  app.serviceSettings.FileSend.SaveFolder,
+			FileMaxSize: uint32(app.serviceSettings.FileSend.MaxSize),
 		}),
 	}
 	return nil

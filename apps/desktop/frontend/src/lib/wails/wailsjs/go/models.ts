@@ -226,6 +226,100 @@ export namespace discovery {
 
 }
 
+export namespace filesend {
+	
+	export class FileTransfersStatusTransfer {
+	    FileName: string;
+	    Percent: number;
+	    FileSize: number;
+	    Status: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new FileTransfersStatusTransfer(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.FileName = source["FileName"];
+	        this.Percent = source["Percent"];
+	        this.FileSize = source["FileSize"];
+	        this.Status = source["Status"];
+	    }
+	}
+	export class FileTransfersStatusDevice {
+	    Device: device.Info;
+	    Transfers: FileTransfersStatusTransfer[];
+	    Percent: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new FileTransfersStatusDevice(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Device = this.convertValues(source["Device"], device.Info);
+	        this.Transfers = this.convertValues(source["Transfers"], FileTransfersStatusTransfer);
+	        this.Percent = source["Percent"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class FileTransfersStatus {
+	    PercentSending: number;
+	    PercentReceiving: number;
+	    Sending: FileTransfersStatusDevice[];
+	    Receiving: FileTransfersStatusDevice[];
+	
+	    static createFrom(source: any = {}) {
+	        return new FileTransfersStatus(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.PercentSending = source["PercentSending"];
+	        this.PercentReceiving = source["PercentReceiving"];
+	        this.Sending = this.convertValues(source["Sending"], FileTransfersStatusDevice);
+	        this.Receiving = this.convertValues(source["Receiving"], FileTransfersStatusDevice);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	
+
+}
+
 export namespace node {
 	
 	export class Status {

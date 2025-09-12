@@ -2,7 +2,6 @@
   import ServiceTile from "../ServiceTile.svelte";
   import { SettingsSetSysInfo } from "$lib/wails/wailsjs/go/app/App";
   import Slider from "$lib/widgets/Slider.svelte";
-  import { fade } from "svelte/transition";
 
   let { data } = $props();
 
@@ -20,7 +19,7 @@
   description="Allow other devices to get system information like disk usage and battery status."
   bind:enabled={settings.Enabled}
   prev="/setup/services"
-  next="/setup/done"
+  next="/setup/services/sendfile"
 >
   <div class="flex items-center justify-between">
     <label for="cache-time" class="font-medium text-surface-600-400"

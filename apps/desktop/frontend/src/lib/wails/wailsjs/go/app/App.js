@@ -42,6 +42,14 @@ export function Run() {
   return window['go']['app']['App']['Run']();
 }
 
+export function ServiceGetFileSendStatus() {
+  return window['go']['app']['App']['ServiceGetFileSendStatus']();
+}
+
+export function ServiceStartSendFilesToDevice(arg1, arg2) {
+  return window['go']['app']['App']['ServiceStartSendFilesToDevice'](arg1, arg2);
+}
+
 export function ServiceSysInfoGet(arg1) {
   return window['go']['app']['App']['ServiceSysInfoGet'](arg1);
 }
