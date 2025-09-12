@@ -17,7 +17,10 @@
             <Icon size={50} color={dev.Info.Color.Hex} />
             <h3 class="ml-8 h3">{dev.Info.Name}</h3>
           </div>
-          <DeviceBattery {dev} />
+          <div class="flex flex-2 pr-1">
+            <div class="flex grow"></div>
+            <DeviceBattery {dev} />
+          </div>
         </div>
         <a
           class="btn preset-filled-primary-700-300"

@@ -48,7 +48,7 @@
       </div>
     {:else}
       <div class="flex items-center space-x-4">
-        <Tooltip>
+        <Tooltip classes="bg-surface-200-800">
           {#snippet tooltip()}
             {#if status}
               <div class="p-4">

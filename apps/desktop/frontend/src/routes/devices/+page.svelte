@@ -2,6 +2,7 @@
   import {
     GetFoundDevices,
     RequestPairingFoundDevice,
+    GetConnectedDevices,
   } from "$lib/wails/wailsjs/go/app/App";
   import { onMount } from "svelte";
   import { ProgressRing } from "@skeletonlabs/skeleton-svelte";
@@ -12,12 +13,13 @@
   let devices: discovery.FoundDevice[] = $state(data.found);
 
   onMount(() => {
-    const searchInterval = setInterval(() => {
-      GetFoundDevices().then((found) => {
-        if (found) {
-          devices = found;
-        }
-      });
+    const searchInterval = setInterval(async () => {
+      const foundDevices = (await GetFoundDevices()) || [];
+      const connectedDevices = await GetConnectedDevices();
+      devices = [];
+      for (const foundDev of foundDevices)
+        for (const connDev of connectedDevices)
+          if (connDev.Info.ID !== foundDev.Info.ID) devices.push(foundDev);
     }, 500);
     return () => {
       clearInterval(searchInterval);

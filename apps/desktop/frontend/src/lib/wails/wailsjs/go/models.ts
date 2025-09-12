@@ -14,6 +14,20 @@ export namespace app {
 	        this.Message = source["Message"];
 	    }
 	}
+	export class SendFile {
+	    Path: string;
+	    Size: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new SendFile(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Path = source["Path"];
+	        this.Size = source["Size"];
+	    }
+	}
 
 }
 

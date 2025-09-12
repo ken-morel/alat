@@ -6,6 +6,10 @@ export function AskFileSharingDestDirectory() {
   return window['go']['app']['App']['AskFileSharingDestDirectory']();
 }
 
+export function AskFilesSend(arg1) {
+  return window['go']['app']['App']['AskFilesSend'](arg1);
+}
+
 export function ConfigReady() {
   return window['go']['app']['App']['ConfigReady']();
 }

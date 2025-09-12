@@ -18,6 +18,16 @@
   let charging: boolean = $state(false);
   let loaded: boolean = $state(false);
   let error: string | null = $state(null);
+
+  let stroke: string = $derived.by(() => {
+    return error
+      ? "error"
+      : loaded
+        ? charging
+          ? "success"
+          : "tertiary"
+        : "warning";
+  });
   onMount(() => {
     const interval = setInterval(() => {
       ServiceSysInfoGet(dev)
@@ -25,7 +35,7 @@
           error = null;
           loaded = true;
           percent.set(info.batteryPercent || 0);
-          charging = info.batteryCharging || false;
+          charging = info.batteryCharging || info.batteryPercent == 100;
         })
         .catch((err: any) => {
           error = err.toString();
@@ -37,17 +47,11 @@
   });
 </script>
 
-<Tooltip classes="p-4 rounded-xl bg-{error ? 'error' : 'surface'}-200-800">
+<Tooltip classes="p-4 rounded-xl bg-{error ? 'error' : 'surface'}-200-700">
   <ProgressRing
     value={loaded && !error ? percent.current : null}
-    size="size-{size}"
-    meterStroke={error
-      ? "stroke-error-600-400"
-      : loaded
-        ? charging
-          ? "stroke-success-600-400"
-          : "stroke-tertiary-600-400"
-        : "stroke-warning-600-400"}
+    size="size-20"
+    meterStroke="stroke-{stroke}-600-400"
   >
     {#if error}
       <IconError size={iconSize} />
