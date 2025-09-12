@@ -12,7 +12,7 @@
   let {
     children,
     tooltip,
-    classes = "rounded-2xl bg-surface-50-950",
+    classes = "rounded-2xl",
   }: { children: Snippet; tooltip: Snippet; classes: string } = $props();
 </script>
 

@@ -37,7 +37,7 @@
   });
 </script>
 
-<Tooltip classes="p-4 rounded-xl bg-{error ? 'error' : 'surface'}-300-700">
+<Tooltip classes="p-4 rounded-xl bg-{error ? 'error' : 'surface'}-200-800">
   <ProgressRing
     value={loaded && !error ? percent.current : null}
     size="size-{size}"
