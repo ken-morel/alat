@@ -35,7 +35,7 @@
   });
 </script>
 
-<AppBar base="h-16 w-full border-t border-surface-200-800 px-4">
+<AppBar base="h-18 w-full border-t border-surface-200-800 px-4">
   {#snippet lead()}
     {#if !status}
       <div class="flex items-center space-x-2">

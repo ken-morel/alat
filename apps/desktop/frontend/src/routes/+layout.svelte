@@ -20,7 +20,7 @@
     {/key}
     {@render children?.()}
   </div>
-  <div class="h-16 w-full">
+  <div class="h-18 w-full">
     <StatusBar />
   </div>
   <PairDialog />
