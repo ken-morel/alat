@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"os"
 
 	"alat/pkg/core/connected"
@@ -42,23 +41,7 @@ func (app *App) AskFilesSend(to string) (sendFiles []SendFile, err error) {
 
 func (app *App) ServiceStartSendFilesToDevice(peer connected.Connected, files []string) error {
 	for _, file := range files {
-		fmt.Println("File: ", file)
-		go func() {
-			err := app.serviceRegistery.FileSend.SendFile(app.ctx, &peer, app.nodeDetails, file)
-			if err != nil {
-				rt.MessageDialog(app.ctx, rt.MessageDialogOptions{
-					Type:    rt.ErrorDialog,
-					Title:   "File send",
-					Message: "Error sending file: " + err.Error(),
-				})
-			} else {
-				rt.MessageDialog(app.ctx, rt.MessageDialogOptions{
-					Type:    rt.InfoDialog,
-					Title:   "File send",
-					Message: "No error ",
-				})
-			}
-		}()
+		go app.serviceRegistery.FileSend.SendFile(app.ctx, &peer, app.nodeDetails, file)
 	}
 	return nil
 }

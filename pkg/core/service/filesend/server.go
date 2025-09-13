@@ -5,7 +5,6 @@ import (
 	"io"
 	"os"
 	"path"
-	"time"
 
 	"alat/pkg/pbuf"
 
@@ -86,7 +85,6 @@ func (s *FileSendServer) SendFile(stream pbuf.FileSendService_SendFileServer) er
 
 		chunk := req.GetChunk()
 
-		time.Sleep(time.Second)
 		if chunk == nil {
 			// This could happen if the client sends an empty message. We'll just ignore it.
 			continue
@@ -102,7 +100,6 @@ func (s *FileSendServer) SendFile(stream pbuf.FileSendService_SendFileServer) er
 
 		// Update status
 		status.TransferredSize = transferredSize
-		fmt.Println("New transfer size: ", transferredSize)
 		s.Service.UpdateIncomingStatus(senderInfo, status)
 	}
 
