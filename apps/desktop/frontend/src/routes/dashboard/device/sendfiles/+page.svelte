@@ -10,6 +10,7 @@
   import { slide } from "svelte/transition";
   import { get } from "svelte/store";
   import type { app } from "$lib/wails/wailsjs/go/models";
+  import {openPane as openFileTransferPane} from "../../../FileSendStatus.svelte";
 
   const dev = connectedDevice;
 
@@ -28,7 +29,7 @@
     ServiceStartSendFilesToDevice(
       device,
       get(sendingFiles).map((f: app.SendFile) => f.Path),
-    );
+    ).then(openFileTransferPane);
   }
 </script>
 

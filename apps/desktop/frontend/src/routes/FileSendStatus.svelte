@@ -1,3 +1,29 @@
+<script lang="ts" module>
+  let status: filesend.FileTransfersStatus | null = $state(null);
+
+  let isOpen: boolean = $state(false);
+
+  export function openPane() {
+    isOpen = true;
+  }
+  export function closePane() {
+    isOpen = false;
+  }
+  export function togglePane() {
+    isOpen = !isOpen;
+  }
+
+  const popover = new Popover({
+    open: () => isOpen,
+    onOpenChange(value) {
+      isOpen = value;
+    },
+  });
+  setInterval(async () => {
+    status = (await ServiceGetFileSendStatus()) || [];
+  }, 100);
+</script>
+
 <script lang="ts">
   import { Popover, Tabs } from "melt/builders";
   import { scale, fly } from "svelte/transition";
@@ -6,47 +32,36 @@
   import IconDownload from "@lucide/svelte/icons/download";
   import IconUpload from "@lucide/svelte/icons/upload";
   import IconDevice from "@lucide/svelte/icons/smartphone";
-  import { onMount } from "svelte";
   import { ServiceGetFileSendStatus } from "$lib/wails/wailsjs/go/app/App";
   import type { filesend } from "$lib/wails/wailsjs/go/models";
   import { Progress } from "@skeletonlabs/skeleton-svelte";
-
-  let status: filesend.FileTransfersStatus | null = $state(null);
-
-  const popover = new Popover({});
+  import guessIcon from "$lib/icons";
 
   const tabs = new Tabs<"sending" | "receiving">({
     value: "sending",
   });
 
   let sendingPercent = $state(100);
-
-  onMount(() => {
-    const interval = setInterval(async () => {
-      status = (await ServiceGetFileSendStatus()) || [];
-    }, 100);
-    return () => {
-      clearInterval(interval);
-    };
-  });
 </script>
 
 <!-- Enhanced Trigger Button -->
 <div {...popover.trigger} class="relative">
   <div class="flex items-center justify-center group cursor-pointer">
     <div class="relative">
-      <ProgressRing
-        value={sendingPercent}
-        size="size-10"
-        meterStroke="stroke-primary-500"
-        trackStroke="stroke-surface-300-700"
-        classes="transition-all duration-300 group-hover:scale-110 drop-shadow-lg"
-      >
-        <IconFile
-          size={24}
-          class="text-primary-500 group-hover:text-primary-400 transition-colors"
-        />
-      </ProgressRing>
+      <button>
+        <ProgressRing
+          value={sendingPercent}
+          size="size-10"
+          meterStroke="stroke-primary-500"
+          trackStroke="stroke-surface-300-700"
+          classes="transition-all duration-300 group-hover:scale-110 drop-shadow-lg"
+        >
+          <IconFile
+            size={24}
+            class="text-primary-500 group-hover:text-primary-400 transition-colors"
+          />
+        </ProgressRing>
+      </button>
 
       <!-- Pulse indicator for active transfers -->
       {#if sendingPercent < 100}
@@ -159,6 +174,7 @@
 
 {#snippet transferTab(devices: filesend.FileTransfersStatusDevice[])}
   {#each devices as device, i (device.Device.ID)}
+    {@const Icon = guessIcon(device.Device.Type)}
     <div
       class="bg-surface-100-900 border border-surface-300-700 overflow-hidden hover:shadow-lg transition-all duration-200 hover:border-primary-500/30"
       in:fly={{ y: 20, duration: 300, delay: i * 100 }}
@@ -170,7 +186,7 @@
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
             <div class="p-2 bg-primary-500/10">
-              <IconDevice class="text-primary-500" size={18} />
+              <Icon class="text-primary-500" size={18} color={device.Device.Color.Hex} />
             </div>
             <div>
               <h5 class="font-semibold text-surface-900-50">

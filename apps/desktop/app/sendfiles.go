@@ -5,8 +5,6 @@ import (
 	"os"
 
 	"alat/pkg/core/connected"
-	"alat/pkg/core/device"
-	"alat/pkg/core/device/color"
 	"alat/pkg/core/service/filesend"
 
 	rt "github.com/wailsapp/wails/v2/pkg/runtime"
@@ -66,28 +64,5 @@ func (app *App) ServiceStartSendFilesToDevice(peer connected.Connected, files []
 }
 
 func (app *App) ServiceGetFileSendStatus() filesend.FileTransfersStatus {
-	return filesend.FileTransfersStatus{
-		PercentSending:   78,
-		PercentReceiving: 32,
-		Sending: []filesend.FileTransfersStatusDevice{
-			{
-				Device: device.Info{
-					ID:    "banana",
-					Name:  "banana",
-					Color: color.Colors[3],
-					Type:  device.DesktopDevice,
-				},
-				Transfers: []filesend.FileTransfersStatusTransfer{
-					{
-						FileName: "banaa.txt",
-						Percent:  59,
-						FileSize: 1025,
-						Status:   filesend.TransferStatusTransferring,
-					},
-				},
-				Percent: 59,
-			},
-		},
-	}
-	// return app.serviceRegistery.FileSend.GetStatus()
+	return app.serviceRegistery.FileSend.GetStatus()
 }
