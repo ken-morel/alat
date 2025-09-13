@@ -6,18 +6,22 @@ end
 function build-windows
     wails build -v 2 -tags webkit2_41 -platform windows -nsis
 end
+function package-linux
+    nfpm pkg --packager deb --target ./build/bin
+end
 
 function build
     wails build -v 2 -tags webkit2_41
 end
 
 function help
-    echo "Usage: ./manage.fish <command>"
+    echo "Usage: ./mng.fish <command>"
     echo ""
     echo "Commands:"
     echo "  dev              - Start the development server."
     echo "  build-windows    - Builds windows binaries."
-    echo "  build    - Builds windows binaries."
+    echo "  package          - Builds debian archive"
+    echo "  build            - Builds linux binaries."
     echo "  help             - Shows this help message."
 end
 
@@ -30,6 +34,8 @@ switch "$argv[1]"
         build-windows
     case build
         build
+    case package
+        package-linux
     case ""
         echo "Error: No command specified."
         help

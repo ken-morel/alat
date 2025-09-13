@@ -9,14 +9,7 @@ import (
 )
 
 func (s *Server) RequestPair(ctx context.Context, req *pbuf.RequestPairRequest) (*pbuf.RequestPairResponse, error) {
-	var accepted bool
-	var reason string
-	if s.PairManager.OnPairRequest != nil {
-		accepted, reason = s.PairManager.OnPairRequest((*security.PairToken)(req.GetToken()), device.PbufToDetails(req.GetDetails()))
-	} else {
-		accepted = false
-		reason = "App misconfigured, no pairing handler available"
-	}
+	accepted, reason := s.PairManager.HandlePairRequest((*security.PairToken)(req.GetToken()), device.PbufToDetails(req.GetDetails()))
 	return &pbuf.RequestPairResponse{
 		Token:    req.GetToken(),
 		Accepted: accepted,

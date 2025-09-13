@@ -58,7 +58,7 @@ func (app *App) initNode() error {
 		fmt.Println("Failed to initialize pair manager:", err)
 		return err
 	}
-	pairManager.OnPairRequest = app.handlePairRequest
+	pairManager.OnPairRequest(app.handlePairRequest)
 
 	node, err := node.NewNode(app.serviceRegistery, &app.nodeStore, app.nodeDetails, pairManager)
 	app.node = node

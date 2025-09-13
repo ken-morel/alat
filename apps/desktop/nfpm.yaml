@@ -1,0 +1,37 @@
+# This is an example nfpm configuration file.
+# Make sure to check the documentation at https://nfpm.goreleaser.com
+#
+# The lines below are called `modelines`. See `:help modeline`
+# Feel free to remove those if you don't want/need to use them.
+# yaml-language-server: $schema=https://nfpm.goreleaser.com/static/schema.json
+# vim: set ts=2 sw=2 tw=0 fo=cnqoj
+
+name: "alat-desktop"
+arch: "amd64"
+platform: "linux"
+version: "0.1.0"
+section: "default"
+priority: "extra"
+provides:
+  - alat-desktop
+maintainer: "Engon Ken Morel <engonkenmorel@gmail.com>"
+description: |
+  Alat desktop is the desktop application for alat
+  providing commucating services between several
+  kind of devices.
+vendor: "Engon Ken Morel"
+homepage: "http://alat.engon.cm"
+license: "MIT"
+contents:
+  - src: ./build/bin/alat-desktop
+    dst: /usr/bin/alat-desktop
+  - src: ./build/darwin/alat-desktop.desktop
+    dst: /usr/share/applications/alat-desktop.desktop
+  - src: ../../logo/static/logo.svg
+    dst: /usr/share/icons/hicolor/scalable/apps/alat-desktop.svg
+  # copy icons to Yaru theme as well. For some reason Ubuntu didn't pick up fileicons from hicolor theme
+  - src: ../../logo/static/logo.svg
+    dst: /usr/share/icons/Yaru/scalable/apps/alat-desktop.svg
+scripts:
+  postinstall: ./build/darwin/postInstall.sh
+  postremove: ./build/darwin/postRemove.sh

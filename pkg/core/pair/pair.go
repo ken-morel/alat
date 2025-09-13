@@ -13,7 +13,26 @@ type PairManager struct {
 	storage       *storage.NodeStorage
 	pairedDevices []device.PairedDevice
 	details       *device.Details
-	OnPairRequest func(*security.PairToken, *device.Details) (bool, string)
+	onPairRequest func(*security.PairToken, *device.Details) (bool, string)
+}
+
+func (p *PairManager) OnPairRequest(handle func(*security.PairToken, *device.Details) (bool, string)) {
+	p.onPairRequest = handle
+}
+
+func (p *PairManager) HandlePairRequest(token *security.PairToken, details *device.Details) (bool, string) {
+	if p.onPairRequest != nil && p.storage != nil {
+		accepted, reason := p.onPairRequest(token, details)
+		if accepted {
+			(*p.storage).AddPaired(device.PairedDevice{
+				Certificate: details.Certificate,
+				Token:       *token,
+			})
+		}
+		return accepted, reason
+	} else {
+		return false, "App misconfigured, no pairing handler available"
+	}
 }
 
 func (p *PairManager) IsTokenValid(token security.PairToken) bool {

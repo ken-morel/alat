@@ -25,7 +25,7 @@
     in:scale={{ opacity: 0.5, duration: 200, start: 0.9 }}
     class={classes}
   >
-    <div {...builder.arrow} class="h-5 w-5"></div>
+    <div {...builder.arrow} class="h-5 w-5 bg-green"></div>
     {@render tooltip?.()}
   </div>
 {/key}

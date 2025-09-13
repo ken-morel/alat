@@ -6,20 +6,20 @@
   } from "$lib/wails/wailsjs/go/app/App";
   import { onMount } from "svelte";
   import { ProgressRing } from "@skeletonlabs/skeleton-svelte";
-  import { discovery, type device } from "$lib/wails/wailsjs/go/models";
+  import { discovery } from "$lib/wails/wailsjs/go/models";
   import FoundDeviceTile from "$lib/components/tiles/FoundDeviceTile.svelte";
   import { pairDialogOptions } from "../PairDialog.svelte";
-  let { data } = $props();
-  let devices: discovery.FoundDevice[] = $state(data.found);
+  let devices: discovery.FoundDevice[] = $state([]);
 
   onMount(() => {
     const searchInterval = setInterval(async () => {
-      const foundDevices = (await GetFoundDevices()) || [];
-      const connectedDevices = await GetConnectedDevices();
-      devices = [];
-      for (const foundDev of foundDevices)
-        for (const connDev of connectedDevices)
-          if (connDev.Info.ID !== foundDev.Info.ID) devices.push(foundDev);
+      const connectedDevices = (await GetConnectedDevices()) || [];
+      devices = ((await GetFoundDevices()) || []).filter((device) => {
+        for (const connDev of connectedDevices) {
+          if (connDev.Info.ID === device.Info.ID) return false;
+        }
+        return true;
+      });
     }, 500);
     return () => {
       clearInterval(searchInterval);
@@ -32,7 +32,7 @@
     class="card preset-filled-surface-100-900 border-[1px] border-surface-200-800 w-full max-w-lg p-8"
   >
     <header><h3 class="h3">Found devices</h3></header>
-    <div class="pt-4">
+    <div class="pt-4 flex flex-col space-y-3">
       {#each devices as device}
         <FoundDeviceTile
           {device}
