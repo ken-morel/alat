@@ -21,8 +21,7 @@ func rcfilepath(folder string, name string) string {
 	newName := name
 	ext := path.Ext(name)
 	stem := name[:len(ext)]
-	i := 0
-	for i < 1000 {
+	for i := range 1000 {
 		if i != 0 {
 			newName = fmt.Sprintf("%s-%d.%s", stem, i, ext)
 		}
