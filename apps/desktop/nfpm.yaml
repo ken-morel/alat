@@ -6,32 +6,32 @@
 # yaml-language-server: $schema=https://nfpm.goreleaser.com/static/schema.json
 # vim: set ts=2 sw=2 tw=0 fo=cnqoj
 
-name: "alat-desktop"
+name: "alat"
 arch: "amd64"
 platform: "linux"
 version: "0.1.0"
 section: "default"
 priority: "extra"
 provides:
-  - alat-desktop
+  - alat
 maintainer: "Engon Ken Morel <engonkenmorel@gmail.com>"
 description: |
-  Alat desktop is the desktop application for alat
+  Alat is the desktop application for alat
   providing commucating services between several
   kind of devices.
 vendor: "Engon Ken Morel"
 homepage: "http://alat.engon.cm"
 license: "MIT"
 contents:
-  - src: ./build/bin/alat-desktop
-    dst: /usr/bin/alat-desktop
-  - src: ./build/darwin/alat-desktop.desktop
-    dst: /usr/share/applications/alat-desktop.desktop
+  - src: ./build/bin/alat
+    dst: /usr/bin/alat
+  - src: ./build/darwin/alat.desktop
+    dst: /usr/share/applications/alat.desktop
   - src: ../../logo/static/logo.svg
-    dst: /usr/share/icons/hicolor/scalable/apps/alat-desktop.svg
+    dst: /usr/share/icons/hicolor/scalable/apps/alat.svg
   # copy icons to Yaru theme as well. For some reason Ubuntu didn't pick up fileicons from hicolor theme
   - src: ../../logo/static/logo.svg
-    dst: /usr/share/icons/Yaru/scalable/apps/alat-desktop.svg
+    dst: /usr/share/icons/Yaru/scalable/apps/alat.svg
 scripts:
   postinstall: ./build/darwin/postInstall.sh
   postremove: ./build/darwin/postRemove.sh
