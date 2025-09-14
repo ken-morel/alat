@@ -5,6 +5,8 @@ import (
 	"embed"
 	"fmt"
 
+	"alat/pkg/core"
+
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
@@ -32,7 +34,7 @@ func (app *App) startup(ctx context.Context) {
 
 func (app *App) Run() error {
 	return wails.Run(&options.App{
-		Title:  "Alat desktop",
+		Title:  "Alat",
 		Width:  800,
 		Height: 600,
 		AssetServer: &assetserver.Options{
@@ -48,18 +50,18 @@ func (app *App) Run() error {
 		MinHeight:     600,
 		OnBeforeClose: app.beforeClose,
 		SingleInstanceLock: &options.SingleInstanceLock{
-			UniqueId:               "cm.engon.alat",
+			UniqueId:               core.DesktopAppID,
 			OnSecondInstanceLaunch: app.onSecondInstance,
 		},
 		Windows: &windows.Options{
 			WindowIsTranslucent:  true,
 			WebviewIsTransparent: true,
 			BackdropType:         windows.Acrylic,
-			WindowClassName:      "cm.engon.alat",
+			WindowClassName:      core.DesktopAppID,
 		},
 		Linux: &linux.Options{
 			WindowIsTranslucent: true,
-			ProgramName:         "cm.engon.alat",
+			ProgramName:         core.DesktopAppID,
 		},
 	})
 }

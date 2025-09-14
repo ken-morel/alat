@@ -1,8 +1,9 @@
 package app
 
 import (
-	"alat/pkg/core/device"
 	"fmt"
+
+	"alat/pkg/core/device"
 )
 
 func (app *App) GetPairedDevices() []device.PairedDevice {

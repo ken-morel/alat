@@ -3,7 +3,7 @@
 # Main management script for the 'alat' project.
 
 function help
-    echo "Usage: ./manage.fish <command>"
+    echo "Usage: ./mng.fish <command>"
     echo ""
     echo "Commands:"
     echo "  proto    - Generates Go and Dart code from .proto files."
@@ -31,13 +31,13 @@ switch "$argv[1]"
         help
     case desktop
         cd apps/desktop
-        fish manage.fish $argv[2..]
+        fish mng.fish $argv[2..]
     case mobile
         cd apps/mobile
-        ./manage.fish $argv[2..]
+        ./mng.fish $argv[2..]
     case server
         cd apps/server
-        fish manage.fish $argv[2..]
+        fish mng.fish $argv[2..]
     case ""
         echo "Error: No command specified."
         help
