@@ -1707,8 +1707,8 @@ class AlatBindings {
   late final _get_app_settings_json = _get_app_settings_jsonPtr
       .asFunction<ffi.Pointer<ffi.Char> Function(int)>();
 
-  int set_app_settings_json(int handle, ffi.Pointer<ffi.Char> settingsJson) {
-    return _set_app_settings_json(handle, settingsJson);
+  int set_app_settings_json(int handle, ffi.Pointer<ffi.Char> settingsJSON) {
+    return _set_app_settings_json(handle, settingsJSON);
   }
 
   late final _set_app_settings_jsonPtr =
@@ -1731,9 +1731,9 @@ class AlatBindings {
 
   int set_service_settings_json(
     int handle,
-    ffi.Pointer<ffi.Char> settingsJson,
+    ffi.Pointer<ffi.Char> settingsJSON,
   ) {
-    return _set_service_settings_json(handle, settingsJson);
+    return _set_service_settings_json(handle, settingsJSON);
   }
 
   late final _set_service_settings_jsonPtr =

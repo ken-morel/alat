@@ -8,7 +8,8 @@ class DeviceColor {
   final String name;
 
   DeviceColor({required this.name});
-  factory DeviceColor.fromJson(Map<String, dynamic> json) => _$DeviceColorFromJson(json);
+  factory DeviceColor.fromJson(Map<String, dynamic> json) =>
+      _$DeviceColorFromJson(json);
   Map<String, dynamic> toJson() => _$DeviceColorToJson(this);
 }
 
@@ -27,7 +28,8 @@ class AppSettings {
     required this.deviceColor,
   });
 
-  factory AppSettings.fromJson(Map<String, dynamic> json) => _$AppSettingsFromJson(json);
+  factory AppSettings.fromJson(Map<String, dynamic> json) =>
+      _$AppSettingsFromJson(json);
   Map<String, dynamic> toJson() => _$AppSettingsToJson(this);
 }
 
@@ -39,7 +41,8 @@ class SysInfoSettings {
   int cacheSeconds;
 
   SysInfoSettings({required this.enabled, required this.cacheSeconds});
-  factory SysInfoSettings.fromJson(Map<String, dynamic> json) => _$SysInfoSettingsFromJson(json);
+  factory SysInfoSettings.fromJson(Map<String, dynamic> json) =>
+      _$SysInfoSettingsFromJson(json);
   Map<String, dynamic> toJson() => _$SysInfoSettingsToJson(this);
 }
 
@@ -52,8 +55,13 @@ class FileSendSettings {
   @JsonKey(name: 'savefolder')
   String saveFolder;
 
-  FileSendSettings({required this.enabled, required this.maxSize, required this.saveFolder});
-  factory FileSendSettings.fromJson(Map<String, dynamic> json) => _$FileSendSettingsFromJson(json);
+  FileSendSettings({
+    required this.enabled,
+    required this.maxSize,
+    required this.saveFolder,
+  });
+  factory FileSendSettings.fromJson(Map<String, dynamic> json) =>
+      _$FileSendSettingsFromJson(json);
   Map<String, dynamic> toJson() => _$FileSendSettingsToJson(this);
 }
 
@@ -65,41 +73,42 @@ class ServiceSettings {
   FileSendSettings fileSend;
 
   ServiceSettings({required this.sysInfo, required this.fileSend});
-  factory ServiceSettings.fromJson(Map<String, dynamic> json) => _$ServiceSettingsFromJson(json);
+  factory ServiceSettings.fromJson(Map<String, dynamic> json) =>
+      _$ServiceSettingsFromJson(json);
   Map<String, dynamic> toJson() => _$ServiceSettingsToJson(this);
 }
 
 @JsonSerializable()
 class FoundDevice {
   FoundDevice(); // Add fields that match the JSON output from Go
-  factory FoundDevice.fromJson(Map<String, dynamic> json) => _$FoundDeviceFromJson(json);
+  factory FoundDevice.fromJson(Map<String, dynamic> json) =>
+      _$FoundDeviceFromJson(json);
   Map<String, dynamic> toJson() => _$FoundDeviceToJson(this);
 }
 
 @JsonSerializable()
 class PairedDevice {
   PairedDevice(); // Add fields that match the JSON output from Go
-  factory PairedDevice.fromJson(Map<String, dynamic> json) => _$PairedDeviceFromJson(json);
+  factory PairedDevice.fromJson(Map<String, dynamic> json) =>
+      _$PairedDeviceFromJson(json);
   Map<String, dynamic> toJson() => _$PairedDeviceToJson(this);
 }
 
 @JsonSerializable()
 class ConnectedDevice {
   ConnectedDevice(); // Add fields that match the JSON output from Go
-  factory ConnectedDevice.fromJson(Map<String, dynamic> json) => _$ConnectedDeviceFromJson(json);
+  factory ConnectedDevice.fromJson(Map<String, dynamic> json) =>
+      _$ConnectedDeviceFromJson(json);
   Map<String, dynamic> toJson() => _$ConnectedDeviceToJson(this);
 }
 
 @JsonSerializable()
 class NodeStatus {
   NodeStatus(); // Add fields that match the JSON output from Go
-  factory NodeStatus.fromJson(Map<String, dynamic> json) => _$NodeStatusFromJson(json);
+  factory NodeStatus.fromJson(Map<String, dynamic> json) =>
+      _$NodeStatusFromJson(json);
   Map<String, dynamic> toJson() => _$NodeStatusToJson(this);
 }
 
-enum DeviceType {
-  unspecified,
-  mobile,
-  desktop,
-  tv,
-}
+enum DeviceType { unspecified, mobile, desktop, tv }
+

@@ -6,6 +6,6 @@ import (
 )
 
 type Registry struct {
-	SysInfo  sysinfo.Service
-	FileSend filesend.Service
+	SysInfo  sysinfo.Service  `yaml:"sysinfo"  json:"sysinfo"`
+	FileSend filesend.Service `yaml:"filesend" json:"filesend"`
 }

@@ -6,6 +6,6 @@ import (
 )
 
 type PairedDevice struct {
-	Certificate security.Certificate
-	Token       security.PairToken
+	Certificate security.Certificate `yaml:"certificate" json:"certificate"`
+	Token       security.PairToken   `yaml:"token"       json:"token"`
 }

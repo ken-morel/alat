@@ -272,4 +272,3 @@ func free_string(s *C.char) {
 }
 
 func main() {}
-

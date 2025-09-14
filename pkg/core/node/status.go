@@ -1,9 +1,9 @@
 package node
 
 type Status struct {
-	DiscoveryRunning bool
-	ServerRunning    bool
-	WorkerRunning    bool
+	DiscoveryRunning bool `yaml:"discoveryRunning" json:"discoveryRunning"`
+	ServerRunning    bool `yaml:"serverRunning"    json:"serverRunning"`
+	WorkerRunning    bool `yaml:"workerRunning"    json:"workerRunning"`
 }
 
 func (n *Node) GetStatus() *Status {

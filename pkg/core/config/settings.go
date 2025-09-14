@@ -29,7 +29,7 @@ type FileSendSettings struct {
 	SaveFolder string `yaml:"savefolder" json:"savefolder"`
 }
 type ServiceSettings struct {
-	SysInfo  SysInfoSettings `yaml:"sysinfo" json:"sysinfo"`
+	SysInfo  SysInfoSettings  `yaml:"sysinfo" json:"sysinfo"`
 	FileSend FileSendSettings `json:"FileSend"`
 }
 
