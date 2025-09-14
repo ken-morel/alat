@@ -33,7 +33,7 @@ func (app *App) SettingsGetDeviceColorName() string {
 func (app *App) SettingsSetDeviceColorName(colName string) error {
 	col := color.FromString(colName)
 	if col == nil {
-		return fmt.Errorf("color not registerred")
+		return fmt.Errorf("color not registered")
 	} else {
 		app.settings.DeviceColor = *col
 		err := app.updateNode()
@@ -88,9 +88,7 @@ func (app *App) SettingsGetFileSend() core_config.FileSendSettings {
 
 func (app *App) SettingsSetFileSend(conf core_config.FileSendSettings) error {
 	app.serviceRegistery.FileSend.Configure(filesend.Config{
-		Enabled:     conf.Enabled,
-		SaveFolder:  conf.SaveFolder,
-		FileMaxSize: uint32(conf.MaxSize),
+		Enabled: conf.Enabled,
 	})
 	app.serviceSettings.FileSend = conf
 	configDir, _ := initAndGetConfigDir()

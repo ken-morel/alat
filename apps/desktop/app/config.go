@@ -1,13 +1,13 @@
 package app
 
 import (
-	"fmt"
-
-	"alat/apps/desktop/app/config"
 	core_config "alat/pkg/core/config"
 	"alat/pkg/core/device"
 	"alat/pkg/core/node"
 	"alat/pkg/core/pair"
+	"fmt"
+	"os"
+	"path"
 )
 
 func (app *App) ConfigReady() bool {
@@ -71,17 +71,23 @@ func (app *App) initNode() error {
 		Type:        device.DesktopDevice,
 		Certificate: app.settings.Certificate,
 	}
-	pairManager, err := pair.NewManager(&app.nodeStore, app.nodeDetails)
+	pairManager, err := pair.NewManager(app.nodeStore, app.nodeDetails)
 	if err != nil {
 		fmt.Println("Failed to initialize pair manager:", err)
 		return err
 	}
 	pairManager.OnPairRequest(app.handlePairRequest)
 
-	node, err := node.NewNode(app.serviceRegistery, &app.nodeStore, app.nodeDetails, pairManager)
+	node, err := node.NewNode(app.serviceRegistery, app.nodeStore, app.nodeDetails, pairManager)
 	app.node = node
 	fmt.Println("Initialized node, got error: ", err)
 	return err
+}
+
+func GetNodeStorage(configDir string) (storage.NodeStorage, error) {
+	return storage.CreateYAMLNodeStorage(
+		path.Join(configDir, "node.yml"),
+	), nil
 }
 
 func (app *App) updateNode() error {

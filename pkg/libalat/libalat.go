@@ -5,7 +5,6 @@ package main
 #include <stdlib.h>
 */
 import "C"
-
 import (
 	"alat/pkg/core/config"
 	"alat/pkg/core/device"
@@ -38,33 +37,29 @@ var (
 	nextInstanceID = 1
 )
 
-//export create_app
-func create_app(configPath *C.char, deviceType C.int) C.int {
+// --- Lifecycle --- //
+
+//export create_instance
+func create_instance(configPath *C.char, deviceType C.int) C.int {
 	instancesMutex.Lock()
 	defer instancesMutex.Unlock()
 
 	goConfigPath := C.GoString(configPath)
 
-	// 1. Load Settings by explicit path
-	appSettingsPath := path.Join(goConfigPath, "settings.yml")
-	appSettings, err := config.LoadAppSettings(appSettingsPath)
+	appSettings, err := config.LoadAppSettings(path.Join(goConfigPath, "settings.yml"))
 	if err != nil {
-		return 0 // Error
+		return 0
 	}
-	serviceSettingsPath := path.Join(goConfigPath, "services.yml")
-	serviceSettings, err := config.LoadServiceSettings(serviceSettingsPath)
+	serviceSettings, err := config.LoadServiceSettings(path.Join(goConfigPath, "services.yml"))
 	if err != nil {
-		return 0 // Error
+		return 0
 	}
 
-	// 2. Create Storage
 	storagePath := path.Join(goConfigPath, "node.yml")
 	nodeStore := storage.CreateYAMLNodeStorage(storagePath)
 
-	// 3. Create Services
 	registry := initServices(serviceSettings)
 
-	// 4. Create Device Details
 	details := &device.Details{
 		Color:       appSettings.DeviceColor,
 		Name:        appSettings.DeviceName,
@@ -72,19 +67,16 @@ func create_app(configPath *C.char, deviceType C.int) C.int {
 		Certificate: appSettings.Certificate,
 	}
 
-	// 5. Create Pair Manager
 	pairManager, err := pair.NewManager(nodeStore, details)
 	if err != nil {
-		return 0 // Error
+		return 0
 	}
 
-	// 6. Create the Node
 	node, err := node.NewNode(&registry, nodeStore, details, pairManager)
 	if err != nil {
-		return 0 // Error
+		return 0
 	}
 
-	// 7. Assemble the App and store it
 	instance := &AlatInstance{
 		node:             node,
 		nodeStore:        nodeStore,
@@ -101,47 +93,61 @@ func create_app(configPath *C.char, deviceType C.int) C.int {
 	return C.int(handle)
 }
 
-// ... (start, stop, destroy functions remain the same) ...
+//export start_instance
+func start_instance(handle C.int) C.int {
+	instance := getInstance(handle)
+	if instance == nil {
+		return -1
+	}
+	if err := instance.node.Start(); err != nil {
+		return -2
+	}
+	return 0
+}
+
+//export stop_instance
+func stop_instance(handle C.int) {
+	if instance := getInstance(handle); instance != nil {
+		instance.node.Stop()
+	}
+}
+
+//export destroy_instance
+func destroy_instance(handle C.int) {
+	instancesMutex.Lock()
+	defer instancesMutex.Unlock()
+	if instance, ok := instances[int(handle)]; ok {
+		instance.node.Stop()
+		delete(instances, int(handle))
+	}
+}
+
+// --- Settings --- //
 
 //export get_app_settings_json
 func get_app_settings_json(handle C.int) *C.char {
-	instancesMutex.Lock()
-	instance, ok := instances[int(handle)]
-	instancesMutex.Unlock()
-
-	if !ok {
+	instance := getInstance(handle)
+	if instance == nil {
 		return nil
 	}
-
-	jsonBytes, err := json.Marshal(instance.appSettings)
-	if err != nil {
-		return nil
-	}
-
-	return C.CString(string(jsonBytes))
+	return toJson(instance.appSettings)
 }
 
 //export set_app_settings_json
-func set_app_settings_json(handle C.int, settingsJSON *C.char) C.int {
-	instancesMutex.Lock()
-	instance, ok := instances[int(handle)]
-	instancesMutex.Unlock()
-
-	if !ok {
-		return -1 // Invalid handle
+func set_app_settings_json(handle C.int, settingsJson *C.char) C.int {
+	instance := getInstance(handle)
+	if instance == nil {
+		return -1
 	}
 
-	goJSON := C.GoString(settingsJSON)
 	var newSettings config.AppSettings
-	if err := json.Unmarshal([]byte(goJSON), &newSettings); err != nil {
-		return -2 // JSON parsing error
+	if err := json.Unmarshal([]byte(C.GoString(settingsJson)), &newSettings); err != nil {
+		return -2
 	}
 
-	// Update and save
 	instance.appSettings = &newSettings
-	appSettingsPath := path.Join(instance.configPath, "settings.yml")
-	if err := config.SaveAppSettings(instance.appSettings, appSettingsPath); err != nil {
-		return -3 // File save error
+	if err := config.SaveAppSettings(instance.appSettings, path.Join(instance.configPath, "settings.yml")); err != nil {
+		return -3
 	}
 
 	// Propagate changes to the running node
@@ -151,8 +157,101 @@ func set_app_settings_json(handle C.int, settingsJSON *C.char) C.int {
 		Type:        instance.node.PairManager.DeviceDetails().Type, // Preserve original type
 		Certificate: instance.appSettings.Certificate,
 	})
+	return 0
+}
 
-	return 0 // Success
+//export get_service_settings_json
+func get_service_settings_json(handle C.int) *C.char {
+	instance := getInstance(handle)
+	if instance == nil {
+		return nil
+	}
+	return toJson(instance.serviceSettings)
+}
+
+//export set_service_settings_json
+func set_service_settings_json(handle C.int, settingsJson *C.char) C.int {
+	instance := getInstance(handle)
+	if instance == nil {
+		return -1
+	}
+
+	var newSettings config.ServiceSettings
+	if err := json.Unmarshal([]byte(C.GoString(settingsJson)), &newSettings); err != nil {
+		return -2
+	}
+
+	instance.serviceSettings = &newSettings
+	if err := config.SaveServiceSettings(instance.serviceSettings, path.Join(instance.configPath, "services.yml")); err != nil {
+		return -3
+	}
+
+	instance.serviceRegistery.SysInfo.Configure(sysinfo.Config{
+		Enabled:   newSettings.SysInfo.Enabled,
+		CacheTime: time.Duration(newSettings.SysInfo.CacheSeconds) * time.Second,
+	})
+	return 0
+}
+
+// --- Device & Pairing --- //
+
+//export get_found_devices_json
+func get_found_devices_json(handle C.int) *C.char {
+	instance := getInstance(handle)
+	if instance == nil {
+		return nil
+	}
+	return toJson(instance.node.GetDiscoverer().GetFoundDevices())
+}
+
+//export get_paired_devices_json
+func get_paired_devices_json(handle C.int) *C.char {
+	instance := getInstance(handle)
+	if instance == nil {
+		return nil
+	}
+	paired, err := instance.nodeStore.GetPaired()
+	if err != nil {
+		return nil // Or return JSON error
+	}
+	return toJson(paired)
+}
+
+//export get_connected_devices_json
+func get_connected_devices_json(handle C.int) *C.char {
+	instance := getInstance(handle)
+	if instance == nil {
+		return nil
+	}
+	return toJson(instance.node.Connected.GetConnectedDevices())
+}
+
+// --- Status --- //
+
+//export get_node_status_json
+func get_node_status_json(handle C.int) *C.char {
+	instance := getInstance(handle)
+	if instance == nil {
+		return nil
+	}
+	return toJson(instance.node.GetStatus())
+}
+
+// --- Helpers --- //
+
+func getInstance(handle C.int) *AlatInstance {
+	instancesMutex.Lock()
+	defer instancesMutex.Unlock()
+	instance, _ := instances[int(handle)]
+	return instance
+}
+
+func toJson(v interface{}) *C.char {
+	bytes, err := json.Marshal(v)
+	if err != nil {
+		return nil
+	}
+	return C.CString(string(bytes))
 }
 
 func initServices(serviceSettings *config.ServiceSettings) service.Registry {
@@ -162,7 +261,7 @@ func initServices(serviceSettings *config.ServiceSettings) service.Registry {
 			CacheTime: time.Duration(serviceSettings.SysInfo.CacheSeconds) * time.Second,
 		}),
 		FileSend: filesend.CreateService(filesend.Config{
-			Enabled: true, // Assuming filesend is always enabled for libalat
+			Enabled: true,
 		}),
 	}
 }

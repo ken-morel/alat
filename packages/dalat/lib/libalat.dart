@@ -1656,27 +1656,147 @@ class AlatBindings {
   late final _getloadavg = _getloadavgPtr
       .asFunction<int Function(ffi.Pointer<ffi.Double>, int)>();
 
-  int create_node_storage(ffi.Pointer<ffi.Char> path) {
-    return _create_node_storage(path);
+  int create_instance(ffi.Pointer<ffi.Char> configPath, int deviceType) {
+    return _create_instance(configPath, deviceType);
   }
 
-  late final _create_node_storagePtr =
-      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Pointer<ffi.Char>)>>(
-        'create_node_storage',
-      );
-  late final _create_node_storage = _create_node_storagePtr
-      .asFunction<int Function(ffi.Pointer<ffi.Char>)>();
+  late final _create_instancePtr =
+      _lookup<
+        ffi.NativeFunction<ffi.Int Function(ffi.Pointer<ffi.Char>, ffi.Int)>
+      >('create_instance');
+  late final _create_instance = _create_instancePtr
+      .asFunction<int Function(ffi.Pointer<ffi.Char>, int)>();
 
-  void destroy_node_storage(int handle) {
-    return _destroy_node_storage(handle);
+  int start_instance(int handle) {
+    return _start_instance(handle);
   }
 
-  late final _destroy_node_storagePtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int)>>(
-        'destroy_node_storage',
-      );
-  late final _destroy_node_storage = _destroy_node_storagePtr
+  late final _start_instancePtr =
+      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Int)>>('start_instance');
+  late final _start_instance = _start_instancePtr
+      .asFunction<int Function(int)>();
+
+  void stop_instance(int handle) {
+    return _stop_instance(handle);
+  }
+
+  late final _stop_instancePtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int)>>('stop_instance');
+  late final _stop_instance = _stop_instancePtr
       .asFunction<void Function(int)>();
+
+  void destroy_instance(int handle) {
+    return _destroy_instance(handle);
+  }
+
+  late final _destroy_instancePtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int)>>(
+        'destroy_instance',
+      );
+  late final _destroy_instance = _destroy_instancePtr
+      .asFunction<void Function(int)>();
+
+  ffi.Pointer<ffi.Char> get_app_settings_json(int handle) {
+    return _get_app_settings_json(handle);
+  }
+
+  late final _get_app_settings_jsonPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function(ffi.Int)>>(
+        'get_app_settings_json',
+      );
+  late final _get_app_settings_json = _get_app_settings_jsonPtr
+      .asFunction<ffi.Pointer<ffi.Char> Function(int)>();
+
+  int set_app_settings_json(int handle, ffi.Pointer<ffi.Char> settingsJson) {
+    return _set_app_settings_json(handle, settingsJson);
+  }
+
+  late final _set_app_settings_jsonPtr =
+      _lookup<
+        ffi.NativeFunction<ffi.Int Function(ffi.Int, ffi.Pointer<ffi.Char>)>
+      >('set_app_settings_json');
+  late final _set_app_settings_json = _set_app_settings_jsonPtr
+      .asFunction<int Function(int, ffi.Pointer<ffi.Char>)>();
+
+  ffi.Pointer<ffi.Char> get_service_settings_json(int handle) {
+    return _get_service_settings_json(handle);
+  }
+
+  late final _get_service_settings_jsonPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function(ffi.Int)>>(
+        'get_service_settings_json',
+      );
+  late final _get_service_settings_json = _get_service_settings_jsonPtr
+      .asFunction<ffi.Pointer<ffi.Char> Function(int)>();
+
+  int set_service_settings_json(
+    int handle,
+    ffi.Pointer<ffi.Char> settingsJson,
+  ) {
+    return _set_service_settings_json(handle, settingsJson);
+  }
+
+  late final _set_service_settings_jsonPtr =
+      _lookup<
+        ffi.NativeFunction<ffi.Int Function(ffi.Int, ffi.Pointer<ffi.Char>)>
+      >('set_service_settings_json');
+  late final _set_service_settings_json = _set_service_settings_jsonPtr
+      .asFunction<int Function(int, ffi.Pointer<ffi.Char>)>();
+
+  ffi.Pointer<ffi.Char> get_found_devices_json(int handle) {
+    return _get_found_devices_json(handle);
+  }
+
+  late final _get_found_devices_jsonPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function(ffi.Int)>>(
+        'get_found_devices_json',
+      );
+  late final _get_found_devices_json = _get_found_devices_jsonPtr
+      .asFunction<ffi.Pointer<ffi.Char> Function(int)>();
+
+  ffi.Pointer<ffi.Char> get_paired_devices_json(int handle) {
+    return _get_paired_devices_json(handle);
+  }
+
+  late final _get_paired_devices_jsonPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function(ffi.Int)>>(
+        'get_paired_devices_json',
+      );
+  late final _get_paired_devices_json = _get_paired_devices_jsonPtr
+      .asFunction<ffi.Pointer<ffi.Char> Function(int)>();
+
+  ffi.Pointer<ffi.Char> get_connected_devices_json(int handle) {
+    return _get_connected_devices_json(handle);
+  }
+
+  late final _get_connected_devices_jsonPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function(ffi.Int)>>(
+        'get_connected_devices_json',
+      );
+  late final _get_connected_devices_json = _get_connected_devices_jsonPtr
+      .asFunction<ffi.Pointer<ffi.Char> Function(int)>();
+
+  ffi.Pointer<ffi.Char> get_node_status_json(int handle) {
+    return _get_node_status_json(handle);
+  }
+
+  late final _get_node_status_jsonPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function(ffi.Int)>>(
+        'get_node_status_json',
+      );
+  late final _get_node_status_json = _get_node_status_jsonPtr
+      .asFunction<ffi.Pointer<ffi.Char> Function(int)>();
+
+  void free_string(ffi.Pointer<ffi.Char> s) {
+    return _free_string(s);
+  }
+
+  late final _free_stringPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Char>)>>(
+        'free_string',
+      );
+  late final _free_string = _free_stringPtr
+      .asFunction<void Function(ffi.Pointer<ffi.Char>)>();
 }
 
 final class max_align_t extends ffi.Opaque {}
