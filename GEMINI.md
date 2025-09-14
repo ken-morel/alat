@@ -12,6 +12,8 @@ The project is in its early stages of development, so breaking changes are expec
 
 `alat` has a service-based architecture. Each device (or "node") exposes a set of services that other paired devices can consume. The communication between devices is handled by gRPC over a secure channel.
 
+A key feature of the architecture is the use of gRPC's streaming capabilities for high-performance, low-memory operations. For example, the `filesend` service uses a client-side stream to send a file in chunks, avoiding the need to load the entire file into memory. This makes it efficient for large files and low-power devices.
+
 The core services include:
 
 *   **sysinfo**: Provides system information and monitoring.
@@ -19,6 +21,7 @@ The core services include:
 *   **media**: Controls media playback.
 *   **notifications**: Shares notifications across devices.
 *   **clipboard**: Provides a shared clipboard.
+*   **filesend**: Enables high-performance, stream-based file transfers.
 
 ### Tech Stack
 
@@ -90,6 +93,8 @@ fish mng.fish proto
 ### Backend
 
 The backend is written in Go and follows standard Go conventions. The code is organized into packages, with each package having a specific responsibility.
+
+**Service Structure**: Each core service (e.g., `sysinfo`, `filesend`) is self-contained within its own package under `pkg/core/service/`. For cleanliness and modularity, the gRPC server implementation for a service is co-located within its package (e.g., `pkg/core/service/filesend/server.go`).
 
 ### Frontend
 
