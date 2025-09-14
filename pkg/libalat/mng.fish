@@ -1,3 +1,4 @@
+#!/usr/bin/fish
 function build -a out_dir
     if test -z "$out_dir"
         echo "Error: No output directory specified for build."
@@ -12,6 +13,6 @@ end
 switch "$argv[1]"
     case build
         build "$argv[2]"
-    case *
+    case "*"
         echo "No command specified. Usage: ./mng.fish build <output_directory>"
 end

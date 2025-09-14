@@ -4,7 +4,7 @@ description: |
   Bindings for `src/dalat.h`.
 
   Regenerate bindings with `dart run ffigen --config ffigen.yaml`.
-output: "lib/dalat_bindings_generated.dart"
+output: "lib/libalat.dart"
 headers:
   entry-points:
     - "src/libalat.h"
