@@ -1,8 +1,10 @@
 #!/usr/bin/fish
 function build-libalat
     cd ../../pkg/libalat
-    ./mng.fish build ../../packages/dalat/src/libalat.so
+    # Call the libalat build script with the output DIRECTORY
+    ./mng.fish build ../../packages/dalat/src
 end
+
 switch "$argv[1]"
     case build
         switch "$argv[2]"
