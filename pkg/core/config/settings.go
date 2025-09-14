@@ -13,24 +13,24 @@ import (
 )
 
 type AppSettings struct {
-	SetupComplete bool                 `yaml:"setupComplete"`
-	DeviceName    string               `yaml:"deviceName"`
-	DeviceColor   color.Color          `yaml:"deviceColor"`
-	Certificate   security.Certificate `yaml:"certificate,omitempty"`
+	SetupComplete bool                 `yaml:"setupComplete" json:"setupComplete"`
+	DeviceName    string               `yaml:"deviceName" json:"deviceName"`
+	DeviceColor   color.Color          `yaml:"deviceColor" json:"deviceColor"`
+	Certificate   security.Certificate `yaml:"certificate,omitempty" json:"certificate,omitempty"`
 }
 
 type SysInfoSettings struct {
-	Enabled      bool  `yaml:"enabled"`
-	CacheSeconds uint8 `yaml:"cacheseconds"`
+	Enabled      bool  `yaml:"enabled" json:"enabled"`
+	CacheSeconds uint8 `yaml:"cacheseconds" json:"cacheseconds"`
 }
 type FileSendSettings struct {
-	Enabled    bool   `yaml:"enabled"`
-	MaxSize    uint64 `yaml:"maxsize"`
-	SaveFolder string `yaml:"savefolder"`
+	Enabled    bool   `yaml:"enabled" json:"enabled"`
+	MaxSize    uint64 `yaml:"maxsize" json:"maxsize"`
+	SaveFolder string `yaml:"savefolder" json:"savefolder"`
 }
 type ServiceSettings struct {
-	SysInfo  SysInfoSettings `yaml:"sysinfo"`
-	FileSend FileSendSettings
+	SysInfo  SysInfoSettings `yaml:"sysinfo" json:"sysinfo"`
+	FileSend FileSendSettings `json:"FileSend"`
 }
 
 func DefaultAppSettings() *AppSettings {
