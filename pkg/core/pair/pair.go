@@ -10,7 +10,7 @@ import (
 type PairRequest struct{}
 
 type PairManager struct {
-	storage       *storage.NodeStorage
+	storage       storage.NodeStorage
 	pairedDevices []device.PairedDevice
 	details       *device.Details
 	onPairRequest func(*security.PairToken, *device.Details) (bool, string)
@@ -24,7 +24,7 @@ func (p *PairManager) HandlePairRequest(token *security.PairToken, details *devi
 	if p.onPairRequest != nil && p.storage != nil {
 		accepted, reason := p.onPairRequest(token, details)
 		if accepted {
-			(*p.storage).AddPaired(device.PairedDevice{
+			p.storage.AddPaired(device.PairedDevice{
 				Certificate: details.Certificate,
 				Token:       *token,
 			})
@@ -52,8 +52,8 @@ func (p *PairManager) SetDetails(details *device.Details) {
 	p.details = details
 }
 
-func NewManager(stor *storage.NodeStorage, details *device.Details) (*PairManager, error) {
-	paired, err := (*stor).GetPaired()
+func NewManager(stor storage.NodeStorage, details *device.Details) (*PairManager, error) {
+	paired, err := stor.GetPaired()
 	if err != nil {
 		return nil, err
 	}

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"alat/apps/desktop/app/config"
+	core_config "alat/pkg/core/config"
 	"alat/pkg/core/device"
 	"alat/pkg/core/node"
 	"alat/pkg/core/pair"
@@ -20,17 +21,18 @@ func (app *App) initConfig() bool {
 	if err != nil {
 		fmt.Printf("Error initializing config: %v\n", err)
 	}
+	configDir := config.GetConfigDir()
 	okay := true
 	if err != nil {
 		okay = false
 		fmt.Println("Failed to initialize config:", err)
 	}
-	app.settings, err = config.LoadAppSettings()
+	app.settings, err = core_config.LoadAppSettings(configDir)
 	if err != nil {
 		okay = false
 		fmt.Println("Failed to load app settings:", err)
 	}
-	app.serviceSettings, err = config.LoadServiceSettings()
+	app.serviceSettings, err = core_config.LoadServiceSettings(configDir)
 	if err != nil {
 		okay = false
 		fmt.Println("Failed to load service settings:", err)

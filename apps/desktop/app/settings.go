@@ -1,13 +1,12 @@
 package app
 
 import (
-	"fmt"
-	"time"
-
-	"alat/apps/desktop/app/config"
+	"alat/pkg/core/config"
 	"alat/pkg/core/device/color"
 	"alat/pkg/core/service/filesend"
 	"alat/pkg/core/service/sysinfo"
+	"fmt"
+	"time"
 
 	rt "github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -22,7 +21,7 @@ func (app *App) SettingsSetDeviceName(name string) error {
 	if err != nil {
 		return err
 	}
-	return config.SaveAppSettings(app.settings)
+	return config.SaveAppSettings(app.settings, config.GetConfigDir())
 }
 
 func (app *App) SettingsGetDeviceColorName() string {
@@ -40,7 +39,7 @@ func (app *App) SettingsSetDeviceColorName(colName string) error {
 		if err != nil {
 			return err
 		}
-		return config.SaveAppSettings(app.settings)
+		return config.SaveAppSettings(app.settings, config.GetConfigDir())
 	}
 }
 
@@ -63,7 +62,7 @@ func (app *App) SettingsSetSetupComplete(complete bool) error {
 		fmt.Println("Node is already running, not starting")
 	}
 
-	return config.SaveAppSettings(app.settings)
+	return config.SaveAppSettings(app.settings, config.GetConfigDir())
 }
 
 func (app *App) SettingsGetSysInfo() config.SysInfoSettings {
@@ -77,7 +76,7 @@ func (app *App) SettingsSetSysInfo(conf config.SysInfoSettings) error {
 	})
 	app.serviceSettings.SysInfo = conf
 
-	return config.SaveServiceSettings(app.serviceSettings)
+	return config.SaveServiceSettings(app.serviceSettings, config.GetConfigDir())
 }
 
 func (app *App) SettingsGetFileSend() config.FileSendSettings {
@@ -91,5 +90,5 @@ func (app *App) SettingsSetFileSend(conf config.FileSendSettings) error {
 		FileMaxSize: uint32(conf.MaxSize),
 	})
 	app.serviceSettings.FileSend = conf
-	return config.SaveServiceSettings(app.serviceSettings)
+	return config.SaveServiceSettings(app.serviceSettings, config.GetConfigDir())
 }

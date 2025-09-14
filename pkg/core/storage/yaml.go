@@ -47,7 +47,7 @@ func (ns *YAMLNodeStorage) AddPaired(newDevice device.PairedDevice) error {
 		return err
 	}
 
-	return os.WriteFile(ns.path, data, 0644)
+	return os.WriteFile(ns.path, data, 0o644)
 }
 
 func CreateYAMLNodeStorage(path string) *YAMLNodeStorage {

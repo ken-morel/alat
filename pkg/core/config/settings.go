@@ -1,3 +1,4 @@
+// Package config, manages an interface to application settings
 package config
 
 import (
@@ -43,7 +44,7 @@ func DefaultAppSettings() *AppSettings {
 	}
 }
 
-func LoadAppSettings() (*AppSettings, error) {
+func LoadAppSettings(configDir string) (*AppSettings, error) {
 	p := path.Join(configDir, "settings.yml")
 
 	defaults := DefaultAppSettings()
@@ -51,7 +52,7 @@ func LoadAppSettings() (*AppSettings, error) {
 	data, err := os.ReadFile(p)
 	if err != nil {
 		if os.IsNotExist(err) {
-			if err := SaveAppSettings(defaults); err != nil {
+			if err := SaveAppSettings(defaults, configDir); err != nil {
 				return nil, err
 			}
 			return defaults, nil
@@ -66,7 +67,7 @@ func LoadAppSettings() (*AppSettings, error) {
 	return &settings, nil
 }
 
-func SaveAppSettings(settings *AppSettings) error {
+func SaveAppSettings(settings *AppSettings, configDir string) error {
 	p := path.Join(configDir, "settings.yml")
 	data, err := yaml.Marshal(settings)
 	if err != nil {
@@ -75,16 +76,16 @@ func SaveAppSettings(settings *AppSettings) error {
 	return os.WriteFile(p, data, 0o644)
 }
 
-func LoadServiceSettings() (*ServiceSettings, error) {
+func LoadServiceSettings(configDir string) (*ServiceSettings, error) {
 	p := path.Join(configDir, "services.yml")
 	home, _ := os.UserHomeDir()
 
 	defaults := &ServiceSettings{
-		SysInfoSettings{
+		SysInfo: SysInfoSettings{
 			Enabled:      true,
 			CacheSeconds: 10,
 		},
-		FileSendSettings{
+		FileSend: FileSendSettings{
 			Enabled:    true,
 			MaxSize:    0,
 			SaveFolder: path.Join(home, "Downloads"),
@@ -94,7 +95,7 @@ func LoadServiceSettings() (*ServiceSettings, error) {
 	data, err := os.ReadFile(p)
 	if err != nil {
 		if os.IsNotExist(err) {
-			if err := SaveServiceSettings(defaults); err != nil {
+			if err := SaveServiceSettings(defaults, configDir); err != nil {
 				return nil, err
 			}
 			return defaults, nil
@@ -109,7 +110,7 @@ func LoadServiceSettings() (*ServiceSettings, error) {
 	return &settings, nil
 }
 
-func SaveServiceSettings(settings *ServiceSettings) error {
+func SaveServiceSettings(settings *ServiceSettings, configDir string) error {
 	p := path.Join(configDir, "services.yml")
 	data, err := yaml.Marshal(settings)
 	if err != nil {
