@@ -122,7 +122,7 @@ func get_app_settings_json(handle C.int) *C.char {
 }
 
 //export set_app_settings_json
-func set_app_settings_json(handle C.int, settingsJson *C.char) C.int {
+func set_app_settings_json(handle C.int, settingsJSON *C.char) C.int {
 	instancesMutex.Lock()
 	instance, ok := instances[int(handle)]
 	instancesMutex.Unlock()
@@ -131,9 +131,9 @@ func set_app_settings_json(handle C.int, settingsJson *C.char) C.int {
 		return -1 // Invalid handle
 	}
 
-	goJson := C.GoString(settingsJson)
+	goJSON := C.GoString(settingsJSON)
 	var newSettings config.AppSettings
-	if err := json.Unmarshal([]byte(goJson), &newSettings); err != nil {
+	if err := json.Unmarshal([]byte(goJSON), &newSettings); err != nil {
 		return -2 // JSON parsing error
 	}
 
