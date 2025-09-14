@@ -30,40 +30,40 @@ Map<String, dynamic> _$AppSettingsToJson(AppSettings instance) =>
 SysInfoSettings _$SysInfoSettingsFromJson(Map<String, dynamic> json) =>
     SysInfoSettings(
       enabled: json['enabled'] as bool,
-      cacheSeconds: (json['cacheseconds'] as num).toInt(),
+      cacheSeconds: (json['cacheSeconds'] as num).toInt(),
     );
 
 Map<String, dynamic> _$SysInfoSettingsToJson(SysInfoSettings instance) =>
     <String, dynamic>{
       'enabled': instance.enabled,
-      'cacheseconds': instance.cacheSeconds,
+      'cacheSeconds': instance.cacheSeconds,
     };
 
 FileSendSettings _$FileSendSettingsFromJson(Map<String, dynamic> json) =>
     FileSendSettings(
       enabled: json['enabled'] as bool,
-      maxSize: (json['maxsize'] as num).toInt(),
-      saveFolder: json['savefolder'] as String,
+      maxSize: (json['maxSize'] as num).toInt(),
+      saveFolder: json['saveFolder'] as String,
     );
 
 Map<String, dynamic> _$FileSendSettingsToJson(FileSendSettings instance) =>
     <String, dynamic>{
       'enabled': instance.enabled,
-      'maxsize': instance.maxSize,
-      'savefolder': instance.saveFolder,
+      'maxSize': instance.maxSize,
+      'saveFolder': instance.saveFolder,
     };
 
 ServiceSettings _$ServiceSettingsFromJson(
   Map<String, dynamic> json,
 ) => ServiceSettings(
   sysInfo: SysInfoSettings.fromJson(json['sysinfo'] as Map<String, dynamic>),
-  fileSend: FileSendSettings.fromJson(json['FileSend'] as Map<String, dynamic>),
+  fileSend: FileSendSettings.fromJson(json['filesend'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$ServiceSettingsToJson(ServiceSettings instance) =>
     <String, dynamic>{
       'sysinfo': instance.sysInfo,
-      'FileSend': instance.fileSend,
+      'filesend': instance.fileSend,
     };
 
 FoundDevice _$FoundDeviceFromJson(Map<String, dynamic> json) => FoundDevice();

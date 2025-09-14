@@ -37,7 +37,7 @@ class AppSettings {
 class SysInfoSettings {
   @JsonKey(name: 'enabled')
   bool enabled;
-  @JsonKey(name: 'cacheseconds')
+  @JsonKey(name: 'cacheSeconds')
   int cacheSeconds;
 
   SysInfoSettings({required this.enabled, required this.cacheSeconds});
@@ -50,9 +50,9 @@ class SysInfoSettings {
 class FileSendSettings {
   @JsonKey(name: 'enabled')
   bool enabled;
-  @JsonKey(name: 'maxsize')
+  @JsonKey(name: 'maxSize')
   int maxSize;
-  @JsonKey(name: 'savefolder')
+  @JsonKey(name: 'saveFolder')
   String saveFolder;
 
   FileSendSettings({
@@ -69,7 +69,7 @@ class FileSendSettings {
 class ServiceSettings {
   @JsonKey(name: 'sysinfo')
   SysInfoSettings sysInfo;
-  @JsonKey(name: 'FileSend')
+  @JsonKey(name: 'filesend')
   FileSendSettings fileSend;
 
   ServiceSettings({required this.sysInfo, required this.fileSend});
