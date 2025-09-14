@@ -3,6 +3,6 @@ go 1.24.5
 use (
 	./apps/desktop
 	./pkg/core
-	./pkg/dalat
+	./pkg/libalat
 	./pkg/pbuf/
 )
