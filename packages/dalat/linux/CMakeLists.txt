@@ -17,6 +17,10 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../src" "${CMAKE_CURRENT_BINARY_DI
 set(dalat_bundled_libraries
   # Defined in ../src/CMakeLists.txt.
   # This can be changed to accommodate different builds.
-  $<TARGET_FILE:dalat>
+  $<TARGET_FILE:alat>
   PARENT_SCOPE
 )
+
+# Install the shared library to the application's lib directory
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/../src/libalat.so"
+        DESTINATION "lib")
