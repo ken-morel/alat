@@ -172,7 +172,7 @@
 </div>
 
 {#snippet transferTab(devices: filesend.FileTransfersStatusDevice[])}
-  {#each devices.toSorted( (a, b) => ([a.Device.ID, b.Device.ID].sort()[0] == a.Device.ID ? 1 : -1), ) as device, i (device.Device.ID)}
+  {#each devices.toSorted( (a, b) => a.Device.ID.localeCompare(b.Device.ID), ) as device, i (device.Device.ID)}
     {@const Icon = guessIcon(device.Device.Type)}
     <div
       class="bg-surface-100-900 border border-surface-300-700 overflow-hidden hover:shadow-lg transition-all duration-200 hover:border-primary-500/30"
@@ -222,7 +222,7 @@
 
       <!-- Files List -->
       <div class="px-1 max-h-80 overflow-y-auto">
-        {#each device.Transfers.toSorted( (a, b) => ([a.FileName, b.FileName].sort()[0] == a.FileName ? 1 : -1), ) as transfer, j (transfer.FileName)}
+        {#each device.Transfers.toSorted( (a, b) => a.FileName.localeCompare(b.FileName), ) as transfer, j (transfer.FileName)}
           <div
             class="flex items-center justify-between p-1 bg-surface-50-950 border border-surface-200-800 hover:border-primary-500/20 transition-colors"
             in:fly={{ x: -20, duration: 200, delay: j * 50 }}
