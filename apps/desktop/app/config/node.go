@@ -5,12 +5,12 @@ import (
 	"path"
 )
 
-func NodeStorageFile() string {
+func NodeStorageFile(configDir string) string {
 	return path.Join(configDir, "node.yml")
 }
 
-func GetNodeStorage() (storage.NodeStorage, error) {
+func GetNodeStorage(configDir string) (storage.NodeStorage, error) {
 	return storage.CreateYAMLNodeStorage(
-		NodeStorageFile(),
+		NodeStorageFile(configDir),
 	), nil
 }

@@ -15,35 +15,51 @@ func (app *App) ConfigReady() bool {
 }
 
 func (app *App) initConfig() bool {
-	fmt.Println("Initializing app")
-	err := config.Init()
-	fmt.Println("Initialized config, got")
+	configDir, err := initAndGetConfigDir()
 	if err != nil {
-		fmt.Printf("Error initializing config: %v\n", err)
+		fmt.Printf("Error initializing config directory: %v\n", err)
+		return false
 	}
-	configDir := config.GetConfigDir()
-	okay := true
+
+	appSettingsPath := path.Join(configDir, "settings.yml")
+	app.settings, err = core_config.LoadAppSettings(appSettingsPath)
 	if err != nil {
-		okay = false
-		fmt.Println("Failed to initialize config:", err)
-	}
-	app.settings, err = core_config.LoadAppSettings(configDir)
-	if err != nil {
-		okay = false
 		fmt.Println("Failed to load app settings:", err)
+		return false
 	}
-	app.serviceSettings, err = core_config.LoadServiceSettings(configDir)
+
+	serviceSettingsPath := path.Join(configDir, "services.yml")
+	app.serviceSettings, err = core_config.LoadServiceSettings(serviceSettingsPath)
 	if err != nil {
-		okay = false
 		fmt.Println("Failed to load service settings:", err)
+		return false
 	}
-	app.nodeStore, err = config.GetNodeStorage()
+
+	app.nodeStore, err = GetNodeStorage(configDir)
 	if err != nil {
-		okay = false
 		fmt.Println("Failed to initialize node storage:", err)
+		return false
 	}
+
 	fmt.Println("Initialized app config")
-	return okay
+	return true
+}
+
+// initAndGetConfigDir determines the appropriate configuration directory, creates it if it doesn't exist,
+// and returns the path.
+func initAndGetConfigDir() (string, error) {
+	dir, err := os.UserConfigDir()
+	if err != nil {
+		dir = path.Join(os.TempDir(), core.AppID)
+	} else {
+		dir = path.Join(dir, core.AppID)
+	}
+
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		return "", err
+	}
+
+	return dir, nil
 }
 
 func (app *App) initNode() error {

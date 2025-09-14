@@ -44,15 +44,13 @@ func DefaultAppSettings() *AppSettings {
 	}
 }
 
-func LoadAppSettings(configDir string) (*AppSettings, error) {
-	p := path.Join(configDir, "settings.yml")
-
+func LoadAppSettings(filePath string) (*AppSettings, error) {
 	defaults := DefaultAppSettings()
 
-	data, err := os.ReadFile(p)
+	data, err := os.ReadFile(filePath)
 	if err != nil {
 		if os.IsNotExist(err) {
-			if err := SaveAppSettings(defaults, configDir); err != nil {
+			if err := SaveAppSettings(defaults, filePath); err != nil {
 				return nil, err
 			}
 			return defaults, nil
@@ -67,17 +65,15 @@ func LoadAppSettings(configDir string) (*AppSettings, error) {
 	return &settings, nil
 }
 
-func SaveAppSettings(settings *AppSettings, configDir string) error {
-	p := path.Join(configDir, "settings.yml")
+func SaveAppSettings(settings *AppSettings, filePath string) error {
 	data, err := yaml.Marshal(settings)
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(p, data, 0o644)
+	return os.WriteFile(filePath, data, 0o644)
 }
 
-func LoadServiceSettings(configDir string) (*ServiceSettings, error) {
-	p := path.Join(configDir, "services.yml")
+func LoadServiceSettings(filePath string) (*ServiceSettings, error) {
 	home, _ := os.UserHomeDir()
 
 	defaults := &ServiceSettings{
@@ -92,10 +88,10 @@ func LoadServiceSettings(configDir string) (*ServiceSettings, error) {
 		},
 	}
 
-	data, err := os.ReadFile(p)
+	data, err := os.ReadFile(filePath)
 	if err != nil {
 		if os.IsNotExist(err) {
-			if err := SaveServiceSettings(defaults, configDir); err != nil {
+			if err := SaveServiceSettings(defaults, filePath); err != nil {
 				return nil, err
 			}
 			return defaults, nil
@@ -110,11 +106,10 @@ func LoadServiceSettings(configDir string) (*ServiceSettings, error) {
 	return &settings, nil
 }
 
-func SaveServiceSettings(settings *ServiceSettings, configDir string) error {
-	p := path.Join(configDir, "services.yml")
+func SaveServiceSettings(settings *ServiceSettings, filePath string) error {
 	data, err := yaml.Marshal(settings)
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(p, data, 0o644)
+	return os.WriteFile(filePath, data, 0o644)
 }

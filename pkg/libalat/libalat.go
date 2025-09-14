@@ -45,12 +45,14 @@ func create_app(configPath *C.char, deviceType C.int) C.int {
 
 	goConfigPath := C.GoString(configPath)
 
-	// 1. Load Settings
-	appSettings, err := config.LoadAppSettings(goConfigPath)
+	// 1. Load Settings by explicit path
+	appSettingsPath := path.Join(goConfigPath, "settings.yml")
+	appSettings, err := config.LoadAppSettings(appSettingsPath)
 	if err != nil {
 		return 0 // Error
 	}
-	serviceSettings, err := config.LoadServiceSettings(goConfigPath)
+	serviceSettingsPath := path.Join(goConfigPath, "services.yml")
+	serviceSettings, err := config.LoadServiceSettings(serviceSettingsPath)
 	if err != nil {
 		return 0 // Error
 	}
@@ -137,7 +139,8 @@ func set_app_settings_json(handle C.int, settingsJson *C.char) C.int {
 
 	// Update and save
 	instance.appSettings = &newSettings
-	if err := config.SaveAppSettings(instance.appSettings, instance.configPath); err != nil {
+	appSettingsPath := path.Join(instance.configPath, "settings.yml")
+	if err := config.SaveAppSettings(instance.appSettings, appSettingsPath); err != nil {
 		return -3 // File save error
 	}
 
