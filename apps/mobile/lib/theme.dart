@@ -11,8 +11,6 @@ const _lightColorScheme = ColorScheme(
   onSecondary: Color(0xFFFFFFFF),
   error: Color(0xFFD95F32), // --color-error-500
   onError: Color(0xFFFFFFFF),
-  background: Color(0xFFFFFFFF), // --body-background-color
-  onBackground: Color(0xFF1A1C1E),
   surface: Color(0xFFFDFBFF),
   onSurface: Color(0xFF1A1C1E),
 );
@@ -25,8 +23,6 @@ const _darkColorScheme = ColorScheme(
   onSecondary: Color(0xFFFFFFFF),
   error: Color(0xFFD95F32), // --color-error-500
   onError: Color(0xFFFFFFFF),
-  background: Color(0xFF2A3757), // --body-background-color-dark
-  onBackground: Color(0xFFE2E2E6),
   surface: Color(0xFF1A1C1E),
   onSurface: Color(0xFFE2E2E6),
 );
