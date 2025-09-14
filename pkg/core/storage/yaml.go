@@ -1,10 +1,8 @@
-package config
+package storage
 
 import (
 	"alat/pkg/core/device"
-	"alat/pkg/core/storage"
 	"os"
-	"path"
 
 	"gopkg.in/yaml.v3"
 )
@@ -49,15 +47,11 @@ func (ns *YAMLNodeStorage) AddPaired(newDevice device.PairedDevice) error {
 		return err
 	}
 
-	return os.WriteFile(ns.path, data, 0644)
+	return os.WriteFile(ns.path, data, 0o644)
 }
 
-func NodeStorageFile() string {
-	return path.Join(configDir, "node.yml")
-}
-
-func GetNodeStorage() (storage.NodeStorage, error) {
+func CreateYAMLNodeStorage(path string) *YAMLNodeStorage {
 	return &YAMLNodeStorage{
-		path: NodeStorageFile(),
-	}, nil
+		path: path,
+	}
 }

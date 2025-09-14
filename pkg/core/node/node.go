@@ -14,7 +14,7 @@ import (
 
 type Node struct {
 	workerState workerState
-	Storage     *storage.NodeStorage
+	Storage     storage.NodeStorage
 	PairManager *pair.PairManager
 	discovery   *discovery.Manager
 	device      *device.Details
@@ -23,7 +23,7 @@ type Node struct {
 	Connected   *connected.Manager
 }
 
-func NewNode(registry *service.Registry, store *storage.NodeStorage, details *device.Details, manager *pair.PairManager) (*Node, error) {
+func NewNode(registry *service.Registry, store storage.NodeStorage, details *device.Details, manager *pair.PairManager) (*Node, error) {
 	server := server.NewServer(registry, manager)
 	discoveryManager, err := discovery.NewManager()
 	if err != nil {

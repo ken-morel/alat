@@ -17,9 +17,7 @@ func (app *App) initServices() error {
 			CacheTime: time.Duration(app.serviceSettings.SysInfo.CacheSeconds) * time.Second,
 		}),
 		FileSend: filesend.CreateService(filesend.Config{
-			Enabled:     app.serviceSettings.FileSend.Enabled,
-			SaveFolder:  app.serviceSettings.FileSend.SaveFolder,
-			FileMaxSize: uint32(app.serviceSettings.FileSend.MaxSize),
+			Enabled: app.serviceSettings.FileSend.Enabled,
 		}),
 	}
 	return nil
