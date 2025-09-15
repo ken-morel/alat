@@ -2,6 +2,7 @@ import 'package:alat/pages/setup/state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async'; // Required for Timer
+import 'package:alat/l10n/app_localizations.dart';
 
 class SysInfoSetupPage extends StatefulWidget {
   final SetupState setupState;
@@ -40,14 +41,9 @@ class _SysInfoSetupPageState extends State<SysInfoSetupPage> {
     _debounce = Timer(const Duration(milliseconds: 500), () {
       final int? newCacheSeconds = int.tryParse(value);
       if (newCacheSeconds != null && newCacheSeconds >= 0) {
-        // Here you would update your setupState
-        // widget.setupState.appState.serviceSettings?.sysInfo.cacheSeconds = newCacheSeconds;
-        print("Cache seconds updated to: $newCacheSeconds");
-      } else {
-        // Optionally show an error or reset to a valid value
-        if (newCacheSeconds != null && newCacheSeconds < 0) {
-          print("Cache seconds cannot be negative.");
-        }
+        widget.setupState.appState.serviceSettings?.sysInfo.cacheSeconds =
+            newCacheSeconds;
+        widget.setupState.appState.saveSettings();
       }
     });
   }
@@ -60,12 +56,14 @@ class _SysInfoSetupPageState extends State<SysInfoSetupPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "System Information and Stats",
+            AppLocalizations.of(context)!.systemInformationAndStats,
             style: Theme.of(context).textTheme.headlineMedium,
           ),
           const SizedBox(height: 10),
           Text(
-            "This permits other devices to display this device's battery, memory, and other system information.",
+            AppLocalizations.of(
+              context,
+            )!.thisPermitsOtherDevicesToDisplayThisDevicesBatteryMemoryAndOtherSystemInformation,
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           const SizedBox(height: 20),
@@ -74,14 +72,18 @@ class _SysInfoSetupPageState extends State<SysInfoSetupPage> {
             onChanged: (value) {
               setState(() {
                 enabled = value;
-                // Update setupState here
-                // widget.setupState.appState.serviceSettings?.sysInfo.enabled = value;
+                widget.setupState.appState.serviceSettings?.sysInfo.enabled =
+                    value;
+                widget.setupState.appState.saveSettings();
               });
             },
           ),
           if (enabled) ...[
             const SizedBox(height: 30),
-            Text("Options", style: Theme.of(context).textTheme.headlineSmall),
+            Text(
+              AppLocalizations.of(context)!.options,
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
             const SizedBox(height: 20),
             _CacheSecondsInput(
               controller: _cacheSecondsController,
@@ -112,7 +114,11 @@ class _ServiceSwitch extends StatelessWidget {
             }
           },
         ),
-        Text(value ? "Service Enabled" : "Service Disabled"),
+        Text(
+          value
+              ? AppLocalizations.of(context)!.serviceEnabled
+              : AppLocalizations.of(context)!.serviceDisabled,
+        ),
       ],
     );
   }
@@ -129,10 +135,10 @@ class _CacheSecondsInput extends StatelessWidget {
     return TextField(
       controller: controller,
       keyboardType: TextInputType.number,
-      decoration: const InputDecoration(
-        labelText: "Cache Refresh Interval",
+      decoration: InputDecoration(
+        labelText: AppLocalizations.of(context)!.cacheRefreshInterval,
         hintText: "e.g., 10",
-        suffixText: "seconds",
+        suffixText: AppLocalizations.of(context)!.seconds,
         border: OutlineInputBorder(),
       ),
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],

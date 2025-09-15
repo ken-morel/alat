@@ -9,13 +9,13 @@ class AppState extends ChangeNotifier {
   dalat.AppSettings? _appSettings;
   dalat.ServiceSettings? _serviceSettings;
 
-  dalat.AlatInstance? get alat => _alatInstance;
+  dalat.AlatInstance? get node => _alatInstance;
   dalat.AppSettings? get settings => _appSettings;
   dalat.ServiceSettings? get serviceSettings => _serviceSettings;
 
   bool get isReady => _alatInstance != null && _appSettings != null;
 
-  Future<void> initialize() async {
+  Future<bool> initialize() async {
     final dir = await getApplicationDocumentsDirectory();
     final configPath = dir.path;
     final configDir = Directory(configPath);
@@ -34,9 +34,18 @@ class AppState extends ChangeNotifier {
     }
 
     _serviceSettings = await _alatInstance!.getServiceSettings();
+    _setupServices();
 
     // Notify listeners that initialization is complete.
     notifyListeners();
+    return _appSettings!.setupComplete;
+  }
+
+  Future<void> _setupServices() async {
+    final downloadsDir = await getDownloadsDirectory();
+    if (downloadsDir != null) {
+      _serviceSettings?.fileSend.saveFolder = downloadsDir.path;
+    }
   }
 
   Future<void> completeSetup() async {

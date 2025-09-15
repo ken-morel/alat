@@ -1,5 +1,7 @@
+import 'package:alat/pages/setup/complete.dart';
 import 'package:alat/pages/setup/device.dart';
 import 'package:alat/pages/setup/home.dart';
+import 'package:alat/pages/setup/services/filesend.dart';
 import 'package:alat/pages/setup/services/services.dart';
 import 'package:alat/pages/setup/services/sysinfo.dart';
 import 'package:alat/pages/setup/state.dart';
@@ -15,7 +17,8 @@ class SetupAssistantPageView extends StatelessWidget {
     BuildContext context,
     SetupState state,
     Widget content,
-    bool nav,
+    bool prev,
+    bool next,
   ) {
     return Padding(
       padding: EdgeInsetsGeometry.only(top: 30, left: 30, right: 30),
@@ -24,62 +27,60 @@ class SetupAssistantPageView extends StatelessWidget {
           children: [
             content,
             SizedBox(height: 50),
-            if (nav) _buildNav(context, state),
+            _buildNav(context, state, prev, next),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildNav(BuildContext context, SetupState state) {
+  Widget _buildNav(
+    BuildContext context,
+    SetupState state,
+    bool prev,
+    bool next,
+  ) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: prev && next
+          ? MainAxisAlignment.spaceBetween
+          : prev
+          ? MainAxisAlignment.spaceBetween
+          : MainAxisAlignment.end,
       children: [
-        FilledButton.tonal(
-          onPressed: () {
-            state.prev();
-          },
-          child: Text(AppLocalizations.of(context)!.previous),
-        ),
-        FilledButton.tonal(
-          onPressed: () {
-            state.next();
-          },
-          child: Text(AppLocalizations.of(context)!.next),
-        ),
+        if (prev)
+          FilledButton.tonal(
+            onPressed: () {
+              state.prev();
+            },
+            child: Text(AppLocalizations.of(context)!.previous),
+          ),
+        if (next)
+          FilledButton.tonal(
+            onPressed: () {
+              state.next();
+            },
+            child: Text(AppLocalizations.of(context)!.next),
+          ),
       ],
     );
   }
 
   Widget buildContent(BuildContext context) {
     final state = SetupState(controller, context.read<AppState>());
+    final pages = [
+      _wrap(context, state, SetupHome(setupState: state), false, true),
+      _wrap(context, state, SetupDevice(setupState: state), true, true),
+      _wrap(context, state, ServicesHomePage(setupState: state), true, true),
+      _wrap(context, state, SysInfoSetupPage(setupState: state), true, true),
+      _wrap(context, state, FileSendSetupPage(setupState: state), true, true),
+      _wrap(context, state, SetupCompletePage(setupState: state), true, false),
+    ];
     return PageView.builder(
       controller: controller,
       itemBuilder: (BuildContext context, int index) {
-        switch (index) {
-          case 0:
-            return _wrap(context, state, SetupHome(setupState: state), false);
-          case 1:
-            return _wrap(context, state, SetupDevice(setupState: state), true);
-          case 2:
-            return _wrap(
-              context,
-              state,
-              ServicesHomePage(setupState: state),
-              true,
-            );
-          case 3:
-            return _wrap(
-              context,
-              state,
-              SysInfoSetupPage(setupState: state),
-              true,
-            );
-          default:
-            return _wrap(context, state, SetupHome(setupState: state), true);
-        }
+        return pages[index % pages.length];
       },
-      itemCount: 4,
+      itemCount: pages.length,
     );
   }
 

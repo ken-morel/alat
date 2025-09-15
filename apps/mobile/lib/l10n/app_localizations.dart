@@ -98,11 +98,18 @@ abstract class AppLocalizations {
     Locale('fr'),
   ];
 
-  /// No description provided for @initializingAlat.
+  /// No description provided for @aShortMemorableName.
   ///
   /// In en, this message translates to:
-  /// **'Initializing Alat...'**
-  String get initializingAlat;
+  /// **'A short, memorable name'**
+  String get aShortMemorableName;
+
+  /// No description provided for @permitConnectedDevicesToSendFilesToThisDevicesWithouthPriorConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Permit connected devices to send files to this devices, withouth prior confirmation'**
+  String
+  get permitConnectedDevicesToSendFilesToThisDevicesWithouthPriorConfirmation;
 
   /// No description provided for @helloWorld.
   ///
@@ -110,11 +117,97 @@ abstract class AppLocalizations {
   /// **'Hello World!'**
   String get helloWorld;
 
+  /// No description provided for @services.
+  ///
+  /// In en, this message translates to:
+  /// **'Services'**
+  String get services;
+
+  /// No description provided for @weAreGoingToGoThroughOutTheProcessOfSettingUpYourDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'We are going to go through out the process of setting up your device'**
+  String get weAreGoingToGoThroughOutTheProcessOfSettingUpYourDevice;
+
+  /// No description provided for @serviceDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Disabled'**
+  String get serviceDisabled;
+
+  /// No description provided for @becauseEachOfYourDevicesAlsoMeritsAName.
+  ///
+  /// In en, this message translates to:
+  /// **'Because each of your devices also merits a name'**
+  String get becauseEachOfYourDevicesAlsoMeritsAName;
+
+  /// No description provided for @yourDeviceIsCompletelySetupAndNowReadyToStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Your device is completely setup and now ready to start'**
+  String get yourDeviceIsCompletelySetupAndNowReadyToStart;
+
+  /// No description provided for @errorInitializingAlatCoreError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error initializing alat core: {error}'**
+  String errorInitializingAlatCoreError(Object error);
+
+  /// No description provided for @theSettingsAreAlreadyInSensibleDefaultsWhichShouldJustFitYouButReadAttentivelySoYouKnowWhatYouExposeToOthers.
+  ///
+  /// In en, this message translates to:
+  /// **'The settings are already in sensible defaults which should just fit you, but read attentively so you know what you expose to others.'**
+  String
+  get theSettingsAreAlreadyInSensibleDefaultsWhichShouldJustFitYouButReadAttentivelySoYouKnowWhatYouExposeToOthers;
+
+  /// No description provided for @name.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get name;
+
+  /// No description provided for @fileReceive.
+  ///
+  /// In en, this message translates to:
+  /// **'File receive'**
+  String get fileReceive;
+
   /// No description provided for @previous.
   ///
   /// In en, this message translates to:
   /// **'Previous'**
   String get previous;
+
+  /// No description provided for @alatSetup.
+  ///
+  /// In en, this message translates to:
+  /// **'Alat setup'**
+  String get alatSetup;
+
+  /// No description provided for @serviceEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Enabled'**
+  String get serviceEnabled;
+
+  /// No description provided for @initializingAlatCore.
+  ///
+  /// In en, this message translates to:
+  /// **'Initializing alat core...'**
+  String get initializingAlatCore;
+
+  /// No description provided for @thisPermitsOtherDevicesToDisplayThisDevicesBatteryMemoryAndOtherSystemInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'This permits other devices to display this device\'s battery, memory, and other system information.'**
+  String
+  get thisPermitsOtherDevicesToDisplayThisDevicesBatteryMemoryAndOtherSystemInformation;
+
+  /// No description provided for @nameMe.
+  ///
+  /// In en, this message translates to:
+  /// **'Name me'**
+  String get nameMe;
 
   /// No description provided for @next.
   ///
@@ -122,11 +215,84 @@ abstract class AppLocalizations {
   /// **'Next'**
   String get next;
 
-  /// No description provided for @alatSetup.
+  /// No description provided for @aColorToMoreEasilyIdentifyYourDevice.
   ///
   /// In en, this message translates to:
-  /// **'Alat setup'**
-  String get alatSetup;
+  /// **'A color to more easily identify your device'**
+  String get aColorToMoreEasilyIdentifyYourDevice;
+
+  /// No description provided for @servicesAreTheDifferentFeaturesOfYourDeviceYouWantToMakeAvailableToConnectedDevicesYouCanDisableThemAtAnyTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Services are the different features of your device you want to make available to connected devices. You can disable them at any time.'**
+  String
+  get servicesAreTheDifferentFeaturesOfYourDeviceYouWantToMakeAvailableToConnectedDevicesYouCanDisableThemAtAnyTime;
+
+  /// No description provided for @systemInformationAndStats.
+  ///
+  /// In en, this message translates to:
+  /// **'System Information and Stats'**
+  String get systemInformationAndStats;
+
+  /// No description provided for @seconds.
+  ///
+  /// In en, this message translates to:
+  /// **'seconds'**
+  String get seconds;
+
+  /// No description provided for @megaBytes.
+  ///
+  /// In en, this message translates to:
+  /// **'Mega bytes'**
+  String get megaBytes;
+
+  /// No description provided for @options.
+  ///
+  /// In en, this message translates to:
+  /// **'Options'**
+  String get options;
+
+  /// No description provided for @initializingAlat.
+  ///
+  /// In en, this message translates to:
+  /// **'Initializing Alat...'**
+  String get initializingAlat;
+
+  /// No description provided for @maximulFileSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximul file size'**
+  String get maximulFileSize;
+
+  /// No description provided for @setupComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Setup complete'**
+  String get setupComplete;
+
+  /// No description provided for @cacheRefreshInterval.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache Refresh Interval'**
+  String get cacheRefreshInterval;
+
+  /// No description provided for @deviceColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Device color'**
+  String get deviceColor;
+
+  /// No description provided for @deviceName.
+  ///
+  /// In en, this message translates to:
+  /// **'Device name'**
+  String get deviceName;
+
+  /// No description provided for @welcomeToAlat.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to alat'**
+  String get welcomeToAlat;
 }
 
 class _AppLocalizationsDelegate
