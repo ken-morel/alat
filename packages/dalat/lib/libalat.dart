@@ -1656,16 +1656,16 @@ class AlatBindings {
   late final _getloadavg = _getloadavgPtr
       .asFunction<int Function(ffi.Pointer<ffi.Double>, int)>();
 
-  int create_instance(ffi.Pointer<ffi.Char> configPath, int deviceType) {
-    return _create_instance(configPath, deviceType);
+  ffi.Pointer<ffi.Char> get_instances() {
+    return _get_instances();
   }
 
-  late final _create_instancePtr =
-      _lookup<
-        ffi.NativeFunction<ffi.Int Function(ffi.Pointer<ffi.Char>, ffi.Int)>
-      >('create_instance');
-  late final _create_instance = _create_instancePtr
-      .asFunction<int Function(ffi.Pointer<ffi.Char>, int)>();
+  late final _get_instancesPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function()>>(
+        'get_instances',
+      );
+  late final _get_instances = _get_instancesPtr
+      .asFunction<ffi.Pointer<ffi.Char> Function()>();
 
   ffi.Pointer<ffi.Char> get_error() {
     return _get_error();
@@ -1677,6 +1677,17 @@ class AlatBindings {
       );
   late final _get_error = _get_errorPtr
       .asFunction<ffi.Pointer<ffi.Char> Function()>();
+
+  int create_instance(ffi.Pointer<ffi.Char> configPath, int deviceType) {
+    return _create_instance(configPath, deviceType);
+  }
+
+  late final _create_instancePtr =
+      _lookup<
+        ffi.NativeFunction<ffi.Int Function(ffi.Pointer<ffi.Char>, ffi.Int)>
+      >('create_instance');
+  late final _create_instance = _create_instancePtr
+      .asFunction<int Function(ffi.Pointer<ffi.Char>, int)>();
 
   int start_instance(int handle) {
     return _start_instance(handle);
@@ -1695,6 +1706,14 @@ class AlatBindings {
       _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int)>>('stop_instance');
   late final _stop_instance = _stop_instancePtr
       .asFunction<void Function(int)>();
+
+  int get_port(int handle) {
+    return _get_port(handle);
+  }
+
+  late final _get_portPtr =
+      _lookup<ffi.NativeFunction<GoInt Function(ffi.Int)>>('get_port');
+  late final _get_port = _get_portPtr.asFunction<int Function(int)>();
 
   void destroy_instance(int handle) {
     return _destroy_instance(handle);

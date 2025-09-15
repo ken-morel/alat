@@ -32,6 +32,29 @@ class AlatInstance {
     return AlatInstance._(handle);
   }
 
+  factory AlatInstance.get(int handle) {
+    final instances = AlatInstance.getInstances();
+    if (instances.contains(handle)) {
+      return AlatInstance._(handle);
+    } else {
+      throw ("Instance $handle does not exist. in AlatInstance.get");
+    }
+  }
+
+  static List<int> getInstances() {
+    final ptr = bindings.get_instances();
+    if (ptr == nullptr) {
+      return [];
+    }
+    try {
+      final jsonStr = ptr.cast<Utf8>().toDartString();
+      final List<dynamic> decoded = jsonDecode(jsonStr);
+      return decoded.map((item) => int.parse(item)).toList();
+    } finally {
+      bindings.free_string(ptr.cast());
+    }
+  }
+
   void start() {
     final result = bindings.start_instance(_handle);
     if (result != 0) {

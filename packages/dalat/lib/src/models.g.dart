@@ -94,7 +94,17 @@ ConnectedDevice _$ConnectedDeviceFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$ConnectedDeviceToJson(ConnectedDevice instance) =>
     <String, dynamic>{};
 
-NodeStatus _$NodeStatusFromJson(Map<String, dynamic> json) => NodeStatus();
+NodeStatus _$NodeStatusFromJson(Map<String, dynamic> json) => NodeStatus(
+  serverRunning: json['serverRunning'] as bool,
+  workerRunning: json['workerRunning'] as bool,
+  discoveryRunning: json['discoveryRunning'] as bool,
+  port: (json['port'] as num).toInt(),
+);
 
 Map<String, dynamic> _$NodeStatusToJson(NodeStatus instance) =>
-    <String, dynamic>{};
+    <String, dynamic>{
+      'discoveryRunning': instance.discoveryRunning,
+      'serverRunning': instance.serverRunning,
+      'workerRunning': instance.workerRunning,
+      'port': instance.port,
+    };

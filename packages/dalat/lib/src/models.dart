@@ -119,7 +119,21 @@ class ConnectedDevice {
 
 @JsonSerializable()
 class NodeStatus {
-  NodeStatus(); // Add fields that match the JSON output from Go
+  @JsonKey(name: 'discoveryRunning')
+  bool discoveryRunning;
+  @JsonKey(name: 'serverRunning')
+  bool serverRunning;
+  @JsonKey(name: 'workerRunning')
+  bool workerRunning;
+  @JsonKey(name: 'port')
+  int port;
+
+  NodeStatus({
+    required this.serverRunning,
+    required this.workerRunning,
+    required this.discoveryRunning,
+    required this.port,
+  }); // Add fields that match the JSON output from Go
   factory NodeStatus.fromJson(Map<String, dynamic> json) =>
       _$NodeStatusFromJson(json);
   Map<String, dynamic> toJson() => _$NodeStatusToJson(this);
