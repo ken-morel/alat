@@ -6,10 +6,25 @@ part 'models.g.dart';
 class DeviceColor {
   @JsonKey(name: 'name')
   final String name;
+  @JsonKey(name: 'hex')
+  final String hex;
+  @JsonKey(name: 'r')
+  final int r;
+  @JsonKey(name: 'g')
+  final int g;
+  @JsonKey(name: 'b')
+  final int b;
 
-  DeviceColor({required this.name});
+  DeviceColor({
+    required this.name,
+    required this.r,
+    required this.g,
+    required this.b,
+    required this.hex,
+  });
   factory DeviceColor.fromJson(Map<String, dynamic> json) =>
       _$DeviceColorFromJson(json);
+
   Map<String, dynamic> toJson() => _$DeviceColorToJson(this);
 }
 
@@ -111,4 +126,3 @@ class NodeStatus {
 }
 
 enum DeviceType { unspecified, mobile, desktop, tv }
-

@@ -6,11 +6,22 @@ part of 'models.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-DeviceColor _$DeviceColorFromJson(Map<String, dynamic> json) =>
-    DeviceColor(name: json['name'] as String);
+DeviceColor _$DeviceColorFromJson(Map<String, dynamic> json) => DeviceColor(
+  name: json['name'] as String,
+  r: (json['r'] as num).toInt(),
+  g: (json['g'] as num).toInt(),
+  b: (json['b'] as num).toInt(),
+  hex: json['hex'] as String,
+);
 
 Map<String, dynamic> _$DeviceColorToJson(DeviceColor instance) =>
-    <String, dynamic>{'name': instance.name};
+    <String, dynamic>{
+      'name': instance.name,
+      'hex': instance.hex,
+      'r': instance.r,
+      'g': instance.g,
+      'b': instance.b,
+    };
 
 AppSettings _$AppSettingsFromJson(Map<String, dynamic> json) => AppSettings(
   setupComplete: json['setupComplete'] as bool,

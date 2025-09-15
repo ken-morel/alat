@@ -98,6 +98,7 @@ extern int set_service_settings_json(int handle, char* settingsJSON);
 extern char* get_found_devices_json(int handle);
 extern char* get_paired_devices_json(int handle);
 extern char* get_connected_devices_json(int handle);
+extern char* get_alat_device_colors_json(void);
 extern char* get_node_status_json(int handle);
 extern void free_string(char* s);
 
