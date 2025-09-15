@@ -1,3 +1,4 @@
+import 'package:alat/pages/dashboard/dashboard.dart';
 import 'package:alat/pages/setup/setup.dart';
 import 'package:alat/state.dart';
 import 'package:alat/pages/start.dart';
@@ -11,7 +12,7 @@ void main() async {
 
   runApp(
     ChangeNotifierProvider(
-      create: (context) => AppState()..initialize(),
+      create: (context) => AppState(),
       child: const MyApp(),
     ),
   );
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.system,
       home: const StartPage(),
       routes: {
-        // '/dashboard': (context) => const DashboardPage(),
+        '/dashboard': (context) => const DashboardPage(),
         '/setup': (context) => SetupAssistantPageView(),
       },
     );

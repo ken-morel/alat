@@ -1,5 +1,6 @@
-import "package:alat/pages/setup/state.dart";
-import "package:flutter/material.dart";
+import 'package:alat/pages/setup/state.dart';
+import 'package:flutter/material.dart';
+import 'package:alat/l10n/app_localizations.dart';
 
 class SetupHome extends StatelessWidget {
   final SetupState setupState;
@@ -10,25 +11,16 @@ class SetupHome extends StatelessWidget {
     return Column(
       children: [
         Text(
-          "Welcome to alat",
+          AppLocalizations.of(context)!.welcomeToAlat,
           style: Theme.of(context).textTheme.headlineLarge,
         ),
         SizedBox(height: 10),
         Text(
-          "We are going to go through out the process of setting up your device",
+          AppLocalizations.of(
+            context,
+          )!.weAreGoingToGoThroughOutTheProcessOfSettingUpYourDevice,
         ),
         SizedBox(height: 30),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            FilledButton.tonal(
-              onPressed: () {
-                setupState.next();
-              },
-              child: Text("Next"),
-            ),
-          ],
-        ),
       ],
     );
   }
