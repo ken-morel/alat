@@ -9,5 +9,17 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get initializingAlat => 'Initializing Alat...';
+
+  @override
   String get helloWorld => 'Hello World!';
+
+  @override
+  String get previous => 'Previous';
+
+  @override
+  String get next => 'Next';
+
+  @override
+  String get alatSetup => 'Alat setup';
 }

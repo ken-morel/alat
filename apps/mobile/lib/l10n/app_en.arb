@@ -1,6 +1,7 @@
 {
+  "initializingAlat": "Initializing Alat...",
   "helloWorld": "Hello World!",
-  "@helloWorld": {
-    "description": "The conventional newborn programmer greeting"
-  }
+  "previous": "Previous",
+  "next": "Next",
+  "alatSetup": "Alat setup"
 }

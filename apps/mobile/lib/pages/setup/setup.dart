@@ -6,22 +6,32 @@ import 'package:alat/pages/setup/state.dart';
 import 'package:alat/state.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:alat/l10n/app_localizations.dart';
 
 class SetupAssistantPageView extends StatelessWidget {
   final controller = PageController();
   SetupAssistantPageView({super.key});
-  Widget _wrap(SetupState state, Widget content, bool nav) {
+  Widget _wrap(
+    BuildContext context,
+    SetupState state,
+    Widget content,
+    bool nav,
+  ) {
     return Padding(
       padding: EdgeInsetsGeometry.only(top: 30, left: 30, right: 30),
       child: SingleChildScrollView(
         child: Column(
-          children: [content, SizedBox(height: 50), if (nav) _buildNav(state)],
+          children: [
+            content,
+            SizedBox(height: 50),
+            if (nav) _buildNav(context, state),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildNav(SetupState state) {
+  Widget _buildNav(BuildContext context, SetupState state) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -29,13 +39,13 @@ class SetupAssistantPageView extends StatelessWidget {
           onPressed: () {
             state.prev();
           },
-          child: Text("Previous"),
+          child: Text(AppLocalizations.of(context)!.previous),
         ),
         FilledButton.tonal(
           onPressed: () {
             state.next();
           },
-          child: Text("Next"),
+          child: Text(AppLocalizations.of(context)!.next),
         ),
       ],
     );
@@ -48,15 +58,25 @@ class SetupAssistantPageView extends StatelessWidget {
       itemBuilder: (BuildContext context, int index) {
         switch (index) {
           case 0:
-            return _wrap(state, SetupHome(setupState: state), false);
+            return _wrap(context, state, SetupHome(setupState: state), false);
           case 1:
-            return _wrap(state, SetupDevice(setupState: state), true);
+            return _wrap(context, state, SetupDevice(setupState: state), true);
           case 2:
-            return _wrap(state, ServicesHomePage(setupState: state), true);
+            return _wrap(
+              context,
+              state,
+              ServicesHomePage(setupState: state),
+              true,
+            );
           case 3:
-            return _wrap(state, SysInfoSetupPage(setupState: state), true);
+            return _wrap(
+              context,
+              state,
+              SysInfoSetupPage(setupState: state),
+              true,
+            );
           default:
-            return _wrap(state, SetupHome(setupState: state), true);
+            return _wrap(context, state, SetupHome(setupState: state), true);
         }
       },
       itemCount: 4,
@@ -66,7 +86,7 @@ class SetupAssistantPageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Alat setup")),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.alatSetup)),
       body: buildContent(context),
     );
   }
