@@ -7,8 +7,6 @@ import (
 	"alat/pkg/core/storage"
 )
 
-type PairRequest struct{}
-
 type PairManager struct {
 	storage       storage.NodeStorage
 	pairedDevices []device.PairedDevice

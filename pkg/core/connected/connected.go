@@ -10,10 +10,10 @@ import (
 )
 
 type Connected struct {
-	Info         device.Info
-	PairedDevice device.PairedDevice
-	IP           net.IP
-	Port         int
+	Info         device.Info         `yaml:"info"         json:"info"`
+	PairedDevice device.PairedDevice `yaml:"pairedDevice" json:"pairedDevice"`
+	IP           net.IP              `yaml:"ip"           json:"ip"`
+	Port         int                 `yaml:"port"         json:"port"`
 }
 type Manager struct {
 	devices     []Connected

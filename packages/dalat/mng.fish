@@ -15,6 +15,10 @@ switch "$argv[1]"
         build-libalat
     case gen
         gen-ffi
+    case make
+        build-libalat
+        cd ../../packages/dalat/
+        gen-ffi
     case "*"
         echo "No command specified, use ./mng.fish <command>"
 end

@@ -7,10 +7,10 @@ import (
 )
 
 type Info struct {
-	ID    string
-	Name  string
-	Color color.Color
-	Type  DeviceType
+	ID    string      `yaml:"id"    json:"id"`
+	Name  string      `yaml:"name"  json:"name"`
+	Color color.Color `yaml:"color" json:"color"`
+	Type  DeviceType  `yaml:"type"  json:"type"`
 }
 
 func (info *Info) ToPBUF() *pbuf.DeviceInfo {

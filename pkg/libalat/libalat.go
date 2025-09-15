@@ -5,6 +5,7 @@ package main
 #include <stdlib.h>
 */
 import "C"
+
 import (
 	"alat/pkg/core/config"
 	"alat/pkg/core/device"
@@ -130,18 +131,18 @@ func get_app_settings_json(handle C.int) *C.char {
 	if instance == nil {
 		return nil
 	}
-	return toJson(instance.appSettings)
+	return toJSON(instance.appSettings)
 }
 
 //export set_app_settings_json
-func set_app_settings_json(handle C.int, settingsJson *C.char) C.int {
+func set_app_settings_json(handle C.int, settingsJSON *C.char) C.int {
 	instance := getInstance(handle)
 	if instance == nil {
 		return -1
 	}
 
 	var newSettings config.AppSettings
-	if err := json.Unmarshal([]byte(C.GoString(settingsJson)), &newSettings); err != nil {
+	if err := json.Unmarshal([]byte(C.GoString(settingsJSON)), &newSettings); err != nil {
 		return -2
 	}
 
@@ -166,18 +167,18 @@ func get_service_settings_json(handle C.int) *C.char {
 	if instance == nil {
 		return nil
 	}
-	return toJson(instance.serviceSettings)
+	return toJSON(instance.serviceSettings)
 }
 
 //export set_service_settings_json
-func set_service_settings_json(handle C.int, settingsJson *C.char) C.int {
+func set_service_settings_json(handle C.int, settingsJSON *C.char) C.int {
 	instance := getInstance(handle)
 	if instance == nil {
 		return -1
 	}
 
 	var newSettings config.ServiceSettings
-	if err := json.Unmarshal([]byte(C.GoString(settingsJson)), &newSettings); err != nil {
+	if err := json.Unmarshal([]byte(C.GoString(settingsJSON)), &newSettings); err != nil {
 		return -2
 	}
 
@@ -201,7 +202,7 @@ func get_found_devices_json(handle C.int) *C.char {
 	if instance == nil {
 		return nil
 	}
-	return toJson(instance.node.GetDiscoverer().GetFoundDevices())
+	return toJSON(instance.node.GetDiscoverer().GetFoundDevices())
 }
 
 //export get_paired_devices_json
@@ -214,7 +215,7 @@ func get_paired_devices_json(handle C.int) *C.char {
 	if err != nil {
 		return nil // Or return JSON error
 	}
-	return toJson(paired)
+	return toJSON(paired)
 }
 
 //export get_connected_devices_json
@@ -223,7 +224,7 @@ func get_connected_devices_json(handle C.int) *C.char {
 	if instance == nil {
 		return nil
 	}
-	return toJson(instance.node.Connected.GetConnectedDevices())
+	return toJSON(instance.node.Connected.GetConnectedDevices())
 }
 
 // --- Status --- //
@@ -234,7 +235,7 @@ func get_node_status_json(handle C.int) *C.char {
 	if instance == nil {
 		return nil
 	}
-	return toJson(instance.node.GetStatus())
+	return toJSON(instance.node.GetStatus())
 }
 
 // --- Helpers --- //
@@ -242,11 +243,10 @@ func get_node_status_json(handle C.int) *C.char {
 func getInstance(handle C.int) *AlatInstance {
 	instancesMutex.Lock()
 	defer instancesMutex.Unlock()
-	instance, _ := instances[int(handle)]
-	return instance
+	return instances[int(handle)]
 }
 
-func toJson(v interface{}) *C.char {
+func toJSON(v any) *C.char {
 	bytes, err := json.Marshal(v)
 	if err != nil {
 		return nil
