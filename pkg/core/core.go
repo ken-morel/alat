@@ -6,5 +6,6 @@ const (
 	DesktopAppID = "cm.engon.alat.desktop"
 	MobileAppID  = "cm.engon.alat.mobile"
 	ServerAppID  = "cm.engon.alat.server"
-	AlatPort     = 12121
+	DefaultPort  = 25280
+	MaxPort      = 25289
 )

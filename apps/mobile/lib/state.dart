@@ -29,9 +29,7 @@ class AppState extends ChangeNotifier {
     );
 
     _appSettings = await _alatInstance!.getAppSettings();
-    if (_appSettings!.setupComplete) {
-      _alatInstance!.start();
-    }
+    if (_appSettings!.setupComplete) _alatInstance!.start();
 
     _serviceSettings = await _alatInstance!.getServiceSettings();
     _setupServices();
@@ -53,9 +51,7 @@ class AppState extends ChangeNotifier {
     if (_appSettings == null) return;
     _appSettings!.setupComplete = true;
     await _alatInstance!.setAppSettings(_appSettings!);
-    if (!_appSettings!.setupComplete) {
-      _alatInstance!.start();
-    }
+    if (!_appSettings!.setupComplete) _alatInstance!.start();
     notifyListeners();
   }
 

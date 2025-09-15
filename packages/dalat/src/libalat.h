@@ -88,6 +88,7 @@ extern "C" {
 #endif
 
 extern int create_instance(char* configPath, int deviceType);
+extern char* get_error(void);
 extern int start_instance(int handle);
 extern void stop_instance(int handle);
 extern void destroy_instance(int handle);

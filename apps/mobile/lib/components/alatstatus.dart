@@ -11,6 +11,11 @@ class AlatStatusWidget extends StatefulWidget {
 class _AlatStatusWidgetState extends State<AlatStatusWidget> {
   @override
   Widget build(BuildContext context) {
-    return Text("Widget");
+    return StreamBuilder(
+      stream: Stream.periodic(Duration(seconds: 10), (_) async => null),
+      builder: (context, snapshot) {
+        return Text("Hello world");
+      },
+    );
   }
 }

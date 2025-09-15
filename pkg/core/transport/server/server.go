@@ -2,9 +2,10 @@
 package server
 
 import (
-	"alat/pkg/core/service/filesend"
 	"fmt"
 	"net"
+
+	"alat/pkg/core/service/filesend"
 
 	"alat/pkg/core"
 	"alat/pkg/core/pair"
@@ -21,6 +22,7 @@ type Server struct {
 	grpcServer  *grpc.Server
 	listener    net.Listener
 	Running     bool
+	Port        int
 }
 
 func NewServer(registry *service.Registry, manager *pair.PairManager) *Server {
@@ -30,10 +32,19 @@ func NewServer(registry *service.Registry, manager *pair.PairManager) *Server {
 	}
 }
 
-func (s *Server) Start() error {
-	lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", core.AlatPort))
+func (s *Server) Start() (int, error) {
+	var lis net.Listener
+	var err error
+
+	for s.Port = core.DefaultPort; s.Port < core.MaxPort; s.Port++ {
+		lis, err = net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", s.Port))
+		if err == nil {
+			break
+		}
+	}
 	if err != nil {
-		return fmt.Errorf("failed to listen: %w", err)
+		s.Port = 0
+		return 0, fmt.Errorf("failed to listen, all alat ports used: %v", err)
 	}
 	s.listener = lis
 	s.grpcServer = grpc.NewServer()
@@ -49,7 +60,7 @@ func (s *Server) Start() error {
 		}
 	}()
 
-	return nil
+	return s.Port, nil
 }
 
 func (s *Server) Stop() {
