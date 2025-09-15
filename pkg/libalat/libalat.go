@@ -41,6 +41,28 @@ var (
 	alatError      error
 )
 
+//export get_instances
+func get_instances() *C.char {
+	instancesMutex.Lock()
+	defer instancesMutex.Unlock()
+	keys := make([]int, 0, len(instances))
+	for k := range instances {
+		keys = append(keys, k)
+	}
+	return toJSON(keys)
+}
+
+//export get_error
+func get_error() *C.char {
+	var message string
+	if alatError == nil {
+		message = "Unknown error"
+	} else {
+		message = alatError.Error()
+	}
+	return C.CString(message)
+}
+
 // --- Lifecycle --- //
 
 //export create_instance
@@ -101,17 +123,6 @@ func create_instance(configPath *C.char, deviceType C.int) C.int {
 	return C.int(handle)
 }
 
-//export get_error
-func get_error() *C.char {
-	var message string
-	if alatError == nil {
-		message = "Unknown error"
-	} else {
-		message = alatError.Error()
-	}
-	return C.CString(message)
-}
-
 //export start_instance
 func start_instance(handle C.int) C.int {
 	instance := getInstance(handle)
@@ -129,6 +140,16 @@ func start_instance(handle C.int) C.int {
 func stop_instance(handle C.int) {
 	if instance := getInstance(handle); instance != nil {
 		instance.node.Stop()
+	}
+}
+
+//export get_port
+func get_port(handle C.int) int {
+	if instance := getInstance(handle); instance != nil {
+		return instance.node.GetPort()
+	} else {
+		alatError = fmt.Errorf("could not get instance's port since it does not exist")
+		return -1
 	}
 }
 

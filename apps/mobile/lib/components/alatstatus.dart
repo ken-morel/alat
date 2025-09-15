@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:dalat/dalat.dart' as dalat;
 
-class AlatStatusWidget extends StatefulWidget {
+class AlatStatusWidget extends StatelessWidget {
   final dalat.AlatInstance node;
   const AlatStatusWidget({super.key, required this.node});
-  @override
-  State<AlatStatusWidget> createState() => _AlatStatusWidgetState();
-}
 
-class _AlatStatusWidgetState extends State<AlatStatusWidget> {
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: Stream.periodic(Duration(seconds: 10), (_) async => null),
+    return FutureBuilder(
+      future: node.getNodeStatus(),
       builder: (context, snapshot) {
-        return Text("Hello world");
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Icon(Icons.error);
+        } else {
+          return Text("Hello: ${snapshot.data}");
+        }
       },
     );
   }

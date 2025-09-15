@@ -87,10 +87,12 @@ typedef struct { void *data; GoInt len; GoInt cap; } GoSlice;
 extern "C" {
 #endif
 
-extern int create_instance(char* configPath, int deviceType);
+extern char* get_instances(void);
 extern char* get_error(void);
+extern int create_instance(char* configPath, int deviceType);
 extern int start_instance(int handle);
 extern void stop_instance(int handle);
+extern GoInt get_port(int handle);
 extern void destroy_instance(int handle);
 extern char* get_app_settings_json(int handle);
 extern int set_app_settings_json(int handle, char* settingsJSON);

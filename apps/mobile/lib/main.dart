@@ -1,10 +1,7 @@
-import 'package:alat/pages/dashboard/dashboard.dart';
-import 'package:alat/pages/setup/setup.dart';
 import 'package:alat/state.dart';
-import 'package:alat/pages/start.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:alat/l10n/app_localizations.dart';
+import 'app.dart';
 
 void main() async {
   // Ensure that plugin services are initialized so that `path_provider` works.
@@ -13,28 +10,7 @@ void main() async {
   runApp(
     ChangeNotifierProvider(
       create: (context) => AppState(),
-      child: const MyApp(),
+      child: const AlatApplication(),
     ),
   );
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Alat',
-      // theme: lightTheme,
-      // darkTheme: darkTheme,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      themeMode: ThemeMode.system,
-      home: const StartPage(),
-      routes: {
-        '/dashboard': (context) => const DashboardPage(),
-        '/setup': (context) => SetupAssistantPageView(),
-      },
-    );
-  }
 }

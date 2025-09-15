@@ -16,17 +16,22 @@ class AppState extends ChangeNotifier {
   bool get isReady => _alatInstance != null && _appSettings != null;
 
   Future<bool> initialize() async {
-    final dir = await getApplicationDocumentsDirectory();
-    final configPath = dir.path;
-    final configDir = Directory(configPath);
-    if (!await configDir.exists()) {
-      await configDir.create(recursive: true);
-    }
+    final instances = dalat.AlatInstance.getInstances();
+    if (instances.isEmpty) {
+      final dir = await getApplicationDocumentsDirectory();
+      final configPath = dir.path;
+      final configDir = Directory(configPath);
+      if (!await configDir.exists()) {
+        await configDir.create(recursive: true);
+      }
 
-    _alatInstance = dalat.AlatInstance.create(
-      configPath: configPath,
-      deviceType: dalat.DeviceType.mobile,
-    );
+      _alatInstance = dalat.AlatInstance.create(
+        configPath: configPath,
+        deviceType: dalat.DeviceType.mobile,
+      );
+    } else {
+      _alatInstance = dalat.AlatInstance.get(instances[0]);
+    }
 
     _appSettings = await _alatInstance!.getAppSettings();
     if (_appSettings!.setupComplete) _alatInstance!.start();
