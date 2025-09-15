@@ -17,6 +17,7 @@ import (
 	"alat/pkg/core/service/sysinfo"
 	"alat/pkg/core/storage"
 	"encoding/json"
+	"fmt"
 	"path"
 	"sync"
 	"time"
@@ -37,6 +38,7 @@ var (
 	instances      = make(map[int]*AlatInstance)
 	instancesMutex = &sync.Mutex{}
 	nextInstanceID = 1
+	alatError      error
 )
 
 // --- Lifecycle --- //
@@ -48,13 +50,15 @@ func create_instance(configPath *C.char, deviceType C.int) C.int {
 
 	goConfigPath := C.GoString(configPath)
 
-	appSettings, err := config.LoadAppSettings(path.Join(goConfigPath, "settings.yml"))
-	if err != nil {
-		return 0
+	var appSettings *config.AppSettings
+	appSettings, alatError = config.LoadAppSettings(path.Join(goConfigPath, "settings.yml"))
+	if alatError != nil {
+		return -1
 	}
-	serviceSettings, err := config.LoadServiceSettings(path.Join(goConfigPath, "services.yml"))
-	if err != nil {
-		return 0
+	var serviceSettings *config.ServiceSettings
+	serviceSettings, alatError = config.LoadServiceSettings(path.Join(goConfigPath, "services.yml"))
+	if alatError != nil {
+		return -2
 	}
 
 	storagePath := path.Join(goConfigPath, "node.yml")
@@ -69,14 +73,16 @@ func create_instance(configPath *C.char, deviceType C.int) C.int {
 		Certificate: appSettings.Certificate,
 	}
 
-	pairManager, err := pair.NewManager(nodeStore, details)
-	if err != nil {
-		return 0
+	var pairManager *pair.PairManager
+	pairManager, alatError = pair.NewManager(nodeStore, details)
+	if alatError != nil {
+		return -3
 	}
 
 	node, err := node.NewNode(&registry, nodeStore, details, pairManager)
 	if err != nil {
-		return 0
+		alatError = err
+		return -4
 	}
 
 	instance := &AlatInstance{
@@ -95,13 +101,25 @@ func create_instance(configPath *C.char, deviceType C.int) C.int {
 	return C.int(handle)
 }
 
+//export get_error
+func get_error() *C.char {
+	var message string
+	if alatError == nil {
+		message = "Unknown error"
+	} else {
+		message = alatError.Error()
+	}
+	return C.CString(message)
+}
+
 //export start_instance
 func start_instance(handle C.int) C.int {
 	instance := getInstance(handle)
 	if instance == nil {
+		alatError = fmt.Errorf("instance %d cannot be started since it does not exist", handle)
 		return -1
 	}
-	if err := instance.node.Start(); err != nil {
+	if alatError = instance.node.Start(); alatError != nil {
 		return -2
 	}
 	return 0
@@ -143,12 +161,12 @@ func set_app_settings_json(handle C.int, settingsJSON *C.char) C.int {
 	}
 
 	var newSettings config.AppSettings
-	if err := json.Unmarshal([]byte(C.GoString(settingsJSON)), &newSettings); err != nil {
+	if alatError = json.Unmarshal([]byte(C.GoString(settingsJSON)), &newSettings); alatError != nil {
 		return -2
 	}
 
 	instance.appSettings = &newSettings
-	if err := config.SaveAppSettings(instance.appSettings, path.Join(instance.configPath, "settings.yml")); err != nil {
+	if alatError = config.SaveAppSettings(instance.appSettings, path.Join(instance.configPath, "settings.yml")); alatError != nil {
 		return -3
 	}
 
@@ -175,16 +193,17 @@ func get_service_settings_json(handle C.int) *C.char {
 func set_service_settings_json(handle C.int, settingsJSON *C.char) C.int {
 	instance := getInstance(handle)
 	if instance == nil {
+		alatError = fmt.Errorf("instance %d does not exist, settings cannot be saved", handle)
 		return -1
 	}
 
 	var newSettings config.ServiceSettings
-	if err := json.Unmarshal([]byte(C.GoString(settingsJSON)), &newSettings); err != nil {
+	if alatError := json.Unmarshal([]byte(C.GoString(settingsJSON)), &newSettings); alatError != nil {
 		return -2
 	}
 
 	instance.serviceSettings = &newSettings
-	if err := config.SaveServiceSettings(instance.serviceSettings, path.Join(instance.configPath, "services.yml")); err != nil {
+	if alatError := config.SaveServiceSettings(instance.serviceSettings, path.Join(instance.configPath, "services.yml")); alatError != nil {
 		return -3
 	}
 
@@ -255,8 +274,8 @@ func getInstance(handle C.int) *AlatInstance {
 }
 
 func toJSON(v any) *C.char {
-	bytes, err := json.Marshal(v)
-	if err != nil {
+	bytes, alatError := json.Marshal(v)
+	if alatError != nil {
 		return nil
 	}
 	return C.CString(string(bytes))

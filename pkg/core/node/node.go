@@ -2,7 +2,6 @@
 package node
 
 import (
-	"alat/pkg/core"
 	"alat/pkg/core/connected"
 	"alat/pkg/core/device"
 	"alat/pkg/core/discovery"
@@ -51,12 +50,16 @@ func (n *Node) SetDetails(details *device.Details) {
 	n.PairManager.SetDetails(details)
 }
 
+func (n *Node) GetPort() int {
+	return n.server.Port
+}
+
 func (n *Node) Start() error {
-	err := n.discovery.Server.Start(core.AlatPort)
+	port, err := n.server.Start()
 	if err != nil {
 		return err
 	}
-	err = n.server.Start()
+	err = n.discovery.Server.Start(port)
 	if err != nil {
 		return err
 	}

@@ -35,7 +35,17 @@ class AlatInstance {
   void start() {
     final result = bindings.start_instance(_handle);
     if (result != 0) {
-      throw Exception('Failed to start AlatInstance. Code: $result');
+      final msgPointer = bindings.get_error();
+      try {
+        final error = msgPointer == nullptr
+            ? "Unknown error"
+            : msgPointer.cast<Utf8>().toDartString();
+        throw Exception(
+          'Failed to start AlatInstance. Code: $result, Error: $error',
+        );
+      } finally {
+        bindings.free_string(msgPointer);
+      }
     }
   }
 

@@ -1667,6 +1667,17 @@ class AlatBindings {
   late final _create_instance = _create_instancePtr
       .asFunction<int Function(ffi.Pointer<ffi.Char>, int)>();
 
+  ffi.Pointer<ffi.Char> get_error() {
+    return _get_error();
+  }
+
+  late final _get_errorPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function()>>(
+        'get_error',
+      );
+  late final _get_error = _get_errorPtr
+      .asFunction<ffi.Pointer<ffi.Char> Function()>();
+
   int start_instance(int handle) {
     return _start_instance(handle);
   }
