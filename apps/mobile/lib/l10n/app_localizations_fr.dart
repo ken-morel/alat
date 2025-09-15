@@ -30,6 +30,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get serviceDisabled => '#Service Disabled';
 
   @override
+  String get openDashboard => '#Open dashboard';
+
+  @override
   String get becauseEachOfYourDevicesAlsoMeritsAName =>
       '#Because each of your devices also merits a name';
 
@@ -60,6 +63,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get alatSetup => '#Alat setup';
 
   @override
+  String get activeDevices => '#Active devices';
+
+  @override
   String get serviceEnabled => '#Service Enabled';
 
   @override
@@ -75,6 +81,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get next => '#Next';
+
+  @override
+  String get dashboard => '#Dashboard';
 
   @override
   String get aColorToMoreEasilyIdentifyYourDevice =>

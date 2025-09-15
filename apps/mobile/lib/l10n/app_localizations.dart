@@ -135,6 +135,12 @@ abstract class AppLocalizations {
   /// **'Service Disabled'**
   String get serviceDisabled;
 
+  /// No description provided for @openDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Open dashboard'**
+  String get openDashboard;
+
   /// No description provided for @becauseEachOfYourDevicesAlsoMeritsAName.
   ///
   /// In en, this message translates to:
@@ -184,6 +190,12 @@ abstract class AppLocalizations {
   /// **'Alat setup'**
   String get alatSetup;
 
+  /// No description provided for @activeDevices.
+  ///
+  /// In en, this message translates to:
+  /// **'Active devices'**
+  String get activeDevices;
+
   /// No description provided for @serviceEnabled.
   ///
   /// In en, this message translates to:
@@ -214,6 +226,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Next'**
   String get next;
+
+  /// No description provided for @dashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard'**
+  String get dashboard;
 
   /// No description provided for @aColorToMoreEasilyIdentifyYourDevice.
   ///

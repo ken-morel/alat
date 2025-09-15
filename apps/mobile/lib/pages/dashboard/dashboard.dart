@@ -2,6 +2,7 @@ import 'package:alat/components/alatstatus.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:alat/state.dart';
+import 'package:alat/l10n/app_localizations.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -19,7 +20,7 @@ class DashboardPage extends StatelessWidget {
         ),
       ),
       appBar: AppBar(
-        title: Text("Dashboard"),
+        title: Text(AppLocalizations.of(context)!.dashboard),
         leading: Builder(
           builder: (BuildContext context) => IconButton(
             onPressed: () {
@@ -34,7 +35,7 @@ class DashboardPage extends StatelessWidget {
           SizedBox(height: 50),
           Center(
             child: Text(
-              "Active devices",
+              AppLocalizations.of(context)!.activeDevices,
               style: Theme.of(context).textTheme.headlineLarge,
             ),
           ),

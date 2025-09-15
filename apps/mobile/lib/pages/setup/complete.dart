@@ -29,7 +29,7 @@ class SetupCompletePage extends StatelessWidget {
               context,
             ).pushNamedAndRemoveUntil("/dashboard", (_) => false);
           },
-          child: Text("Open dashboard"),
+          child: Text(AppLocalizations.of(context)!.openDashboard),
         ),
       ],
     );
