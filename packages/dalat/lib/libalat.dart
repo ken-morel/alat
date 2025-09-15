@@ -1776,6 +1776,17 @@ class AlatBindings {
   late final _get_connected_devices_json = _get_connected_devices_jsonPtr
       .asFunction<ffi.Pointer<ffi.Char> Function(int)>();
 
+  ffi.Pointer<ffi.Char> get_alat_device_colors_json() {
+    return _get_alat_device_colors_json();
+  }
+
+  late final _get_alat_device_colors_jsonPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function()>>(
+        'get_alat_device_colors_json',
+      );
+  late final _get_alat_device_colors_json = _get_alat_device_colors_jsonPtr
+      .asFunction<ffi.Pointer<ffi.Char> Function()>();
+
   ffi.Pointer<ffi.Char> get_node_status_json(int handle) {
     return _get_node_status_json(handle);
   }

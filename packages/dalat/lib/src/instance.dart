@@ -94,6 +94,22 @@ class AlatInstance {
     return _jsonHelper(bindings.get_node_status_json, NodeStatus.fromJson);
   }
 
+  Future<List<DeviceColor>> getAlatColors() async {
+    final ptr = bindings.get_alat_device_colors_json();
+    if (ptr == nullptr) {
+      return [];
+    }
+    try {
+      final jsonStr = ptr.cast<Utf8>().toDartString();
+      final List<dynamic> decoded = jsonDecode(jsonStr);
+      return decoded
+          .map((item) => DeviceColor.fromJson(item as Map<String, dynamic>))
+          .toList();
+    } finally {
+      bindings.free_string(ptr.cast());
+    }
+  }
+
   // --- Private Helpers ---
 
   Future<T> _jsonHelper<T>(

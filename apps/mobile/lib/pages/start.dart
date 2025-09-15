@@ -14,7 +14,6 @@ class _StartPageState extends State<StartPage> {
   @override
   void initState() {
     super.initState();
-    // Listen to the AppState to know when initialization is complete
     context.read<AppState>().addListener(_onAppStateChanged);
   }
 
@@ -27,12 +26,9 @@ class _StartPageState extends State<StartPage> {
   void _onAppStateChanged() {
     final appState = context.read<AppState>();
     if (appState.isReady) {
-      if (appState.appSettings!.setupComplete) {
-        // If setup is complete, go to the main dashboard (not created yet)
-        // Navigator.of(context).pushReplacementNamed('/dashboard');
+      if (appState.settings!.setupComplete) {
       } else {
-        // If setup is not complete, go to the setup screen (not created yet)
-        // Navigator.of(context).pushReplacementNamed('/setup');
+        Navigator.of(context).pushReplacementNamed('/setup');
       }
     }
   }

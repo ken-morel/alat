@@ -10,6 +10,8 @@ switch "$argv[1]"
         call_flutter $argv[2..]
     case dev
         flutter_dev
+    case arb-watch
+        arb-util
     case "*"
         echo "No or invalid command, specify flutter|.."
 end

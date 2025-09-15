@@ -9,6 +9,7 @@ import "C"
 import (
 	"alat/pkg/core/config"
 	"alat/pkg/core/device"
+	"alat/pkg/core/device/color"
 	"alat/pkg/core/node"
 	"alat/pkg/core/pair"
 	"alat/pkg/core/service"
@@ -225,6 +226,13 @@ func get_connected_devices_json(handle C.int) *C.char {
 		return nil
 	}
 	return toJSON(instance.node.Connected.GetConnectedDevices())
+}
+
+// --- Core Constants --- //
+
+//export get_alat_device_colors_json
+func get_alat_device_colors_json() *C.char {
+	return toJSON(color.Colors)
 }
 
 // --- Status --- //

@@ -9,6 +9,10 @@ function gen-ffi
     echo "Generating ffi bindings for dalat"
     dart run ffigen --config ffigen.yaml
 end
+function gen-json
+    echo "Generating json serializable"
+    dart run build_runner build
+end
 
 switch "$argv[1]"
     case build
@@ -19,6 +23,7 @@ switch "$argv[1]"
         build-libalat
         cd ../../packages/dalat/
         gen-ffi
+        gen-json
     case "*"
         echo "No command specified, use ./mng.fish <command>"
 end

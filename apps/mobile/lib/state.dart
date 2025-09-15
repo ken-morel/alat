@@ -1,53 +1,58 @@
 import 'dart:io';
 
-import 'package:dalat/dalat.dart';
+import 'package:dalat/dalat.dart' as dalat;
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 class AppState extends ChangeNotifier {
-  AlatInstance? _alatInstance;
-  AppSettings? _appSettings;
+  dalat.AlatInstance? _alatInstance;
+  dalat.AppSettings? _appSettings;
+  dalat.ServiceSettings? _serviceSettings;
 
-  AlatInstance? get alatInstance => _alatInstance;
-  AppSettings? get appSettings => _appSettings;
+  dalat.AlatInstance? get alat => _alatInstance;
+  dalat.AppSettings? get settings => _appSettings;
+  dalat.ServiceSettings? get serviceSettings => _serviceSettings;
 
   bool get isReady => _alatInstance != null && _appSettings != null;
 
   Future<void> initialize() async {
     final dir = await getApplicationDocumentsDirectory();
     final configPath = dir.path;
-
-    // Ensure the config directory exists
     final configDir = Directory(configPath);
     if (!await configDir.exists()) {
       await configDir.create(recursive: true);
     }
 
-    _alatInstance = AlatInstance.create(
+    _alatInstance = dalat.AlatInstance.create(
       configPath: configPath,
-      deviceType: DeviceType.mobile,
+      deviceType: dalat.DeviceType.mobile,
     );
 
     _appSettings = await _alatInstance!.getAppSettings();
-
     if (_appSettings!.setupComplete) {
       _alatInstance!.start();
     }
+
+    _serviceSettings = await _alatInstance!.getServiceSettings();
 
     // Notify listeners that initialization is complete.
     notifyListeners();
   }
 
-  Future<void> completeSetup(AppSettings newSettings) async {
+  Future<void> completeSetup() async {
     if (_alatInstance == null) return;
-
-    await _alatInstance!.setAppSettings(newSettings);
-    _appSettings = newSettings;
-
-    // Start the node after setup is complete
-    _alatInstance!.start();
-
+    if (_appSettings == null) return;
+    _appSettings!.setupComplete = true;
+    await _alatInstance!.setAppSettings(_appSettings!);
+    if (!_appSettings!.setupComplete) {
+      _alatInstance!.start();
+    }
     notifyListeners();
+  }
+
+  Future<void> saveSettings() async {
+    await _alatInstance!.setAppSettings(_appSettings!);
+    await _alatInstance!.setServiceSettings(_serviceSettings!);
   }
 
   @override
