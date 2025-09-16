@@ -34,11 +34,11 @@ export namespace app {
 export namespace color {
 	
 	export class Color {
-	    Name: string;
-	    Hex: string;
-	    R: number;
-	    G: number;
-	    B: number;
+	    name: string;
+	    hex: string;
+	    r: number;
+	    g: number;
+	    b: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new Color(source);
@@ -46,11 +46,11 @@ export namespace color {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.Name = source["Name"];
-	        this.Hex = source["Hex"];
-	        this.R = source["R"];
-	        this.G = source["G"];
-	        this.B = source["B"];
+	        this.name = source["name"];
+	        this.hex = source["hex"];
+	        this.r = source["r"];
+	        this.g = source["g"];
+	        this.b = source["b"];
 	    }
 	}
 
@@ -59,9 +59,9 @@ export namespace color {
 export namespace config {
 	
 	export class FileSendSettings {
-	    Enabled: boolean;
-	    MaxSize: number;
-	    SaveFolder: string;
+	    enabled: boolean;
+	    maxSize: number;
+	    saveFolder: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new FileSendSettings(source);
@@ -69,14 +69,14 @@ export namespace config {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.Enabled = source["Enabled"];
-	        this.MaxSize = source["MaxSize"];
-	        this.SaveFolder = source["SaveFolder"];
+	        this.enabled = source["enabled"];
+	        this.maxSize = source["maxSize"];
+	        this.saveFolder = source["saveFolder"];
 	    }
 	}
 	export class SysInfoSettings {
-	    Enabled: boolean;
-	    CacheSeconds: number;
+	    enabled: boolean;
+	    cacheSeconds: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new SysInfoSettings(source);
@@ -84,8 +84,8 @@ export namespace config {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.Enabled = source["Enabled"];
-	        this.CacheSeconds = source["CacheSeconds"];
+	        this.enabled = source["enabled"];
+	        this.cacheSeconds = source["cacheSeconds"];
 	    }
 	}
 
@@ -94,10 +94,10 @@ export namespace config {
 export namespace connected {
 	
 	export class Connected {
-	    Info: device.Info;
-	    PairedDevice: device.PairedDevice;
-	    IP: number[];
-	    Port: number;
+	    info: device.Info;
+	    pairedDevice: device.PairedDevice;
+	    ip: number[];
+	    port: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new Connected(source);
@@ -105,10 +105,10 @@ export namespace connected {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.Info = this.convertValues(source["Info"], device.Info);
-	        this.PairedDevice = this.convertValues(source["PairedDevice"], device.PairedDevice);
-	        this.IP = source["IP"];
-	        this.Port = source["Port"];
+	        this.info = this.convertValues(source["info"], device.Info);
+	        this.pairedDevice = this.convertValues(source["pairedDevice"], device.PairedDevice);
+	        this.ip = source["ip"];
+	        this.port = source["port"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -135,10 +135,10 @@ export namespace connected {
 export namespace device {
 	
 	export class Info {
-	    ID: string;
-	    Name: string;
-	    Color: color.Color;
-	    Type: string;
+	    id: string;
+	    name: string;
+	    color: color.Color;
+	    type: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Info(source);
@@ -146,10 +146,10 @@ export namespace device {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.ID = source["ID"];
-	        this.Name = source["Name"];
-	        this.Color = this.convertValues(source["Color"], color.Color);
-	        this.Type = source["Type"];
+	        this.id = source["id"];
+	        this.name = source["name"];
+	        this.color = this.convertValues(source["color"], color.Color);
+	        this.type = source["type"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -171,8 +171,8 @@ export namespace device {
 		}
 	}
 	export class PairedDevice {
-	    Certificate: number[];
-	    Token: number[];
+	    certificate: number[];
+	    token: number[];
 	
 	    static createFrom(source: any = {}) {
 	        return new PairedDevice(source);
@@ -180,8 +180,8 @@ export namespace device {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.Certificate = source["Certificate"];
-	        this.Token = source["Token"];
+	        this.certificate = source["certificate"];
+	        this.token = source["token"];
 	    }
 	}
 
@@ -190,9 +190,9 @@ export namespace device {
 export namespace discovery {
 	
 	export class FoundDevice {
-	    IP: number[];
-	    Port: number;
-	    Info: device.Info;
+	    ip: number[];
+	    port: number;
+	    info: device.Info;
 	
 	    static createFrom(source: any = {}) {
 	        return new FoundDevice(source);
@@ -200,9 +200,9 @@ export namespace discovery {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.IP = source["IP"];
-	        this.Port = source["Port"];
-	        this.Info = this.convertValues(source["Info"], device.Info);
+	        this.ip = source["ip"];
+	        this.port = source["port"];
+	        this.info = this.convertValues(source["info"], device.Info);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -323,9 +323,10 @@ export namespace filesend {
 export namespace node {
 	
 	export class Status {
-	    DiscoveryRunning: boolean;
-	    ServerRunning: boolean;
-	    WorkerRunning: boolean;
+	    discoveryRunning: boolean;
+	    serverRunning: boolean;
+	    workerRunning: boolean;
+	    port: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new Status(source);
@@ -333,9 +334,10 @@ export namespace node {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.DiscoveryRunning = source["DiscoveryRunning"];
-	        this.ServerRunning = source["ServerRunning"];
-	        this.WorkerRunning = source["WorkerRunning"];
+	        this.discoveryRunning = source["discoveryRunning"];
+	        this.serverRunning = source["serverRunning"];
+	        this.workerRunning = source["workerRunning"];
+	        this.port = source["port"];
 	    }
 	}
 

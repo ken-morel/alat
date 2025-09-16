@@ -8,7 +8,28 @@ This file provides a comprehensive overview of the `alat` project, its architect
 
 ## Architecture
 
-`alat` has a modular, service-based architecture. The core logic is written in Go and is shared across all platform-specific applications.
+### Technical Deep Dive: How It Works
+
+Alat's core functionality can be broken down into three main areas: Discovery, Communication, and Services.
+
+#### 1. Discovery (`pkg/core/discovery`)
+
+-   **Mechanism**: Alat uses **multicast DNS (mDNS)** for peer discovery on the local network. This is a zero-configuration service that allows devices to find each other without a central DNS server.
+-   **Implementation**: The `discovery.Manager` in the Go core is responsible for both broadcasting the device's presence and listening for other Alat instances.
+-   **Process**: When an Alat node starts, it registers an mDNS service, advertising its IP address, port, and device information. Simultaneously, it browses for other instances of the same service.
+
+#### 2. Communication (`pkg/core/transport`)
+
+-   **Framework**: Communication between paired devices is handled by **gRPC**, a high-performance, open-source RPC framework.
+-   **Schema**: The services and message formats are defined in `.proto` files located in `pkg/pbuf`. These files serve as the definitive API contract. The `protoc` compiler is used to generate Go code from these definitions.
+-   **Server**: Each Alat node runs a gRPC server (`transport/server/server.go`) to handle incoming requests from other devices. It listens on a port within the range of `25280-25289`.
+-   **Security**: The initial connection requires a pairing process to establish trust. Subsequent connections will require a valid token/certificate (details in `pkg/core/pair` and `pkg/core/security`).
+
+#### 3. Services (`pkg/core/service`)
+
+-   **Modularity**: All high-level features in Alat are implemented as distinct "services" (e.g., `SysInfo`, `FileSend`).
+-   **Registry**: A central `service.Registry` is used to register and manage all available services within a node.
+-   **Extensibility**: This modular design allows new features to be added by simply creating a new service and registering it, without needing to alter the core discovery or communication logic.
 
 ### Core & FFI
 
@@ -56,29 +77,47 @@ The project uses `mng.fish` scripts to automate common development tasks.
 *   Wails CLI
 *   Flutter SDK
 *   Fish shell
+*   Protobuf compiler (`protoc`)
 
-### Building `libalat` and `dalat`
+### Building everything from scratch
+
+The `mng.fish` script in the root of the project can be used to build everything.
+
+```bash
+# From the root directory:
+
+# 1. Generate Go and Dart code from .proto files
+./mng.fish proto
+
+# 2. Build the `libalat` shared library and the `dalat` Dart package
+./mng.fish dalat make
+
+# 3. Build the desktop app
+./mng.fish desktop build
+```
+
+### Building `libalat` and `dalat` for the mobile app
 
 To work on the mobile app, you must first build the Go library and generate the Dart bindings.
 
 ```bash
 # From the `packages/dalat` directory:
 
-# 1. Build the Go library and generate the C header
-./mng.fish build libalat
-
-# 2. Generate the Dart bindings from the header
-dart run ffigen --config ffigen.yaml
-
-# 3. Generate JSON serialization models
-dart run build_runner build --delete-conflicting-outputs
+# 1. Build the Go library and generate the C header and Dart bindings
+./mng.fish make
 ```
+
+This command will:
+
+1.  Build the `libalat` shared library.
+2.  Generate the Dart FFI bindings from the C header.
+3.  Generate the JSON serialization models.
 
 ### Running the Desktop App
 
 ```bash
 # From the `apps/desktop` directory:
-fish manage.fish dev
+./mng.fish dev
 ```
 
 ### Running the Mobile App
