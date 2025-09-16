@@ -13,8 +13,8 @@ export const load: PageLoad = async () => {
     deviceName: name,
     deviceColorName,
     alatColors: colors.map((color) => ({
-      name: color.Name,
-      hex: color.Hex,
+      name: color.name,
+      hex: color.hex,
     })),
   };
 };

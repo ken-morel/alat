@@ -11,7 +11,7 @@
   let settings = $state(data.settings);
 
   let unit: string = $state("MB");
-  let maxSize: number = $state(settings.MaxSize / (1024 * 1024));
+  let maxSize: number = $state(settings.maxSize / (1024 * 1024));
   $effect(() => {
     // @ts-ignore
     settings.MaxSize = SIZES[unit] * maxSize;
@@ -31,7 +31,7 @@
   };
   function changeSaveFolder() {
     AskFileSharingDestDirectory().then((path) => {
-      if (path) settings.SaveFolder = path;
+      if (path) settings.saveFolder = path;
     });
   }
 </script>
@@ -39,7 +39,7 @@
 <ServiceTile
   title="File receive"
   description="Allow other devices send you files."
-  bind:enabled={settings.Enabled}
+  bind:enabled={settings.enabled}
   prev="/setup/services/sysinfo"
   next="/setup/done"
 >
@@ -50,7 +50,7 @@
     <input
       type="text"
       class="input text-surface-700-300 ml-2"
-      bind:value={settings.SaveFolder}
+      bind:value={settings.saveFolder}
       disabled
     />
     <button class="btn preset-filled-surface-200-800" onclick={changeSaveFolder}

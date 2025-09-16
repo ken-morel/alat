@@ -1,4 +1,5 @@
 // Package core store's alat core
+// [N!]N(.N)*[{a|b|rc}N][.postN][.devN] versioning
 package core
 
 const (

@@ -36,14 +36,14 @@
     <article class="p-8">
       <div class="flex p-2">
         {#each connectedDevices as dev, i (i)}
-          {@const Icon = guessIcon(dev.Info.Type)}
+          {@const Icon = guessIcon(dev.info.type)}
           <div
             class="group card flex flex-col justify-between overflow-hidden rounded-lg
          bg-surface-100-900 ring-1 ring-surface-300/50 transition-all
          duration-300 ease-in-out hover:shadow-xl hover:-translate-y-0.5
           hover:bg-surface-200-800"
-            style="--device-color: {dev.Info.Color.Hex};"
-            aria-label={"Select device " + dev.Info.Name}
+            style="--device-color: {dev.info.color.hex};"
+            aria-label={"Select device " + dev.info.name}
             role="button"
             tabindex="0"
             onkeydown={() => null}
@@ -54,18 +54,18 @@
             <article class="flex flex-grow items-start gap-4 p-4">
               <div class="mt-1">
                 <!-- svelte-ignore svelte_component_deprecated -->
-                <Icon color={dev.Info.Color.Hex} class="h-16 w-16 opacity-80" />
+                <Icon color={dev.info.color.hex} class="h-16 w-16 opacity-80" />
               </div>
 
               <div class="flex min-w-0 flex-col">
                 <h4 class="h4 font-bold text-surface-700-200">
-                  {dev.Info.Name}
+                  {dev.info.name}
                 </h4>
                 <p
                   class="truncate text-sm text-surface-500-400"
-                  title={dev.Info.ID}
+                  title={dev.info.id}
                 >
-                  <small class="text-surface-700-300">{dev.IP}:{dev.Port}</small
+                  <small class="text-surface-700-300">{dev.ip}:{dev.port}</small
                   >
                 </p>
               </div>

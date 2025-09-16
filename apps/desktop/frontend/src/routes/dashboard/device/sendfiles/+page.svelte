@@ -17,7 +17,7 @@
   function selectFiles() {
     const device = $dev;
     if (!device) return;
-    AskFilesSend(device.Info.Name).then((selectedFiles) => {
+    AskFilesSend(device.info.name).then((selectedFiles) => {
       sendingFiles.update((files) => {
         return selectedFiles.concat(files);
       });
@@ -42,7 +42,7 @@
       class="card preset-filled-surface-100-900 border-[1px] border-surface-200-800 w-full max-w-lg"
     >
       <header class="flex border-b border-surface-200-800 p-8">
-        <h3 class="ml-8 h4">Send files to {$dev.Info.Name}</h3>
+        <h3 class="ml-8 h4">Send files to {$dev.info.name}</h3>
       </header>
       <article class="place-items-center w-full h-full grid p-10">
         <button

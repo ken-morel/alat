@@ -41,14 +41,14 @@
         <IconDevices />
       </Navigation.Tile>
       {#if $connectedDevice}
-        {@const Icon = guessIcon($connectedDevice.Info.Type)}
+        {@const Icon = guessIcon($connectedDevice.info.type)}
         <div transition:slide>
           <Navigation.Tile
             selected={page.url.pathname == "/dashboard/device"}
-            label={$connectedDevice.Info.Name}
+            label={$connectedDevice.info.name}
             href="/dashboard/device"
           >
-            <Icon color={$connectedDevice.Info.Color.Hex} />
+            <Icon color={$connectedDevice.info.color.hex} />
           </Navigation.Tile>
         </div>
       {/if}
