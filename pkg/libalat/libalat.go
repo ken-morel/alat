@@ -38,7 +38,8 @@ var (
 	instances      = make(map[int]*AlatInstance)
 	instancesMutex = &sync.Mutex{}
 	nextInstanceID = 1
-	alatError      error
+	// FIX: Race condition
+	alatError error
 )
 
 //export get_instances
