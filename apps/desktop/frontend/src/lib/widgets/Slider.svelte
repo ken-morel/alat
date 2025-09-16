@@ -38,7 +38,7 @@
 
 <div style="--width: {width};">
   {#if tooltipSnippet}
-    <Tooltip tooltip={tooltipSnippet}>
+    <Tooltip tooltip={tooltipSnippet} classes="bg-surface-300-700">
       {@render slider()}
     </Tooltip>
   {:else}
