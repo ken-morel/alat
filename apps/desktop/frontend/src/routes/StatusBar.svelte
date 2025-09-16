@@ -55,34 +55,34 @@
               <div class="p-4">
                 <div class=" flex space-x-1">
                   <IconBolt
-                    class="h-5 w-5 {status.ServerRunning
+                    class="h-5 w-5 {status.serverRunning
                       ? 'text-success-500'
                       : 'text-warning-500'}"
                   />
                   <span class="text-sm">
-                    Services are {status.ServerRunning ? "running" : "stalked"}
+                    Services are {status.serverRunning ? "running" : "stalked"}
                   </span>
                 </div>
                 <div class=" flex space-x-1">
                   <IconMagnifyingGlass
-                    class="h-5 w-5 {status.DiscoveryRunning
+                    class="h-5 w-5 {status.discoveryRunning
                       ? 'text-success-500'
                       : 'text-warning-500'}"
                   />
                   <span class="text-sm">
-                    {status.DiscoveryRunning
+                    {status.discoveryRunning
                       ? "Device visible"
                       : "Device hidden"}
                   </span>
                 </div>
                 <div class="flex space-x-1">
                   <IconNode
-                    class="h-5 w-5 {status.WorkerRunning
+                    class="h-5 w-5 {status.workerRunning
                       ? 'text-success-500'
                       : 'text-warning-500'}"
                   />
                   <span class="text-sm">
-                    {status.WorkerRunning ? "Alat is running" : "Alat stalked"}
+                    {status.workerRunning ? "Alat is running" : "Alat stalked"}
                   </span>
                 </div>
               </div>
@@ -91,17 +91,17 @@
 
           <div class="chip flex items-center space-x-1">
             <IconBolt
-              class="h-5 w-5 {status.ServerRunning
+              class="h-5 w-5 {status.serverRunning
                 ? 'text-success-500'
                 : 'text-warning-500'}"
             />
             <IconMagnifyingGlass
-              class="h-5 w-5 {status.DiscoveryRunning
+              class="h-5 w-5 {status.discoveryRunning
                 ? 'text-success-500'
                 : 'text-warning-500'}"
             />
             <IconNode
-              class="h-5 w-5 {status.WorkerRunning
+              class="h-5 w-5 {status.workerRunning
                 ? 'text-success-500'
                 : 'text-warning-500'}"
             />

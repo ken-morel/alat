@@ -16,7 +16,7 @@
       const connectedDevices = (await GetConnectedDevices()) || [];
       devices = ((await GetFoundDevices()) || []).filter((device) => {
         for (const connDev of connectedDevices) {
-          if (connDev.Info.ID === device.Info.ID) return false;
+          if (connDev.info.id === device.info.id) return false;
         }
         return true;
       });
@@ -38,9 +38,9 @@
           {device}
           onclick={() => {
             pairDialogOptions.set({
-              info: device.Info,
+              info: device.info,
               accept: () => {
-                RequestPairingFoundDevice(device.Info.ID);
+                RequestPairingFoundDevice(device.info.id);
               },
               decline: () => {},
             });

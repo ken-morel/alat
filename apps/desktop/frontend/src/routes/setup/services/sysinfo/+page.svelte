@@ -17,7 +17,7 @@
 <ServiceTile
   title="System Info"
   description="Allow other devices to get system information like disk usage and battery status."
-  bind:enabled={settings.Enabled}
+  bind:enabled={settings.enabled}
   prev="/setup/services"
   next="/setup/services/sendfile"
 >
@@ -25,10 +25,10 @@
     <label for="cache-time" class="font-medium text-surface-600-400"
       >Cache time</label
     >
-    <Slider bind:value={settings.CacheSeconds} max={30} min={1} step={1}>
+    <Slider bind:value={settings.cacheSeconds} max={30} min={1} step={1}>
       {#snippet subtext()}
         <span class="text-xs">
-          {settings.CacheSeconds} second{settings.CacheSeconds > 1 ? "s" : ""}
+          {settings.cacheSeconds} second{settings.cacheSeconds > 1 ? "s" : ""}
         </span>
       {/snippet}
       {#snippet tooltip()}
