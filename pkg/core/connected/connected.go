@@ -2,7 +2,6 @@
 package connected
 
 import (
-	"fmt"
 	"net"
 
 	"alat/pkg/core/device"
@@ -49,7 +48,7 @@ func (m *Manager) RefreshConnections() error {
 		}
 	}
 	clear(m.devices)
-	fmt.Printf("There are %d connected devices In %d found devices, and %d paired\n", len(connected), len(m.discoverer.GetFoundDevices()), len(m.pairManager.GetPairedDevices()))
+	// fmt.Printf("There are %d connected devices In %d found devices, and %d paired\n", len(connected), len(m.discoverer.GetFoundDevices()), len(m.pairManager.GetPairedDevices()))
 	m.devices = connected
 	return nil
 }

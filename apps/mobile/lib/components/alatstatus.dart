@@ -15,7 +15,7 @@ class AlatStatusWidget extends StatelessWidget {
         } else if (snapshot.hasError) {
           return Icon(Icons.error);
         } else {
-          return Text("Hello: ${snapshot.data}");
+          return Text("Hello: data");
         }
       },
     );

@@ -10,8 +10,21 @@ function package-linux
     nfpm pkg --packager deb --target ./build/bin
 end
 
-function build
+function build-linux
     wails build -v 2 -tags webkit2_41
+end
+
+function build
+    switch "$argv[1]"
+        case windows
+            build-windows
+        case linux
+            build-linux
+        case ""
+            echo "No build target specified, either `build linux` or `build windows`"
+        case "*"
+            echo "Invalid build target, either `build linux` or `build-windows`"
+    end
 end
 
 function help
@@ -30,10 +43,8 @@ switch "$argv[1]"
         help
     case dev
         dev
-    case build-windows
-        build-windows
     case build
-        build
+        build "$argv[2]"
     case package
         package-linux
     case ""
