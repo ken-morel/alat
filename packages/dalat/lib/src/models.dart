@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:json_annotation/json_annotation.dart';
+import 'converters.dart';
 
 part 'models.g.dart';
 
@@ -31,6 +32,7 @@ class DeviceColor {
 }
 
 @JsonSerializable()
+@Uint8ListConverter()
 class AppSettings {
   @JsonKey(name: 'setupComplete')
   bool setupComplete;
@@ -38,8 +40,9 @@ class AppSettings {
   String deviceName;
   @JsonKey(name: 'deviceColor')
   DeviceColor deviceColor;
+
   @JsonKey(name: 'certificate')
-  Uint8List certificate;
+  Certificate certificate;
 
   AppSettings({
     required this.setupComplete,
@@ -99,16 +102,54 @@ class ServiceSettings {
 }
 
 @JsonSerializable()
+@Uint8ListConverter()
 class FoundDevice {
-  FoundDevice(); // Add fields that match the JSON output from Go
+  @JsonKey(name: 'ip')
+  Ip ip;
+  @JsonKey(name: 'port')
+  Port port;
+  @JsonKey(name: 'info')
+  DeviceInfo info;
+
+  FoundDevice({required this.ip, required this.port, required this.info});
   factory FoundDevice.fromJson(Map<String, dynamic> json) =>
       _$FoundDeviceFromJson(json);
   Map<String, dynamic> toJson() => _$FoundDeviceToJson(this);
 }
 
 @JsonSerializable()
+@Uint8ListConverter()
+class DeviceDetails {
+  @JsonKey(name: 'color')
+  DeviceColor color;
+  @JsonKey(name: 'name')
+  String name;
+  @JsonKey(name: 'type')
+  DeviceType type;
+  @JsonKey(name: 'certificate')
+  Certificate certificate;
+  DeviceDetails({
+    required this.color,
+    required this.name,
+    required this.type,
+    required this.certificate,
+  });
+  factory DeviceDetails.fromJson(Map<String, dynamic> json) =>
+      _$DeviceDetailsFromJson(json);
+  Map<String, dynamic> toJson() => _$DeviceDetailsToJson(this);
+}
+
+@JsonSerializable()
+@Uint8ListConverter()
 class PairedDevice {
-  PairedDevice(); // Add fields that match the JSON output from Go
+  @JsonKey(name: 'certificate')
+  Certificate certificate;
+  @JsonKey(name: 'token')
+  Uint8List token;
+  PairedDevice({
+    required this.certificate,
+    required this.token,
+  }); // Add fields that match the JSON output from Go
   factory PairedDevice.fromJson(Map<String, dynamic> json) =>
       _$PairedDeviceFromJson(json);
   Map<String, dynamic> toJson() => _$PairedDeviceToJson(this);
@@ -136,8 +177,22 @@ class DeviceInfo {
 }
 
 @JsonSerializable()
+@Uint8ListConverter()
 class ConnectedDevice {
-  ConnectedDevice();
+  @JsonKey(name: 'info')
+  DeviceInfo info;
+  @JsonKey(name: 'pairedDevice')
+  PairedDevice pairedDevice;
+  @JsonKey(name: 'ip')
+  Ip ip;
+  @JsonKey(name: 'port')
+  Port port;
+  ConnectedDevice({
+    required this.info,
+    required this.pairedDevice,
+    required this.ip,
+    required this.port,
+  });
   factory ConnectedDevice.fromJson(Map<String, dynamic> json) =>
       _$ConnectedDeviceFromJson(json);
   Map<String, dynamic> toJson() => _$ConnectedDeviceToJson(this);
@@ -152,7 +207,7 @@ class NodeStatus {
   @JsonKey(name: 'workerRunning')
   bool workerRunning;
   @JsonKey(name: 'port')
-  int port;
+  Port port;
 
   NodeStatus({
     required this.serverRunning,

@@ -16,9 +16,9 @@ switch "$argv[1]"
     case dev
         flutter_dev $argv[2..]
     case build
-        exec flutter build "$argv[2..]"
+        exec flutter build $argv[2..]
     case run
-        exec flutter run "$argv[2..]"
+        exec flutter run $argv[2..]
     case arb-watch
         exec arb-util
     case "*"

@@ -29,6 +29,7 @@ AppSettings _$AppSettingsFromJson(Map<String, dynamic> json) => AppSettings(
   deviceColor: DeviceColor.fromJson(
     json['deviceColor'] as Map<String, dynamic>,
   ),
+  certificate: const Uint8ListConverter().fromJson(json['certificate'] as List),
 );
 
 Map<String, dynamic> _$AppSettingsToJson(AppSettings instance) =>
@@ -36,6 +37,7 @@ Map<String, dynamic> _$AppSettingsToJson(AppSettings instance) =>
       'setupComplete': instance.setupComplete,
       'deviceName': instance.deviceName,
       'deviceColor': instance.deviceColor,
+      'certificate': const Uint8ListConverter().toJson(instance.certificate),
     };
 
 SysInfoSettings _$SysInfoSettingsFromJson(Map<String, dynamic> json) =>
@@ -77,22 +79,87 @@ Map<String, dynamic> _$ServiceSettingsToJson(ServiceSettings instance) =>
       'filesend': instance.fileSend,
     };
 
-FoundDevice _$FoundDeviceFromJson(Map<String, dynamic> json) => FoundDevice();
+FoundDevice _$FoundDeviceFromJson(Map<String, dynamic> json) => FoundDevice(
+  ip: const Uint8ListConverter().fromJson(json['ip'] as List),
+  port: (json['port'] as num).toInt(),
+  info: DeviceInfo.fromJson(json['info'] as Map<String, dynamic>),
+);
 
 Map<String, dynamic> _$FoundDeviceToJson(FoundDevice instance) =>
-    <String, dynamic>{};
+    <String, dynamic>{
+      'ip': const Uint8ListConverter().toJson(instance.ip),
+      'port': instance.port,
+      'info': instance.info,
+    };
 
-PairedDevice _$PairedDeviceFromJson(Map<String, dynamic> json) =>
-    PairedDevice();
+DeviceDetails _$DeviceDetailsFromJson(Map<String, dynamic> json) =>
+    DeviceDetails(
+      color: DeviceColor.fromJson(json['color'] as Map<String, dynamic>),
+      name: json['name'] as String,
+      type: $enumDecode(_$DeviceTypeEnumMap, json['type']),
+      certificate: const Uint8ListConverter().fromJson(
+        json['certificate'] as List,
+      ),
+    );
+
+Map<String, dynamic> _$DeviceDetailsToJson(DeviceDetails instance) =>
+    <String, dynamic>{
+      'color': instance.color,
+      'name': instance.name,
+      'type': _$DeviceTypeEnumMap[instance.type]!,
+      'certificate': const Uint8ListConverter().toJson(instance.certificate),
+    };
+
+const _$DeviceTypeEnumMap = {
+  DeviceType.unspecified: 'unspecified',
+  DeviceType.mobile: 'mobile',
+  DeviceType.desktop: 'desktop',
+  DeviceType.tv: 'tv',
+};
+
+PairedDevice _$PairedDeviceFromJson(Map<String, dynamic> json) => PairedDevice(
+  certificate: const Uint8ListConverter().fromJson(json['certificate'] as List),
+  token: const Uint8ListConverter().fromJson(json['token'] as List),
+);
 
 Map<String, dynamic> _$PairedDeviceToJson(PairedDevice instance) =>
-    <String, dynamic>{};
+    <String, dynamic>{
+      'certificate': const Uint8ListConverter().toJson(instance.certificate),
+      'token': const Uint8ListConverter().toJson(instance.token),
+    };
+
+DeviceInfo _$DeviceInfoFromJson(Map<String, dynamic> json) => DeviceInfo(
+  id: json['id'] as String,
+  name: json['name'] as String,
+  color: DeviceColor.fromJson(json['color'] as Map<String, dynamic>),
+  type: $enumDecode(_$DeviceTypeEnumMap, json['type']),
+);
+
+Map<String, dynamic> _$DeviceInfoToJson(DeviceInfo instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'color': instance.color,
+      'type': _$DeviceTypeEnumMap[instance.type]!,
+    };
 
 ConnectedDevice _$ConnectedDeviceFromJson(Map<String, dynamic> json) =>
-    ConnectedDevice();
+    ConnectedDevice(
+      info: DeviceInfo.fromJson(json['info'] as Map<String, dynamic>),
+      pairedDevice: PairedDevice.fromJson(
+        json['pairedDevice'] as Map<String, dynamic>,
+      ),
+      ip: const Uint8ListConverter().fromJson(json['ip'] as List),
+      port: (json['port'] as num).toInt(),
+    );
 
 Map<String, dynamic> _$ConnectedDeviceToJson(ConnectedDevice instance) =>
-    <String, dynamic>{};
+    <String, dynamic>{
+      'info': instance.info,
+      'pairedDevice': instance.pairedDevice,
+      'ip': const Uint8ListConverter().toJson(instance.ip),
+      'port': instance.port,
+    };
 
 NodeStatus _$NodeStatusFromJson(Map<String, dynamic> json) => NodeStatus(
   serverRunning: json['serverRunning'] as bool,

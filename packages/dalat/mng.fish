@@ -20,6 +20,8 @@ switch "$argv[1]"
         build-libalat
     case gen
         gen-ffi
+    case gen-json
+        gen-json
     case make
         build-libalat
         gen-ffi
