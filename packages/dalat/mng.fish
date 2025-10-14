@@ -1,9 +1,10 @@
 #!/usr/bin/fish
+
 function build-libalat
     echo "Building libalat"
-    cd ../../pkg/libalat
-    # Call the libalat build script with the output DIRECTORY
+    cd ../../lib/libalat
     ./mng.fish build ../../packages/dalat/src
+    cd ../../packages/dalat/
 end
 function gen-ffi
     echo "Generating ffi bindings for dalat"
@@ -21,7 +22,6 @@ switch "$argv[1]"
         gen-ffi
     case make
         build-libalat
-        cd ../../packages/dalat/
         gen-ffi
         gen-json
     case "*"

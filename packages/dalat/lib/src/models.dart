@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:json_annotation/json_annotation.dart';
 
 part 'models.g.dart';
@@ -36,11 +38,14 @@ class AppSettings {
   String deviceName;
   @JsonKey(name: 'deviceColor')
   DeviceColor deviceColor;
+  @JsonKey(name: 'certificate')
+  Uint8List certificate;
 
   AppSettings({
     required this.setupComplete,
     required this.deviceName,
     required this.deviceColor,
+    required this.certificate,
   });
 
   factory AppSettings.fromJson(Map<String, dynamic> json) =>
@@ -110,8 +115,29 @@ class PairedDevice {
 }
 
 @JsonSerializable()
+class DeviceInfo {
+  @JsonKey(name: 'id')
+  String id;
+  @JsonKey(name: 'name')
+  String name;
+  @JsonKey(name: 'color')
+  DeviceColor color;
+  @JsonKey(name: 'type')
+  DeviceType type;
+  DeviceInfo({
+    required this.id,
+    required this.name,
+    required this.color,
+    required this.type,
+  });
+  factory DeviceInfo.fromJson(Map<String, dynamic> json) =>
+      _$DeviceInfoFromJson(json);
+  Map<String, dynamic> toJson() => _$DeviceInfoToJson(this);
+}
+
+@JsonSerializable()
 class ConnectedDevice {
-  ConnectedDevice(); // Add fields that match the JSON output from Go
+  ConnectedDevice();
   factory ConnectedDevice.fromJson(Map<String, dynamic> json) =>
       _$ConnectedDeviceFromJson(json);
   Map<String, dynamic> toJson() => _$ConnectedDeviceToJson(this);

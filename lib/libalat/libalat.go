@@ -38,8 +38,8 @@ var (
 	instances      = make(map[int]*AlatInstance)
 	instancesMutex = &sync.Mutex{}
 	nextInstanceID = 1
-	// FIX: Race condition
-	alatError error
+	alatErrorLock  = &sync.Mutex{}
+	alatError      error
 )
 
 //export get_instances
@@ -56,6 +56,8 @@ func get_instances() *C.char {
 //export get_error
 func get_error() *C.char {
 	var message string
+	alatErrorLock.Lock()
+	defer alatErrorLock.Unlock()
 	if alatError == nil {
 		message = "Unknown error"
 	} else {
@@ -70,6 +72,8 @@ func get_error() *C.char {
 func create_instance(configPath *C.char, deviceType C.int) C.int {
 	instancesMutex.Lock()
 	defer instancesMutex.Unlock()
+	alatErrorLock.Lock()
+	defer alatErrorLock.Unlock()
 
 	goConfigPath := C.GoString(configPath)
 
@@ -126,6 +130,8 @@ func create_instance(configPath *C.char, deviceType C.int) C.int {
 
 //export start_instance
 func start_instance(handle C.int) C.int {
+	alatErrorLock.Lock()
+	defer alatErrorLock.Unlock()
 	instance := getInstance(handle)
 	if instance == nil {
 		alatError = fmt.Errorf("instance %d cannot be started since it does not exist", handle)
@@ -146,6 +152,8 @@ func stop_instance(handle C.int) {
 
 //export get_port
 func get_port(handle C.int) int {
+	alatErrorLock.Lock()
+	defer alatErrorLock.Unlock()
 	if instance := getInstance(handle); instance != nil {
 		return instance.node.GetPort()
 	} else {
@@ -177,6 +185,8 @@ func get_app_settings_json(handle C.int) *C.char {
 
 //export set_app_settings_json
 func set_app_settings_json(handle C.int, settingsJSON *C.char) C.int {
+	alatErrorLock.Lock()
+	defer alatErrorLock.Unlock()
 	instance := getInstance(handle)
 	if instance == nil {
 		return -1
@@ -213,6 +223,8 @@ func get_service_settings_json(handle C.int) *C.char {
 
 //export set_service_settings_json
 func set_service_settings_json(handle C.int, settingsJSON *C.char) C.int {
+	alatErrorLock.Lock()
+	defer alatErrorLock.Unlock()
 	instance := getInstance(handle)
 	if instance == nil {
 		alatError = fmt.Errorf("instance %d does not exist, settings cannot be saved", handle)
@@ -296,6 +308,8 @@ func getInstance(handle C.int) *AlatInstance {
 }
 
 func toJSON(v any) *C.char {
+	alatErrorLock.Lock()
+	defer alatErrorLock.Unlock()
 	bytes, alatError := json.Marshal(v)
 	if alatError != nil {
 		return nil

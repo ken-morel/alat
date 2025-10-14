@@ -12,6 +12,7 @@ class SetupDevice extends StatefulWidget {
 
 class _SetupDeviceState extends State<SetupDevice> {
   final TextEditingController nameController = TextEditingController();
+  late Future<List<dalat.DeviceColor>> _colorsFuture;
   dalat.DeviceColor color = dalat.DeviceColor(
     name: "blue",
     hex: "#0000FF",
@@ -21,11 +22,12 @@ class _SetupDeviceState extends State<SetupDevice> {
   );
   @override
   void initState() {
+    super.initState();
+    _colorsFuture = widget.setupState.appState.node!.getAlatColors();
     color = widget.setupState.appState.settings?.deviceColor ?? color;
     nameController.text =
         widget.setupState.appState.settings?.deviceName ??
         AppLocalizations.of(context)!.nameMe;
-    super.initState();
   }
 
   @override
@@ -49,59 +51,69 @@ class _SetupDeviceState extends State<SetupDevice> {
   }
 
   Widget _buildColorSelect(BuildContext context) {
-    return FutureBuilder(
-      future: Future.delayed(
-        Duration(milliseconds: 500),
-        () => widget.setupState.appState.node!.getAlatColors(),
-      ),
+    return FutureBuilder<List<dalat.DeviceColor>>(
+      future: _colorsFuture,
       builder: (context, snapshot) {
-        List<dalat.DeviceColor>? colors;
-        if (snapshot.hasData) {
-          colors = snapshot.data!;
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
         }
-        const cols = [0, 1, 2, 3, 4];
-        const rows = [0, 1, 2, 3];
-        return Column(
-          children: rows
-              .map(
-                (rowid) => Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: cols.map((colid) {
-                    dalat.DeviceColor tileColor = colors == null
-                        ? color
-                        : colors[colid + rowid * cols.length];
-                    return Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadiusGeometry.circular(50),
-                        color: color.name == tileColor.name
-                            ? Theme.of(context).colorScheme.primary
-                            : null,
-                      ),
-                      child: Padding(
-                        padding: EdgeInsetsGeometry.all(5),
-                        child: FilledButton(
-                          onPressed: () {
-                            setState(() {
-                              color = tileColor;
-                            });
-                            _save();
-                          },
-                          style: FilledButton.styleFrom(
-                            backgroundColor: Color.fromRGBO(
-                              tileColor.r,
-                              tileColor.g,
-                              tileColor.b,
-                              1,
-                            ),
-                          ),
-                          child: const SizedBox(width: 0, height: 55),
-                        ),
-                      ),
-                    );
-                  }).toList(),
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No colors available.'));
+        }
+
+        final colors = snapshot.data!;
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 5,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+          ),
+          itemCount: colors.length,
+          itemBuilder: (context, index) {
+            final tileColor = colors[index];
+            final isSelected = color.name == tileColor.name;
+            final tileColorRgb =
+                Color.fromRGBO(tileColor.r, tileColor.g, tileColor.b, 1);
+            final iconColor =
+                ThemeData.estimateBrightnessForColor(tileColorRgb) ==
+                        Brightness.dark
+                    ? Colors.white
+                    : Colors.black;
+
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  color = tileColor;
+                });
+                _save();
+              },
+              child: Container(
+                width: 65,
+                height: 65,
+                decoration: BoxDecoration(
+                  color: tileColorRgb,
+                  shape: BoxShape.circle,
+                  border: isSelected
+                      ? Border.all(
+                          color: Theme.of(context).colorScheme.primary,
+                          width: 4,
+                        )
+                      : null,
                 ),
-              )
-              .toList(),
+                child: isSelected
+                    ? Icon(
+                        Icons.check,
+                        color: iconColor,
+                      )
+                    : null,
+              ),
+            );
+          },
         );
       },
     );

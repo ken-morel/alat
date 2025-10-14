@@ -44,8 +44,8 @@ switch "$argv[1]"
         cd packages/dalat
         fish mng.fish $argv[2..]
     case libalat
-        cd pkg/libalat
-        fish mng.fish $argv[2...]
+        cd lib/libalat
+        fish mng.fish $argv[2..]
     case server
         cd apps/server
         fish mng.fish $argv[2..]

@@ -7,4 +7,5 @@ require (
 	gopkg.in/yaml.v3 v3.0.1
 )
 
-replace alat/pkg/core => ../core
+replace alat/pkg/core => ../../pkg/core
+

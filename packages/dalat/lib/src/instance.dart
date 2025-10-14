@@ -26,8 +26,10 @@ class AlatInstance {
     );
     malloc.free(configPathC);
 
-    if (handle == 0) {
-      throw Exception('Failed to create AlatInstance in the Go core.');
+    if (handle <= 0) {
+      throw Exception(
+        'Failed to create AlatInstance in the Go core.${AlatInstance.getAlatError()}',
+      );
     }
     return AlatInstance._(handle);
   }
@@ -35,6 +37,7 @@ class AlatInstance {
   factory AlatInstance.get(int handle) {
     final instances = AlatInstance.getInstances();
     if (instances.contains(handle)) {
+      print("Getting instance from handle");
       return AlatInstance._(handle);
     } else {
       throw ("Instance $handle does not exist. in AlatInstance.get");
@@ -48,8 +51,7 @@ class AlatInstance {
     }
     try {
       final jsonStr = ptr.cast<Utf8>().toDartString();
-      final List<dynamic> decoded = jsonDecode(jsonStr);
-      return decoded.map((item) => int.parse(item)).toList();
+      return (jsonDecode(jsonStr) as List).map((k) => k as int).toList();
     } finally {
       bindings.free_string(ptr.cast());
     }
@@ -70,6 +72,15 @@ class AlatInstance {
         bindings.free_string(msgPointer);
       }
     }
+  }
+
+  static String getAlatError() {
+    final msgPointer = bindings.get_error();
+    final error = msgPointer == nullptr
+        ? "Unknown error"
+        : msgPointer.cast<Utf8>().toDartString();
+    bindings.free_string(msgPointer);
+    return error;
   }
 
   void stop() {
@@ -152,7 +163,7 @@ class AlatInstance {
     final ptr = ffiFunc(_handle);
     if (ptr == nullptr) {
       throw Exception(
-        'Failed to get data from Go core: function returned null pointer.',
+        'Failed to get data from Go core: function returned null pointer. ${getAlatError()}',
       );
     }
     try {
@@ -192,7 +203,9 @@ class AlatInstance {
     try {
       final result = ffiFunc(_handle, jsonStrC.cast());
       if (result != 0) {
-        throw Exception('Failed to set data in Go core. Code: $result');
+        throw Exception(
+          'Failed to set data in Go core. Code: $result ${getAlatError()}',
+        );
       }
     } finally {
       malloc.free(jsonStrC);

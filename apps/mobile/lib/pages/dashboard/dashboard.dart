@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:alat/components/alatstatus.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -8,15 +10,11 @@ class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
   @override
   Widget build(BuildContext context) {
+    log("Displaing dashboard");
     return Scaffold(
       drawer: Drawer(
         child: ListView(
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(color: Colors.blue),
-              child: AlatStatusWidget(node: context.read<AppState>().node!),
-            ),
-          ],
+          children: [AlatStatusWidget(node: context.read<AppState>().node!)],
         ),
       ),
       appBar: AppBar(

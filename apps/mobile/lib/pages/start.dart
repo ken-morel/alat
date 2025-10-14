@@ -14,11 +14,13 @@ class StartPage extends StatelessWidget {
           future: context.read<AppState>().initialize(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              if (snapshot.data!) {
-                Navigator.of(context).pushReplacementNamed("/dashboard");
-              } else {
-                Navigator.of(context).pushReplacementNamed("/setup");
-              }
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (snapshot.data!) {
+                  Navigator.of(context).pushReplacementNamed("/dashboard");
+                } else {
+                  Navigator.of(context).pushReplacementNamed("/setup");
+                }
+              });
               return Container();
             } else if (snapshot.connectionState == ConnectionState.waiting) {
               return Column(
@@ -47,7 +49,7 @@ class StartPage extends StatelessWidget {
                       AppLocalizations.of(
                         context,
                       )!.errorInitializingAlatCoreError(
-                        snapshot.error.toString(),
+                        snapshot.hasError ? snapshot.error.toString() : "...",
                       ),
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),

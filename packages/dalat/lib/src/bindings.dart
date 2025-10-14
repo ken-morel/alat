@@ -3,20 +3,13 @@ import 'dart:io';
 
 import '../libalat.dart';
 
-// This file is an internal implementation detail of the plugin.
-//
-// It handles loading the dynamic library and creating the FFI bindings
-// so that the high-level API classes can use them.
-
-const String _libName = 'alat';
-
 final DynamicLibrary _dylib = () {
   if (Platform.isMacOS || Platform.isIOS) {
-    return DynamicLibrary.open('lib$_libName.dylib');
+    return DynamicLibrary.open('libalat.dylib');
   } else if (Platform.isAndroid || Platform.isLinux) {
-    return DynamicLibrary.open('lib$_libName.so');
+    return DynamicLibrary.open('libalat.so');
   } else if (Platform.isWindows) {
-    return DynamicLibrary.open('$_libName.dll');
+    return DynamicLibrary.open('alat.dll');
   } else {
     throw UnsupportedError('Unknown platform: ${Platform.operatingSystem}');
   }

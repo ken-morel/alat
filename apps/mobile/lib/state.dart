@@ -15,18 +15,27 @@ class AppState extends ChangeNotifier {
 
   bool get isReady => _alatInstance != null && _appSettings != null;
 
+  static Future<Directory> getAlatDir() async {
+    try {
+      return await getLibraryDirectory();
+    } catch (e) {
+      return await getApplicationSupportDirectory();
+    }
+  }
+
   Future<bool> initialize() async {
+    print("App state initializing");
     final instances = dalat.AlatInstance.getInstances();
+    print("There are $instances running instances");
     if (instances.isEmpty) {
-      final dir = await getApplicationDocumentsDirectory();
-      final configPath = dir.path;
-      final configDir = Directory(configPath);
+      final configDir = await AppState.getAlatDir();
+      print("Creating alat instance for ${configDir.path}");
       if (!await configDir.exists()) {
         await configDir.create(recursive: true);
       }
 
       _alatInstance = dalat.AlatInstance.create(
-        configPath: configPath,
+        configPath: configDir.path,
         deviceType: dalat.DeviceType.mobile,
       );
     } else {
@@ -35,7 +44,6 @@ class AppState extends ChangeNotifier {
 
     _appSettings = await _alatInstance!.getAppSettings();
     if (_appSettings!.setupComplete) _alatInstance!.start();
-
     _serviceSettings = await _alatInstance!.getServiceSettings();
     _setupServices();
 
@@ -52,11 +60,12 @@ class AppState extends ChangeNotifier {
   }
 
   Future<void> completeSetup() async {
-    if (_alatInstance == null) return;
-    if (_appSettings == null) return;
+    if (_alatInstance == null || _appSettings == null) {
+      throw "Cannot complete setup, setings or instance not set";
+    }
     _appSettings!.setupComplete = true;
     await _alatInstance!.setAppSettings(_appSettings!);
-    if (!_appSettings!.setupComplete) _alatInstance!.start();
+    _alatInstance!.start();
     notifyListeners();
   }
 

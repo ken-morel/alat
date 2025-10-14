@@ -16,7 +16,7 @@ type AppSettings struct {
 	SetupComplete bool                 `yaml:"setupComplete"         json:"setupComplete"`
 	DeviceName    string               `yaml:"deviceName"            json:"deviceName"`
 	DeviceColor   color.Color          `yaml:"deviceColor"           json:"deviceColor"`
-	Certificate   security.Certificate `yaml:"certificate,omitempty" json:"certificate,omitempty"`
+	Certificate   security.Certificate `yaml:"certificate"           json:"certificate"`
 }
 
 type SysInfoSettings struct {
@@ -49,13 +49,10 @@ func LoadAppSettings(filePath string) (*AppSettings, error) {
 
 	data, err := os.ReadFile(filePath)
 	if err != nil {
-		if os.IsNotExist(err) {
-			if err := SaveAppSettings(defaults, filePath); err != nil {
-				return nil, err
-			}
-			return defaults, nil
+		if err := SaveAppSettings(defaults, filePath); err != nil {
+			return nil, err
 		}
-		return nil, err
+		return defaults, nil
 	}
 
 	var settings AppSettings
