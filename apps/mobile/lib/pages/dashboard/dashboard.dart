@@ -4,6 +4,10 @@ import 'package:alat/l10n/app_localizations.dart';
 
 class DashboardPage extends DashboardBase {
   const DashboardPage({super.key});
+  @override
+  AppBar buildAppBar(BuildContext context) {
+    return AppBar(title: Text(AppLocalizations.of(context)!.dashboard));
+  }
 
   @override
   Widget buildContent(BuildContext context) {
@@ -19,7 +23,9 @@ class DashboardPage extends DashboardBase {
         _ConnectedDevicesList(),
         SizedBox(height: 50),
         FilledButton.tonal(
-          onPressed: () {},
+          onPressed: () =>
+              Navigator.of(context).pushReplacementNamed("/dashboard/pair"),
+
           child: Text("Connect a new device"),
         ),
       ],

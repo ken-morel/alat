@@ -11,10 +11,32 @@ class DashboardBase extends StatelessWidget {
     return const Text("Nothing here");
   }
 
-  Widget _buildLink(BuildContext context, String label, String name) {
-    return TextButton(
-      onPressed: () => Navigator.of(context).pushReplacementNamed(name),
-      child: Text(label),
+  AppBar buildAppBar(BuildContext context) {
+    return AppBar();
+  }
+
+  Widget _buildDrawerItem(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required String routeName,
+  }) {
+    final currentRoute = ModalRoute.of(context)?.settings.name;
+    final isSelected = currentRoute == routeName;
+
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(label),
+      selected: isSelected,
+      selectedTileColor: Theme.of(context).colorScheme.primary.withAlpha(25),
+      onTap: () {
+        // Close the drawer
+        Navigator.of(context).pop();
+        // Navigate if not already on the page
+        if (!isSelected) {
+          Navigator.of(context).pushReplacementNamed(routeName);
+        }
+      },
     );
   }
 
@@ -23,26 +45,32 @@ class DashboardBase extends StatelessWidget {
     return Scaffold(
       drawer: Drawer(
         child: ListView(
+          padding: EdgeInsets.zero,
           children: [
-            AlatStatusWidget(node: context.read<AppState>().node!),
-            Divider(),
-            _buildLink(context, "Dashboard", "/dashboard"),
-            Divider(),
-            _buildLink(context, "Connect a device", "/dashboard/pair"),
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primaryContainer,
+              ),
+              margin: EdgeInsets.zero,
+              child: AlatStatusWidget(node: context.read<AppState>().node!),
+            ),
+            _buildDrawerItem(
+              context,
+              icon: Icons.dashboard_outlined,
+              label: AppLocalizations.of(context)!.dashboard,
+              routeName: "/dashboard",
+            ),
+            _buildDrawerItem(
+              context,
+              icon: Icons.add_circle_outline,
+              label: "Connect a device",
+              routeName: "/dashboard/pair",
+            ),
           ],
         ),
       ),
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.dashboard),
-        leading: Builder(
-          builder: (BuildContext context) => IconButton(
-            onPressed: () {
-              Scaffold.of(context).openDrawer();
-            },
-            icon: Icon(Icons.menu),
-          ),
-        ),
-      ),
+      appBar: buildAppBar(context),
+
       body: buildContent(context),
     );
   }
