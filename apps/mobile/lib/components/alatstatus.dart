@@ -37,7 +37,7 @@ class AlatStatusWidget extends StatelessWidget {
               Text("Status", style: Theme.of(context).textTheme.headlineSmall),
             ],
           ),
-          Divider(),
+          SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

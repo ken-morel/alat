@@ -1,3 +1,4 @@
+import 'package:alat/pages/dashboard/pair.dart';
 import 'package:flutter/material.dart';
 import 'package:alat/pages/dashboard/dashboard.dart';
 import 'package:alat/pages/setup/setup.dart';
@@ -19,6 +20,7 @@ class AlatApplication extends StatelessWidget {
       home: const StartPage(),
       routes: {
         '/dashboard': (context) => const DashboardPage(),
+        '/dashboard/pair': (context) => const PairDevicePage(),
         '/setup': (context) => SetupAssistantPageView(),
       },
     );
