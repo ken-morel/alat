@@ -41,7 +41,6 @@ func CreateNode(store storage.NodeStorage) (*Node, error) {
 	if err != nil {
 		return nil, fmt.Errorf("Error creating pair manager: %v", err)
 	}
-
 	discoveryManager, err := discovery.NewManager()
 	if err != nil {
 		return nil, fmt.Errorf("Error creating discovery manager: %v", err)

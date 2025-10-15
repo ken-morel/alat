@@ -169,17 +169,23 @@ class AlatInstance {
     Pointer<Char> Function(int) ffiFunc,
     T Function(Map<String, dynamic>) fromJson,
   ) async {
+    print("[dalat] Calling alat function getter");
     final ptr = ffiFunc(_handle);
+    print("[dalat] Called ffi func");
     if (ptr == nullptr) {
+      print("Got nullptr");
       throw Exception(
         'Failed to get data from Go core: function returned null pointer. ${getAlatError()}',
       );
     }
     try {
       final jsonStr = ptr.cast<Utf8>().toDartString();
+      print("Got data, returning from json $jsonStr");
       return fromJson(jsonDecode(jsonStr));
     } finally {
+      print("Freeing pointer");
       bindings.free_string(ptr.cast());
+      print("Freed pointer");
     }
   }
 

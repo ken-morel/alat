@@ -64,7 +64,6 @@ func create_instance(configPathC *C.char, appConfigC *C.char, serviceConfigC *C.
 		alatError = fmt.Errorf("Error creating node: %v", err)
 		return -3
 	}
-
 	instance := &AlatInstance{
 		node: node,
 	}

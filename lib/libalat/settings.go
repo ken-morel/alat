@@ -11,17 +11,24 @@ import (
 
 //export get_app_config_json
 func get_app_config_json(handle C.int) *C.char {
+	fmt.Println("Locking alaterror lock")
 	alatErrorLock.Lock()
 	defer alatErrorLock.Unlock()
+	fmt.Println("Getting instance")
 	instance := getInstance(handle)
 	if instance == nil {
+		fmt.Println("Instance is nil")
+		alatError = fmt.Errorf("Instance %d does not exist", handle)
 		return nil
 	}
 	config, err := instance.node.GetAppConfig()
+	fmt.Println("Getting app config")
 	if err != nil {
 		alatError = err
+		fmt.Println("Got alat error")
 		return nil
 	}
+	fmt.Println("Returning app config json")
 	return toJSON(config)
 }
 

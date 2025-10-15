@@ -56,27 +56,20 @@ class AppState extends ChangeNotifier {
       if (!await configDir.exists()) {
         await configDir.create(recursive: true);
       }
-
       _alatInstance = await AppState.createInstance(configDir.path);
     } else {
       _alatInstance = dalat.AlatInstance.get(instances[0]);
     }
 
     _appSettings = await _alatInstance!.getAppConfig();
-    if (_appSettings!.setupComplete) _alatInstance!.start();
+    if (_appSettings!.setupComplete) {
+      _alatInstance!.start();
+    }
     _serviceSettings = await _alatInstance!.getServiceConfig();
-    _setupServices();
 
     // Notify listeners that initialization is complete.
     notifyListeners();
     return _appSettings!.setupComplete;
-  }
-
-  Future<void> _setupServices() async {
-    final downloadsDir = await getDownloadsDirectory();
-    if (downloadsDir != null) {
-      _serviceSettings?.fileSend.saveFolder = downloadsDir.path;
-    }
   }
 
   Future<void> completeSetup() async {
