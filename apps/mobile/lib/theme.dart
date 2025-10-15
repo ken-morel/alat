@@ -43,7 +43,7 @@ ThemeData createLightTheme() {
     inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       filled: true,
-      fillColor: colorScheme.surfaceVariant.withOpacity(0.5),
+      fillColor: colorScheme.surfaceContainer.withAlpha(128),
     ),
     dialogTheme: DialogThemeData(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -81,11 +81,10 @@ ThemeData createDarkTheme() {
     inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       filled: true,
-      fillColor: colorScheme.surfaceVariant.withOpacity(0.5),
+      fillColor: colorScheme.surfaceContainer.withAlpha(128),
     ),
     dialogTheme: DialogThemeData(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),
   );
 }
-

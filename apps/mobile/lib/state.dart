@@ -24,12 +24,9 @@ class AppState extends ChangeNotifier {
   }
 
   Future<bool> initialize() async {
-    print("App state initializing");
     final instances = dalat.AlatInstance.getInstances();
-    print("There are $instances running instances");
     if (instances.isEmpty) {
       final configDir = await AppState.getAlatDir();
-      print("Creating alat instance for ${configDir.path}");
       if (!await configDir.exists()) {
         await configDir.create(recursive: true);
       }

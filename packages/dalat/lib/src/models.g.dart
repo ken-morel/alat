@@ -23,57 +23,59 @@ Map<String, dynamic> _$DeviceColorToJson(DeviceColor instance) =>
       'b': instance.b,
     };
 
-AppSettings _$AppSettingsFromJson(Map<String, dynamic> json) => AppSettings(
+AppConfig _$AppConfigFromJson(Map<String, dynamic> json) => AppConfig(
   setupComplete: json['setupComplete'] as bool,
   deviceName: json['deviceName'] as String,
   deviceColor: DeviceColor.fromJson(
     json['deviceColor'] as Map<String, dynamic>,
   ),
   certificate: const Uint8ListConverter().fromJson(json['certificate'] as List),
+  deviceType: json['deviceType'] as String,
 );
 
-Map<String, dynamic> _$AppSettingsToJson(AppSettings instance) =>
-    <String, dynamic>{
-      'setupComplete': instance.setupComplete,
-      'deviceName': instance.deviceName,
-      'deviceColor': instance.deviceColor,
-      'certificate': const Uint8ListConverter().toJson(instance.certificate),
-    };
+Map<String, dynamic> _$AppConfigToJson(AppConfig instance) => <String, dynamic>{
+  'setupComplete': instance.setupComplete,
+  'deviceName': instance.deviceName,
+  'deviceColor': instance.deviceColor,
+  'certificate': const Uint8ListConverter().toJson(instance.certificate),
+  'deviceType': instance.deviceType,
+};
 
-SysInfoSettings _$SysInfoSettingsFromJson(Map<String, dynamic> json) =>
-    SysInfoSettings(
+SysInfoConfig _$SysInfoConfigFromJson(Map<String, dynamic> json) =>
+    SysInfoConfig(
       enabled: json['enabled'] as bool,
       cacheSeconds: (json['cacheSeconds'] as num).toInt(),
     );
 
-Map<String, dynamic> _$SysInfoSettingsToJson(SysInfoSettings instance) =>
+Map<String, dynamic> _$SysInfoConfigToJson(SysInfoConfig instance) =>
     <String, dynamic>{
       'enabled': instance.enabled,
       'cacheSeconds': instance.cacheSeconds,
     };
 
-FileSendSettings _$FileSendSettingsFromJson(Map<String, dynamic> json) =>
-    FileSendSettings(
+FileSendConfig _$FileSendConfigFromJson(Map<String, dynamic> json) =>
+    FileSendConfig(
       enabled: json['enabled'] as bool,
       maxSize: (json['maxSize'] as num).toInt(),
       saveFolder: json['saveFolder'] as String,
     );
 
-Map<String, dynamic> _$FileSendSettingsToJson(FileSendSettings instance) =>
+Map<String, dynamic> _$FileSendConfigToJson(FileSendConfig instance) =>
     <String, dynamic>{
       'enabled': instance.enabled,
       'maxSize': instance.maxSize,
       'saveFolder': instance.saveFolder,
     };
 
-ServiceSettings _$ServiceSettingsFromJson(
-  Map<String, dynamic> json,
-) => ServiceSettings(
-  sysInfo: SysInfoSettings.fromJson(json['sysinfo'] as Map<String, dynamic>),
-  fileSend: FileSendSettings.fromJson(json['filesend'] as Map<String, dynamic>),
-);
+ServiceConfig _$ServiceConfigFromJson(Map<String, dynamic> json) =>
+    ServiceConfig(
+      sysInfo: SysInfoConfig.fromJson(json['sysinfo'] as Map<String, dynamic>),
+      fileSend: FileSendConfig.fromJson(
+        json['filesend'] as Map<String, dynamic>,
+      ),
+    );
 
-Map<String, dynamic> _$ServiceSettingsToJson(ServiceSettings instance) =>
+Map<String, dynamic> _$ServiceConfigToJson(ServiceConfig instance) =>
     <String, dynamic>{
       'sysinfo': instance.sysInfo,
       'filesend': instance.fileSend,
