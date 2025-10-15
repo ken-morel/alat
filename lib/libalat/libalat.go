@@ -69,7 +69,7 @@ func get_error() *C.char {
 // --- Lifecycle --- //
 
 //export create_instance
-func create_instance(configPath *C.char, deviceType C.int) C.int {
+func create_instance(configPath *C.char, deviceType *C.int) C.int {
 	instancesMutex.Lock()
 	defer instancesMutex.Unlock()
 	alatErrorLock.Lock()

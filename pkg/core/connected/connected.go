@@ -50,6 +50,6 @@ func (m *Manager) RefreshConnections() error {
 	}
 	clear(m.devices)
 	m.devices = connected
-	fmt.Printf("There are %d connected devices In %d found devices, and %d paired\n", len(connected), len(m.discoverer.GetFoundDevices()), len(m.pairManager.GetPairedDevices()))
+	// fmt.Printf("There are %d connected devices In %d found devices, and %d paired\n", len(connected), len(m.discoverer.GetFoundDevices()), len(m.pairManager.GetPairedDevices()))
 	return nil
 }

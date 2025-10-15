@@ -33,6 +33,26 @@ const (
 	UnspecifiedDevice DeviceType = "unspecified"
 )
 
+func DeviceTypeFromString(t string) DeviceType {
+	switch t {
+	case string(MobileDevice):
+		return MobileDevice
+	case string(DesktopDevice):
+		return DesktopDevice
+	case string(TVDevice):
+		return TVDevice
+	case string(WebDevice):
+		return WebDevice
+	case string(ArduinoDevice):
+		return ArduinoDevice
+	default:
+		return UnspecifiedDevice
+	}
+}
+func (t DeviceType) ToString() string {
+	return string(t)
+}
+
 func (t DeviceType) ToPBUF() pbuf.DeviceType {
 	switch t {
 	case MobileDevice:
