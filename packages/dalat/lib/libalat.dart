@@ -1656,6 +1656,81 @@ class AlatBindings {
   late final _getloadavg = _getloadavgPtr
       .asFunction<int Function(ffi.Pointer<ffi.Double>, int)>();
 
+  void call_async_callback_bridge(
+    async_pair_request_callback cb,
+    int handle,
+    ffi.Pointer<ffi.Char> request_id,
+    ffi.Pointer<ffi.Char> token,
+    ffi.Pointer<ffi.Char> details,
+  ) {
+    return _call_async_callback_bridge(cb, handle, request_id, token, details);
+  }
+
+  late final _call_async_callback_bridgePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            async_pair_request_callback,
+            ffi.Int,
+            ffi.Pointer<ffi.Char>,
+            ffi.Pointer<ffi.Char>,
+            ffi.Pointer<ffi.Char>,
+          )
+        >
+      >('call_async_callback_bridge');
+  late final _call_async_callback_bridge = _call_async_callback_bridgePtr
+      .asFunction<
+        void Function(
+          async_pair_request_callback,
+          int,
+          ffi.Pointer<ffi.Char>,
+          ffi.Pointer<ffi.Char>,
+          ffi.Pointer<ffi.Char>,
+        )
+      >();
+
+  int register_async_pair_request_callback(
+    int handle,
+    async_pair_request_callback callback,
+  ) {
+    return _register_async_pair_request_callback(handle, callback);
+  }
+
+  late final _register_async_pair_request_callbackPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Int Function(ffi.Int, async_pair_request_callback)
+        >
+      >('register_async_pair_request_callback');
+  late final _register_async_pair_request_callback =
+      _register_async_pair_request_callbackPtr
+          .asFunction<int Function(int, async_pair_request_callback)>();
+
+  int submit_pair_response(
+    int handle,
+    ffi.Pointer<ffi.Char> requestID_C,
+    bool accepted,
+    ffi.Pointer<ffi.Char> reason_C,
+  ) {
+    return _submit_pair_response(handle, requestID_C, accepted, reason_C);
+  }
+
+  late final _submit_pair_responsePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Int Function(
+            ffi.Int,
+            ffi.Pointer<ffi.Char>,
+            ffi.Bool,
+            ffi.Pointer<ffi.Char>,
+          )
+        >
+      >('submit_pair_response');
+  late final _submit_pair_response = _submit_pair_responsePtr
+      .asFunction<
+        int Function(int, ffi.Pointer<ffi.Char>, bool, ffi.Pointer<ffi.Char>)
+      >();
+
   ffi.Pointer<ffi.Char> default_app_config() {
     return _default_app_config();
   }
@@ -2209,6 +2284,22 @@ typedef __compar_fn_tFunction =
     ffi.Int Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Void>);
 typedef Dart__compar_fn_tFunction =
     int Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Void>);
+typedef async_pair_request_callback =
+    ffi.Pointer<ffi.NativeFunction<async_pair_request_callbackFunction>>;
+typedef async_pair_request_callbackFunction =
+    ffi.Void Function(
+      ffi.Int handle,
+      ffi.Pointer<ffi.Char> request_id,
+      ffi.Pointer<ffi.Char> token_json,
+      ffi.Pointer<ffi.Char> device_details_json,
+    );
+typedef Dartasync_pair_request_callbackFunction =
+    void Function(
+      int handle,
+      ffi.Pointer<ffi.Char> request_id,
+      ffi.Pointer<ffi.Char> token_json,
+      ffi.Pointer<ffi.Char> device_details_json,
+    );
 
 final class GoInterface extends ffi.Struct {
   external ffi.Pointer<ffi.Void> t;
@@ -2231,6 +2322,12 @@ typedef GoInt64 = ffi.LongLong;
 typedef DartGoInt64 = int;
 
 const int NULL = 0;
+
+const int __bool_true_false_are_defined = 1;
+
+const int true1 = 1;
+
+const int false1 = 0;
 
 const int _FEATURES_H = 1;
 
