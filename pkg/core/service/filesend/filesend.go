@@ -4,14 +4,9 @@ package filesend
 import (
 	"sync"
 
+	"alat/pkg/core/config"
 	"alat/pkg/pbuf"
 )
-
-type Config struct {
-	Enabled     bool
-	SaveFolder  string
-	FileMaxSize uint32
-}
 
 // TransferStatus defines the state of a file transfer.
 type TransferStatus string
@@ -40,7 +35,7 @@ type PeerTransferSession struct {
 
 // Service manages all file transfer sessions.
 type Service struct {
-	config        Config
+	config        config.FileSendSettings
 	ready         bool
 	sessions      map[string]*PeerTransferSession // Keyed by peer ID
 	sessionsMutex sync.RWMutex
@@ -92,11 +87,11 @@ func (s *Service) Enabled() bool {
 	return s.config.Enabled
 }
 
-func (s *Service) Configure(c Config) {
+func (s *Service) Configure(c config.FileSendSettings) {
 	s.config = c
 }
 
-func CreateService(conf Config) Service {
+func CreateService(conf config.FileSendSettings) Service {
 	return Service{
 		ready:    true,
 		config:   conf,

@@ -9,39 +9,29 @@ class ThemeSwitcher extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
 
-    return Column(
-      children: [
-        RadioListTile<ThemeMode>(
-          title: const Text('Light'),
-          value: ThemeMode.light,
-          groupValue: themeProvider.themeMode,
-          onChanged: (ThemeMode? value) {
-            if (value != null) {
-              themeProvider.setThemeMode(value);
-            }
-          },
-        ),
-        RadioListTile<ThemeMode>(
-          title: const Text('Dark'),
-          value: ThemeMode.dark,
-          groupValue: themeProvider.themeMode,
-          onChanged: (ThemeMode? value) {
-            if (value != null) {
-              themeProvider.setThemeMode(value);
-            }
-          },
-        ),
-        RadioListTile<ThemeMode>(
-          title: const Text('System'),
-          value: ThemeMode.system,
-          groupValue: themeProvider.themeMode,
-          onChanged: (ThemeMode? value) {
-            if (value != null) {
-              themeProvider.setThemeMode(value);
-            }
-          },
-        ),
-      ],
+    return RadioGroup(
+      onChanged: (ThemeMode? value) {
+        if (value != null) {
+          themeProvider.setThemeMode(value);
+        }
+      },
+      groupValue: themeProvider.themeMode,
+      child: Column(
+        children: [
+          RadioListTile<ThemeMode>(
+            title: const Text('Light'),
+            value: ThemeMode.light,
+          ),
+          RadioListTile<ThemeMode>(
+            title: const Text('Dark'),
+            value: ThemeMode.dark,
+          ),
+          RadioListTile<ThemeMode>(
+            title: const Text('System'),
+            value: ThemeMode.system,
+          ),
+        ],
+      ),
     );
   }
 }

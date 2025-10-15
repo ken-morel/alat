@@ -1,25 +1,17 @@
 package app
 
 import (
-	"time"
-
 	"alat/pkg/core/connected"
 	"alat/pkg/core/service"
-	"alat/pkg/core/service/filesend"
-	"alat/pkg/core/service/sysinfo"
+
 	"alat/pkg/pbuf"
 )
 
+//FIX: Move service configuration to service registry, when updating config, creating, init, ...
+//TODO: ^
+
 func (app *App) initServices() error {
-	app.serviceRegistery = &service.Registry{
-		SysInfo: sysinfo.CreateService(sysinfo.Config{
-			Enabled:   app.serviceSettings.SysInfo.Enabled,
-			CacheTime: time.Duration(app.serviceSettings.SysInfo.CacheSeconds) * time.Second,
-		}),
-		FileSend: filesend.CreateService(filesend.Config{
-			Enabled: app.serviceSettings.FileSend.Enabled,
-		}),
-	}
+	app.serviceRegistery = service.CreateRegistry(*app.serviceSettings)
 	return nil
 }
 

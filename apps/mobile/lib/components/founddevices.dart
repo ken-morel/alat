@@ -39,7 +39,6 @@ class _FoundDeviceListState extends State<FoundDevicesList> {
   Future<void> _fetchDevices() async {
     final devices = await _appState.node?.getFoundDevices();
     if (devices != null && mounted) {
-      print("There are ${devices.length} fond devices");
       setState(() {
         _foundDevices = devices;
       });
