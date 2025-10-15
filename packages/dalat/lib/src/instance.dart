@@ -5,7 +5,6 @@ import 'package:ffi/ffi.dart';
 
 import 'bindings.dart';
 import 'models.dart';
-import 'converters.dart';
 
 /// A high-level, platform-agnostic API for interacting with the Alat core.
 ///
@@ -18,22 +17,31 @@ class AlatInstance {
 
   static AlatInstance create({
     required String configPath,
-    required DeviceType deviceType,
+    required ServiceConfig serviceConfig,
+    required AppConfig appConfig,
   }) {
-    final configPathC = configPath.toNativeUtf8();
-    final deviceTypeC = deviceType.toNativeUtf8();
-    final handle = bindings.create_instance(
-      configPathC.cast(),
-      deviceTypeC.cast(),
-    );
-    malloc.free(configPathC);
-
-    if (handle <= 0) {
-      throw Exception(
-        'Failed to create AlatInstance in the Go core.${AlatInstance.getAlatError()}',
+    final serviceString = jsonEncode(serviceConfig);
+    final appString = jsonEncode(appConfig);
+    final serviceC = serviceString.toNativeUtf8();
+    final appC = appString.toNativeUtf8();
+    final configC = configPath.toNativeUtf8();
+    try {
+      final handle = bindings.create_instance(
+        configC.cast(),
+        appC.cast(),
+        serviceC.cast(),
       );
+      if (handle <= 0) {
+        throw Exception(
+          'Failed to create handle, got id: $handle; ${getAlatError()}',
+        );
+      }
+      return AlatInstance._(handle);
+    } finally {
+      malloc.free(serviceC);
+      malloc.free(appC);
+      malloc.free(configC);
     }
-    return AlatInstance._(handle);
   }
 
   factory AlatInstance.get(int handle) {
@@ -92,25 +100,25 @@ class AlatInstance {
     bindings.destroy_instance(_handle);
   }
 
-  Future<AppSettings> getAppSettings() async {
-    return _jsonHelper(bindings.get_app_settings_json, AppSettings.fromJson);
+  Future<AppConfig> getAppConfig() async {
+    return _jsonHelper(bindings.get_app_config_json, AppConfig.fromJson);
   }
 
-  Future<void> setAppSettings(AppSettings settings) async {
-    return _jsonSetterHelper(settings.toJson(), bindings.set_app_settings_json);
+  Future<void> setAppConfig(AppConfig settings) async {
+    return _jsonSetterHelper(settings.toJson(), bindings.set_app_config_json);
   }
 
-  Future<ServiceSettings> getServiceSettings() async {
+  Future<ServiceConfig> getServiceConfig() async {
     return _jsonHelper(
-      bindings.get_service_settings_json,
-      ServiceSettings.fromJson,
+      bindings.get_service_config_json,
+      ServiceConfig.fromJson,
     );
   }
 
-  Future<void> setServiceSettings(ServiceSettings settings) async {
+  Future<void> setServiceConfig(ServiceConfig settings) async {
     return _jsonSetterHelper(
       settings.toJson(),
-      bindings.set_service_settings_json,
+      bindings.set_service_config_json,
     );
   }
 
@@ -226,6 +234,34 @@ class AlatInstance {
     } else {
       final result = ptr.cast<Utf8>().toDartString();
       return RequestPairResponse.fromJson(jsonDecode(result));
+    }
+  }
+
+  static AppConfig createAppConfig() {
+    final ptr = bindings.default_app_config();
+    if (ptr == nullptr) {
+      throw "Could not create default app settings, backend sent invalid null response";
+    }
+    try {
+      final jsonStr = ptr.cast<Utf8>().toDartString();
+      final Map<String, dynamic> decoded = jsonDecode(jsonStr);
+      return AppConfig.fromJson(decoded);
+    } finally {
+      bindings.free_string(ptr.cast());
+    }
+  }
+
+  static ServiceConfig createServiceConfig() {
+    final ptr = bindings.default_service_config();
+    if (ptr == nullptr) {
+      throw "Could not create default service configuration, backend sent invalid null response";
+    }
+    try {
+      final jsonStr = ptr.cast<Utf8>().toDartString();
+      final Map<String, dynamic> decoded = jsonDecode(jsonStr);
+      return ServiceConfig.fromJson(decoded);
+    } finally {
+      bindings.free_string(ptr.cast());
     }
   }
 }

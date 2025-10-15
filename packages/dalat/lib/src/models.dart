@@ -33,44 +33,46 @@ class DeviceColor {
 
 @JsonSerializable()
 @Uint8ListConverter()
-class AppSettings {
+class AppConfig {
   @JsonKey(name: 'setupComplete')
   bool setupComplete;
   @JsonKey(name: 'deviceName')
   String deviceName;
   @JsonKey(name: 'deviceColor')
   DeviceColor deviceColor;
-
   @JsonKey(name: 'certificate')
   Certificate certificate;
+  @JsonKey(name: 'deviceType')
+  DeviceType deviceType;
 
-  AppSettings({
+  AppConfig({
     required this.setupComplete,
     required this.deviceName,
     required this.deviceColor,
     required this.certificate,
+    required this.deviceType,
   });
 
-  factory AppSettings.fromJson(Map<String, dynamic> json) =>
-      _$AppSettingsFromJson(json);
-  Map<String, dynamic> toJson() => _$AppSettingsToJson(this);
+  factory AppConfig.fromJson(Map<String, dynamic> json) =>
+      _$AppConfigFromJson(json);
+  Map<String, dynamic> toJson() => _$AppConfigToJson(this);
 }
 
 @JsonSerializable()
-class SysInfoSettings {
+class SysInfoConfig {
   @JsonKey(name: 'enabled')
   bool enabled;
   @JsonKey(name: 'cacheSeconds')
   int cacheSeconds;
 
-  SysInfoSettings({required this.enabled, required this.cacheSeconds});
-  factory SysInfoSettings.fromJson(Map<String, dynamic> json) =>
-      _$SysInfoSettingsFromJson(json);
-  Map<String, dynamic> toJson() => _$SysInfoSettingsToJson(this);
+  SysInfoConfig({required this.enabled, required this.cacheSeconds});
+  factory SysInfoConfig.fromJson(Map<String, dynamic> json) =>
+      _$SysInfoConfigFromJson(json);
+  Map<String, dynamic> toJson() => _$SysInfoConfigToJson(this);
 }
 
 @JsonSerializable()
-class FileSendSettings {
+class FileSendConfig {
   @JsonKey(name: 'enabled')
   bool enabled;
   @JsonKey(name: 'maxSize')
@@ -78,27 +80,27 @@ class FileSendSettings {
   @JsonKey(name: 'saveFolder')
   String saveFolder;
 
-  FileSendSettings({
+  FileSendConfig({
     required this.enabled,
     required this.maxSize,
     required this.saveFolder,
   });
-  factory FileSendSettings.fromJson(Map<String, dynamic> json) =>
-      _$FileSendSettingsFromJson(json);
-  Map<String, dynamic> toJson() => _$FileSendSettingsToJson(this);
+  factory FileSendConfig.fromJson(Map<String, dynamic> json) =>
+      _$FileSendConfigFromJson(json);
+  Map<String, dynamic> toJson() => _$FileSendConfigToJson(this);
 }
 
 @JsonSerializable()
-class ServiceSettings {
+class ServiceConfig {
   @JsonKey(name: 'sysinfo')
-  SysInfoSettings sysInfo;
+  SysInfoConfig sysInfo;
   @JsonKey(name: 'filesend')
-  FileSendSettings fileSend;
+  FileSendConfig fileSend;
 
-  ServiceSettings({required this.sysInfo, required this.fileSend});
-  factory ServiceSettings.fromJson(Map<String, dynamic> json) =>
-      _$ServiceSettingsFromJson(json);
-  Map<String, dynamic> toJson() => _$ServiceSettingsToJson(this);
+  ServiceConfig({required this.sysInfo, required this.fileSend});
+  factory ServiceConfig.fromJson(Map<String, dynamic> json) =>
+      _$ServiceConfigFromJson(json);
+  Map<String, dynamic> toJson() => _$ServiceConfigToJson(this);
 }
 
 @JsonSerializable()

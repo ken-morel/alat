@@ -1656,6 +1656,28 @@ class AlatBindings {
   late final _getloadavg = _getloadavgPtr
       .asFunction<int Function(ffi.Pointer<ffi.Double>, int)>();
 
+  ffi.Pointer<ffi.Char> default_app_config() {
+    return _default_app_config();
+  }
+
+  late final _default_app_configPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function()>>(
+        'default_app_config',
+      );
+  late final _default_app_config = _default_app_configPtr
+      .asFunction<ffi.Pointer<ffi.Char> Function()>();
+
+  ffi.Pointer<ffi.Char> default_service_config() {
+    return _default_service_config();
+  }
+
+  late final _default_service_configPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function()>>(
+        'default_service_config',
+      );
+  late final _default_service_config = _default_service_configPtr
+      .asFunction<ffi.Pointer<ffi.Char> Function()>();
+
   ffi.Pointer<ffi.Char> get_error() {
     return _get_error();
   }

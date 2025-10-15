@@ -23,6 +23,7 @@ extern const char *_GoStringPtr(_GoString_ s);
 
 
 
+
 #line 4 "libalat.go"
 
 #include <stdlib.h>
@@ -91,6 +92,8 @@ typedef struct { void *data; GoInt len; GoInt cap; } GoSlice;
 extern "C" {
 #endif
 
+extern char* default_app_config(void);
+extern char* default_service_config(void);
 extern char* get_error(void);
 extern char* get_instances(void);
 extern int create_instance(char* configPathC, char* appConfigC, char* serviceConfigC);
