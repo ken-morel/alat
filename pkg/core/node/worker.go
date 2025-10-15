@@ -31,7 +31,7 @@ func (n *Node) worker() {
 			if !shouldRun {
 				break
 			} else {
-				n.Connected.RefreshConnections()
+				n.connected.RefreshConnections()
 			}
 		}
 	}

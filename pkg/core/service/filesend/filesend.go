@@ -35,7 +35,7 @@ type PeerTransferSession struct {
 
 // Service manages all file transfer sessions.
 type Service struct {
-	config        config.FileSendSettings
+	config        config.FileSendConfig
 	ready         bool
 	sessions      map[string]*PeerTransferSession // Keyed by peer ID
 	sessionsMutex sync.RWMutex
@@ -87,11 +87,11 @@ func (s *Service) Enabled() bool {
 	return s.config.Enabled
 }
 
-func (s *Service) Configure(c config.FileSendSettings) {
+func (s *Service) Configure(c config.FileSendConfig) {
 	s.config = c
 }
 
-func CreateService(conf config.FileSendSettings) Service {
+func CreateService(conf config.FileSendConfig) Service {
 	return Service{
 		ready:    true,
 		config:   conf,

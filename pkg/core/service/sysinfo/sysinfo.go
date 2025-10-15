@@ -9,7 +9,7 @@ import (
 )
 
 type Service struct {
-	config   config.SysInfoSettings
+	config   config.SysInfoConfig
 	ready    bool
 	cache    *pbuf.SysInfo
 	cacheAge time.Time
@@ -35,11 +35,11 @@ func (s *Service) Get() (*pbuf.SysInfo, error) {
 	return s.cache, nil
 }
 
-func (s *Service) Configure(c config.SysInfoSettings) {
+func (s *Service) Configure(c config.SysInfoConfig) {
 	s.config = c
 }
 
-func CreateService(conf config.SysInfoSettings) Service {
+func CreateService(conf config.SysInfoConfig) Service {
 	return Service{
 		cacheAge: time.Now(),
 		cache:    nil,

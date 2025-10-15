@@ -11,7 +11,7 @@ type YAMLNodeStorage struct {
 	path string
 }
 
-func (ns *YAMLNodeStorage) GetPaired() ([]device.PairedDevice, error) {
+func (ns *YAMLNodeStorage) GetPairedDevices() ([]device.PairedDevice, error) {
 	data, err := os.ReadFile(ns.path)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -28,8 +28,8 @@ func (ns *YAMLNodeStorage) GetPaired() ([]device.PairedDevice, error) {
 	return devices, nil
 }
 
-func (ns *YAMLNodeStorage) AddPaired(newDevice device.PairedDevice) error {
-	devices, err := ns.GetPaired()
+func (ns *YAMLNodeStorage) AddPairedDevice(newDevice device.PairedDevice) error {
+	devices, err := ns.GetPairedDevices()
 	if err != nil {
 		return err
 	}

@@ -13,41 +13,55 @@ import (
 
 type Node struct {
 	workerState workerState
-	Storage     storage.NodeStorage
-	PairManager *pair.PairManager
+	storage     storage.NodeStorage
+	pairManager *pair.PairManager
 	discovery   *discovery.Manager
-	device      *device.Details
 	services    *service.Registry
 	server      *server.Server
-	Connected   *connected.Manager
+	connected   *connected.Manager
 }
 
-func NewNode(registry *service.Registry, store storage.NodeStorage, details *device.Details, manager *pair.PairManager) (*Node, error) {
-	server := server.NewServer(registry, manager)
+func CreateNode(store storage.NodeStorage, deviceType device.DeviceType) (*Node, error) {
+	serviceConfig, err := store.GetServiceConfig()
+	if err != nil {
+		return nil, err
+	}
+	registry := service.CreateRegistry(serviceConfig)
+	appConfig, err := store.GetAppConfig()
+	if err != nil {
+		return nil, err
+	}
+	pairManager, err := pair.NewManager(store, &device.Details{
+		Certificate: appConfig.Certificate,
+		Color:       appConfig.DeviceColor,
+		Name:        appConfig.DeviceName,
+		Type:        deviceType,
+	})
+	if err != nil {
+		return nil, err
+	}
+
 	discoveryManager, err := discovery.NewManager()
 	if err != nil {
 		return nil, err
 	}
 
 	return &Node{
-		server:      server,
-		device:      details,
+		server:      server.NewServer(registry, pairManager),
 		services:    registry,
-		Storage:     store,
-		PairManager: manager,
+		storage:     store,
+		pairManager: pairManager,
 		discovery:   discoveryManager,
-		Connected:   connected.NewManageer(manager, discoveryManager.Discoverer),
+		connected:   connected.NewManageer(pairManager, discoveryManager.Discoverer),
 		workerState: workerState{},
 	}, nil
 }
 
-func (n *Node) GetDiscoverer() *discovery.Discoverer {
-	return n.discovery.Discoverer
-}
-
 func (n *Node) SetDetails(details *device.Details) {
-	n.device = details
-	n.PairManager.SetDetails(details)
+	n.pairManager.SetDeviceDetails(details)
+}
+func (n *Node) GetDetails() *device.Details {
+	return n.pairManager.GetDeviceDetails()
 }
 
 func (n *Node) GetPort() int {

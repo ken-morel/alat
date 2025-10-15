@@ -12,17 +12,24 @@ import (
 )
 
 type PairManager struct {
+	deviceDetails *device.Details
 	storage       storage.NodeStorage
 	pairedDevices []device.PairedDevice
-	details       *device.Details
 	onPairRequest func(*security.PairToken, *device.Details) (bool, string)
+}
+
+func (p *PairManager) GetDeviceDetails() *device.Details {
+	return p.deviceDetails
+}
+func (p *PairManager) SetDeviceDetails(d *device.Details) {
+	p.deviceDetails = d
 }
 
 func (p *PairManager) OnPairRequest(handle func(*security.PairToken, *device.Details) (bool, string)) {
 	p.onPairRequest = handle
 }
 func (p *PairManager) AddPairedDevice(dev device.PairedDevice) {
-	p.storage.AddPaired(dev)
+	p.storage.AddPairedDevice(dev)
 	p.pairedDevices = append(p.pairedDevices, dev)
 }
 
@@ -50,23 +57,15 @@ func (p *PairManager) IsTokenValid(token security.PairToken) bool {
 	return false
 }
 
-func (p *PairManager) DeviceDetails() *device.Details {
-	return p.details
-}
-
-func (p *PairManager) SetDetails(details *device.Details) {
-	p.details = details
-}
-
 func NewManager(stor storage.NodeStorage, details *device.Details) (*PairManager, error) {
-	paired, err := stor.GetPaired()
+	paired, err := stor.GetPairedDevices()
 	if err != nil {
 		return nil, err
 	}
 	return &PairManager{
 		storage:       stor,
 		pairedDevices: paired,
-		details:       details,
+		deviceDetails: details,
 	}, nil
 }
 
@@ -75,12 +74,11 @@ func (p *PairManager) GetPairedDevices() []device.PairedDevice {
 }
 
 func (p *PairManager) RequestPair(ip net.IP, port int) (*pbuf.RequestPairResponse, error) {
-
 	pairToken, err := security.GeneratePairToken()
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate pair token: %w", err)
 	}
-	response, err := client.RequestPair(ip, port, &pairToken, p.DeviceDetails())
+	response, err := client.RequestPair(ip, port, &pairToken, p.deviceDetails)
 	if response.GetAccepted() {
 		p.AddPairedDevice(device.PairedDevice{
 			Token:       security.PairToken(response.GetToken()),
