@@ -6,7 +6,8 @@ import 'package:dalat/dalat.dart' as dalat;
 import 'package:provider/provider.dart';
 
 class FoundDevicesList extends StatefulWidget {
-  const FoundDevicesList({super.key});
+  final void Function(dalat.FoundDevice) onConnectionUserRequest;
+  const FoundDevicesList({super.key, required this.onConnectionUserRequest});
 
   @override
   State<FoundDevicesList> createState() => _FoundDeviceListState();
@@ -38,6 +39,7 @@ class _FoundDeviceListState extends State<FoundDevicesList> {
   Future<void> _fetchDevices() async {
     final devices = await _appState.node?.getFoundDevices();
     if (devices != null && mounted) {
+      print("There are ${devices.length} fond devices");
       setState(() {
         _foundDevices = devices;
       });
@@ -94,6 +96,10 @@ class _FoundDeviceListState extends State<FoundDevicesList> {
                   ),
                   const Divider(),
                   ListTile(
+                    title: const Text('Color'),
+                    subtitle: Text(device.info.color.name),
+                  ),
+                  ListTile(
                     title: const Text('ID'),
                     subtitle: Text(
                       device.info.id,
@@ -119,8 +125,8 @@ class _FoundDeviceListState extends State<FoundDevicesList> {
                       const SizedBox(width: 12),
                       ElevatedButton(
                         onPressed: () {
-                          // TODO: Implement connection logic
                           Navigator.pop(context);
+                          widget.onConnectionUserRequest(device);
                         },
                         child: const Text('Connect'),
                       ),

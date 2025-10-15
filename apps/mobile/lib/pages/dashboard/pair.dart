@@ -19,7 +19,10 @@ class PairDevicePage extends DashboardBase {
             style: Theme.of(context).textTheme.headlineLarge,
           ),
         ),
-        SizedBox(height: 300, child: FoundDevicesList()),
+        SizedBox(
+          height: 300,
+          child: FoundDevicesList(onConnectionUserRequest: (device) {}),
+        ),
       ],
     );
   }

@@ -1,4 +1,5 @@
 import 'package:alat/components/alatstatus.dart';
+import 'package:alat/components/themeswitcher.dart';
 import 'package:alat/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:alat/state.dart';
@@ -66,6 +67,8 @@ class DashboardBase extends StatelessWidget {
               label: "Connect a device",
               routeName: "/dashboard/pair",
             ),
+            const Divider(),
+            const ThemeSwitcher(),
           ],
         ),
       ),
