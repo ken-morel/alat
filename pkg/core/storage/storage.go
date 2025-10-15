@@ -10,9 +10,9 @@ type NodeStorage interface {
 	GetPairedDevices() ([]device.PairedDevice, error)
 	AddPairedDevice(device.PairedDevice) error
 
-	GetAppConfig() (config.AppConfig, error)
+	GetAppConfig() (*config.AppConfig, error)
 	SetAppConfig(config.AppConfig) error
 
-	GetServiceConfig() (config.ServiceConfig, error)
+	GetServiceConfig() (*config.ServiceConfig, error)
 	SetServiceConfig(config.ServiceConfig) error
 }

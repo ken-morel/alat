@@ -1,8 +1,10 @@
 package storage
 
 import (
+	"alat/pkg/core/config"
 	"alat/pkg/core/device"
 	"os"
+	"path"
 
 	"gopkg.in/yaml.v3"
 )
@@ -48,6 +50,20 @@ func (ns *YAMLNodeStorage) AddPairedDevice(newDevice device.PairedDevice) error 
 	}
 
 	return os.WriteFile(ns.path, data, 0o644)
+}
+
+func (ns *YAMLNodeStorage) GetAppConfig(defaults config.AppConfig) (*config.AppConfig, error) {
+	return LoadAppConfig(path.Join(ns.path, "app.yml"), defaults)
+}
+func (ns *YAMLNodeStorage) SetAppConfig(conf config.AppConfig) error {
+	return SaveAppConfig(conf, path.Join(ns.path, "app.yml"))
+}
+
+func (ns *YAMLNodeStorage) GetServiceConfig(defaults config.ServiceConfig) (*config.ServiceConfig, error) {
+	return LoadServiceConfig(path.Join(ns.path, "services.yml"), defaults)
+}
+func (ns *YAMLNodeStorage) SetServiceConfig(conf config.ServiceConfig) error {
+	return SaveServiceConfig(conf, path.Join(ns.path, "services.yml"))
 }
 
 func CreateYAMLNodeStorage(path string) *YAMLNodeStorage {

@@ -7,14 +7,14 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func LoadAppConfig(filePath string, defaults *config.AppConfig) (*config.AppConfig, error) {
+func LoadAppConfig(filePath string, defaults config.AppConfig) (*config.AppConfig, error) {
 
 	data, err := os.ReadFile(filePath)
 	if err != nil {
 		if err := SaveAppConfig(defaults, filePath); err != nil {
 			return nil, err
 		}
-		return defaults, nil
+		return &defaults, nil
 	}
 
 	var settings config.AppConfig
@@ -24,7 +24,7 @@ func LoadAppConfig(filePath string, defaults *config.AppConfig) (*config.AppConf
 	return &settings, nil
 }
 
-func SaveAppConfig(settings *config.AppConfig, filePath string) error {
+func SaveAppConfig(settings config.AppConfig, filePath string) error {
 	data, err := yaml.Marshal(settings)
 	if err != nil {
 		return err
@@ -32,15 +32,14 @@ func SaveAppConfig(settings *config.AppConfig, filePath string) error {
 	return os.WriteFile(filePath, data, 0o644)
 }
 
-func LoadServiceSettings(filePath string, defaults *config.ServiceConfig) (*config.ServiceConfig, error) {
-
+func LoadServiceConfig(filePath string, defaults config.ServiceConfig) (*config.ServiceConfig, error) {
 	data, err := os.ReadFile(filePath)
 	if err != nil {
 		if os.IsNotExist(err) {
-			if err := SaveServiceSettings(defaults, filePath); err != nil {
+			if err := SaveServiceConfig(defaults, filePath); err != nil {
 				return nil, err
 			}
-			return defaults, nil
+			return &defaults, nil
 		}
 		return nil, err
 	}
@@ -52,7 +51,7 @@ func LoadServiceSettings(filePath string, defaults *config.ServiceConfig) (*conf
 	return &settings, nil
 }
 
-func SaveServiceSettings(settings *config.ServiceConfig, filePath string) error {
+func SaveServiceConfig(settings config.ServiceConfig, filePath string) error {
 	data, err := yaml.Marshal(settings)
 	if err != nil {
 		return err
