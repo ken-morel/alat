@@ -69,13 +69,14 @@ func get_error() *C.char {
 // --- Lifecycle --- //
 
 //export create_instance
-func create_instance(configPath *C.char, deviceType *C.int) C.int {
+func create_instance(configPath *C.char, deviceType *C.char) C.int {
 	instancesMutex.Lock()
 	defer instancesMutex.Unlock()
 	alatErrorLock.Lock()
 	defer alatErrorLock.Unlock()
 
 	goConfigPath := C.GoString(configPath)
+	goDeviceType := C.GoString(deviceType)
 
 	var appSettings *config.AppSettings
 	appSettings, alatError = config.LoadAppSettings(path.Join(goConfigPath, "settings.yml"))
@@ -96,7 +97,7 @@ func create_instance(configPath *C.char, deviceType *C.int) C.int {
 	details := &device.Details{
 		Color:       appSettings.DeviceColor,
 		Name:        appSettings.DeviceName,
-		Type:        device.DeviceType(deviceType),
+		Type:        device.DeviceTypeFromString(goDeviceType),
 		Certificate: appSettings.Certificate,
 	}
 
