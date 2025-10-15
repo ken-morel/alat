@@ -9,7 +9,6 @@ import (
 )
 
 func initServices(serviceSettings *config.ServiceSettings) service.Registry {
-
 	return service.Registry{
 		SysInfo: sysinfo.CreateService(sysinfo.Config{
 			Enabled:   serviceSettings.SysInfo.Enabled,

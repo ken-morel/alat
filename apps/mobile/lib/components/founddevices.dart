@@ -33,7 +33,7 @@ class _FoundDeviceListState extends State<FoundDevicesList> {
 
   void _startDeviceDiscovery() {
     _fetchDevices();
-    _timer = Timer.periodic(const Duration(seconds: 2), (_) => _fetchDevices());
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) => _fetchDevices());
   }
 
   Future<void> _fetchDevices() async {

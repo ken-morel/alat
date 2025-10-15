@@ -2,6 +2,7 @@
 package connected
 
 import (
+	"fmt"
 	"net"
 
 	"alat/pkg/core/device"

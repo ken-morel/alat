@@ -229,10 +229,10 @@ export namespace discovery {
 export namespace filesend {
 	
 	export class FileTransfersStatusTransfer {
-	    FileName: string;
-	    Percent: number;
-	    FileSize: number;
-	    Status: string;
+	    fileName: string;
+	    percent: number;
+	    fileSize: number;
+	    status: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new FileTransfersStatusTransfer(source);
@@ -240,16 +240,16 @@ export namespace filesend {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.FileName = source["FileName"];
-	        this.Percent = source["Percent"];
-	        this.FileSize = source["FileSize"];
-	        this.Status = source["Status"];
+	        this.fileName = source["fileName"];
+	        this.percent = source["percent"];
+	        this.fileSize = source["fileSize"];
+	        this.status = source["status"];
 	    }
 	}
 	export class FileTransfersStatusDevice {
-	    Device: device.Info;
-	    Transfers: FileTransfersStatusTransfer[];
-	    Percent: number;
+	    device: device.Info;
+	    transfers: FileTransfersStatusTransfer[];
+	    percent: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new FileTransfersStatusDevice(source);
@@ -257,9 +257,9 @@ export namespace filesend {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.Device = this.convertValues(source["Device"], device.Info);
-	        this.Transfers = this.convertValues(source["Transfers"], FileTransfersStatusTransfer);
-	        this.Percent = source["Percent"];
+	        this.device = this.convertValues(source["device"], device.Info);
+	        this.transfers = this.convertValues(source["transfers"], FileTransfersStatusTransfer);
+	        this.percent = source["percent"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -281,10 +281,10 @@ export namespace filesend {
 		}
 	}
 	export class FileTransfersStatus {
-	    PercentSending: number;
-	    PercentReceiving: number;
-	    Sending: FileTransfersStatusDevice[];
-	    Receiving: FileTransfersStatusDevice[];
+	    percentSending: number;
+	    percentReceiving: number;
+	    sending: FileTransfersStatusDevice[];
+	    receiving: FileTransfersStatusDevice[];
 	
 	    static createFrom(source: any = {}) {
 	        return new FileTransfersStatus(source);
@@ -292,10 +292,10 @@ export namespace filesend {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.PercentSending = source["PercentSending"];
-	        this.PercentReceiving = source["PercentReceiving"];
-	        this.Sending = this.convertValues(source["Sending"], FileTransfersStatusDevice);
-	        this.Receiving = this.convertValues(source["Receiving"], FileTransfersStatusDevice);
+	        this.percentSending = source["percentSending"];
+	        this.percentReceiving = source["percentReceiving"];
+	        this.sending = this.convertValues(source["sending"], FileTransfersStatusDevice);
+	        this.receiving = this.convertValues(source["receiving"], FileTransfersStatusDevice);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
