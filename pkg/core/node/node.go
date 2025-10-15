@@ -9,6 +9,7 @@ import (
 	"alat/pkg/core/service"
 	"alat/pkg/core/storage"
 	"alat/pkg/core/transport/server"
+	"fmt"
 )
 
 type Node struct {
@@ -24,7 +25,7 @@ type Node struct {
 func CreateNode(store storage.NodeStorage) (*Node, error) {
 	serviceConfig, err := store.GetServiceConfig()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Error geting initial service configuraiton: %v", err)
 	}
 	registry := service.CreateRegistry(serviceConfig)
 	appConfig, err := store.GetAppConfig()
@@ -38,12 +39,12 @@ func CreateNode(store storage.NodeStorage) (*Node, error) {
 		Type:        appConfig.DeviceType,
 	})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Error creating pair manager: %v", err)
 	}
 
 	discoveryManager, err := discovery.NewManager()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Error creating discovery manager: %v", err)
 	}
 
 	return &Node{

@@ -16,7 +16,7 @@ type YAMLNodeStorage struct {
 }
 
 func (ns *YAMLNodeStorage) GetPairedDevices() ([]device.PairedDevice, error) {
-	data, err := os.ReadFile(ns.path)
+	data, err := os.ReadFile(ns.PairedDevicesPath())
 	if err != nil {
 		if os.IsNotExist(err) {
 			return []device.PairedDevice{}, nil
@@ -51,13 +51,16 @@ func (ns *YAMLNodeStorage) AddPairedDevice(newDevice device.PairedDevice) error 
 		return err
 	}
 
-	return os.WriteFile(ns.path, data, 0o644)
+	return os.WriteFile(ns.PairedDevicesPath(), data, 0o644)
 }
 func (ns *YAMLNodeStorage) AppConfigPath() string {
 	return path.Join(ns.path, "app.yml")
 }
 func (ns *YAMLNodeStorage) ServiceConfigPath() string {
 	return path.Join(ns.path, "services.yml")
+}
+func (ns *YAMLNodeStorage) PairedDevicesPath() string {
+	return path.Join(ns.path, "paired.yml")
 }
 
 func (ns *YAMLNodeStorage) GetAppConfig() (*config.AppConfig, error) {
@@ -83,7 +86,6 @@ func (ns *YAMLNodeStorage) SetAppConfig(conf config.AppConfig) error {
 func (ns *YAMLNodeStorage) GetServiceConfig() (*config.ServiceConfig, error) {
 	data, err := os.ReadFile(ns.ServiceConfigPath())
 	if err != nil {
-
 		return &ns.defaultServiceConfig, nil
 	}
 

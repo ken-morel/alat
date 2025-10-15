@@ -54,15 +54,15 @@ func create_instance(configPathC *C.char, appConfigC *C.char, serviceConfigC *C.
 	err = json.Unmarshal(serviceConfigBytes, &defaultServiceConfig)
 	if err != nil {
 		alatError = err
-		return -1
+		return -2
 	}
 
 	store := storage.CreateYAMLNodeStorage(configPath, defaultAppConfig, defaultServiceConfig)
 
 	node, err := node.CreateNode(store)
 	if err != nil {
-		alatError = err
-		return -1
+		alatError = fmt.Errorf("Error creating node: %v", err)
+		return -3
 	}
 
 	instance := &AlatInstance{
