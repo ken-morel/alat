@@ -12,7 +12,9 @@ type NodeStorage interface {
 
 	GetAppConfig() (*config.AppConfig, error)
 	SetAppConfig(config.AppConfig) error
+	DefaultAppConfig(config.AppConfig)
 
 	GetServiceConfig() (*config.ServiceConfig, error)
 	SetServiceConfig(config.ServiceConfig) error
+	DefaultServiceConfig(config.ServiceConfig)
 }

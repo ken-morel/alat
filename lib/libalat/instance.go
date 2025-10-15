@@ -15,12 +15,7 @@ import (
 
 // AlatInstance holds the entire state for a running instance of the Alat core.
 type AlatInstance struct {
-	node             *node.Node
-	nodeStore        storage.NodeStorage
-	serviceRegistery *service.Registry
-	appSettings      *config.AppSettings
-	serviceSettings  *config.ServiceSettings
-	configPath       string
+	node *node.Node
 }
 
 var (
@@ -41,7 +36,7 @@ func get_instances() *C.char {
 }
 
 //export create_instance
-func create_instance(configPath *C.char, deviceType *C.char) C.int {
+func create_instance(configPath *C.char, deviceType *C.char, appConfigC *C.char, serviceConfigC *C.char) C.int {
 	instancesMutex.Lock()
 	defer instancesMutex.Unlock()
 	alatErrorLock.Lock()
