@@ -96,7 +96,7 @@ DeviceDetails _$DeviceDetailsFromJson(Map<String, dynamic> json) =>
     DeviceDetails(
       color: DeviceColor.fromJson(json['color'] as Map<String, dynamic>),
       name: json['name'] as String,
-      type: $enumDecode(_$DeviceTypeEnumMap, json['type']),
+      type: json['type'] as String,
       certificate: const Uint8ListConverter().fromJson(
         json['certificate'] as List,
       ),
@@ -106,16 +106,9 @@ Map<String, dynamic> _$DeviceDetailsToJson(DeviceDetails instance) =>
     <String, dynamic>{
       'color': instance.color,
       'name': instance.name,
-      'type': _$DeviceTypeEnumMap[instance.type]!,
+      'type': instance.type,
       'certificate': const Uint8ListConverter().toJson(instance.certificate),
     };
-
-const _$DeviceTypeEnumMap = {
-  DeviceType.unspecified: 'unspecified',
-  DeviceType.mobile: 'mobile',
-  DeviceType.desktop: 'desktop',
-  DeviceType.tv: 'tv',
-};
 
 PairedDevice _$PairedDeviceFromJson(Map<String, dynamic> json) => PairedDevice(
   certificate: const Uint8ListConverter().fromJson(json['certificate'] as List),
@@ -132,7 +125,7 @@ DeviceInfo _$DeviceInfoFromJson(Map<String, dynamic> json) => DeviceInfo(
   id: json['id'] as String,
   name: json['name'] as String,
   color: DeviceColor.fromJson(json['color'] as Map<String, dynamic>),
-  type: $enumDecode(_$DeviceTypeEnumMap, json['type']),
+  type: json['type'] as String,
 );
 
 Map<String, dynamic> _$DeviceInfoToJson(DeviceInfo instance) =>
@@ -140,7 +133,7 @@ Map<String, dynamic> _$DeviceInfoToJson(DeviceInfo instance) =>
       'id': instance.id,
       'name': instance.name,
       'color': instance.color,
-      'type': _$DeviceTypeEnumMap[instance.type]!,
+      'type': instance.type,
     };
 
 ConnectedDevice _$ConnectedDeviceFromJson(Map<String, dynamic> json) =>

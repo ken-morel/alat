@@ -44,22 +44,11 @@ class _FoundDeviceListState extends State<FoundDevicesList> {
     }
   }
 
-  String _deviceTypeToString(dalat.DeviceType type) {
-    switch (type) {
-      case dalat.DeviceType.desktop:
-        return 'Desktop';
-      case dalat.DeviceType.mobile:
-        return 'Mobile';
-      default:
-        return 'Unspecified';
-    }
-  }
-
   IconData _deviceTypeToIcon(dalat.DeviceType type) {
     switch (type) {
-      case dalat.DeviceType.desktop:
+      case "desktop":
         return Icons.desktop_windows;
-      case dalat.DeviceType.mobile:
+      case "mobile":
         return Icons.phone_iphone;
       default:
         return Icons.devices_other;
@@ -197,7 +186,7 @@ class _FoundDeviceListState extends State<FoundDevicesList> {
           child: ListTile(
             leading: CircleAvatar(backgroundColor: deviceColor),
             title: Text(device.info.name),
-            subtitle: Text(_deviceTypeToString(device.info.type)),
+            subtitle: Text(device.info.type),
             onTap: () => _showDeviceDetailsSheet(context, device),
           ),
         );

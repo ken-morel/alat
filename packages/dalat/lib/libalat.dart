@@ -1678,16 +1678,21 @@ class AlatBindings {
   late final _get_error = _get_errorPtr
       .asFunction<ffi.Pointer<ffi.Char> Function()>();
 
-  int create_instance(ffi.Pointer<ffi.Char> configPath, int deviceType) {
+  int create_instance(
+    ffi.Pointer<ffi.Char> configPath,
+    ffi.Pointer<ffi.Char> deviceType,
+  ) {
     return _create_instance(configPath, deviceType);
   }
 
   late final _create_instancePtr =
       _lookup<
-        ffi.NativeFunction<ffi.Int Function(ffi.Pointer<ffi.Char>, ffi.Int)>
+        ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>)
+        >
       >('create_instance');
   late final _create_instance = _create_instancePtr
-      .asFunction<int Function(ffi.Pointer<ffi.Char>, int)>();
+      .asFunction<int Function(ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>)>();
 
   int start_instance(int handle) {
     return _start_instance(handle);

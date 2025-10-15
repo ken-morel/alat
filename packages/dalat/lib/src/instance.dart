@@ -21,7 +21,11 @@ class AlatInstance {
     required DeviceType deviceType,
   }) {
     final configPathC = configPath.toNativeUtf8();
-    final handle = bindings.create_instance(configPathC.cast(), deviceType);
+    final deviceTypeC = deviceType.toNativeUtf8();
+    final handle = bindings.create_instance(
+      configPathC.cast(),
+      deviceTypeC.cast(),
+    );
     malloc.free(configPathC);
 
     if (handle <= 0) {

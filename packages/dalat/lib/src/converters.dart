@@ -4,6 +4,13 @@ import 'package:json_annotation/json_annotation.dart';
 
 typedef DeviceType = String;
 
+const DeviceType deviceTypeMobile = "mobile",
+    deviceTypeDesktop = "desktop",
+    deviceTypeTV = "tv",
+    deviceTypeWeb = "web",
+    deviceTypeArduino = "arduino",
+    deviceTypeUnspecified = "unspecified";
+
 typedef Certificate = Uint8List;
 typedef Ip = String;
 typedef Port = int;

@@ -36,7 +36,7 @@ class AppState extends ChangeNotifier {
 
       _alatInstance = dalat.AlatInstance.create(
         configPath: configDir.path,
-        deviceType: dalat.DeviceType.mobile,
+        deviceType: dalat.deviceTypeMobile,
       );
     } else {
       _alatInstance = dalat.AlatInstance.get(instances[0]);

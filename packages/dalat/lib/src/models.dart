@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-import 'types.dart';
 
 import 'package:json_annotation/json_annotation.dart';
 import 'converters.dart';
