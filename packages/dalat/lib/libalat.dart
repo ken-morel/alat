@@ -1679,20 +1679,31 @@ class AlatBindings {
       .asFunction<ffi.Pointer<ffi.Char> Function()>();
 
   int create_instance(
-    ffi.Pointer<ffi.Char> configPath,
-    ffi.Pointer<ffi.Char> deviceType,
+    ffi.Pointer<ffi.Char> configPathC,
+    ffi.Pointer<ffi.Char> appConfigC,
+    ffi.Pointer<ffi.Char> serviceConfigC,
   ) {
-    return _create_instance(configPath, deviceType);
+    return _create_instance(configPathC, appConfigC, serviceConfigC);
   }
 
   late final _create_instancePtr =
       _lookup<
         ffi.NativeFunction<
-          ffi.Int Function(ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>)
+          ffi.Int Function(
+            ffi.Pointer<ffi.Char>,
+            ffi.Pointer<ffi.Char>,
+            ffi.Pointer<ffi.Char>,
+          )
         >
       >('create_instance');
   late final _create_instance = _create_instancePtr
-      .asFunction<int Function(ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>)>();
+      .asFunction<
+        int Function(
+          ffi.Pointer<ffi.Char>,
+          ffi.Pointer<ffi.Char>,
+          ffi.Pointer<ffi.Char>,
+        )
+      >();
 
   int start_instance(int handle) {
     return _start_instance(handle);
@@ -1769,51 +1780,48 @@ class AlatBindings {
   late final _request_pair_found_device = _request_pair_found_devicePtr
       .asFunction<ffi.Pointer<ffi.Char> Function(int, ffi.Pointer<ffi.Char>)>();
 
-  ffi.Pointer<ffi.Char> get_app_settings_json(int handle) {
-    return _get_app_settings_json(handle);
+  ffi.Pointer<ffi.Char> get_app_config_json(int handle) {
+    return _get_app_config_json(handle);
   }
 
-  late final _get_app_settings_jsonPtr =
+  late final _get_app_config_jsonPtr =
       _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function(ffi.Int)>>(
-        'get_app_settings_json',
+        'get_app_config_json',
       );
-  late final _get_app_settings_json = _get_app_settings_jsonPtr
+  late final _get_app_config_json = _get_app_config_jsonPtr
       .asFunction<ffi.Pointer<ffi.Char> Function(int)>();
 
-  int set_app_settings_json(int handle, ffi.Pointer<ffi.Char> settingsJSON) {
-    return _set_app_settings_json(handle, settingsJSON);
+  int set_app_config_json(int handle, ffi.Pointer<ffi.Char> settingsJSON) {
+    return _set_app_config_json(handle, settingsJSON);
   }
 
-  late final _set_app_settings_jsonPtr =
+  late final _set_app_config_jsonPtr =
       _lookup<
         ffi.NativeFunction<ffi.Int Function(ffi.Int, ffi.Pointer<ffi.Char>)>
-      >('set_app_settings_json');
-  late final _set_app_settings_json = _set_app_settings_jsonPtr
+      >('set_app_config_json');
+  late final _set_app_config_json = _set_app_config_jsonPtr
       .asFunction<int Function(int, ffi.Pointer<ffi.Char>)>();
 
-  ffi.Pointer<ffi.Char> get_service_settings_json(int handle) {
-    return _get_service_settings_json(handle);
+  ffi.Pointer<ffi.Char> get_service_config_json(int handle) {
+    return _get_service_config_json(handle);
   }
 
-  late final _get_service_settings_jsonPtr =
+  late final _get_service_config_jsonPtr =
       _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function(ffi.Int)>>(
-        'get_service_settings_json',
+        'get_service_config_json',
       );
-  late final _get_service_settings_json = _get_service_settings_jsonPtr
+  late final _get_service_config_json = _get_service_config_jsonPtr
       .asFunction<ffi.Pointer<ffi.Char> Function(int)>();
 
-  int set_service_settings_json(
-    int handle,
-    ffi.Pointer<ffi.Char> settingsJSON,
-  ) {
-    return _set_service_settings_json(handle, settingsJSON);
+  int set_service_config_json(int handle, ffi.Pointer<ffi.Char> settingsJSON) {
+    return _set_service_config_json(handle, settingsJSON);
   }
 
-  late final _set_service_settings_jsonPtr =
+  late final _set_service_config_jsonPtr =
       _lookup<
         ffi.NativeFunction<ffi.Int Function(ffi.Int, ffi.Pointer<ffi.Char>)>
-      >('set_service_settings_json');
-  late final _set_service_settings_json = _set_service_settings_jsonPtr
+      >('set_service_config_json');
+  late final _set_service_config_json = _set_service_config_jsonPtr
       .asFunction<int Function(int, ffi.Pointer<ffi.Char>)>();
 
   ffi.Pointer<ffi.Char> get_found_devices_json(int handle) {

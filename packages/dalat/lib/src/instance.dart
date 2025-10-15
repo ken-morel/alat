@@ -39,10 +39,9 @@ class AlatInstance {
   factory AlatInstance.get(int handle) {
     final instances = AlatInstance.getInstances();
     if (instances.contains(handle)) {
-      print("Getting instance from handle");
       return AlatInstance._(handle);
     } else {
-      throw ("Instance $handle does not exist. in AlatInstance.get");
+      throw "Instance $handle does not exist. in AlatInstance.get";
     }
   }
 
