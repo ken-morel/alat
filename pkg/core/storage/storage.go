@@ -1,9 +1,18 @@
 // Package storage: holds persistent file storage methods
 package storage
 
-import "alat/pkg/core/device"
+import (
+	"alat/pkg/core/config"
+	"alat/pkg/core/device"
+)
 
 type NodeStorage interface {
-	GetPaired() ([]device.PairedDevice, error)
-	AddPaired(device.PairedDevice) error
+	GetPairedDevices() ([]device.PairedDevice, error)
+	AddPairedDevice(device.PairedDevice) error
+
+	GetAppConfig() (*config.AppConfig, error)
+	SetAppConfig(config.AppConfig) error
+
+	GetServiceConfig() (*config.ServiceConfig, error)
+	SetServiceConfig(config.ServiceConfig) error
 }

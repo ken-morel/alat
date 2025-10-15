@@ -6,8 +6,6 @@ import (
 )
 
 func toJSON(v any) *C.char {
-	alatErrorLock.Lock()
-	defer alatErrorLock.Unlock()
 	bytes, alatError := json.Marshal(v)
 	if alatError != nil {
 		return nil

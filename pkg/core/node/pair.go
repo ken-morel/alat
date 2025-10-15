@@ -7,10 +7,9 @@ import (
 )
 
 func (n *Node) RequestPairFoundDevice(id string) (*pbuf.RequestPairResponse, error) {
-
 	for _, found := range n.discovery.Discoverer.GetFoundDevices() {
 		if found.Info.ID == id {
-			return n.PairManager.RequestPair(found.IP, found.Port)
+			return n.pairManager.RequestPair(found.IP, found.Port)
 		}
 	}
 	return nil, fmt.Errorf("device with ID %s not found", id)

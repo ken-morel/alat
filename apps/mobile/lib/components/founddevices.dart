@@ -73,7 +73,12 @@ class _FoundDeviceListState extends State<FoundDevicesList> {
                       Icon(
                         _deviceTypeToIcon(device.info.type),
                         size: 32,
-                        color: Theme.of(context).colorScheme.primary,
+                        color: Color.fromRGBO(
+                          device.info.color.r,
+                          device.info.color.g,
+                          device.info.color.b,
+                          1,
+                        ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
