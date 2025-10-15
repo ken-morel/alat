@@ -8,6 +8,7 @@ function build -a out_dir
     echo "Building libalat.so shared library and header file in $out_dir"
     # cgo will create both libalat.so and libalat.h in the same directory
     go build -buildmode=c-shared -o "$out_dir/libalat.so" .
+    cp ./*.h "$out_dir/"
 end
 
 switch "$argv[1]"

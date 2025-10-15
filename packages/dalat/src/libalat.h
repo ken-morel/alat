@@ -21,6 +21,12 @@ extern const char *_GoStringPtr(_GoString_ s);
 /* Start of preamble from import "C" comments.  */
 
 
+#line 3 "async_pair.go"
+
+#include "async_pair.h"
+
+#line 1 "cgo-generated-wrapper"
+
 
 
 
@@ -92,6 +98,8 @@ typedef struct { void *data; GoInt len; GoInt cap; } GoSlice;
 extern "C" {
 #endif
 
+extern int register_async_pair_request_callback(int handle, async_pair_request_callback callback);
+extern int submit_pair_response(int handle, char* requestID_C, _Bool accepted, char* reason_C);
 extern char* default_app_config(void);
 extern char* default_service_config(void);
 extern char* get_error(void);
