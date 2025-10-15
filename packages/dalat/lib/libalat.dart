@@ -1656,17 +1656,6 @@ class AlatBindings {
   late final _getloadavg = _getloadavgPtr
       .asFunction<int Function(ffi.Pointer<ffi.Double>, int)>();
 
-  ffi.Pointer<ffi.Char> get_instances() {
-    return _get_instances();
-  }
-
-  late final _get_instancesPtr =
-      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function()>>(
-        'get_instances',
-      );
-  late final _get_instances = _get_instancesPtr
-      .asFunction<ffi.Pointer<ffi.Char> Function()>();
-
   ffi.Pointer<ffi.Char> get_error() {
     return _get_error();
   }
@@ -1676,6 +1665,17 @@ class AlatBindings {
         'get_error',
       );
   late final _get_error = _get_errorPtr
+      .asFunction<ffi.Pointer<ffi.Char> Function()>();
+
+  ffi.Pointer<ffi.Char> get_instances() {
+    return _get_instances();
+  }
+
+  late final _get_instancesPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function()>>(
+        'get_instances',
+      );
+  late final _get_instances = _get_instancesPtr
       .asFunction<ffi.Pointer<ffi.Char> Function()>();
 
   int create_instance(
@@ -1730,6 +1730,44 @@ class AlatBindings {
       );
   late final _destroy_instance = _destroy_instancePtr
       .asFunction<void Function(int)>();
+
+  ffi.Pointer<ffi.Char> get_node_status_json(int handle) {
+    return _get_node_status_json(handle);
+  }
+
+  late final _get_node_status_jsonPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function(ffi.Int)>>(
+        'get_node_status_json',
+      );
+  late final _get_node_status_json = _get_node_status_jsonPtr
+      .asFunction<ffi.Pointer<ffi.Char> Function(int)>();
+
+  void free_string(ffi.Pointer<ffi.Char> s) {
+    return _free_string(s);
+  }
+
+  late final _free_stringPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Char>)>>(
+        'free_string',
+      );
+  late final _free_string = _free_stringPtr
+      .asFunction<void Function(ffi.Pointer<ffi.Char>)>();
+
+  ffi.Pointer<ffi.Char> request_pair_found_device(
+    int handleC,
+    ffi.Pointer<ffi.Char> deviceIdC,
+  ) {
+    return _request_pair_found_device(handleC, deviceIdC);
+  }
+
+  late final _request_pair_found_devicePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<ffi.Char> Function(ffi.Int, ffi.Pointer<ffi.Char>)
+        >
+      >('request_pair_found_device');
+  late final _request_pair_found_device = _request_pair_found_devicePtr
+      .asFunction<ffi.Pointer<ffi.Char> Function(int, ffi.Pointer<ffi.Char>)>();
 
   ffi.Pointer<ffi.Char> get_app_settings_json(int handle) {
     return _get_app_settings_json(handle);
@@ -1821,28 +1859,6 @@ class AlatBindings {
       );
   late final _get_alat_device_colors_json = _get_alat_device_colors_jsonPtr
       .asFunction<ffi.Pointer<ffi.Char> Function()>();
-
-  ffi.Pointer<ffi.Char> get_node_status_json(int handle) {
-    return _get_node_status_json(handle);
-  }
-
-  late final _get_node_status_jsonPtr =
-      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function(ffi.Int)>>(
-        'get_node_status_json',
-      );
-  late final _get_node_status_json = _get_node_status_jsonPtr
-      .asFunction<ffi.Pointer<ffi.Char> Function(int)>();
-
-  void free_string(ffi.Pointer<ffi.Char> s) {
-    return _free_string(s);
-  }
-
-  late final _free_stringPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Char>)>>(
-        'free_string',
-      );
-  late final _free_string = _free_stringPtr
-      .asFunction<void Function(ffi.Pointer<ffi.Char>)>();
 }
 
 final class max_align_t extends ffi.Opaque {}

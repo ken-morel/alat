@@ -213,4 +213,20 @@ class AlatInstance {
       malloc.free(jsonStrC);
     }
   }
+
+  Future<RequestPairResponse> requestPair(String deviceId) async {
+    final deviceIdC = deviceId.toNativeUtf8();
+    final ptr = bindings.request_pair_found_device(_handle, deviceIdC.cast());
+    if (ptr == nullptr) {
+      return RequestPairResponse(
+        status: -1,
+        error: "Alat sent no reponse",
+        accepted: false,
+        reason: "Could not query device",
+      );
+    } else {
+      final result = ptr.cast<Utf8>().toDartString();
+      return RequestPairResponse.fromJson(jsonDecode(result));
+    }
+  }
 }

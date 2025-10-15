@@ -21,11 +21,15 @@ extern const char *_GoStringPtr(_GoString_ s);
 /* Start of preamble from import "C" comments.  */
 
 
+
+
 #line 4 "libalat.go"
 
 #include <stdlib.h>
 
 #line 1 "cgo-generated-wrapper"
+
+
 
 
 /* End of preamble from import "C" comments.  */
@@ -87,13 +91,16 @@ typedef struct { void *data; GoInt len; GoInt cap; } GoSlice;
 extern "C" {
 #endif
 
-extern char* get_instances(void);
 extern char* get_error(void);
+extern char* get_instances(void);
 extern int create_instance(char* configPath, char* deviceType);
 extern int start_instance(int handle);
 extern void stop_instance(int handle);
 extern GoInt get_port(int handle);
 extern void destroy_instance(int handle);
+extern char* get_node_status_json(int handle);
+extern void free_string(char* s);
+extern char* request_pair_found_device(int handleC, char* deviceIdC);
 extern char* get_app_settings_json(int handle);
 extern int set_app_settings_json(int handle, char* settingsJSON);
 extern char* get_service_settings_json(int handle);
@@ -102,8 +109,6 @@ extern char* get_found_devices_json(int handle);
 extern char* get_paired_devices_json(int handle);
 extern char* get_connected_devices_json(int handle);
 extern char* get_alat_device_colors_json(void);
-extern char* get_node_status_json(int handle);
-extern void free_string(char* s);
 
 #ifdef __cplusplus
 }

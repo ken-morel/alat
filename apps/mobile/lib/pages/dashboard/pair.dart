@@ -1,6 +1,8 @@
 import 'package:alat/components/founddevices.dart';
 import 'package:alat/pages/dashboard/base.dart';
+import 'package:alat/state.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class PairDevicePage extends DashboardBase {
   const PairDevicePage({super.key});
@@ -11,6 +13,8 @@ class PairDevicePage extends DashboardBase {
 
   @override
   Widget buildContent(BuildContext context) {
+    final appState = context.read<AppState>();
+
     return Column(
       children: [
         Center(
@@ -19,7 +23,14 @@ class PairDevicePage extends DashboardBase {
             style: Theme.of(context).textTheme.headlineLarge,
           ),
         ),
-        SizedBox(height: 300, child: FoundDevicesList()),
+        SizedBox(
+          height: 300,
+          child: FoundDevicesList(
+            onConnectionUserRequest: (device) {
+              appState.node?.requestPair(device.info.id).then((response) {});
+            },
+          ),
+        ),
       ],
     );
   }

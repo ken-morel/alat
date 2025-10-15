@@ -219,3 +219,24 @@ class NodeStatus {
       _$NodeStatusFromJson(json);
   Map<String, dynamic> toJson() => _$NodeStatusToJson(this);
 }
+
+@JsonSerializable()
+class RequestPairResponse {
+  @JsonKey(name: 'status')
+  int status;
+  @JsonKey(name: 'error')
+  String error;
+  @JsonKey(name: 'accepted')
+  bool accepted;
+  @JsonKey(name: 'reason')
+  String reason;
+  RequestPairResponse({
+    required this.status,
+    required this.error,
+    required this.accepted,
+    required this.reason,
+  });
+  factory RequestPairResponse.fromJson(Map<String, dynamic> json) =>
+      _$RequestPairResponseFromJson(json);
+  Map<String, dynamic> toJson() => _$RequestPairResponseToJson(this);
+}
