@@ -86,3 +86,6 @@ func (n *Node) Stop() {
 	n.discovery.Stop()
 	n.StopWorker()
 }
+func (n *Node) GetFoundDevices() []discovery.FoundDevice {
+	return n.discovery.Discoverer.GetFoundDevices()
+}

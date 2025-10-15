@@ -3,13 +3,10 @@ package main
 import "C"
 import (
 	"alat/pkg/core/config"
-	"alat/pkg/core/device"
 	"alat/pkg/core/node"
-	"alat/pkg/core/pair"
 	"alat/pkg/core/storage"
 	"encoding/json"
 	"fmt"
-	"path"
 	"sync"
 )
 
@@ -36,32 +33,40 @@ func get_instances() *C.char {
 }
 
 //export create_instance
-func create_instance(configPath *C.char, deviceType *C.char, appConfigC *C.char, serviceConfigC *C.char) C.int {
+func create_instance(configPathC *C.char, appConfigC *C.char, serviceConfigC *C.char) C.int {
 	instancesMutex.Lock()
 	defer instancesMutex.Unlock()
 	alatErrorLock.Lock()
 	defer alatErrorLock.Unlock()
 
-	configPath := C.GoString(configPath)
-	deviceType := device.DeviceTypeFromString( C.GoString(deviceType))
+	configPath := C.GoString(configPathC)
+	appConfigBytes := []byte(C.GoString(appConfigC))
+	serviceConfigBytes := []byte(C.GoString(serviceConfigC))
 
-	var defaultAppConfig  config.AppConfig
-	 err := json.Unmarshal(C.GoString(appConfigC), &defaultAppConfig)
-
-	var defaultServiceConfig config.ServiceConfig
-	err := json.Unmarshal(C.GoString(serviceConfigC), &defaultServiceConfig)
-
-	storage 
-
-	node, err := node.CreateNode(:)
+	var defaultAppConfig config.AppConfig
+	err := json.Unmarshal(appConfigBytes, &defaultAppConfig)
 	if err != nil {
 		alatError = err
-		return -4
+		return -1
+	}
+
+	var defaultServiceConfig config.ServiceConfig
+	err = json.Unmarshal(serviceConfigBytes, &defaultServiceConfig)
+	if err != nil {
+		alatError = err
+		return -1
+	}
+
+	store := storage.CreateYAMLNodeStorage(configPath, defaultAppConfig, defaultServiceConfig)
+
+	node, err := node.CreateNode(store)
+	if err != nil {
+		alatError = err
+		return -1
 	}
 
 	instance := &AlatInstance{
-		node:             node,
-
+		node: node,
 	}
 
 	handle := nextInstanceID

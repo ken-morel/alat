@@ -79,9 +79,6 @@ func (ns *YAMLNodeStorage) SetAppConfig(conf config.AppConfig) error {
 	return os.WriteFile(ns.AppConfigPath(), data, 0o644)
 
 }
-func (ns *YAMLNodeStorage) DefaultAppConfig(conf config.AppConfig) {
-	ns.defaultAppConfig = conf
-}
 
 func (ns *YAMLNodeStorage) GetServiceConfig() (*config.ServiceConfig, error) {
 	data, err := os.ReadFile(ns.ServiceConfigPath())
@@ -104,12 +101,11 @@ func (ns *YAMLNodeStorage) SetServiceConfig(conf config.ServiceConfig) error {
 	}
 	return os.WriteFile(ns.ServiceConfigPath(), data, 0o644)
 }
-func (ns *YAMLNodeStorage) DefaultServiceConfig(conf config.ServiceConfig) {
-	ns.defaultServiceConfig = conf
-}
 
-func CreateYAMLNodeStorage(path string) *YAMLNodeStorage {
+func CreateYAMLNodeStorage(path string, defaultAppConfig config.AppConfig, defaultServiceConfig config.ServiceConfig) *YAMLNodeStorage {
 	return &YAMLNodeStorage{
-		path: path,
+		path:                 path,
+		defaultAppConfig:     defaultAppConfig,
+		defaultServiceConfig: defaultServiceConfig,
 	}
 }

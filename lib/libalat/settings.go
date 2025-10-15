@@ -4,26 +4,29 @@ import "C"
 
 import (
 	"alat/pkg/core/config"
-	"alat/pkg/core/device"
 	"alat/pkg/core/device/color"
-	"alat/pkg/core/service/sysinfo"
 	"encoding/json"
 	"fmt"
-	"path"
-	"time"
 )
 
-//export get_app_settings_json
-func get_app_settings_json(handle C.int) *C.char {
+//export get_app_config_json
+func get_app_config_json(handle C.int) *C.char {
+	alatErrorLock.Lock()
+	defer alatErrorLock.Unlock()
 	instance := getInstance(handle)
 	if instance == nil {
 		return nil
 	}
-	return toJSON(instance.appSettings)
+	config, err := instance.node.GetAppConfig()
+	if err != nil {
+		alatError = err
+		return nil
+	}
+	return toJSON(config)
 }
 
-//export set_app_settings_json
-func set_app_settings_json(handle C.int, settingsJSON *C.char) C.int {
+//export set_app_config_json
+func set_app_config_json(handle C.int, settingsJSON *C.char) C.int {
 	alatErrorLock.Lock()
 	defer alatErrorLock.Unlock()
 	instance := getInstance(handle)
@@ -31,37 +34,35 @@ func set_app_settings_json(handle C.int, settingsJSON *C.char) C.int {
 		return -1
 	}
 
-	var newSettings config.AppSettings
+	var newSettings config.AppConfig
 	if alatError = json.Unmarshal([]byte(C.GoString(settingsJSON)), &newSettings); alatError != nil {
 		return -2
 	}
-
-	instance.appSettings = &newSettings
-	if alatError = config.SaveAppSettings(instance.appSettings, path.Join(instance.configPath, "settings.yml")); alatError != nil {
-		return -3
+	alatError := instance.node.SetAppConfig(newSettings)
+	if alatError != nil {
+		return -1
 	}
 
-	// Propagate changes to the running node
-	instance.node.SetDetails(&device.Details{
-		Color:       instance.appSettings.DeviceColor,
-		Name:        instance.appSettings.DeviceName,
-		Type:        instance.node.PairManager.DeviceDetails().Type, // Preserve original type
-		Certificate: instance.appSettings.Certificate,
-	})
 	return 0
 }
 
-//export get_service_settings_json
-func get_service_settings_json(handle C.int) *C.char {
+//export get_service_config_json
+func get_service_config_json(handle C.int) *C.char {
+	alatErrorLock.Lock()
+	defer alatErrorLock.Unlock()
 	instance := getInstance(handle)
 	if instance == nil {
 		return nil
 	}
-	return toJSON(instance.serviceSettings)
+	conf, alatError := instance.node.GetServiceConfig()
+	if alatError != nil {
+		return nil
+	}
+	return toJSON(conf)
 }
 
-//export set_service_settings_json
-func set_service_settings_json(handle C.int, settingsJSON *C.char) C.int {
+//export set_service_config_json
+func set_service_config_json(handle C.int, settingsJSON *C.char) C.int {
 	alatErrorLock.Lock()
 	defer alatErrorLock.Unlock()
 	instance := getInstance(handle)
@@ -70,20 +71,15 @@ func set_service_settings_json(handle C.int, settingsJSON *C.char) C.int {
 		return -1
 	}
 
-	var newSettings config.ServiceSettings
+	var newSettings config.ServiceConfig
 	if alatError := json.Unmarshal([]byte(C.GoString(settingsJSON)), &newSettings); alatError != nil {
-		return -2
+		return -1
 	}
 
-	instance.serviceSettings = &newSettings
-	if alatError := config.SaveServiceSettings(instance.serviceSettings, path.Join(instance.configPath, "services.yml")); alatError != nil {
-		return -3
+	alatError = instance.node.SetServiceConfig(newSettings)
+	if alatError != nil {
+		return -1
 	}
-
-	instance.serviceRegistery.SysInfo.Configure(sysinfo.Config{
-		Enabled:   newSettings.SysInfo.Enabled,
-		CacheTime: time.Duration(newSettings.SysInfo.CacheSeconds) * time.Second,
-	})
 	return 0
 }
 
@@ -95,7 +91,7 @@ func get_found_devices_json(handle C.int) *C.char {
 	if instance == nil {
 		return nil
 	}
-	return toJSON(instance.node.GetDiscoverer().GetFoundDevices())
+	return toJSON(instance.node.GetFoundDevices())
 }
 
 //export get_paired_devices_json
@@ -104,11 +100,8 @@ func get_paired_devices_json(handle C.int) *C.char {
 	if instance == nil {
 		return nil
 	}
-	paired, err := instance.nodeStore.GetPaired()
-	if err != nil {
-		return nil // Or return JSON error
-	}
-	return toJSON(paired)
+
+	return toJSON(instance.node.GetPairedDevices())
 }
 
 //export get_connected_devices_json
@@ -117,10 +110,8 @@ func get_connected_devices_json(handle C.int) *C.char {
 	if instance == nil {
 		return nil
 	}
-	return toJSON(instance.node.Connected.GetConnectedDevices())
+	return toJSON(instance.node.GetConnectedDevices())
 }
-
-// --- Core Constants --- //
 
 //export get_alat_device_colors_json
 func get_alat_device_colors_json() *C.char {
