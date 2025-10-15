@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'types.dart';
 
 import 'package:json_annotation/json_annotation.dart';
 import 'converters.dart';
@@ -219,5 +220,3 @@ class NodeStatus {
       _$NodeStatusFromJson(json);
   Map<String, dynamic> toJson() => _$NodeStatusToJson(this);
 }
-
-enum DeviceType { unspecified, mobile, desktop, tv }

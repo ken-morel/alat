@@ -5,6 +5,7 @@ import 'package:ffi/ffi.dart';
 
 import 'bindings.dart';
 import 'models.dart';
+import 'converters.dart';
 
 /// A high-level, platform-agnostic API for interacting with the Alat core.
 ///
@@ -20,10 +21,7 @@ class AlatInstance {
     required DeviceType deviceType,
   }) {
     final configPathC = configPath.toNativeUtf8();
-    final handle = bindings.create_instance(
-      configPathC.cast(),
-      deviceType.index,
-    );
+    final handle = bindings.create_instance(configPathC.cast(), deviceType);
     malloc.free(configPathC);
 
     if (handle <= 0) {

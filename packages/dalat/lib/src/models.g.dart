@@ -80,14 +80,14 @@ Map<String, dynamic> _$ServiceSettingsToJson(ServiceSettings instance) =>
     };
 
 FoundDevice _$FoundDeviceFromJson(Map<String, dynamic> json) => FoundDevice(
-  ip: const Uint8ListConverter().fromJson(json['ip'] as List),
+  ip: json['ip'] as String,
   port: (json['port'] as num).toInt(),
   info: DeviceInfo.fromJson(json['info'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$FoundDeviceToJson(FoundDevice instance) =>
     <String, dynamic>{
-      'ip': const Uint8ListConverter().toJson(instance.ip),
+      'ip': instance.ip,
       'port': instance.port,
       'info': instance.info,
     };
@@ -149,7 +149,7 @@ ConnectedDevice _$ConnectedDeviceFromJson(Map<String, dynamic> json) =>
       pairedDevice: PairedDevice.fromJson(
         json['pairedDevice'] as Map<String, dynamic>,
       ),
-      ip: const Uint8ListConverter().fromJson(json['ip'] as List),
+      ip: json['ip'] as String,
       port: (json['port'] as num).toInt(),
     );
 
@@ -157,7 +157,7 @@ Map<String, dynamic> _$ConnectedDeviceToJson(ConnectedDevice instance) =>
     <String, dynamic>{
       'info': instance.info,
       'pairedDevice': instance.pairedDevice,
-      'ip': const Uint8ListConverter().toJson(instance.ip),
+      'ip': instance.ip,
       'port': instance.port,
     };
 
