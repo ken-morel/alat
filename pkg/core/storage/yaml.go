@@ -58,7 +58,6 @@ func (ns *YAMLNodeStorage) AppConfigPath() string {
 }
 func (ns *YAMLNodeStorage) ServiceConfigPath() string {
 	return path.Join(ns.path, "services.yml")
-
 }
 
 func (ns *YAMLNodeStorage) GetAppConfig() (*config.AppConfig, error) {

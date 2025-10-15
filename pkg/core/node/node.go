@@ -21,7 +21,7 @@ type Node struct {
 	connected   *connected.Manager
 }
 
-func CreateNode(store storage.NodeStorage, deviceType device.DeviceType) (*Node, error) {
+func CreateNode(store storage.NodeStorage) (*Node, error) {
 	serviceConfig, err := store.GetServiceConfig()
 	if err != nil {
 		return nil, err
@@ -35,7 +35,7 @@ func CreateNode(store storage.NodeStorage, deviceType device.DeviceType) (*Node,
 		Certificate: appConfig.Certificate,
 		Color:       appConfig.DeviceColor,
 		Name:        appConfig.DeviceName,
-		Type:        deviceType,
+		Type:        appConfig.DeviceType,
 	})
 	if err != nil {
 		return nil, err

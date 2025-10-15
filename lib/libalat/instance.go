@@ -6,8 +6,8 @@ import (
 	"alat/pkg/core/device"
 	"alat/pkg/core/node"
 	"alat/pkg/core/pair"
-	"alat/pkg/core/service"
 	"alat/pkg/core/storage"
+	"encoding/json"
 	"fmt"
 	"path"
 	"sync"
@@ -42,39 +42,18 @@ func create_instance(configPath *C.char, deviceType *C.char, appConfigC *C.char,
 	alatErrorLock.Lock()
 	defer alatErrorLock.Unlock()
 
-	goConfigPath := C.GoString(configPath)
-	goDeviceType := C.GoString(deviceType)
+	configPath := C.GoString(configPath)
+	deviceType := device.DeviceTypeFromString( C.GoString(deviceType))
 
-	var appSettings *config.AppSettings
-	appSettings, alatError = config.LoadAppSettings(path.Join(goConfigPath, "settings.yml"))
-	if alatError != nil {
-		return -1
-	}
-	var serviceSettings *config.ServiceSettings
-	serviceSettings, alatError = config.LoadServiceSettings(path.Join(goConfigPath, "services.yml"))
-	if alatError != nil {
-		return -2
-	}
+	var defaultAppConfig  config.AppConfig
+	 err := json.Unmarshal(C.GoString(appConfigC), &defaultAppConfig)
 
-	storagePath := path.Join(goConfigPath, "node.yml")
-	nodeStore := storage.CreateYAMLNodeStorage(storagePath)
+	var defaultServiceConfig config.ServiceConfig
+	err := json.Unmarshal(C.GoString(serviceConfigC), &defaultServiceConfig)
 
-	registry := initServices(serviceSettings)
+	storage 
 
-	details := &device.Details{
-		Color:       appSettings.DeviceColor,
-		Name:        appSettings.DeviceName,
-		Type:        device.DeviceTypeFromString(goDeviceType),
-		Certificate: appSettings.Certificate,
-	}
-
-	var pairManager *pair.PairManager
-	pairManager, alatError = pair.NewManager(nodeStore, details)
-	if alatError != nil {
-		return -3
-	}
-
-	node, err := node.NewNode(&registry, nodeStore, details, pairManager)
+	node, err := node.CreateNode(:)
 	if err != nil {
 		alatError = err
 		return -4
@@ -82,11 +61,7 @@ func create_instance(configPath *C.char, deviceType *C.char, appConfigC *C.char,
 
 	instance := &AlatInstance{
 		node:             node,
-		nodeStore:        nodeStore,
-		serviceRegistery: &registry,
-		appSettings:      appSettings,
-		serviceSettings:  serviceSettings,
-		configPath:       goConfigPath,
+
 	}
 
 	handle := nextInstanceID

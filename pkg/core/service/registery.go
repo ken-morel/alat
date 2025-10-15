@@ -15,7 +15,7 @@ func (r *Registry) UpdateConfig(settings config.ServiceConfig) {
 	r.FileSend.Configure(settings.FileSend)
 	r.SysInfo.Configure(settings.SysInfo)
 }
-func CreateRegistry(settings config.ServiceConfig) *Registry {
+func CreateRegistry(settings *config.ServiceConfig) *Registry {
 	return &Registry{
 		FileSend: filesend.CreateService(settings.FileSend),
 		SysInfo:  sysinfo.CreateService(settings.SysInfo),
