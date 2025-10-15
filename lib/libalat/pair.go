@@ -9,7 +9,7 @@ import (
 type RequestPairFoundDeviceResponse struct {
 	Status   int                 `json:"status"`
 	Error    string              `json:"error"`
-	Accepted bool                `json:"accpeted"`
+	Accepted bool                `json:"accepted"`
 	Reason   pair.ResponseReason `json:"reason"`
 }
 

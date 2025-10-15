@@ -5,6 +5,10 @@ import (
 	"alat/pkg/core/device"
 	"alat/pkg/core/security"
 	"alat/pkg/core/storage"
+	"alat/pkg/core/transport/client"
+	"alat/pkg/pbuf"
+	"fmt"
+	"net"
 )
 
 type PairManager struct {
@@ -17,12 +21,16 @@ type PairManager struct {
 func (p *PairManager) OnPairRequest(handle func(*security.PairToken, *device.Details) (bool, string)) {
 	p.onPairRequest = handle
 }
+func (p *PairManager) AddPairedDevice(dev device.PairedDevice) {
+	p.storage.AddPaired(dev)
+	p.pairedDevices = append(p.pairedDevices, dev)
+}
 
 func (p *PairManager) HandlePairRequest(token *security.PairToken, details *device.Details) (bool, string) {
 	if p.onPairRequest != nil && p.storage != nil {
 		accepted, reason := p.onPairRequest(token, details)
 		if accepted {
-			p.storage.AddPaired(device.PairedDevice{
+			p.AddPairedDevice(device.PairedDevice{
 				Certificate: details.Certificate,
 				Token:       *token,
 			})
@@ -64,4 +72,20 @@ func NewManager(stor storage.NodeStorage, details *device.Details) (*PairManager
 
 func (p *PairManager) GetPairedDevices() []device.PairedDevice {
 	return p.pairedDevices
+}
+
+func (p *PairManager) RequestPair(ip net.IP, port int) (*pbuf.RequestPairResponse, error) {
+
+	pairToken, err := security.GeneratePairToken()
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate pair token: %w", err)
+	}
+	response, err := client.RequestPair(ip, port, &pairToken, p.DeviceDetails())
+	if response.GetAccepted() {
+		p.AddPairedDevice(device.PairedDevice{
+			Token:       security.PairToken(response.GetToken()),
+			Certificate: security.Certificate(response.GetDetails().GetCertificate()),
+		})
+	}
+	return response, err
 }
