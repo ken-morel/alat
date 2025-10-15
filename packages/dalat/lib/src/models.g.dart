@@ -168,3 +168,20 @@ Map<String, dynamic> _$NodeStatusToJson(NodeStatus instance) =>
       'workerRunning': instance.workerRunning,
       'port': instance.port,
     };
+
+RequestPairResponse _$RequestPairResponseFromJson(Map<String, dynamic> json) =>
+    RequestPairResponse(
+      status: (json['status'] as num).toInt(),
+      error: json['error'] as String,
+      accepted: json['accepted'] as bool,
+      reason: json['reason'] as String,
+    );
+
+Map<String, dynamic> _$RequestPairResponseToJson(
+  RequestPairResponse instance,
+) => <String, dynamic>{
+  'status': instance.status,
+  'error': instance.error,
+  'accepted': instance.accepted,
+  'reason': instance.reason,
+};
