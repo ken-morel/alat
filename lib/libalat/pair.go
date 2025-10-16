@@ -15,12 +15,10 @@ type RequestPairFoundDeviceResponse struct {
 
 //export request_pair_found_device
 func request_pair_found_device(handleC C.int, deviceIdC *C.char) *C.char {
-	alatErrorLock.Lock()
-	defer alatErrorLock.Unlock()
 	instance := getInstance(handleC)
 	deviceId := C.GoString(deviceIdC)
 	if instance == nil {
-		alatError = fmt.Errorf("Handle %d not found", handleC)
+		setError(fmt.Errorf("Handle %d not found", handleC))
 		return toJSON(RequestPairFoundDeviceResponse{
 			Status:   -1,
 			Error:    "Handle not found",
@@ -30,7 +28,7 @@ func request_pair_found_device(handleC C.int, deviceIdC *C.char) *C.char {
 	}
 	res, err := instance.node.RequestPairFoundDevice(deviceId)
 	if err != nil {
-		alatError = err
+		setError(err)
 
 		return toJSON(RequestPairFoundDeviceResponse{
 			Status:   -5,
