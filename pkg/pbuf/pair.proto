@@ -53,16 +53,16 @@ message SysInfo {
   string os = 2;
   string platform = 3;
 
-  int32 memTotal = 4;
-  int32 memUsed = 5;
+  uint64 memTotal = 4;
+  uint64 memUsed = 5;
 
-  int64 diskTotal = 6;
-  int64 diskUsed = 7;
+  uint64 diskTotal = 6;
+  uint64 diskUsed = 7;
 
   bool batteryCharging = 8;
-  float batteryPercent = 9;
+  double batteryPercent = 9;
 
-  float cpuUsage = 10;
+  double cpuUsage = 10;
 }
 
 message GetSysInfoRequest {

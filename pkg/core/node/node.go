@@ -106,3 +106,12 @@ func (n *Node) Stop() {
 func (n *Node) GetFoundDevices() []discovery.FoundDevice {
 	return n.discovery.Discoverer.GetFoundDevices()
 }
+
+func (n *Node) GetConnectedDeviceByID(id string) *connected.Connected {
+	for _, device := range n.GetConnectedDevices() {
+		if device.Info.ID == id {
+			return &device
+		}
+	}
+	return nil
+}

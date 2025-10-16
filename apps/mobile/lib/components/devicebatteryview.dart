@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:alat/state.dart';
 import 'package:flutter/material.dart';
 import 'package:dalat/dalat.dart' as dalat;
+import 'package:provider/provider.dart';
 
 class DeviceBatteryView extends StatefulWidget {
   final dalat.ConnectedDevice connectedDevice;
@@ -21,6 +24,44 @@ class _DeviceBatteryViewState extends State<DeviceBatteryView> {
   String? error;
   late Timer timer;
   bool charging = false;
+  @override
+  void initState() {
+    const nTimes = 20;
+    const animDuration = 2000;
+    final appState = context.read<AppState>();
+    timer = Timer.periodic(Duration(seconds: 5), (_) {
+      try {
+        final info = appState.node!.queryConnectedDeviceSysInfo(
+          widget.connectedDevice.info.id,
+        );
+        setState(() {
+          error = null;
+          charging = info.batteryCharging;
+          if (percent == null) {
+            () async {
+              sleep(Duration(seconds: 1));
+              for (double p = 0; p <= info.batteryPercent; p++) {
+                sleep(Duration(milliseconds: (animDuration / nTimes).round()));
+                setState(() {
+                  percent = p;
+                });
+              }
+            }();
+          } else {
+            percent = info.batteryPercent;
+          }
+        });
+      } catch (e) {
+        setState(() {
+          error = e.toString();
+          percent = null;
+        });
+      }
+    });
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;

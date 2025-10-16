@@ -5,13 +5,12 @@ import (
 	"time"
 
 	"alat/pkg/core/config"
-	"alat/pkg/pbuf"
 )
 
 type Service struct {
 	config   config.SysInfoConfig
 	ready    bool
-	cache    *pbuf.SysInfo
+	cache    *SysInfo
 	cacheAge time.Time
 }
 
@@ -19,8 +18,8 @@ func (s *Service) Enabled() bool {
 	return s.config.Enabled
 }
 
-func (s *Service) Get() (*pbuf.SysInfo, error) {
-	var cache *pbuf.SysInfo
+func (s *Service) Get() (*SysInfo, error) {
+	var cache *SysInfo
 	var err error
 	if s.cache == nil || time.Since(s.cacheAge) > time.Duration(s.config.CacheSeconds)*time.Second {
 		cache, err = GetSysInfo()

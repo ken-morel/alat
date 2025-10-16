@@ -1964,6 +1964,25 @@ class AlatBindings {
       );
   late final _get_alat_device_colors_json = _get_alat_device_colors_jsonPtr
       .asFunction<ffi.Pointer<ffi.Char> Function()>();
+
+  ffi.Pointer<ffi.Char> query_connected_device_sysinfo(
+    int handle,
+    ffi.Pointer<ffi.Char> deviceIdC,
+  ) {
+    return _query_connected_device_sysinfo(handle, deviceIdC);
+  }
+
+  late final _query_connected_device_sysinfoPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<ffi.Char> Function(ffi.Int, ffi.Pointer<ffi.Char>)
+        >
+      >('query_connected_device_sysinfo');
+  late final _query_connected_device_sysinfo =
+      _query_connected_device_sysinfoPtr
+          .asFunction<
+            ffi.Pointer<ffi.Char> Function(int, ffi.Pointer<ffi.Char>)
+          >();
 }
 
 final class max_align_t extends ffi.Opaque {}

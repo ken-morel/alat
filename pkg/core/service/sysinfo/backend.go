@@ -11,7 +11,7 @@ import (
 	"github.com/shirou/gopsutil/v3/mem"
 )
 
-func GetSysInfo() (*pbuf.SysInfo, error) {
+func GetSysInfo() (*SysInfo, error) {
 	hostInfo, err := host.Info()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get host info: %w", err)
@@ -42,16 +42,59 @@ func GetSysInfo() (*pbuf.SysInfo, error) {
 	}
 	fmt.Println("Battery charging: ", charging, "Percent:", charge)
 
-	return &pbuf.SysInfo{
+	return &SysInfo{
 		HostName:        hostInfo.Hostname,
-		Os:              hostInfo.OS,
+		OS:              hostInfo.OS,
 		Platform:        hostInfo.Platform,
-		MemTotal:        int32(memInfo.Total),
-		MemUsed:         int32(memInfo.Used),
-		DiskTotal:       int64(diskInfo.Total),
-		DiskUsed:        int64(diskInfo.Used),
+		MemTotal:        memInfo.Total,
+		MemUsed:         memInfo.Used,
+		DiskTotal:       diskInfo.Total,
+		DiskUsed:        diskInfo.Used,
 		BatteryCharging: charging,
-		BatteryPercent:  float32(charge),
+		BatteryPercent:  charge,
 		CpuUsage:        0,
 	}, nil
+}
+
+type SysInfo struct {
+	HostName        string  `json:"hostname"`
+	OS              string  `json:"os"`
+	Platform        string  `json:"platform"`
+	MemTotal        uint64  `json:"memTotal"`
+	MemUsed         uint64  `json:"memUsed"`
+	DiskTotal       uint64  `json:"diskTotal"`
+	DiskUsed        uint64  `json:"diskUsed"`
+	BatteryCharging bool    `json:"batteryCharging"`
+	BatteryPercent  float64 `json:"batteryPercent"`
+	CpuUsage        float64 `json:"cpuUsage"`
+}
+
+func (s *SysInfo) ToPBUF() *pbuf.SysInfo {
+	return &pbuf.SysInfo{
+		HostName:        s.HostName,
+		Os:              s.OS,
+		Platform:        s.Platform,
+		MemTotal:        s.MemTotal,
+		MemUsed:         s.MemUsed,
+		DiskTotal:       s.DiskTotal,
+		DiskUsed:        s.DiskUsed,
+		BatteryCharging: s.BatteryCharging,
+		BatteryPercent:  s.BatteryPercent,
+		CpuUsage:        s.CpuUsage,
+	}
+}
+
+func SysInfoFromPBUF(i *pbuf.SysInfo) *SysInfo {
+	return &SysInfo{
+		HostName:        i.HostName,
+		OS:              i.Os,
+		BatteryCharging: i.BatteryCharging,
+		BatteryPercent:  i.BatteryPercent,
+		Platform:        i.Platform,
+		MemTotal:        i.MemTotal,
+		MemUsed:         i.MemUsed,
+		DiskTotal:       i.DiskTotal,
+		DiskUsed:        i.DiskUsed,
+		CpuUsage:        i.CpuUsage,
+	}
 }
