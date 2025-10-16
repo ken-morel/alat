@@ -22,7 +22,6 @@ const (
 	AlatService_RequestPair_FullMethodName = "/pbuf.v1.AlatService/RequestPair"
 	AlatService_GetDetails_FullMethodName  = "/pbuf.v1.AlatService/GetDetails"
 	AlatService_GetInfo_FullMethodName     = "/pbuf.v1.AlatService/GetInfo"
-	AlatService_GetSysInfo_FullMethodName  = "/pbuf.v1.AlatService/GetSysInfo"
 )
 
 // AlatServiceClient is the client API for AlatService service.
@@ -32,7 +31,6 @@ type AlatServiceClient interface {
 	RequestPair(ctx context.Context, in *RequestPairRequest, opts ...grpc.CallOption) (*RequestPairResponse, error)
 	GetDetails(ctx context.Context, in *GetDetailsRequest, opts ...grpc.CallOption) (*GetDetailsResponse, error)
 	GetInfo(ctx context.Context, in *GetInfoRequest, opts ...grpc.CallOption) (*GetInfoResponse, error)
-	GetSysInfo(ctx context.Context, in *GetSysInfoRequest, opts ...grpc.CallOption) (*GetSysInfoResponse, error)
 }
 
 type alatServiceClient struct {
@@ -73,16 +71,6 @@ func (c *alatServiceClient) GetInfo(ctx context.Context, in *GetInfoRequest, opt
 	return out, nil
 }
 
-func (c *alatServiceClient) GetSysInfo(ctx context.Context, in *GetSysInfoRequest, opts ...grpc.CallOption) (*GetSysInfoResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetSysInfoResponse)
-	err := c.cc.Invoke(ctx, AlatService_GetSysInfo_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // AlatServiceServer is the server API for AlatService service.
 // All implementations must embed UnimplementedAlatServiceServer
 // for forward compatibility.
@@ -90,7 +78,6 @@ type AlatServiceServer interface {
 	RequestPair(context.Context, *RequestPairRequest) (*RequestPairResponse, error)
 	GetDetails(context.Context, *GetDetailsRequest) (*GetDetailsResponse, error)
 	GetInfo(context.Context, *GetInfoRequest) (*GetInfoResponse, error)
-	GetSysInfo(context.Context, *GetSysInfoRequest) (*GetSysInfoResponse, error)
 	mustEmbedUnimplementedAlatServiceServer()
 }
 
@@ -109,9 +96,6 @@ func (UnimplementedAlatServiceServer) GetDetails(context.Context, *GetDetailsReq
 }
 func (UnimplementedAlatServiceServer) GetInfo(context.Context, *GetInfoRequest) (*GetInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetInfo not implemented")
-}
-func (UnimplementedAlatServiceServer) GetSysInfo(context.Context, *GetSysInfoRequest) (*GetSysInfoResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetSysInfo not implemented")
 }
 func (UnimplementedAlatServiceServer) mustEmbedUnimplementedAlatServiceServer() {}
 func (UnimplementedAlatServiceServer) testEmbeddedByValue()                     {}
@@ -188,24 +172,6 @@ func _AlatService_GetInfo_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AlatService_GetSysInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetSysInfoRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AlatServiceServer).GetSysInfo(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AlatService_GetSysInfo_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AlatServiceServer).GetSysInfo(ctx, req.(*GetSysInfoRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // AlatService_ServiceDesc is the grpc.ServiceDesc for AlatService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -225,9 +191,107 @@ var AlatService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "GetInfo",
 			Handler:    _AlatService_GetInfo_Handler,
 		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "pair.proto",
+}
+
+const (
+	SysInfoService_GetSysInfo_FullMethodName = "/pbuf.v1.SysInfoService/GetSysInfo"
+)
+
+// SysInfoServiceClient is the client API for SysInfoService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type SysInfoServiceClient interface {
+	GetSysInfo(ctx context.Context, in *GetSysInfoRequest, opts ...grpc.CallOption) (*GetSysInfoResponse, error)
+}
+
+type sysInfoServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewSysInfoServiceClient(cc grpc.ClientConnInterface) SysInfoServiceClient {
+	return &sysInfoServiceClient{cc}
+}
+
+func (c *sysInfoServiceClient) GetSysInfo(ctx context.Context, in *GetSysInfoRequest, opts ...grpc.CallOption) (*GetSysInfoResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetSysInfoResponse)
+	err := c.cc.Invoke(ctx, SysInfoService_GetSysInfo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// SysInfoServiceServer is the server API for SysInfoService service.
+// All implementations must embed UnimplementedSysInfoServiceServer
+// for forward compatibility.
+type SysInfoServiceServer interface {
+	GetSysInfo(context.Context, *GetSysInfoRequest) (*GetSysInfoResponse, error)
+	mustEmbedUnimplementedSysInfoServiceServer()
+}
+
+// UnimplementedSysInfoServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedSysInfoServiceServer struct{}
+
+func (UnimplementedSysInfoServiceServer) GetSysInfo(context.Context, *GetSysInfoRequest) (*GetSysInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSysInfo not implemented")
+}
+func (UnimplementedSysInfoServiceServer) mustEmbedUnimplementedSysInfoServiceServer() {}
+func (UnimplementedSysInfoServiceServer) testEmbeddedByValue()                        {}
+
+// UnsafeSysInfoServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to SysInfoServiceServer will
+// result in compilation errors.
+type UnsafeSysInfoServiceServer interface {
+	mustEmbedUnimplementedSysInfoServiceServer()
+}
+
+func RegisterSysInfoServiceServer(s grpc.ServiceRegistrar, srv SysInfoServiceServer) {
+	// If the following call pancis, it indicates UnimplementedSysInfoServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&SysInfoService_ServiceDesc, srv)
+}
+
+func _SysInfoService_GetSysInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSysInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SysInfoServiceServer).GetSysInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SysInfoService_GetSysInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SysInfoServiceServer).GetSysInfo(ctx, req.(*GetSysInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// SysInfoService_ServiceDesc is the grpc.ServiceDesc for SysInfoService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var SysInfoService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "pbuf.v1.SysInfoService",
+	HandlerType: (*SysInfoServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "GetSysInfo",
-			Handler:    _AlatService_GetSysInfo_Handler,
+			Handler:    _SysInfoService_GetSysInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

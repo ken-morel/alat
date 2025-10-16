@@ -810,8 +810,9 @@ func (x *GetSysInfoResponse) GetInfo() *SysInfo {
 
 type InitialSendFileRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Metadata      *FileMetadata          `protobuf:"bytes,1,opt,name=metadata,proto3" json:"metadata,omitempty"`
-	SenderInfo    *DeviceInfo            `protobuf:"bytes,2,opt,name=sender_info,json=senderInfo,proto3" json:"sender_info,omitempty"`
+	Token         []byte                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	Metadata      *FileMetadata          `protobuf:"bytes,2,opt,name=metadata,proto3" json:"metadata,omitempty"`
+	SenderInfo    *DeviceInfo            `protobuf:"bytes,3,opt,name=sender_info,json=senderInfo,proto3" json:"sender_info,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -844,6 +845,13 @@ func (x *InitialSendFileRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use InitialSendFileRequest.ProtoReflect.Descriptor instead.
 func (*InitialSendFileRequest) Descriptor() ([]byte, []int) {
 	return file_pair_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *InitialSendFileRequest) GetToken() []byte {
+	if x != nil {
+		return x.Token
+	}
+	return nil
 }
 
 func (x *InitialSendFileRequest) GetMetadata() *FileMetadata {
@@ -1148,10 +1156,11 @@ const file_pair_proto_rawDesc = "" +
 	"\x12GetSysInfoResponse\x122\n" +
 	"\x06status\x18\x01 \x01(\x0e2\x1a.pbuf.v1.ServiceCallStatusR\x06status\x12\x10\n" +
 	"\x03msg\x18\x02 \x01(\tR\x03msg\x12$\n" +
-	"\x04info\x18\x03 \x01(\v2\x10.pbuf.v1.SysInfoR\x04info\"\x81\x01\n" +
-	"\x16InitialSendFileRequest\x121\n" +
-	"\bmetadata\x18\x01 \x01(\v2\x15.pbuf.v1.FileMetadataR\bmetadata\x124\n" +
-	"\vsender_info\x18\x02 \x01(\v2\x13.pbuf.v1.DeviceInfoR\n" +
+	"\x04info\x18\x03 \x01(\v2\x10.pbuf.v1.SysInfoR\x04info\"\x97\x01\n" +
+	"\x16InitialSendFileRequest\x12\x14\n" +
+	"\x05token\x18\x01 \x01(\fR\x05token\x121\n" +
+	"\bmetadata\x18\x02 \x01(\v2\x15.pbuf.v1.FileMetadataR\bmetadata\x124\n" +
+	"\vsender_info\x18\x03 \x01(\v2\x13.pbuf.v1.DeviceInfoR\n" +
 	"senderInfo\"J\n" +
 	"\fFileMetadata\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
@@ -1177,12 +1186,13 @@ const file_pair_proto_rawDesc = "" +
 	"\x19SERVICE_CALL_STATUS_ERROR\x10\x01\x12$\n" +
 	" SERVICE_CALL_STATUS_UNAUTHORIZED\x10\x02\x12 \n" +
 	"\x1cSERVICE_CALL_STATUS_DISABLED\x10\x03\x12\x1f\n" +
-	"\x1bSERVICE_CALL_STATUS_UNKNOWN\x10\x042\xa3\x02\n" +
+	"\x1bSERVICE_CALL_STATUS_UNKNOWN\x10\x042\xdc\x01\n" +
 	"\vAlatService\x12H\n" +
 	"\vRequestPair\x12\x1b.pbuf.v1.RequestPairRequest\x1a\x1c.pbuf.v1.RequestPairResponse\x12E\n" +
 	"\n" +
 	"GetDetails\x12\x1a.pbuf.v1.GetDetailsRequest\x1a\x1b.pbuf.v1.GetDetailsResponse\x12<\n" +
-	"\aGetInfo\x12\x17.pbuf.v1.GetInfoRequest\x1a\x18.pbuf.v1.GetInfoResponse\x12E\n" +
+	"\aGetInfo\x12\x17.pbuf.v1.GetInfoRequest\x1a\x18.pbuf.v1.GetInfoResponse2W\n" +
+	"\x0eSysInfoService\x12E\n" +
 	"\n" +
 	"GetSysInfo\x12\x1a.pbuf.v1.GetSysInfoRequest\x1a\x1b.pbuf.v1.GetSysInfoResponse2T\n" +
 	"\x0fFileSendService\x12A\n" +
@@ -1242,12 +1252,12 @@ var file_pair_proto_depIdxs = []int32{
 	5,  // 15: pbuf.v1.AlatService.RequestPair:input_type -> pbuf.v1.RequestPairRequest
 	7,  // 16: pbuf.v1.AlatService.GetDetails:input_type -> pbuf.v1.GetDetailsRequest
 	9,  // 17: pbuf.v1.AlatService.GetInfo:input_type -> pbuf.v1.GetInfoRequest
-	12, // 18: pbuf.v1.AlatService.GetSysInfo:input_type -> pbuf.v1.GetSysInfoRequest
+	12, // 18: pbuf.v1.SysInfoService.GetSysInfo:input_type -> pbuf.v1.GetSysInfoRequest
 	17, // 19: pbuf.v1.FileSendService.SendFile:input_type -> pbuf.v1.SendFileRequest
 	6,  // 20: pbuf.v1.AlatService.RequestPair:output_type -> pbuf.v1.RequestPairResponse
 	8,  // 21: pbuf.v1.AlatService.GetDetails:output_type -> pbuf.v1.GetDetailsResponse
 	10, // 22: pbuf.v1.AlatService.GetInfo:output_type -> pbuf.v1.GetInfoResponse
-	13, // 23: pbuf.v1.AlatService.GetSysInfo:output_type -> pbuf.v1.GetSysInfoResponse
+	13, // 23: pbuf.v1.SysInfoService.GetSysInfo:output_type -> pbuf.v1.GetSysInfoResponse
 	18, // 24: pbuf.v1.FileSendService.SendFile:output_type -> pbuf.v1.SendFileResponse
 	20, // [20:25] is the sub-list for method output_type
 	15, // [15:20] is the sub-list for method input_type
@@ -1273,7 +1283,7 @@ func file_pair_proto_init() {
 			NumEnums:      2,
 			NumMessages:   17,
 			NumExtensions: 0,
-			NumServices:   2,
+			NumServices:   3,
 		},
 		GoTypes:           file_pair_proto_goTypes,
 		DependencyIndexes: file_pair_proto_depIdxs,

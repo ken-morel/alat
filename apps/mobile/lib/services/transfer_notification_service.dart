@@ -10,7 +10,6 @@ class TransferNotificationService {
         AndroidInitializationSettings('@mipmap/ic_launcher');
     const LinuxInitializationSettings initializationSettingsLinux =
         LinuxInitializationSettings(defaultActionName: 'Open');
-
     const InitializationSettings initializationSettings =
         InitializationSettings(
           android: initializationSettingsAndroid,

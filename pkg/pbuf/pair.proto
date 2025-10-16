@@ -86,6 +86,9 @@ service AlatService {
   rpc RequestPair(RequestPairRequest) returns (RequestPairResponse);
   rpc GetDetails(GetDetailsRequest) returns (GetDetailsResponse);
   rpc GetInfo(GetInfoRequest) returns (GetInfoResponse);
+}
+
+service SysInfoService {
   rpc GetSysInfo(GetSysInfoRequest) returns (GetSysInfoResponse);
 }
 
@@ -94,8 +97,9 @@ service FileSendService {
 }
 
 message InitialSendFileRequest {
-  FileMetadata metadata = 1;
-  DeviceInfo sender_info = 2;
+  bytes token = 1;
+  FileMetadata metadata = 2;
+  DeviceInfo sender_info = 3;
 }
 
 message FileMetadata {

@@ -27,7 +27,6 @@ func CreateNode(store storage.NodeStorage) (*Node, error) {
 	if err != nil {
 		return nil, fmt.Errorf("Error geting initial service configuraiton: %v", err)
 	}
-	registry := service.CreateRegistry(serviceConfig)
 	appConfig, err := store.GetAppConfig()
 	if err != nil {
 		return nil, err
@@ -38,6 +37,8 @@ func CreateNode(store storage.NodeStorage) (*Node, error) {
 		Name:        appConfig.DeviceName,
 		Type:        appConfig.DeviceType,
 	})
+
+	registry := service.CreateRegistry(serviceConfig, pairManager)
 	if err != nil {
 		return nil, fmt.Errorf("Error creating pair manager: %v", err)
 	}
