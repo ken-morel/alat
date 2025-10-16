@@ -213,3 +213,61 @@ Map<String, dynamic> _$RequestPairResponseToJson(
   'accepted': instance.accepted,
   'reason': instance.reason,
 };
+
+SingleFileTransferStatus _$SingleFileTransferStatusFromJson(
+  Map<String, dynamic> json,
+) => SingleFileTransferStatus(
+  fileName: json['fileName'] as String,
+  percent: (json['percent'] as num).toDouble(),
+  fileSize: (json['fileSize'] as num).toInt(),
+  status: json['status'] as String,
+);
+
+Map<String, dynamic> _$SingleFileTransferStatusToJson(
+  SingleFileTransferStatus instance,
+) => <String, dynamic>{
+  'fileName': instance.fileName,
+  'percent': instance.percent,
+  'fileSize': instance.fileSize,
+  'status': instance.status,
+};
+
+DeviceFileTransferStatus _$DeviceFileTransferStatusFromJson(
+  Map<String, dynamic> json,
+) => DeviceFileTransferStatus(
+  device: DeviceInfo.fromJson(json['device'] as Map<String, dynamic>),
+  transfers: (json['transfers'] as List<dynamic>)
+      .map((e) => SingleFileTransferStatus.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  percent: (json['percent'] as num).toDouble(),
+);
+
+Map<String, dynamic> _$DeviceFileTransferStatusToJson(
+  DeviceFileTransferStatus instance,
+) => <String, dynamic>{
+  'device': instance.device,
+  'transfers': instance.transfers,
+  'percent': instance.percent,
+};
+
+FileTransfersStatus _$FileTransfersStatusFromJson(
+  Map<String, dynamic> json,
+) => FileTransfersStatus(
+  percentSending: (json['percentSending'] as num).toDouble(),
+  percentReceiving: (json['percentReceiving'] as num).toDouble(),
+  sending: (json['sending'] as List<dynamic>)
+      .map((e) => DeviceFileTransferStatus.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  receiving: (json['receiving'] as List<dynamic>)
+      .map((e) => DeviceFileTransferStatus.fromJson(e as Map<String, dynamic>))
+      .toList(),
+);
+
+Map<String, dynamic> _$FileTransfersStatusToJson(
+  FileTransfersStatus instance,
+) => <String, dynamic>{
+  'percentSending': instance.percentSending,
+  'percentReceiving': instance.percentReceiving,
+  'sending': instance.sending,
+  'receiving': instance.receiving,
+};

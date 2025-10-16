@@ -1,6 +1,7 @@
 import 'package:alat/components/devicebatteryview.dart';
 import 'package:alat/components/deviceicon.dart';
 import 'package:alat/pages/dashboard/base.dart';
+import 'package:alat/pages/dashboard/devicefilesend.dart';
 import 'package:dalat/dalat.dart' as dalat;
 import 'package:flutter/material.dart';
 
@@ -61,7 +62,12 @@ class DeviceView extends DashboardBase {
                 title: const Text('Send File'),
                 subtitle: const Text('Transfer files to this device'),
                 onTap: () {
-                  // TODO: Implement file sending logic
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          DeviceFileSendPage(connectedDevice: device),
+                    ),
+                  );
                 },
               ),
               // Add other actions here as ListTiles

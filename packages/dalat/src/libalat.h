@@ -30,6 +30,7 @@ extern const char *_GoStringPtr(_GoString_ s);
 
 
 
+
 #line 4 "libalat.go"
 
 #include <stdlib.h>
@@ -104,6 +105,7 @@ extern int submit_pair_response(int handle, char* requestID_C, _Bool accepted, c
 extern char* default_app_config(void);
 extern char* default_service_config(void);
 extern char* get_error(void);
+extern char* get_file_transfers_status(int handle);
 extern char* get_instances(void);
 extern int create_instance(char* configPathC, char* appConfigC, char* serviceConfigC);
 extern int start_instance(int handle);

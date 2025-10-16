@@ -20,8 +20,8 @@ type FileTransfersStatus struct {
 	Receiving        []FileTransfersStatusDevice `json:"receiving"        yaml:"receiving"`
 }
 
-func (s *Service) GetStatus() FileTransfersStatus {
-	transfers := FileTransfersStatus{}
+func (s *Service) GetStatus() *FileTransfersStatus {
+	transfers := &FileTransfersStatus{}
 
 	// Process incoming transfers
 	for _, session := range s.sessions {

@@ -15,6 +15,11 @@ typedef Certificate = Uint8List;
 typedef PairToken = Uint8List;
 typedef Ip = String;
 typedef Port = int;
+typedef FileTransferStatus = String;
+
+const FileTransferStatus transferStatusTransferring = "transferring";
+const FileTransferStatus transferStatusCompleted = "completed";
+const FileTransferStatus transferStatusFailed = "failed";
 
 class Uint8ListConverter implements JsonConverter<Uint8List, List<dynamic>> {
   const Uint8ListConverter();

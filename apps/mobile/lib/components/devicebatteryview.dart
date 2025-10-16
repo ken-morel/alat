@@ -108,7 +108,7 @@ class _DeviceBatteryViewState extends State<DeviceBatteryView> {
                     error != null
                         ? Colors.red
                         : percent != null
-                        ? percent == 100
+                        ? percent == 100 || charging
                               ? Colors.green
                               : Colors.blue
                         : Colors.yellow,

@@ -321,6 +321,13 @@ class AlatInstance {
     _nativeCallables.remove(handle);
     _pairRequestHandlers.remove(handle);
   }
+
+  Future<FileTransfersStatus> getFileTransfersStatus() {
+    return _jsonHelper(
+      bindings.get_file_transfers_status,
+      FileTransfersStatus.fromJson,
+    );
+  }
 }
 
 final Map<int, PairRequestHandler> _pairRequestHandlers = {};

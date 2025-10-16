@@ -1764,6 +1764,17 @@ class AlatBindings {
   late final _get_error = _get_errorPtr
       .asFunction<ffi.Pointer<ffi.Char> Function()>();
 
+  ffi.Pointer<ffi.Char> get_file_transfers_status(int handle) {
+    return _get_file_transfers_status(handle);
+  }
+
+  late final _get_file_transfers_statusPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function(ffi.Int)>>(
+        'get_file_transfers_status',
+      );
+  late final _get_file_transfers_status = _get_file_transfers_statusPtr
+      .asFunction<ffi.Pointer<ffi.Char> Function(int)>();
+
   ffi.Pointer<ffi.Char> get_instances() {
     return _get_instances();
   }
