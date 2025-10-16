@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:ffi';
+import 'dart:isolate';
 
 import 'package:dalat/dalat.dart';
 import 'package:ffi/ffi.dart';
@@ -100,12 +101,22 @@ class AlatInstance {
   }
 
   void registerPairRequestHandler(PairRequestHandler fun) {
-    final fnPointer =
-        Pointer.fromFunction<
+    final nativeCallback =
+        NativeCallable<
           Void Function(Int, Pointer<Char>, Pointer<Char>, Pointer<Char>)
-        >(_pairRequestHandler);
-    bindings.register_async_pair_request_callback(handle, fnPointer);
+        >.listener(_pairRequestHandler);
+    bindings.register_async_pair_request_callback(
+      handle,
+      nativeCallback.nativeFunction,
+    );
     _pairRequestHandlers[handle] = fun;
+    _nativeCallables[handle] = nativeCallback;
+
+    // Register the native callback with Go.
+    bindings.register_async_pair_request_callback(
+      handle,
+      nativeCallback.nativeFunction,
+    );
   }
 
   void dispose() {
@@ -276,40 +287,54 @@ class AlatInstance {
       bindings.free_string(ptr.cast());
     }
   }
+
+  void unregisterPairRequestHandler() {
+    _nativeCallables[handle]?.close();
+    _nativeCallables.remove(handle);
+    _pairRequestHandlers.remove(handle);
+  }
 }
 
 final Map<int, PairRequestHandler> _pairRequestHandlers = {};
+final Map<int, NativeCallable> _nativeCallables = {};
 void _pairRequestHandler(
   int handle,
   Pointer<Char> requestIdC,
   Pointer<Char> pairTokenC,
   Pointer<Char> deviceDetailsC,
 ) {
-  if (!_pairRequestHandlers.containsKey(handle)) return;
-  PairRequestHandler handler = _pairRequestHandlers[handle]!;
-  final requestid = requestIdC.cast<Utf8>().toDartString();
-  final token = Uint8ListConverter().fromJson(
+  final handler = _pairRequestHandlers[handle];
+  if (handler == null) return;
+
+  final requestId = requestIdC.cast<Utf8>().toDartString();
+  final pairToken = Uint8ListConverter().fromJson(
     jsonDecode(pairTokenC.cast<Utf8>().toDartString()),
   );
-  final device = DeviceDetails.fromJson(
+  final deviceDetails = DeviceDetails.fromJson(
     jsonDecode(deviceDetailsC.cast<Utf8>().toDartString()),
   );
-  handler(PairRequest(requestid: requestid, token: token, device: device)).then(
-    (response) {
-      final newRequestIdC = requestid.toNativeUtf8();
-      final reasonC = response.reason.toNativeUtf8();
-      try {
-        bindings.submit_pair_response(
-          handle,
-          newRequestIdC.cast(),
-          response.accepted,
-          reasonC.cast(),
-        );
-      } finally {
-        malloc.free(newRequestIdC);
-        malloc.free(reasonC);
-      }
-    },
-  );
+
+  print("Dart Received, invoking handler");
+
+  // The handler is already being called on the correct isolate, so
+  // another `Isolate.run` is not necessary.
+  handler(
+    PairRequest(requestid: requestId, token: pairToken, device: deviceDetails),
+  ).then((response) {
+    print("Received handler response");
+    final newRequestIdC = requestId.toNativeUtf8();
+    final reasonC = response.reason.toNativeUtf8();
+    try {
+      bindings.submit_pair_response(
+        handle,
+        newRequestIdC.cast(),
+        response.accepted,
+        reasonC.cast(),
+      );
+    } finally {
+      malloc.free(newRequestIdC);
+      malloc.free(reasonC);
+    }
+  });
   return;
 }

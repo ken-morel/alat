@@ -9,6 +9,7 @@ import (
 	"alat/pkg/core/device"
 	"alat/pkg/core/security"
 	"encoding/json"
+	"fmt"
 	"sync"
 	"unsafe"
 )
@@ -57,13 +58,14 @@ func register_async_pair_request_callback(handle C.int, callback C.async_pair_re
 		}
 
 		requestID_C := C.CString(requestID)
-		defer C.free(unsafe.Pointer(requestID_C))
 		tokenJSON_C := C.CString(string(tokenBytes))
-		defer C.free(unsafe.Pointer(tokenJSON_C))
 		detailsJSON_C := C.CString(string(detailsBytes))
-		defer C.free(unsafe.Pointer(detailsJSON_C))
-
+		fmt.Println("[libalat] received request, sending to dart handler")
 		C.call_async_callback_bridge(cb, handle, requestID_C, tokenJSON_C, detailsJSON_C)
+		fmt.Println("[libalat] handler called")
+		C.free(unsafe.Pointer(detailsJSON_C))
+		C.free(unsafe.Pointer(tokenJSON_C))
+		C.free(unsafe.Pointer(requestID_C))
 	})
 
 	return 0
