@@ -1775,6 +1775,30 @@ class AlatBindings {
   late final _get_file_transfers_status = _get_file_transfers_statusPtr
       .asFunction<ffi.Pointer<ffi.Char> Function(int)>();
 
+  int query_send_files_to_connected_device(
+    int handle,
+    ffi.Pointer<ffi.Char> deviceIdC,
+    ffi.Pointer<ffi.Char> filesJsonC,
+  ) {
+    return _query_send_files_to_connected_device(handle, deviceIdC, filesJsonC);
+  }
+
+  late final _query_send_files_to_connected_devicePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Int Function(
+            ffi.Int,
+            ffi.Pointer<ffi.Char>,
+            ffi.Pointer<ffi.Char>,
+          )
+        >
+      >('query_send_files_to_connected_device');
+  late final _query_send_files_to_connected_device =
+      _query_send_files_to_connected_devicePtr
+          .asFunction<
+            int Function(int, ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>)
+          >();
+
   ffi.Pointer<ffi.Char> get_instances() {
     return _get_instances();
   }

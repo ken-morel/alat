@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 
 class FilesSelectionComponent extends StatefulWidget {
-  final void Function(List<PlatformFile>) onSubmit;
+  final Future<void> Function(List<PlatformFile>) onSubmit;
   const FilesSelectionComponent({super.key, required this.onSubmit});
   @override
   State<StatefulWidget> createState() => _FilesSelectionComponentState();
@@ -22,6 +22,7 @@ String formatSize(int bytes) {
 
 class _FilesSelectionComponentState extends State<FilesSelectionComponent> {
   List<PlatformFile> selectedFiles = [];
+  String? error;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -82,12 +83,37 @@ class _FilesSelectionComponentState extends State<FilesSelectionComponent> {
             ),
           ),
         ),
+        if (error != null)
+          Text(
+            error!,
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              color: Theme.of(context).colorScheme.error,
+            ),
+          ),
         Divider(),
         Padding(
           padding: EdgeInsetsGeometry.symmetric(horizontal: 15, vertical: 10),
           child: SizedBox(
             width: double.infinity,
-            child: FilledButton(onPressed: () {}, child: Text("Send files")),
+            child: FilledButton(
+              onPressed: () {
+                () async {
+                  try {
+                    widget.onSubmit(selectedFiles);
+                    setState(() {
+                      error = null;
+                      selectedFiles.removeWhere((_) => true);
+                      Navigator.of(context).pop();
+                    });
+                  } catch (e) {
+                    setState(() {
+                      error = e.toString();
+                    });
+                  }
+                }();
+              },
+              child: Text("Send files"),
+            ),
           ),
         ),
         SizedBox(height: 5),

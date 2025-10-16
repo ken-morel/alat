@@ -55,6 +55,7 @@ func (s *Service) SendFile(ctx context.Context, ip net.IP, port int, token *secu
 					Mode: int32(fileInfo.Mode().Perm()),
 				},
 				SenderInfo: senderInfoPBUF,
+				Token:      token[:],
 			},
 		},
 	}

@@ -106,6 +106,7 @@ extern char* default_app_config(void);
 extern char* default_service_config(void);
 extern char* get_error(void);
 extern char* get_file_transfers_status(int handle);
+extern int query_send_files_to_connected_device(int handle, char* deviceIdC, char* filesJsonC);
 extern char* get_instances(void);
 extern int create_instance(char* configPathC, char* appConfigC, char* serviceConfigC);
 extern int start_instance(int handle);

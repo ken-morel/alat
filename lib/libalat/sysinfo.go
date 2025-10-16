@@ -16,7 +16,8 @@ func query_connected_device_sysinfo(handle C.int, deviceIdC *C.char) *C.char {
 		setError(fmt.Errorf("Connected device not found, device surely not connected"))
 		return nil
 	}
-	info, err := device.GetSysInfo()
+
+	info, err := instance.node.QueryDeviceSysInfo(device)
 	if err != nil {
 		setError(fmt.Errorf("Error getting system information from %s: %s", device.Info.Name, err.Error()))
 		return nil
