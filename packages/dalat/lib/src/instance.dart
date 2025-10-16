@@ -245,19 +245,21 @@ class AlatInstance {
   }
 
   Future<RequestPairResponse> requestPair(String deviceId) async {
-    final deviceIdC = deviceId.toNativeUtf8();
-    final ptr = bindings.request_pair_found_device(handle, deviceIdC.cast());
-    if (ptr == nullptr) {
-      return RequestPairResponse(
-        status: -1,
-        error: "Alat sent no reponse",
-        accepted: false,
-        reason: "Could not query device",
-      );
-    } else {
-      final result = ptr.cast<Utf8>().toDartString();
-      return RequestPairResponse.fromJson(jsonDecode(result));
-    }
+    return await Isolate.run(() {
+      final deviceIdC = deviceId.toNativeUtf8();
+      final ptr = bindings.request_pair_found_device(handle, deviceIdC.cast());
+      if (ptr == nullptr) {
+        return RequestPairResponse(
+          status: -1,
+          error: "Alat sent no reponse",
+          accepted: false,
+          reason: "Could not query device",
+        );
+      } else {
+        final result = ptr.cast<Utf8>().toDartString();
+        return RequestPairResponse.fromJson(jsonDecode(result));
+      }
+    });
   }
 
   static AppConfig createAppConfig() {
@@ -303,6 +305,7 @@ void _pairRequestHandler(
   Pointer<Char> pairTokenC,
   Pointer<Char> deviceDetailsC,
 ) {
+  print("Dart had it succesful");
   final handler = _pairRequestHandlers[handle];
   if (handler == null) return;
 
