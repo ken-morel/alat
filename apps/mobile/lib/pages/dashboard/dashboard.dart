@@ -1,6 +1,13 @@
+import 'dart:async';
+
+import 'package:alat/components/devicebatteryview.dart';
 import 'package:alat/pages/dashboard/base.dart';
+import 'package:alat/pages/dashboard/deviceview.dart';
+import 'package:alat/state.dart';
 import 'package:flutter/material.dart';
 import 'package:alat/l10n/app_localizations.dart';
+import 'package:dalat/dalat.dart' as dalat;
+import 'package:provider/provider.dart';
 
 class DashboardPage extends DashboardBase {
   const DashboardPage({super.key});
@@ -39,8 +46,72 @@ class _ConnectedDevicesList extends StatefulWidget {
 }
 
 class _ConnectedDevicesListState extends State<_ConnectedDevicesList> {
+  List<dalat.ConnectedDevice> connecteDevices = [];
+  late Timer timer;
+
+  @override
+  void initState() {
+    final AppState appState = context.read();
+    timer = Timer.periodic(Duration(seconds: 1), (_) {
+      appState.node?.getConnectedDevices().then((devices) {
+        setState(() {
+          connecteDevices = devices;
+        });
+      });
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
+  }
+
+  Widget _buildNoConnectedWidget(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+        child: Text("No active device"),
+      ),
+    );
+  }
+
+  Widget _buildConnectedDevicesView(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: connecteDevices.map((device) {
+          final deviceColor = Color.fromRGBO(
+            device.info.color.r,
+            device.info.color.g,
+            device.info.color.b,
+            1,
+          );
+          return Card(
+            margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundColor: deviceColor,
+                child: DeviceBatteryView(connectedDevice: device),
+              ),
+              title: Text(device.info.name),
+              subtitle: Text(device.info.type),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => DeviceView(device: device),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Text("Nothing for now");
+    return connecteDevices.isEmpty
+        ? _buildNoConnectedWidget(context)
+        : _buildConnectedDevicesView(context);
   }
 }

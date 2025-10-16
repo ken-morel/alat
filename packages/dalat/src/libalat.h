@@ -39,6 +39,7 @@ extern const char *_GoStringPtr(_GoString_ s);
 
 
 
+
 /* End of preamble from import "C" comments.  */
 
 
@@ -120,6 +121,7 @@ extern char* get_found_devices_json(int handle);
 extern char* get_paired_devices_json(int handle);
 extern char* get_connected_devices_json(int handle);
 extern char* get_alat_device_colors_json(void);
+extern char* query_connected_device_sysinfo(int handle, char* deviceIdC);
 
 #ifdef __cplusplus
 }

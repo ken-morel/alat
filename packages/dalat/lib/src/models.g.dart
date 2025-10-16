@@ -6,6 +6,32 @@ part of 'models.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+SysInfo _$SysInfoFromJson(Map<String, dynamic> json) => SysInfo(
+  hostname: json['hostname'] as String,
+  os: json['os'] as String,
+  platform: json['platform'] as String,
+  memTotal: (json['memTotal'] as num).toInt(),
+  memUsed: (json['memUsed'] as num).toInt(),
+  diskTotal: (json['diskTotal'] as num).toInt(),
+  diskUsed: (json['diskUsed'] as num).toInt(),
+  batteryCharging: json['batteryCharging'] as bool,
+  batteryPercent: (json['batteryPercent'] as num).toDouble(),
+  cpuUsage: (json['cpuUsage'] as num).toDouble(),
+);
+
+Map<String, dynamic> _$SysInfoToJson(SysInfo instance) => <String, dynamic>{
+  'hostname': instance.hostname,
+  'os': instance.os,
+  'platform': instance.platform,
+  'memTotal': instance.memTotal,
+  'memUsed': instance.memUsed,
+  'diskTotal': instance.diskTotal,
+  'diskUsed': instance.diskUsed,
+  'batteryCharging': instance.batteryCharging,
+  'batteryPercent': instance.batteryPercent,
+  'cpuUsage': instance.cpuUsage,
+};
+
 DeviceColor _$DeviceColorFromJson(Map<String, dynamic> json) => DeviceColor(
   name: json['name'] as String,
   r: (json['r'] as num).toInt(),

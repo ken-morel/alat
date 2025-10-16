@@ -69,23 +69,49 @@ func (n *Node) GetPort() int {
 }
 
 func (n *Node) Start() error {
-	port, err := n.server.Start()
-	if err != nil {
-		return err
+	status := n.GetStatus()
+	listeningPort := status.Port
+	if !status.ServerRunning {
+		port, err := n.server.Start()
+		if err != nil {
+			return err
+		}
+		listeningPort = port
+
 	}
-	err = n.discovery.Server.Start(port)
-	if err != nil {
-		return err
+	if !status.DiscoveryRunning {
+		err := n.discovery.Server.Start(listeningPort)
+		if err != nil {
+			return err
+		}
 	}
-	n.StartWorker()
+	if !status.WorkerRunning {
+		n.StartWorker()
+	}
 	return nil
 }
 
 func (n *Node) Stop() {
-	n.server.Stop()
-	n.discovery.Stop()
-	n.StopWorker()
+	status := n.GetStatus()
+	if status.ServerRunning {
+		n.server.Stop()
+	}
+	if status.DiscoveryRunning {
+		n.discovery.Stop()
+	}
+	if status.WorkerRunning {
+		n.StopWorker()
+	}
 }
 func (n *Node) GetFoundDevices() []discovery.FoundDevice {
 	return n.discovery.Discoverer.GetFoundDevices()
+}
+
+func (n *Node) GetConnectedDeviceByID(id string) *connected.Connected {
+	for _, device := range n.GetConnectedDevices() {
+		if device.Info.ID == id {
+			return &device
+		}
+	}
+	return nil
 }

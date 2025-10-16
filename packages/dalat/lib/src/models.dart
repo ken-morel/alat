@@ -1,9 +1,47 @@
-import 'dart:typed_data';
-
 import 'package:json_annotation/json_annotation.dart';
 import 'converters.dart';
 
 part 'models.g.dart';
+
+@JsonSerializable()
+class SysInfo {
+  @JsonKey(name: 'hostname')
+  String hostname;
+  @JsonKey(name: 'os')
+  String os;
+  @JsonKey(name: 'platform')
+  String platform;
+  @JsonKey(name: 'memTotal')
+  int memTotal;
+  @JsonKey(name: 'memUsed')
+  int memUsed;
+  @JsonKey(name: 'diskTotal')
+  int diskTotal;
+  @JsonKey(name: 'diskUsed')
+  int diskUsed;
+  @JsonKey(name: 'batteryCharging')
+  bool batteryCharging;
+  @JsonKey(name: 'batteryPercent')
+  double batteryPercent;
+  @JsonKey(name: 'cpuUsage')
+  double cpuUsage;
+  SysInfo({
+    required this.hostname,
+    required this.os,
+    required this.platform,
+    required this.memTotal,
+    required this.memUsed,
+    required this.diskTotal,
+    required this.diskUsed,
+    required this.batteryCharging,
+    required this.batteryPercent,
+    required this.cpuUsage,
+  });
+
+  factory SysInfo.fromJson(Map<String, dynamic> json) =>
+      _$SysInfoFromJson(json);
+  Map<String, dynamic> toJson() => _$SysInfoToJson(this);
+}
 
 @JsonSerializable()
 class DeviceColor {

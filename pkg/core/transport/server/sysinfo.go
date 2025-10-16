@@ -4,11 +4,12 @@ import (
 	"context"
 
 	"alat/pkg/core/security"
+	"alat/pkg/core/service/sysinfo"
 	"alat/pkg/pbuf"
 )
 
 func (s *Server) GetSysInfo(ctx context.Context, req *pbuf.GetSysInfoRequest) (*pbuf.GetSysInfoResponse, error) {
-	var info *pbuf.SysInfo
+	var info *sysinfo.SysInfo
 	var msg string
 	var status pbuf.ServiceCallStatus
 	if s.PairManager.IsTokenValid(security.PairToken(req.GetToken())) {
@@ -33,6 +34,6 @@ func (s *Server) GetSysInfo(ctx context.Context, req *pbuf.GetSysInfoRequest) (*
 	return &pbuf.GetSysInfoResponse{
 		Status: status,
 		Msg:    msg,
-		Info:   info,
+		Info:   info.ToPBUF(),
 	}, nil
 }

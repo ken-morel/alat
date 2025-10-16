@@ -183,7 +183,7 @@ class AlatInstance {
           .map((item) => DeviceColor.fromJson(item as Map<String, dynamic>))
           .toList();
     } finally {
-      bindings.free_string(ptr.cast());
+      bindings.free_string(ptr);
     }
   }
 
@@ -193,7 +193,7 @@ class AlatInstance {
     Pointer<Char> Function(int) ffiFunc,
     T Function(Map<String, dynamic>) fromJson,
   ) async {
-    final ptr = await Isolate.run(() => ffiFunc(handle));
+    final ptr = ffiFunc(handle);
     if (ptr == nullptr) {
       throw Exception(
         'Failed to get data from Go core: function returned null pointer. ${getAlatError()}',
@@ -203,7 +203,7 @@ class AlatInstance {
       final jsonStr = ptr.cast<Utf8>().toDartString();
       return fromJson(jsonDecode(jsonStr));
     } finally {
-      bindings.free_string(ptr.cast());
+      bindings.free_string(ptr);
     }
   }
 
@@ -211,19 +211,19 @@ class AlatInstance {
     Pointer<Char> Function(int) ffiFunc,
     T Function(Map<String, dynamic>) fromJson,
   ) async {
-    final ptr = await Isolate.run(() => ffiFunc(handle));
+    final ptr = ffiFunc(handle);
     if (ptr == nullptr) {
       // An empty list is represented by a null pointer in this API
       return [];
     }
     try {
       final jsonStr = ptr.cast<Utf8>().toDartString();
-      final List<dynamic> decoded = jsonDecode(jsonStr);
+      final List<dynamic> decoded = jsonDecode(jsonStr) ?? [];
       return decoded
           .map((item) => fromJson(item as Map<String, dynamic>))
           .toList();
     } finally {
-      bindings.free_string(ptr.cast());
+      bindings.free_string(ptr);
     }
   }
 
@@ -245,6 +245,27 @@ class AlatInstance {
     }
   }
 
+  SysInfo queryConnectedDeviceSysInfo(String deviceId) {
+    final deviceIdC = deviceId.toNativeUtf8();
+    try {
+      final infoC = bindings.query_connected_device_sysinfo(
+        handle,
+        deviceIdC.cast(),
+      );
+      if (infoC == nullptr) {
+        throw "Failed getting system information: ${getAlatError()}";
+      }
+      try {
+        final info = infoC.cast<Utf8>().toDartString();
+        return SysInfo.fromJson(jsonDecode(info));
+      } finally {
+        bindings.free_string(infoC);
+      }
+    } finally {
+      malloc.free(deviceIdC);
+    }
+  }
+
   Future<RequestPairResponse> requestPair(String deviceId) async {
     return await Isolate.run(() {
       final deviceIdC = deviceId.toNativeUtf8();
@@ -257,8 +278,12 @@ class AlatInstance {
           reason: "Could not query device",
         );
       } else {
-        final result = ptr.cast<Utf8>().toDartString();
-        return RequestPairResponse.fromJson(jsonDecode(result));
+        try {
+          final result = ptr.cast<Utf8>().toDartString();
+          return RequestPairResponse.fromJson(jsonDecode(result));
+        } finally {
+          bindings.free_string(ptr);
+        }
       }
     });
   }
@@ -273,7 +298,7 @@ class AlatInstance {
       final Map<String, dynamic> decoded = jsonDecode(jsonStr);
       return AppConfig.fromJson(decoded);
     } finally {
-      bindings.free_string(ptr.cast());
+      bindings.free_string(ptr);
     }
   }
 
@@ -287,7 +312,7 @@ class AlatInstance {
       final Map<String, dynamic> decoded = jsonDecode(jsonStr);
       return ServiceConfig.fromJson(decoded);
     } finally {
-      bindings.free_string(ptr.cast());
+      bindings.free_string(ptr);
     }
   }
 
@@ -317,8 +342,6 @@ void _pairRequestHandler(
       jsonDecode(deviceDetailsC.cast<Utf8>().toDartString()),
     );
 
-    // The handler is already being called on the correct isolate, so
-    // another `Isolate.run` is not necessary.
     handler(
       PairRequest(
         requestid: requestId,
