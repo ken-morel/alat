@@ -1,4 +1,4 @@
-package client
+package sysinfo
 
 import (
 	"context"
@@ -13,7 +13,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func GetSysInfo(addr net.IP, port int, token security.PairToken) (*pbuf.SysInfo, error) {
+func QueryDeviceSysInfo(addr net.IP, port int, token security.PairToken) (*pbuf.SysInfo, error) {
 	fullAddress := net.JoinHostPort(addr.String(), fmt.Sprintf("%d", port))
 	conn, err := grpc.NewClient(fullAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
