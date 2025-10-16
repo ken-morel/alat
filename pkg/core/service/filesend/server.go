@@ -21,7 +21,8 @@ type FileSendServer struct {
 func rcfilepath(folder string, name string) string {
 	newName := name
 	ext := path.Ext(name)
-	stem := name[:len(name)-len(ext)-1]
+	stem := name[:len(name)-len(ext)]
+	fmt.Printf("stem: '%s', name: '%s', ext: '%s'", stem, name, ext)
 	for i := range 1_000_000 {
 		if i != 0 {
 			newName = fmt.Sprintf("%s-%d.%s", stem, i, ext)

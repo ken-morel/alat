@@ -27,9 +27,6 @@ class _FilesSelectionComponentState extends State<FilesSelectionComponent> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(height: 20),
-        Text("Select files", style: Theme.of(context).textTheme.headlineMedium),
-        const SizedBox(height: 10),
         Expanded(
           child: Card(
             margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),

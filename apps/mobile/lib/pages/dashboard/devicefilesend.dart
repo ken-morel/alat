@@ -10,7 +10,7 @@ class DeviceFileSendPage extends DashboardBase {
   const DeviceFileSendPage({super.key, required this.connectedDevice});
   @override
   AppBar buildAppBar(BuildContext context) {
-    return AppBar(leading: BackButton());
+    return AppBar(leading: BackButton(), title: Text("Select files"));
   }
 
   @override
