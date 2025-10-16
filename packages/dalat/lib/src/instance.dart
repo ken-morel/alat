@@ -121,6 +121,7 @@ class AlatInstance {
 
   void dispose() {
     bindings.destroy_instance(handle);
+    unregisterPairRequestHandler();
   }
 
   Future<AppConfig> getAppConfig() async {
@@ -192,7 +193,7 @@ class AlatInstance {
     Pointer<Char> Function(int) ffiFunc,
     T Function(Map<String, dynamic>) fromJson,
   ) async {
-    final ptr = ffiFunc(handle);
+    final ptr = await Isolate.run(() => ffiFunc(handle));
     if (ptr == nullptr) {
       throw Exception(
         'Failed to get data from Go core: function returned null pointer. ${getAlatError()}',
@@ -210,7 +211,7 @@ class AlatInstance {
     Pointer<Char> Function(int) ffiFunc,
     T Function(Map<String, dynamic>) fromJson,
   ) async {
-    final ptr = ffiFunc(handle);
+    final ptr = await Isolate.run(() => ffiFunc(handle));
     if (ptr == nullptr) {
       // An empty list is represented by a null pointer in this API
       return [];
@@ -233,7 +234,7 @@ class AlatInstance {
     final jsonStr = jsonEncode(jsonData);
     final jsonStrC = jsonStr.toNativeUtf8();
     try {
-      final result = ffiFunc(handle, jsonStrC.cast());
+      final result = await Isolate.run(() => ffiFunc(handle, jsonStrC.cast()));
       if (result != 0) {
         throw Exception(
           'Failed to set data in Go core. Code: $result ${getAlatError()}',
