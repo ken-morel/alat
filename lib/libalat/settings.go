@@ -11,38 +11,29 @@ import (
 
 //export get_app_config_json
 func get_app_config_json(handle C.int) *C.char {
-	fmt.Println("Locking alaterror lock")
-	alatErrorLock.Lock()
-	defer alatErrorLock.Unlock()
-	fmt.Println("Getting instance")
 	instance := getInstance(handle)
 	if instance == nil {
-		fmt.Println("Instance is nil")
-		alatError = fmt.Errorf("Instance %d does not exist", handle)
+		setError(fmt.Errorf("Instance %d does not exist", handle))
 		return nil
 	}
 	config, err := instance.node.GetAppConfig()
-	fmt.Println("Getting app config")
 	if err != nil {
-		alatError = err
-		fmt.Println("Got alat error")
+		setError(err)
 		return nil
 	}
-	fmt.Println("Returning app config json")
 	return toJSON(config)
 }
 
 //export set_app_config_json
 func set_app_config_json(handle C.int, settingsJSON *C.char) C.int {
-	alatErrorLock.Lock()
-	defer alatErrorLock.Unlock()
 	instance := getInstance(handle)
 	if instance == nil {
 		return -1
 	}
 
 	var newSettings config.AppConfig
-	if alatError = json.Unmarshal([]byte(C.GoString(settingsJSON)), &newSettings); alatError != nil {
+	if err := json.Unmarshal([]byte(C.GoString(settingsJSON)), &newSettings); err != nil {
+		setError(err)
 		return -2
 	}
 	alatError := instance.node.SetAppConfig(newSettings)
@@ -55,8 +46,6 @@ func set_app_config_json(handle C.int, settingsJSON *C.char) C.int {
 
 //export get_service_config_json
 func get_service_config_json(handle C.int) *C.char {
-	alatErrorLock.Lock()
-	defer alatErrorLock.Unlock()
 	instance := getInstance(handle)
 	if instance == nil {
 		return nil
@@ -70,11 +59,9 @@ func get_service_config_json(handle C.int) *C.char {
 
 //export set_service_config_json
 func set_service_config_json(handle C.int, settingsJSON *C.char) C.int {
-	alatErrorLock.Lock()
-	defer alatErrorLock.Unlock()
 	instance := getInstance(handle)
 	if instance == nil {
-		alatError = fmt.Errorf("instance %d does not exist, settings cannot be saved", handle)
+		setError(fmt.Errorf("instance %d does not exist, settings cannot be saved", handle))
 		return -1
 	}
 
@@ -83,14 +70,13 @@ func set_service_config_json(handle C.int, settingsJSON *C.char) C.int {
 		return -1
 	}
 
-	alatError = instance.node.SetServiceConfig(newSettings)
-	if alatError != nil {
+	err := instance.node.SetServiceConfig(newSettings)
+	if err != nil {
+		setError(err)
 		return -1
 	}
 	return 0
 }
-
-// --- Device & Pairing --- //
 
 //export get_found_devices_json
 func get_found_devices_json(handle C.int) *C.char {

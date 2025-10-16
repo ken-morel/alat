@@ -1,14 +1,13 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
+import 'package:alat/services/transfer_notification_service.dart';
 import 'package:dalat/dalat.dart' as dalat;
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'services/notification_service.dart';
 
-/// A state object to hold a pending pair request and the completer to resolve it.
 class PairRequestState {
   final dalat.PairRequest request;
   final Completer<dalat.PairResponse> completer;
@@ -18,6 +17,8 @@ class PairRequestState {
 
 class AppState extends ChangeNotifier {
   final NotificationService notificationService;
+  final TransferNotificationService transferNotificationService;
+  Timer? _transferStatusTimer;
 
   dalat.AlatInstance? _alatInstance;
   dalat.AppConfig? _appSettings;
@@ -27,7 +28,10 @@ class AppState extends ChangeNotifier {
     null,
   );
 
-  AppState({required this.notificationService});
+  AppState({
+    required this.notificationService,
+    required this.transferNotificationService,
+  });
 
   dalat.AlatInstance? get node => _alatInstance;
   dalat.AppConfig? get settings => _appSettings;
@@ -86,6 +90,7 @@ class AppState extends ChangeNotifier {
     _appSettings = await _alatInstance!.getAppConfig();
     if (_appSettings!.setupComplete) {
       _alatInstance!.start();
+      _startTransferStatusUpdates();
     }
     _serviceSettings = await _alatInstance!.getServiceConfig();
 
@@ -100,6 +105,7 @@ class AppState extends ChangeNotifier {
     _appSettings!.setupComplete = true;
     await _alatInstance!.setAppConfig(_appSettings!);
     _alatInstance!.start();
+    _startTransferStatusUpdates();
     notifyListeners();
   }
 
@@ -108,8 +114,26 @@ class AppState extends ChangeNotifier {
     await _alatInstance!.setServiceConfig(_serviceSettings!);
   }
 
+  void _startTransferStatusUpdates() {
+    _transferStatusTimer?.cancel(); // Cancel any existing timer
+    _transferStatusTimer = Timer.periodic(const Duration(seconds: 1), (
+      timer,
+    ) async {
+      try {
+        final status = await _alatInstance?.getFileTransfersStatus();
+        if (status != null) {
+          await transferNotificationService.showTransferProgress(status);
+        }
+      } catch (e) {
+        // Handle or log the error appropriately
+        print('Error fetching transfer status: $e');
+      }
+    });
+  }
+
   @override
   void dispose() {
+    _transferStatusTimer?.cancel();
     _alatInstance?.dispose();
     super.dispose();
   }

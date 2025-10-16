@@ -36,8 +36,6 @@ func get_instances() *C.char {
 func create_instance(configPathC *C.char, appConfigC *C.char, serviceConfigC *C.char) C.int {
 	instancesMutex.Lock()
 	defer instancesMutex.Unlock()
-	alatErrorLock.Lock()
-	defer alatErrorLock.Unlock()
 
 	configPath := C.GoString(configPathC)
 	appConfigBytes := []byte(C.GoString(appConfigC))
@@ -46,14 +44,14 @@ func create_instance(configPathC *C.char, appConfigC *C.char, serviceConfigC *C.
 	var defaultAppConfig config.AppConfig
 	err := json.Unmarshal(appConfigBytes, &defaultAppConfig)
 	if err != nil {
-		alatError = err
+		setError(err)
 		return -1
 	}
 
 	var defaultServiceConfig config.ServiceConfig
 	err = json.Unmarshal(serviceConfigBytes, &defaultServiceConfig)
 	if err != nil {
-		alatError = err
+		setError(err)
 		return -2
 	}
 
@@ -61,7 +59,7 @@ func create_instance(configPathC *C.char, appConfigC *C.char, serviceConfigC *C.
 
 	node, err := node.CreateNode(store)
 	if err != nil {
-		alatError = fmt.Errorf("Error creating node: %v", err)
+		setError(fmt.Errorf("Error creating node: %v", err))
 		return -3
 	}
 	instance := &AlatInstance{
@@ -77,14 +75,13 @@ func create_instance(configPathC *C.char, appConfigC *C.char, serviceConfigC *C.
 
 //export start_instance
 func start_instance(handle C.int) C.int {
-	alatErrorLock.Lock()
-	defer alatErrorLock.Unlock()
 	instance := getInstance(handle)
 	if instance == nil {
-		alatError = fmt.Errorf("instance %d cannot be started since it does not exist", handle)
+		setError(fmt.Errorf("instance %d cannot be started since it does not exist", handle))
 		return -1
 	}
-	if alatError = instance.node.Start(); alatError != nil {
+	if err := instance.node.Start(); err != nil {
+		setError(err)
 		return -2
 	}
 	return 0
@@ -99,12 +96,10 @@ func stop_instance(handle C.int) {
 
 //export get_port
 func get_port(handle C.int) int {
-	alatErrorLock.Lock()
-	defer alatErrorLock.Unlock()
 	if instance := getInstance(handle); instance != nil {
 		return instance.node.GetPort()
 	} else {
-		alatError = fmt.Errorf("could not get instance's port since it does not exist")
+		setError(fmt.Errorf("could not get instance's port since it does not exist"))
 		return -1
 	}
 }

@@ -4,19 +4,25 @@ import "C"
 import "sync"
 
 var (
-	alatErrorLock = &sync.Mutex{}
-	alatError     error
+	_alatErrorLock = &sync.Mutex{}
+	_alatError     error
 )
 
 //export get_error
 func get_error() *C.char {
 	var message string
-	alatErrorLock.Lock()
-	defer alatErrorLock.Unlock()
-	if alatError == nil {
+	_alatErrorLock.Lock()
+	defer _alatErrorLock.Unlock()
+	if _alatError == nil {
 		message = "Unknown error"
 	} else {
-		message = alatError.Error()
+		message = _alatError.Error()
 	}
 	return C.CString(message)
+}
+
+func setError(err error) {
+	_alatErrorLock.Lock()
+	_alatError = err
+	_alatErrorLock.Unlock()
 }

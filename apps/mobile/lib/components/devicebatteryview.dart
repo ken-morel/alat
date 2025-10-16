@@ -28,7 +28,7 @@ class _DeviceBatteryViewState extends State<DeviceBatteryView> {
   bool charging = false;
   void _fetchData() async {
     try {
-      final info = _appState.node!.queryConnectedDeviceSysInfo(
+      final info = await _appState.node!.queryConnectedDeviceSysInfo(
         widget.connectedDevice.info.id,
       );
       setState(() {
@@ -108,7 +108,7 @@ class _DeviceBatteryViewState extends State<DeviceBatteryView> {
                     error != null
                         ? Colors.red
                         : percent != null
-                        ? percent == 100
+                        ? percent == 100 || charging
                               ? Colors.green
                               : Colors.blue
                         : Colors.yellow,

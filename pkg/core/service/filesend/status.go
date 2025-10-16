@@ -20,8 +20,8 @@ type FileTransfersStatus struct {
 	Receiving        []FileTransfersStatusDevice `json:"receiving"        yaml:"receiving"`
 }
 
-func (s *Service) GetStatus() FileTransfersStatus {
-	transfers := FileTransfersStatus{}
+func (s *Service) GetStatus() *FileTransfersStatus {
+	transfers := &FileTransfersStatus{}
 
 	// Process incoming transfers
 	for _, session := range s.sessions {
@@ -30,7 +30,7 @@ func (s *Service) GetStatus() FileTransfersStatus {
 		}
 
 		incomingStatus := FileTransfersStatusDevice{
-			Device: *device.PbufToInfo(session.PeerInfo),
+			Device: *session.PeerInfo,
 		}
 		numIncoming := float32(len(session.IncomingTransfers))
 
@@ -64,7 +64,7 @@ func (s *Service) GetStatus() FileTransfersStatus {
 		}
 
 		sendingStatus := FileTransfersStatusDevice{
-			Device: *device.PbufToInfo(session.PeerInfo),
+			Device: *session.PeerInfo,
 		}
 		numSending := float32(len(session.OutgoingTransfers))
 

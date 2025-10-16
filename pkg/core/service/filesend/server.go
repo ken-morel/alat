@@ -6,6 +6,8 @@ import (
 	"os"
 	"path"
 
+	"alat/pkg/core/device"
+	"alat/pkg/core/security"
 	"alat/pkg/pbuf"
 
 	"github.com/labstack/gommon/log"
@@ -19,8 +21,9 @@ type FileSendServer struct {
 func rcfilepath(folder string, name string) string {
 	newName := name
 	ext := path.Ext(name)
-	stem := name[:len(ext)]
-	for i := range 1000 {
+	stem := name[:len(name)-len(ext)]
+	fmt.Printf("stem: '%s', name: '%s', ext: '%s'", stem, name, ext)
+	for i := range 1_000_000 {
 		if i != 0 {
 			newName = fmt.Sprintf("%s-%d.%s", stem, i, ext)
 		}
@@ -35,7 +38,9 @@ func rcfilepath(folder string, name string) string {
 }
 
 func (s *FileSendServer) SendFile(stream pbuf.FileSendService_SendFileServer) error {
-	// The first message must be the initial request with metadata and sender info.
+	if !s.Service.Enabled() {
+		return fmt.Errorf("Sending files to this device(%s) is disabled", s.Service.pairManager.GetDeviceDetails().Name)
+	}
 	req, err := stream.Recv()
 	if err != nil {
 		return fmt.Errorf("failed to receive initial request: %w", err)
@@ -46,13 +51,19 @@ func (s *FileSendServer) SendFile(stream pbuf.FileSendService_SendFileServer) er
 		return fmt.Errorf("protocol error: expected InitialSendFileRequest, got something else")
 	}
 
+	token := security.PairToken(initialReq.GetToken())
+	if !s.Service.pairManager.IsTokenValid(token) {
+		return fmt.Errorf("File sending unauthorized(device is not authorized to send files to %s), device received invalid pair token", s.Service.pairManager.GetDeviceDetails().Name)
+	}
+
 	metadata := initialReq.GetMetadata()
-	senderInfo := initialReq.GetSenderInfo()
-	if metadata == nil || senderInfo == nil {
+	senderInfoPBUF := initialReq.GetSenderInfo()
+	if metadata == nil || senderInfoPBUF == nil {
 		return fmt.Errorf("protocol error: initial request is missing metadata or sender info")
 	}
 
-	// Create the file
+	senderInfo := device.PbufToInfo(senderInfoPBUF)
+
 	dest := rcfilepath(s.Service.config.SaveFolder, metadata.GetName())
 
 	file, err := os.OpenFile(dest, os.O_CREATE|os.O_WRONLY, os.FileMode(metadata.Mode))
@@ -71,7 +82,6 @@ func (s *FileSendServer) SendFile(stream pbuf.FileSendService_SendFileServer) er
 	}
 	s.Service.UpdateIncomingStatus(senderInfo, status)
 
-	// Process subsequent chunk messages
 	for {
 		req, err := stream.Recv()
 		if err == io.EOF {
@@ -98,12 +108,10 @@ func (s *FileSendServer) SendFile(stream pbuf.FileSendService_SendFileServer) er
 		}
 		transferredSize += int64(n)
 
-		// Update status
 		status.TransferredSize = transferredSize
 		s.Service.UpdateIncomingStatus(senderInfo, status)
 	}
 
-	// Final status update
 	status.Status = TransferStatusCompleted
 	status.TransferredSize = status.TotalSize
 	s.Service.UpdateIncomingStatus(senderInfo, status)

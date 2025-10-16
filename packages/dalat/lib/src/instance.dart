@@ -6,7 +6,6 @@ import 'package:dalat/dalat.dart';
 import 'package:ffi/ffi.dart';
 
 import 'bindings.dart';
-import 'pair.dart';
 
 typedef PairRequestHandler = Future<PairResponse> Function(PairRequest);
 
@@ -125,69 +124,83 @@ class AlatInstance {
   }
 
   Future<AppConfig> getAppConfig() async {
-    return _jsonHelper(bindings.get_app_config_json, AppConfig.fromJson);
+    return Isolate.run(
+      () => _jsonHelper(bindings.get_app_config_json, AppConfig.fromJson),
+    );
   }
 
   Future<void> setAppConfig(AppConfig settings) async {
-    return _jsonSetterHelper(settings.toJson(), bindings.set_app_config_json);
-  }
-
-  Future<ServiceConfig> getServiceConfig() async {
-    return _jsonHelper(
-      bindings.get_service_config_json,
-      ServiceConfig.fromJson,
+    return Isolate.run(
+      () => _jsonSetterHelper(settings.toJson(), bindings.set_app_config_json),
     );
   }
 
-  Future<void> setServiceConfig(ServiceConfig settings) async {
-    return _jsonSetterHelper(
-      settings.toJson(),
-      bindings.set_service_config_json,
+  Future<ServiceConfig> getServiceConfig() {
+    return Isolate.run(
+      () =>
+          _jsonHelper(bindings.get_service_config_json, ServiceConfig.fromJson),
     );
   }
 
-  Future<List<FoundDevice>> getFoundDevices() async {
-    return _jsonListHelper(
-      bindings.get_found_devices_json,
-      FoundDevice.fromJson,
+  Future<void> setServiceConfig(ServiceConfig settings) {
+    return Isolate.run(
+      () => _jsonSetterHelper(
+        settings.toJson(),
+        bindings.set_service_config_json,
+      ),
     );
   }
 
-  Future<List<PairedDevice>> getPairedDevices() async {
-    return _jsonListHelper(
-      bindings.get_paired_devices_json,
-      PairedDevice.fromJson,
+  Future<List<FoundDevice>> getFoundDevices() {
+    return Isolate.run(
+      () => _jsonListHelper(
+        bindings.get_found_devices_json,
+        FoundDevice.fromJson,
+      ),
     );
   }
 
-  Future<List<ConnectedDevice>> getConnectedDevices() async {
-    return _jsonListHelper(
-      bindings.get_connected_devices_json,
-      ConnectedDevice.fromJson,
+  Future<List<PairedDevice>> getPairedDevices() {
+    return Isolate.run(
+      () => _jsonListHelper(
+        bindings.get_paired_devices_json,
+        PairedDevice.fromJson,
+      ),
     );
   }
 
-  Future<NodeStatus> getNodeStatus() async {
-    return _jsonHelper(bindings.get_node_status_json, NodeStatus.fromJson);
+  Future<List<ConnectedDevice>> getConnectedDevices() {
+    return Isolate.run(
+      () => _jsonListHelper(
+        bindings.get_connected_devices_json,
+        ConnectedDevice.fromJson,
+      ),
+    );
   }
 
-  Future<List<DeviceColor>> getAlatColors() async {
-    final ptr = bindings.get_alat_device_colors_json();
-    if (ptr == nullptr) {
-      return [];
-    }
-    try {
-      final jsonStr = ptr.cast<Utf8>().toDartString();
-      final List<dynamic> decoded = jsonDecode(jsonStr);
-      return decoded
-          .map((item) => DeviceColor.fromJson(item as Map<String, dynamic>))
-          .toList();
-    } finally {
-      bindings.free_string(ptr);
-    }
+  Future<NodeStatus> getNodeStatus() {
+    return Isolate.run(
+      () => _jsonHelper(bindings.get_node_status_json, NodeStatus.fromJson),
+    );
   }
 
-  // --- Private Helpers ---
+  Future<List<DeviceColor>> getAlatColors() {
+    return Isolate.run(() {
+      final ptr = bindings.get_alat_device_colors_json();
+      if (ptr == nullptr) {
+        return [];
+      }
+      try {
+        final jsonStr = ptr.cast<Utf8>().toDartString();
+        final List<dynamic> decoded = jsonDecode(jsonStr);
+        return decoded
+            .map((item) => DeviceColor.fromJson(item as Map<String, dynamic>))
+            .toList();
+      } finally {
+        bindings.free_string(ptr);
+      }
+    });
+  }
 
   Future<T> _jsonHelper<T>(
     Pointer<Char> Function(int) ffiFunc,
@@ -245,29 +258,31 @@ class AlatInstance {
     }
   }
 
-  SysInfo queryConnectedDeviceSysInfo(String deviceId) {
-    final deviceIdC = deviceId.toNativeUtf8();
-    try {
-      final infoC = bindings.query_connected_device_sysinfo(
-        handle,
-        deviceIdC.cast(),
-      );
-      if (infoC == nullptr) {
-        throw "Failed getting system information: ${getAlatError()}";
-      }
+  Future<SysInfo> queryConnectedDeviceSysInfo(String deviceId) {
+    return Isolate.run(() {
+      final deviceIdC = deviceId.toNativeUtf8();
       try {
-        final info = infoC.cast<Utf8>().toDartString();
-        return SysInfo.fromJson(jsonDecode(info));
+        final infoC = bindings.query_connected_device_sysinfo(
+          handle,
+          deviceIdC.cast(),
+        );
+        if (infoC == nullptr) {
+          throw "Failed getting system information: ${getAlatError()}";
+        }
+        try {
+          final info = infoC.cast<Utf8>().toDartString();
+          return SysInfo.fromJson(jsonDecode(info));
+        } finally {
+          bindings.free_string(infoC);
+        }
       } finally {
-        bindings.free_string(infoC);
+        malloc.free(deviceIdC);
       }
-    } finally {
-      malloc.free(deviceIdC);
-    }
+    });
   }
 
-  Future<RequestPairResponse> requestPair(String deviceId) async {
-    return await Isolate.run(() {
+  Future<RequestPairResponse> requestPair(String deviceId) {
+    return Isolate.run(() {
       final deviceIdC = deviceId.toNativeUtf8();
       final ptr = bindings.request_pair_found_device(handle, deviceIdC.cast());
       if (ptr == nullptr) {
@@ -284,6 +299,26 @@ class AlatInstance {
         } finally {
           bindings.free_string(ptr);
         }
+      }
+    });
+  }
+
+  Future<void> querySendFilesToDevice(String deviceId, List<String> files) {
+    return Isolate.run(() {
+      final deviceIdC = deviceId.toNativeUtf8();
+      final filesJsonC = jsonEncode(files).toNativeUtf8();
+      try {
+        final response = bindings.query_send_files_to_connected_device(
+          handle,
+          deviceIdC.cast(),
+          filesJsonC.cast(),
+        );
+        if (response < 0) {
+          throw "Error sending files: ${getAlatError()}";
+        }
+      } finally {
+        malloc.free(deviceIdC);
+        malloc.free(filesJsonC);
       }
     });
   }
@@ -320,6 +355,15 @@ class AlatInstance {
     _nativeCallables[handle]?.close();
     _nativeCallables.remove(handle);
     _pairRequestHandlers.remove(handle);
+  }
+
+  Future<FileTransfersStatus> getFileTransfersStatus() {
+    return Isolate.run(
+      () => _jsonHelper(
+        bindings.get_file_transfers_status,
+        FileTransfersStatus.fromJson,
+      ),
+    );
   }
 }
 

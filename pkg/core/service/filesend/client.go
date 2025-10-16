@@ -8,8 +8,7 @@ import (
 	"os"
 	"strconv"
 
-	"alat/pkg/core/connected"
-	"alat/pkg/core/device"
+	"alat/pkg/core/security"
 	"alat/pkg/pbuf"
 
 	"google.golang.org/grpc"
@@ -18,8 +17,8 @@ import (
 
 // SendFile connects to a peer and sends a file.
 // This is a self-contained method that handles the entire client-side lifecycle.
-func (s *Service) SendFile(ctx context.Context, peer *connected.Connected, localNodeDetails *device.Details, filePath string) error {
-	fullAddress := net.JoinHostPort(peer.IP.String(), strconv.Itoa(peer.Port))
+func (s *Service) SendFile(ctx context.Context, ip net.IP, port int, token *security.PairToken, filePath string) error {
+	fullAddress := net.JoinHostPort(ip.To4().String(), strconv.Itoa(port))
 
 	conn, err := grpc.NewClient(fullAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
@@ -45,7 +44,8 @@ func (s *Service) SendFile(ctx context.Context, peer *connected.Connected, local
 		return fmt.Errorf("failed to create send stream: %w", err)
 	}
 
-	senderInfo := localNodeDetails.GetInfo().ToPBUF()
+	senderInfo := s.pairManager.GetDeviceDetails().GetInfo()
+	senderInfoPBUF := senderInfo.ToPBUF()
 	initialReq := &pbuf.SendFileRequest{
 		Data: &pbuf.SendFileRequest_InitialRequest{
 			InitialRequest: &pbuf.InitialSendFileRequest{
@@ -54,7 +54,8 @@ func (s *Service) SendFile(ctx context.Context, peer *connected.Connected, local
 					Size: fileInfo.Size(),
 					Mode: int32(fileInfo.Mode().Perm()),
 				},
-				SenderInfo: senderInfo,
+				SenderInfo: senderInfoPBUF,
+				Token:      token[:],
 			},
 		},
 	}
@@ -118,6 +119,5 @@ func (s *Service) SendFile(ctx context.Context, peer *connected.Connected, local
 
 	status.Status = TransferStatusCompleted
 	s.UpdateOutgoingStatus(senderInfo, status)
-	fmt.Printf("File %s sent successfully\n", fileInfo.Name())
 	return nil
 }

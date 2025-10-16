@@ -280,3 +280,64 @@ class RequestPairResponse {
       _$RequestPairResponseFromJson(json);
   Map<String, dynamic> toJson() => _$RequestPairResponseToJson(this);
 }
+
+@JsonSerializable()
+class SingleFileTransferStatus {
+  @JsonKey(name: 'fileName')
+  String fileName;
+  @JsonKey(name: 'percent')
+  double percent;
+  @JsonKey(name: 'fileSize')
+  int fileSize;
+  @JsonKey(name: 'status')
+  FileTransferStatus status;
+  SingleFileTransferStatus({
+    required this.fileName,
+    required this.percent,
+    required this.fileSize,
+    required this.status,
+  });
+  factory SingleFileTransferStatus.fromJson(Map<String, dynamic> json) =>
+      _$SingleFileTransferStatusFromJson(json);
+  Map<String, dynamic> toJson() => _$SingleFileTransferStatusToJson(this);
+}
+
+@JsonSerializable()
+class DeviceFileTransferStatus {
+  @JsonKey(name: 'device')
+  DeviceInfo device;
+  @JsonKey(name: 'transfers')
+  List<SingleFileTransferStatus>? transfers;
+  @JsonKey(name: 'percent')
+  double percent;
+  DeviceFileTransferStatus({
+    required this.device,
+    required this.transfers,
+    required this.percent,
+  });
+  factory DeviceFileTransferStatus.fromJson(Map<String, dynamic> json) =>
+      _$DeviceFileTransferStatusFromJson(json);
+  Map<String, dynamic> toJson() => _$DeviceFileTransferStatusToJson(this);
+}
+
+@JsonSerializable()
+class FileTransfersStatus {
+  @JsonKey(name: 'percentSending')
+  double percentSending;
+  @JsonKey(name: 'percentReceiving')
+  double percentReceiving;
+  @JsonKey(name: 'sending')
+  List<DeviceFileTransferStatus>? sending;
+  @JsonKey(name: 'receiving')
+  List<DeviceFileTransferStatus>? receiving;
+  FileTransfersStatus({
+    required this.percentSending,
+    required this.percentReceiving,
+    required this.sending,
+    required this.receiving,
+  });
+
+  factory FileTransfersStatus.fromJson(Map<String, dynamic> json) =>
+      _$FileTransfersStatusFromJson(json);
+  Map<String, dynamic> toJson() => _$FileTransfersStatusToJson(this);
+}
