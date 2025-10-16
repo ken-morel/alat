@@ -1,18 +1,22 @@
 package storage
 
 import (
+	"alat/pkg/core/config"
 	"alat/pkg/core/device"
 	"os"
+	"path"
 
 	"gopkg.in/yaml.v3"
 )
 
 type YAMLNodeStorage struct {
-	path string
+	path                 string
+	defaultAppConfig     config.AppConfig
+	defaultServiceConfig config.ServiceConfig
 }
 
-func (ns *YAMLNodeStorage) GetPaired() ([]device.PairedDevice, error) {
-	data, err := os.ReadFile(ns.path)
+func (ns *YAMLNodeStorage) GetPairedDevices() ([]device.PairedDevice, error) {
+	data, err := os.ReadFile(ns.PairedDevicesPath())
 	if err != nil {
 		if os.IsNotExist(err) {
 			return []device.PairedDevice{}, nil
@@ -28,8 +32,8 @@ func (ns *YAMLNodeStorage) GetPaired() ([]device.PairedDevice, error) {
 	return devices, nil
 }
 
-func (ns *YAMLNodeStorage) AddPaired(newDevice device.PairedDevice) error {
-	devices, err := ns.GetPaired()
+func (ns *YAMLNodeStorage) AddPairedDevice(newDevice device.PairedDevice) error {
+	devices, err := ns.GetPairedDevices()
 	if err != nil {
 		return err
 	}
@@ -47,11 +51,63 @@ func (ns *YAMLNodeStorage) AddPaired(newDevice device.PairedDevice) error {
 		return err
 	}
 
-	return os.WriteFile(ns.path, data, 0o644)
+	return os.WriteFile(ns.PairedDevicesPath(), data, 0o644)
+}
+func (ns *YAMLNodeStorage) AppConfigPath() string {
+	return path.Join(ns.path, "app.yml")
+}
+func (ns *YAMLNodeStorage) ServiceConfigPath() string {
+	return path.Join(ns.path, "services.yml")
+}
+func (ns *YAMLNodeStorage) PairedDevicesPath() string {
+	return path.Join(ns.path, "paired.yml")
 }
 
-func CreateYAMLNodeStorage(path string) *YAMLNodeStorage {
+func (ns *YAMLNodeStorage) GetAppConfig() (*config.AppConfig, error) {
+	data, err := os.ReadFile(ns.AppConfigPath())
+	if err != nil {
+		return &ns.defaultAppConfig, nil
+	}
+	var settings config.AppConfig
+	if err := yaml.Unmarshal(data, &settings); err != nil {
+		return nil, err
+	}
+	return &settings, nil
+}
+func (ns *YAMLNodeStorage) SetAppConfig(conf config.AppConfig) error {
+	data, err := yaml.Marshal(conf)
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(ns.AppConfigPath(), data, 0o644)
+
+}
+
+func (ns *YAMLNodeStorage) GetServiceConfig() (*config.ServiceConfig, error) {
+	data, err := os.ReadFile(ns.ServiceConfigPath())
+	if err != nil {
+		return &ns.defaultServiceConfig, nil
+	}
+
+	var settings config.ServiceConfig
+	if err := yaml.Unmarshal(data, &settings); err != nil {
+		return nil, err
+	}
+	return &settings, nil
+
+}
+func (ns *YAMLNodeStorage) SetServiceConfig(conf config.ServiceConfig) error {
+	data, err := yaml.Marshal(conf)
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(ns.ServiceConfigPath(), data, 0o644)
+}
+
+func CreateYAMLNodeStorage(path string, defaultAppConfig config.AppConfig, defaultServiceConfig config.ServiceConfig) *YAMLNodeStorage {
 	return &YAMLNodeStorage{
-		path: path,
+		path:                 path,
+		defaultAppConfig:     defaultAppConfig,
+		defaultServiceConfig: defaultServiceConfig,
 	}
 }

@@ -1,17 +1,37 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dalat/dalat.dart' as dalat;
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'services/notification_service.dart';
+
+/// A state object to hold a pending pair request and the completer to resolve it.
+class PairRequestState {
+  final dalat.PairRequest request;
+  final Completer<dalat.PairResponse> completer;
+
+  PairRequestState(this.request, this.completer);
+}
+
 class AppState extends ChangeNotifier {
+  final NotificationService notificationService;
+
   dalat.AlatInstance? _alatInstance;
-  dalat.AppSettings? _appSettings;
-  dalat.ServiceSettings? _serviceSettings;
+  dalat.AppConfig? _appSettings;
+  dalat.ServiceConfig? _serviceSettings;
+
+  final ValueNotifier<PairRequestState?> pendingPairRequest = ValueNotifier(
+    null,
+  );
+
+  AppState({required this.notificationService});
 
   dalat.AlatInstance? get node => _alatInstance;
-  dalat.AppSettings? get settings => _appSettings;
-  dalat.ServiceSettings? get serviceSettings => _serviceSettings;
+  dalat.AppConfig? get settings => _appSettings;
+  dalat.ServiceConfig? get serviceSettings => _serviceSettings;
 
   bool get isReady => _alatInstance != null && _appSettings != null;
 
@@ -23,40 +43,54 @@ class AppState extends ChangeNotifier {
     }
   }
 
+  static dalat.AppConfig createAppConfig() {
+    final config = dalat.AlatInstance.createAppConfig();
+    config.deviceType = dalat.deviceTypeMobile;
+    if (Platform.isLinux || Platform.isMacOS || Platform.isWindows) {
+      config.deviceType = dalat.deviceTypeDesktop;
+    }
+    return config;
+  }
+
+  static Future<dalat.ServiceConfig> createServiceConfig() async {
+    final config = dalat.AlatInstance.createServiceConfig();
+    config.fileSend.saveFolder =
+        ((await getDownloadsDirectory()) ?? Directory(".")).path;
+    return config;
+  }
+
+  static Future<dalat.AlatInstance> createInstance(String configPath) async {
+    final appConfig = AppState.createAppConfig();
+    final serviceConfig = await AppState.createServiceConfig();
+    return dalat.AlatInstance.create(
+      configPath: configPath,
+      serviceConfig: serviceConfig,
+      appConfig: appConfig,
+    );
+  }
+
   Future<bool> initialize() async {
-    print("App state initializing");
     final instances = dalat.AlatInstance.getInstances();
-    print("There are $instances running instances");
     if (instances.isEmpty) {
       final configDir = await AppState.getAlatDir();
-      print("Creating alat instance for ${configDir.path}");
       if (!await configDir.exists()) {
         await configDir.create(recursive: true);
       }
-
-      _alatInstance = dalat.AlatInstance.create(
-        configPath: configDir.path,
-        deviceType: dalat.DeviceType.mobile,
-      );
+      _alatInstance = await AppState.createInstance(configDir.path);
+      _alatInstance!.registerPairRequestHandler(pairRequestHandler);
     } else {
       _alatInstance = dalat.AlatInstance.get(instances[0]);
+      _alatInstance!.registerPairRequestHandler(pairRequestHandler);
     }
 
-    _appSettings = await _alatInstance!.getAppSettings();
-    if (_appSettings!.setupComplete) _alatInstance!.start();
-    _serviceSettings = await _alatInstance!.getServiceSettings();
-    _setupServices();
+    _appSettings = await _alatInstance!.getAppConfig();
+    if (_appSettings!.setupComplete) {
+      _alatInstance!.start();
+    }
+    _serviceSettings = await _alatInstance!.getServiceConfig();
 
-    // Notify listeners that initialization is complete.
     notifyListeners();
     return _appSettings!.setupComplete;
-  }
-
-  Future<void> _setupServices() async {
-    final downloadsDir = await getDownloadsDirectory();
-    if (downloadsDir != null) {
-      _serviceSettings?.fileSend.saveFolder = downloadsDir.path;
-    }
   }
 
   Future<void> completeSetup() async {
@@ -64,19 +98,30 @@ class AppState extends ChangeNotifier {
       throw "Cannot complete setup, setings or instance not set";
     }
     _appSettings!.setupComplete = true;
-    await _alatInstance!.setAppSettings(_appSettings!);
+    await _alatInstance!.setAppConfig(_appSettings!);
     _alatInstance!.start();
     notifyListeners();
   }
 
   Future<void> saveSettings() async {
-    await _alatInstance!.setAppSettings(_appSettings!);
-    await _alatInstance!.setServiceSettings(_serviceSettings!);
+    await _alatInstance!.setAppConfig(_appSettings!);
+    await _alatInstance!.setServiceConfig(_serviceSettings!);
   }
 
   @override
   void dispose() {
     _alatInstance?.dispose();
     super.dispose();
+  }
+
+  Future<dalat.PairResponse> pairRequestHandler(dalat.PairRequest req) async {
+    final completer = Completer<dalat.PairResponse>();
+
+    notificationService.showPairingRequest(req);
+
+    // Set the state that the UI will listen to.
+    pendingPairRequest.value = PairRequestState(req, completer);
+
+    return completer.future;
   }
 }

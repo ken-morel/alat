@@ -25,12 +25,13 @@ func (n *Node) worker() {
 	shouldRun := true
 	for shouldRun {
 		n.discovery.Discoverer.StartDeviceSearch()
-		for range 10 {
-			time.Sleep(time.Second)
-			n.Connected.RefreshConnections()
+		for range 5 {
+			time.Sleep(time.Second * 2)
 			shouldRun = !n.workerState.shouldStop
 			if !shouldRun {
 				break
+			} else {
+				n.connected.RefreshConnections()
 			}
 		}
 	}

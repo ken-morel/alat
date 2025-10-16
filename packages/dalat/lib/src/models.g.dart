@@ -23,71 +23,73 @@ Map<String, dynamic> _$DeviceColorToJson(DeviceColor instance) =>
       'b': instance.b,
     };
 
-AppSettings _$AppSettingsFromJson(Map<String, dynamic> json) => AppSettings(
+AppConfig _$AppConfigFromJson(Map<String, dynamic> json) => AppConfig(
   setupComplete: json['setupComplete'] as bool,
   deviceName: json['deviceName'] as String,
   deviceColor: DeviceColor.fromJson(
     json['deviceColor'] as Map<String, dynamic>,
   ),
   certificate: const Uint8ListConverter().fromJson(json['certificate'] as List),
+  deviceType: json['deviceType'] as String,
 );
 
-Map<String, dynamic> _$AppSettingsToJson(AppSettings instance) =>
-    <String, dynamic>{
-      'setupComplete': instance.setupComplete,
-      'deviceName': instance.deviceName,
-      'deviceColor': instance.deviceColor,
-      'certificate': const Uint8ListConverter().toJson(instance.certificate),
-    };
+Map<String, dynamic> _$AppConfigToJson(AppConfig instance) => <String, dynamic>{
+  'setupComplete': instance.setupComplete,
+  'deviceName': instance.deviceName,
+  'deviceColor': instance.deviceColor,
+  'certificate': const Uint8ListConverter().toJson(instance.certificate),
+  'deviceType': instance.deviceType,
+};
 
-SysInfoSettings _$SysInfoSettingsFromJson(Map<String, dynamic> json) =>
-    SysInfoSettings(
+SysInfoConfig _$SysInfoConfigFromJson(Map<String, dynamic> json) =>
+    SysInfoConfig(
       enabled: json['enabled'] as bool,
       cacheSeconds: (json['cacheSeconds'] as num).toInt(),
     );
 
-Map<String, dynamic> _$SysInfoSettingsToJson(SysInfoSettings instance) =>
+Map<String, dynamic> _$SysInfoConfigToJson(SysInfoConfig instance) =>
     <String, dynamic>{
       'enabled': instance.enabled,
       'cacheSeconds': instance.cacheSeconds,
     };
 
-FileSendSettings _$FileSendSettingsFromJson(Map<String, dynamic> json) =>
-    FileSendSettings(
+FileSendConfig _$FileSendConfigFromJson(Map<String, dynamic> json) =>
+    FileSendConfig(
       enabled: json['enabled'] as bool,
       maxSize: (json['maxSize'] as num).toInt(),
       saveFolder: json['saveFolder'] as String,
     );
 
-Map<String, dynamic> _$FileSendSettingsToJson(FileSendSettings instance) =>
+Map<String, dynamic> _$FileSendConfigToJson(FileSendConfig instance) =>
     <String, dynamic>{
       'enabled': instance.enabled,
       'maxSize': instance.maxSize,
       'saveFolder': instance.saveFolder,
     };
 
-ServiceSettings _$ServiceSettingsFromJson(
-  Map<String, dynamic> json,
-) => ServiceSettings(
-  sysInfo: SysInfoSettings.fromJson(json['sysinfo'] as Map<String, dynamic>),
-  fileSend: FileSendSettings.fromJson(json['filesend'] as Map<String, dynamic>),
-);
+ServiceConfig _$ServiceConfigFromJson(Map<String, dynamic> json) =>
+    ServiceConfig(
+      sysInfo: SysInfoConfig.fromJson(json['sysinfo'] as Map<String, dynamic>),
+      fileSend: FileSendConfig.fromJson(
+        json['filesend'] as Map<String, dynamic>,
+      ),
+    );
 
-Map<String, dynamic> _$ServiceSettingsToJson(ServiceSettings instance) =>
+Map<String, dynamic> _$ServiceConfigToJson(ServiceConfig instance) =>
     <String, dynamic>{
       'sysinfo': instance.sysInfo,
       'filesend': instance.fileSend,
     };
 
 FoundDevice _$FoundDeviceFromJson(Map<String, dynamic> json) => FoundDevice(
-  ip: const Uint8ListConverter().fromJson(json['ip'] as List),
+  ip: json['ip'] as String,
   port: (json['port'] as num).toInt(),
   info: DeviceInfo.fromJson(json['info'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$FoundDeviceToJson(FoundDevice instance) =>
     <String, dynamic>{
-      'ip': const Uint8ListConverter().toJson(instance.ip),
+      'ip': instance.ip,
       'port': instance.port,
       'info': instance.info,
     };
@@ -96,7 +98,7 @@ DeviceDetails _$DeviceDetailsFromJson(Map<String, dynamic> json) =>
     DeviceDetails(
       color: DeviceColor.fromJson(json['color'] as Map<String, dynamic>),
       name: json['name'] as String,
-      type: $enumDecode(_$DeviceTypeEnumMap, json['type']),
+      type: json['type'] as String,
       certificate: const Uint8ListConverter().fromJson(
         json['certificate'] as List,
       ),
@@ -106,16 +108,9 @@ Map<String, dynamic> _$DeviceDetailsToJson(DeviceDetails instance) =>
     <String, dynamic>{
       'color': instance.color,
       'name': instance.name,
-      'type': _$DeviceTypeEnumMap[instance.type]!,
+      'type': instance.type,
       'certificate': const Uint8ListConverter().toJson(instance.certificate),
     };
-
-const _$DeviceTypeEnumMap = {
-  DeviceType.unspecified: 'unspecified',
-  DeviceType.mobile: 'mobile',
-  DeviceType.desktop: 'desktop',
-  DeviceType.tv: 'tv',
-};
 
 PairedDevice _$PairedDeviceFromJson(Map<String, dynamic> json) => PairedDevice(
   certificate: const Uint8ListConverter().fromJson(json['certificate'] as List),
@@ -132,7 +127,7 @@ DeviceInfo _$DeviceInfoFromJson(Map<String, dynamic> json) => DeviceInfo(
   id: json['id'] as String,
   name: json['name'] as String,
   color: DeviceColor.fromJson(json['color'] as Map<String, dynamic>),
-  type: $enumDecode(_$DeviceTypeEnumMap, json['type']),
+  type: json['type'] as String,
 );
 
 Map<String, dynamic> _$DeviceInfoToJson(DeviceInfo instance) =>
@@ -140,7 +135,7 @@ Map<String, dynamic> _$DeviceInfoToJson(DeviceInfo instance) =>
       'id': instance.id,
       'name': instance.name,
       'color': instance.color,
-      'type': _$DeviceTypeEnumMap[instance.type]!,
+      'type': instance.type,
     };
 
 ConnectedDevice _$ConnectedDeviceFromJson(Map<String, dynamic> json) =>
@@ -149,7 +144,7 @@ ConnectedDevice _$ConnectedDeviceFromJson(Map<String, dynamic> json) =>
       pairedDevice: PairedDevice.fromJson(
         json['pairedDevice'] as Map<String, dynamic>,
       ),
-      ip: const Uint8ListConverter().fromJson(json['ip'] as List),
+      ip: json['ip'] as String,
       port: (json['port'] as num).toInt(),
     );
 
@@ -157,7 +152,7 @@ Map<String, dynamic> _$ConnectedDeviceToJson(ConnectedDevice instance) =>
     <String, dynamic>{
       'info': instance.info,
       'pairedDevice': instance.pairedDevice,
-      'ip': const Uint8ListConverter().toJson(instance.ip),
+      'ip': instance.ip,
       'port': instance.port,
     };
 
@@ -175,3 +170,20 @@ Map<String, dynamic> _$NodeStatusToJson(NodeStatus instance) =>
       'workerRunning': instance.workerRunning,
       'port': instance.port,
     };
+
+RequestPairResponse _$RequestPairResponseFromJson(Map<String, dynamic> json) =>
+    RequestPairResponse(
+      status: (json['status'] as num).toInt(),
+      error: json['error'] as String,
+      accepted: json['accepted'] as bool,
+      reason: json['reason'] as String,
+    );
+
+Map<String, dynamic> _$RequestPairResponseToJson(
+  RequestPairResponse instance,
+) => <String, dynamic>{
+  'status': instance.status,
+  'error': instance.error,
+  'accepted': instance.accepted,
+  'reason': instance.reason,
+};

@@ -1656,15 +1656,101 @@ class AlatBindings {
   late final _getloadavg = _getloadavgPtr
       .asFunction<int Function(ffi.Pointer<ffi.Double>, int)>();
 
-  ffi.Pointer<ffi.Char> get_instances() {
-    return _get_instances();
+  void call_async_callback_bridge(
+    async_pair_request_callback cb,
+    int handle,
+    ffi.Pointer<ffi.Char> request_id,
+    ffi.Pointer<ffi.Char> token,
+    ffi.Pointer<ffi.Char> details,
+  ) {
+    return _call_async_callback_bridge(cb, handle, request_id, token, details);
   }
 
-  late final _get_instancesPtr =
+  late final _call_async_callback_bridgePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            async_pair_request_callback,
+            ffi.Int,
+            ffi.Pointer<ffi.Char>,
+            ffi.Pointer<ffi.Char>,
+            ffi.Pointer<ffi.Char>,
+          )
+        >
+      >('call_async_callback_bridge');
+  late final _call_async_callback_bridge = _call_async_callback_bridgePtr
+      .asFunction<
+        void Function(
+          async_pair_request_callback,
+          int,
+          ffi.Pointer<ffi.Char>,
+          ffi.Pointer<ffi.Char>,
+          ffi.Pointer<ffi.Char>,
+        )
+      >();
+
+  int register_async_pair_request_callback(
+    int handle,
+    async_pair_request_callback callback,
+  ) {
+    return _register_async_pair_request_callback(handle, callback);
+  }
+
+  late final _register_async_pair_request_callbackPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Int Function(ffi.Int, async_pair_request_callback)
+        >
+      >('register_async_pair_request_callback');
+  late final _register_async_pair_request_callback =
+      _register_async_pair_request_callbackPtr
+          .asFunction<int Function(int, async_pair_request_callback)>();
+
+  int submit_pair_response(
+    int handle,
+    ffi.Pointer<ffi.Char> requestID_C,
+    bool accepted,
+    ffi.Pointer<ffi.Char> reason_C,
+  ) {
+    return _submit_pair_response(handle, requestID_C, accepted, reason_C);
+  }
+
+  late final _submit_pair_responsePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Int Function(
+            ffi.Int,
+            ffi.Pointer<ffi.Char>,
+            ffi.Bool,
+            ffi.Pointer<ffi.Char>,
+          )
+        >
+      >('submit_pair_response');
+  late final _submit_pair_response = _submit_pair_responsePtr
+      .asFunction<
+        int Function(int, ffi.Pointer<ffi.Char>, bool, ffi.Pointer<ffi.Char>)
+      >();
+
+  ffi.Pointer<ffi.Char> default_app_config() {
+    return _default_app_config();
+  }
+
+  late final _default_app_configPtr =
       _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function()>>(
-        'get_instances',
+        'default_app_config',
       );
-  late final _get_instances = _get_instancesPtr
+  late final _default_app_config = _default_app_configPtr
+      .asFunction<ffi.Pointer<ffi.Char> Function()>();
+
+  ffi.Pointer<ffi.Char> default_service_config() {
+    return _default_service_config();
+  }
+
+  late final _default_service_configPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function()>>(
+        'default_service_config',
+      );
+  late final _default_service_config = _default_service_configPtr
       .asFunction<ffi.Pointer<ffi.Char> Function()>();
 
   ffi.Pointer<ffi.Char> get_error() {
@@ -1678,16 +1764,43 @@ class AlatBindings {
   late final _get_error = _get_errorPtr
       .asFunction<ffi.Pointer<ffi.Char> Function()>();
 
-  int create_instance(ffi.Pointer<ffi.Char> configPath, int deviceType) {
-    return _create_instance(configPath, deviceType);
+  ffi.Pointer<ffi.Char> get_instances() {
+    return _get_instances();
+  }
+
+  late final _get_instancesPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function()>>(
+        'get_instances',
+      );
+  late final _get_instances = _get_instancesPtr
+      .asFunction<ffi.Pointer<ffi.Char> Function()>();
+
+  int create_instance(
+    ffi.Pointer<ffi.Char> configPathC,
+    ffi.Pointer<ffi.Char> appConfigC,
+    ffi.Pointer<ffi.Char> serviceConfigC,
+  ) {
+    return _create_instance(configPathC, appConfigC, serviceConfigC);
   }
 
   late final _create_instancePtr =
       _lookup<
-        ffi.NativeFunction<ffi.Int Function(ffi.Pointer<ffi.Char>, ffi.Int)>
+        ffi.NativeFunction<
+          ffi.Int Function(
+            ffi.Pointer<ffi.Char>,
+            ffi.Pointer<ffi.Char>,
+            ffi.Pointer<ffi.Char>,
+          )
+        >
       >('create_instance');
   late final _create_instance = _create_instancePtr
-      .asFunction<int Function(ffi.Pointer<ffi.Char>, int)>();
+      .asFunction<
+        int Function(
+          ffi.Pointer<ffi.Char>,
+          ffi.Pointer<ffi.Char>,
+          ffi.Pointer<ffi.Char>,
+        )
+      >();
 
   int start_instance(int handle) {
     return _start_instance(handle);
@@ -1726,51 +1839,86 @@ class AlatBindings {
   late final _destroy_instance = _destroy_instancePtr
       .asFunction<void Function(int)>();
 
-  ffi.Pointer<ffi.Char> get_app_settings_json(int handle) {
-    return _get_app_settings_json(handle);
+  ffi.Pointer<ffi.Char> get_node_status_json(int handle) {
+    return _get_node_status_json(handle);
   }
 
-  late final _get_app_settings_jsonPtr =
+  late final _get_node_status_jsonPtr =
       _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function(ffi.Int)>>(
-        'get_app_settings_json',
+        'get_node_status_json',
       );
-  late final _get_app_settings_json = _get_app_settings_jsonPtr
+  late final _get_node_status_json = _get_node_status_jsonPtr
       .asFunction<ffi.Pointer<ffi.Char> Function(int)>();
 
-  int set_app_settings_json(int handle, ffi.Pointer<ffi.Char> settingsJSON) {
-    return _set_app_settings_json(handle, settingsJSON);
+  void free_string(ffi.Pointer<ffi.Char> s) {
+    return _free_string(s);
   }
 
-  late final _set_app_settings_jsonPtr =
+  late final _free_stringPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Char>)>>(
+        'free_string',
+      );
+  late final _free_string = _free_stringPtr
+      .asFunction<void Function(ffi.Pointer<ffi.Char>)>();
+
+  ffi.Pointer<ffi.Char> request_pair_found_device(
+    int handleC,
+    ffi.Pointer<ffi.Char> deviceIdC,
+  ) {
+    return _request_pair_found_device(handleC, deviceIdC);
+  }
+
+  late final _request_pair_found_devicePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<ffi.Char> Function(ffi.Int, ffi.Pointer<ffi.Char>)
+        >
+      >('request_pair_found_device');
+  late final _request_pair_found_device = _request_pair_found_devicePtr
+      .asFunction<ffi.Pointer<ffi.Char> Function(int, ffi.Pointer<ffi.Char>)>();
+
+  ffi.Pointer<ffi.Char> get_app_config_json(int handle) {
+    return _get_app_config_json(handle);
+  }
+
+  late final _get_app_config_jsonPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function(ffi.Int)>>(
+        'get_app_config_json',
+      );
+  late final _get_app_config_json = _get_app_config_jsonPtr
+      .asFunction<ffi.Pointer<ffi.Char> Function(int)>();
+
+  int set_app_config_json(int handle, ffi.Pointer<ffi.Char> settingsJSON) {
+    return _set_app_config_json(handle, settingsJSON);
+  }
+
+  late final _set_app_config_jsonPtr =
       _lookup<
         ffi.NativeFunction<ffi.Int Function(ffi.Int, ffi.Pointer<ffi.Char>)>
-      >('set_app_settings_json');
-  late final _set_app_settings_json = _set_app_settings_jsonPtr
+      >('set_app_config_json');
+  late final _set_app_config_json = _set_app_config_jsonPtr
       .asFunction<int Function(int, ffi.Pointer<ffi.Char>)>();
 
-  ffi.Pointer<ffi.Char> get_service_settings_json(int handle) {
-    return _get_service_settings_json(handle);
+  ffi.Pointer<ffi.Char> get_service_config_json(int handle) {
+    return _get_service_config_json(handle);
   }
 
-  late final _get_service_settings_jsonPtr =
+  late final _get_service_config_jsonPtr =
       _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function(ffi.Int)>>(
-        'get_service_settings_json',
+        'get_service_config_json',
       );
-  late final _get_service_settings_json = _get_service_settings_jsonPtr
+  late final _get_service_config_json = _get_service_config_jsonPtr
       .asFunction<ffi.Pointer<ffi.Char> Function(int)>();
 
-  int set_service_settings_json(
-    int handle,
-    ffi.Pointer<ffi.Char> settingsJSON,
-  ) {
-    return _set_service_settings_json(handle, settingsJSON);
+  int set_service_config_json(int handle, ffi.Pointer<ffi.Char> settingsJSON) {
+    return _set_service_config_json(handle, settingsJSON);
   }
 
-  late final _set_service_settings_jsonPtr =
+  late final _set_service_config_jsonPtr =
       _lookup<
         ffi.NativeFunction<ffi.Int Function(ffi.Int, ffi.Pointer<ffi.Char>)>
-      >('set_service_settings_json');
-  late final _set_service_settings_json = _set_service_settings_jsonPtr
+      >('set_service_config_json');
+  late final _set_service_config_json = _set_service_config_jsonPtr
       .asFunction<int Function(int, ffi.Pointer<ffi.Char>)>();
 
   ffi.Pointer<ffi.Char> get_found_devices_json(int handle) {
@@ -1816,28 +1964,6 @@ class AlatBindings {
       );
   late final _get_alat_device_colors_json = _get_alat_device_colors_jsonPtr
       .asFunction<ffi.Pointer<ffi.Char> Function()>();
-
-  ffi.Pointer<ffi.Char> get_node_status_json(int handle) {
-    return _get_node_status_json(handle);
-  }
-
-  late final _get_node_status_jsonPtr =
-      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function(ffi.Int)>>(
-        'get_node_status_json',
-      );
-  late final _get_node_status_json = _get_node_status_jsonPtr
-      .asFunction<ffi.Pointer<ffi.Char> Function(int)>();
-
-  void free_string(ffi.Pointer<ffi.Char> s) {
-    return _free_string(s);
-  }
-
-  late final _free_stringPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Char>)>>(
-        'free_string',
-      );
-  late final _free_string = _free_stringPtr
-      .asFunction<void Function(ffi.Pointer<ffi.Char>)>();
 }
 
 final class max_align_t extends ffi.Opaque {}
@@ -2158,6 +2284,22 @@ typedef __compar_fn_tFunction =
     ffi.Int Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Void>);
 typedef Dart__compar_fn_tFunction =
     int Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Void>);
+typedef async_pair_request_callback =
+    ffi.Pointer<ffi.NativeFunction<async_pair_request_callbackFunction>>;
+typedef async_pair_request_callbackFunction =
+    ffi.Void Function(
+      ffi.Int handle,
+      ffi.Pointer<ffi.Char> request_id,
+      ffi.Pointer<ffi.Char> token_json,
+      ffi.Pointer<ffi.Char> device_details_json,
+    );
+typedef Dartasync_pair_request_callbackFunction =
+    void Function(
+      int handle,
+      ffi.Pointer<ffi.Char> request_id,
+      ffi.Pointer<ffi.Char> token_json,
+      ffi.Pointer<ffi.Char> device_details_json,
+    );
 
 final class GoInterface extends ffi.Struct {
   external ffi.Pointer<ffi.Void> t;
@@ -2180,6 +2322,12 @@ typedef GoInt64 = ffi.LongLong;
 typedef DartGoInt64 = int;
 
 const int NULL = 0;
+
+const int __bool_true_false_are_defined = 1;
+
+const int true1 = 1;
+
+const int false1 = 0;
 
 const int _FEATURES_H = 1;
 

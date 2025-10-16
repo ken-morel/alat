@@ -14,6 +14,6 @@ func (s *Server) RequestPair(ctx context.Context, req *pbuf.RequestPairRequest) 
 		Token:    req.GetToken(),
 		Accepted: accepted,
 		Reason:   reason,
-		Details:  s.PairManager.DeviceDetails().ToPBUF(),
+		Details:  s.PairManager.GetDeviceDetails().ToPBUF(),
 	}, nil
 }
