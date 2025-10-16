@@ -193,7 +193,7 @@ class AlatInstance {
     Pointer<Char> Function(int) ffiFunc,
     T Function(Map<String, dynamic>) fromJson,
   ) async {
-    final ptr = await Isolate.run(() => ffiFunc(handle));
+    final ptr = ffiFunc(handle);
     if (ptr == nullptr) {
       throw Exception(
         'Failed to get data from Go core: function returned null pointer. ${getAlatError()}',
@@ -211,14 +211,14 @@ class AlatInstance {
     Pointer<Char> Function(int) ffiFunc,
     T Function(Map<String, dynamic>) fromJson,
   ) async {
-    final ptr = await Isolate.run(() => ffiFunc(handle));
+    final ptr = ffiFunc(handle);
     if (ptr == nullptr) {
       // An empty list is represented by a null pointer in this API
       return [];
     }
     try {
       final jsonStr = ptr.cast<Utf8>().toDartString();
-      final List<dynamic> decoded = jsonDecode(jsonStr);
+      final List<dynamic> decoded = jsonDecode(jsonStr) ?? [];
       return decoded
           .map((item) => fromJson(item as Map<String, dynamic>))
           .toList();
