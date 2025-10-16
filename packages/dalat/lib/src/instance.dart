@@ -1,19 +1,24 @@
 import 'dart:convert';
 import 'dart:ffi';
 
+import 'package:dalat/dalat.dart';
 import 'package:ffi/ffi.dart';
 
 import 'bindings.dart';
 import 'models.dart';
+import 'pair.dart';
+
+typedef PairRequestHandler = Future<PairResponse> Function(PairRequest);
 
 /// A high-level, platform-agnostic API for interacting with the Alat core.
 ///
 /// This class encapsulates the FFI handle management and provides a clean,
 /// Dart-idiomatic interface to the underlying Go implementation.
 class AlatInstance {
-  final int _handle;
+  final int handle;
+  PairRequestHandler? pairRequestHandler;
 
-  AlatInstance._(this._handle);
+  AlatInstance._(this.handle);
 
   static AlatInstance create({
     required String configPath,
@@ -67,7 +72,7 @@ class AlatInstance {
   }
 
   void start() {
-    final result = bindings.start_instance(_handle);
+    final result = bindings.start_instance(handle);
     if (result != 0) {
       final msgPointer = bindings.get_error();
       try {
@@ -93,11 +98,20 @@ class AlatInstance {
   }
 
   void stop() {
-    bindings.stop_instance(_handle);
+    bindings.stop_instance(handle);
+  }
+
+  void registerPairRequestHandler(PairRequestHandler fun) {
+    final fnPointer =
+        Pointer.fromFunction<
+          Void Function(Int, Pointer<Char>, Pointer<Char>, Pointer<Char>)
+        >(_pairRequestHandler);
+    bindings.register_async_pair_request_callback(handle, fnPointer);
+    pairRequestHandler = fun;
   }
 
   void dispose() {
-    bindings.destroy_instance(_handle);
+    bindings.destroy_instance(handle);
   }
 
   Future<AppConfig> getAppConfig() async {
@@ -169,7 +183,7 @@ class AlatInstance {
     Pointer<Char> Function(int) ffiFunc,
     T Function(Map<String, dynamic>) fromJson,
   ) async {
-    final ptr = ffiFunc(_handle);
+    final ptr = ffiFunc(handle);
     if (ptr == nullptr) {
       throw Exception(
         'Failed to get data from Go core: function returned null pointer. ${getAlatError()}',
@@ -187,7 +201,7 @@ class AlatInstance {
     Pointer<Char> Function(int) ffiFunc,
     T Function(Map<String, dynamic>) fromJson,
   ) async {
-    final ptr = ffiFunc(_handle);
+    final ptr = ffiFunc(handle);
     if (ptr == nullptr) {
       // An empty list is represented by a null pointer in this API
       return [];
@@ -210,7 +224,7 @@ class AlatInstance {
     final jsonStr = jsonEncode(jsonData);
     final jsonStrC = jsonStr.toNativeUtf8();
     try {
-      final result = ffiFunc(_handle, jsonStrC.cast());
+      final result = ffiFunc(handle, jsonStrC.cast());
       if (result != 0) {
         throw Exception(
           'Failed to set data in Go core. Code: $result ${getAlatError()}',
@@ -223,7 +237,7 @@ class AlatInstance {
 
   Future<RequestPairResponse> requestPair(String deviceId) async {
     final deviceIdC = deviceId.toNativeUtf8();
-    final ptr = bindings.request_pair_found_device(_handle, deviceIdC.cast());
+    final ptr = bindings.request_pair_found_device(handle, deviceIdC.cast());
     if (ptr == nullptr) {
       return RequestPairResponse(
         status: -1,
@@ -263,5 +277,40 @@ class AlatInstance {
     } finally {
       bindings.free_string(ptr.cast());
     }
+  }
+
+  void _pairRequestHandler(
+    int handle,
+    Pointer<Char> requestIdC,
+    Pointer<Char> pairTokenC,
+    Pointer<Char> deviceDetailsC,
+  ) {
+    if (pairRequestHandler == null) return;
+    PairRequestHandler handler = pairRequestHandler!;
+    final requestid = requestIdC.cast<Utf8>().toDartString();
+    final token = Uint8ListConverter().fromJson(
+      jsonDecode(pairTokenC.cast<Utf8>().toDartString()),
+    );
+    final device = DeviceDetails.fromJson(
+      jsonDecode(deviceDetailsC.cast<Utf8>().toDartString()),
+    );
+    handler(
+      PairRequest(requestid: requestid, token: token, device: device),
+    ).then((response) {
+      final newRequestIdC = requestid.toNativeUtf8();
+      final reasonC = response.reason.toNativeUtf8();
+      try {
+        bindings.submit_pair_response(
+          handle,
+          newRequestIdC.cast(),
+          response.accepted,
+          reasonC.cast(),
+        );
+      } finally {
+        malloc.free(newRequestIdC);
+        malloc.free(reasonC);
+      }
+    });
+    return;
   }
 }

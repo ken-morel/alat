@@ -12,6 +12,7 @@ const DeviceType deviceTypeMobile = "mobile",
     deviceTypeUnspecified = "unspecified";
 
 typedef Certificate = Uint8List;
+typedef PairToken = Uint8List;
 typedef Ip = String;
 typedef Port = int;
 

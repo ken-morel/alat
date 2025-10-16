@@ -147,7 +147,7 @@ class PairedDevice {
   @JsonKey(name: 'certificate')
   Certificate certificate;
   @JsonKey(name: 'token')
-  Uint8List token;
+  PairToken token;
   PairedDevice({
     required this.certificate,
     required this.token,
