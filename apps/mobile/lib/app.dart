@@ -1,4 +1,6 @@
+import 'package:alat/components/pairing_dialog.dart';
 import 'package:alat/pages/dashboard/pair.dart';
+import 'package:alat/state.dart';
 import 'package:flutter/material.dart';
 import 'package:alat/pages/dashboard/dashboard.dart';
 import 'package:alat/pages/setup/setup.dart';
@@ -8,7 +10,8 @@ import 'package:alat/theme.dart';
 import 'package:provider/provider.dart';
 
 class AlatApplication extends StatelessWidget {
-  const AlatApplication({super.key});
+  final GlobalKey<NavigatorState> navigatorKey;
+  const AlatApplication({super.key, required this.navigatorKey});
 
   @override
   Widget build(BuildContext context) {
@@ -23,15 +26,69 @@ class AlatApplication extends StatelessWidget {
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
             themeMode: themeProvider.themeMode,
+            navigatorKey: navigatorKey, // Assign the global key
             home: const StartPage(),
-            routes: {
-              '/dashboard': (context) => const DashboardPage(),
-              '/dashboard/pair': (context) => const PairDevicePage(),
-              '/setup': (context) => SetupAssistantPageView(),
+            // Use onGenerateRoute to handle showing the dialog from a notification.
+            onGenerateRoute: (settings) {
+              if (settings.name == '/pair-request') {
+                return MaterialPageRoute(
+                  builder: (context) {
+                    // This page will be the one that shows the dialog.
+                    return const PairingRequestHandlerPage();
+                  },
+                  settings: settings,
+                );
+              }
+              // Handle other routes normally.
+              switch (settings.name) {
+                case '/dashboard':
+                  return MaterialPageRoute(
+                    builder: (_) => const DashboardPage(),
+                  );
+                case '/dashboard/pair':
+                  return MaterialPageRoute(
+                    builder: (_) => const PairDevicePage(),
+                  );
+                case '/setup':
+                  return MaterialPageRoute(
+                    builder: (_) => SetupAssistantPageView(),
+                  );
+                default:
+                  return MaterialPageRoute(builder: (_) => const StartPage());
+              }
             },
           );
         },
       ),
+    );
+  }
+}
+
+/// A helper page that listens for the pairing request and shows the dialog.
+class PairingRequestHandlerPage extends StatelessWidget {
+  const PairingRequestHandlerPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final appState = Provider.of<AppState>(context, listen: false);
+
+    return ValueListenableBuilder<PairRequestState?>(
+      valueListenable: appState.pendingPairRequest,
+      builder: (context, value, child) {
+        if (value == null) {
+          // If the request is cleared, pop the page.
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          });
+          return const Scaffold(
+            body: Center(child: Text('No active pairing request.')),
+          );
+        }
+
+        return PairingDialog(pairRequestState: value);
+      },
     );
   }
 }

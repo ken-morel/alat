@@ -1,13 +1,33 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dalat/dalat.dart' as dalat;
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'services/notification_service.dart';
+
+/// A state object to hold a pending pair request and the completer to resolve it.
+class PairRequestState {
+  final dalat.PairRequest request;
+  final Completer<dalat.PairResponse> completer;
+
+  PairRequestState(this.request, this.completer);
+}
+
 class AppState extends ChangeNotifier {
+  final NotificationService notificationService;
+
   dalat.AlatInstance? _alatInstance;
   dalat.AppConfig? _appSettings;
   dalat.ServiceConfig? _serviceSettings;
+
+  final ValueNotifier<PairRequestState?> pendingPairRequest = ValueNotifier(
+    null,
+  );
+
+  AppState({required this.notificationService});
 
   dalat.AlatInstance? get node => _alatInstance;
   dalat.AppConfig? get settings => _appSettings;
@@ -60,6 +80,7 @@ class AppState extends ChangeNotifier {
       _alatInstance!.registerPairRequestHandler(pairRequestHandler);
     } else {
       _alatInstance = dalat.AlatInstance.get(instances[0]);
+      _alatInstance!.registerPairRequestHandler(pairRequestHandler);
     }
 
     _appSettings = await _alatInstance!.getAppConfig();
@@ -68,7 +89,6 @@ class AppState extends ChangeNotifier {
     }
     _serviceSettings = await _alatInstance!.getServiceConfig();
 
-    // Notify listeners that initialization is complete.
     notifyListeners();
     return _appSettings!.setupComplete;
   }
@@ -95,9 +115,17 @@ class AppState extends ChangeNotifier {
   }
 
   Future<dalat.PairResponse> pairRequestHandler(dalat.PairRequest req) async {
-    return dalat.PairResponse(
-      accepted: false,
-      reason: "Did not query the user",
-    );
+    final completer = Completer<dalat.PairResponse>();
+
+    // The payload for the notification is the JSON representation of the request.
+    final payload = jsonEncode(req);
+
+    // Trigger the notification.
+    notificationService.showPairingRequest(req.device.name, payload);
+
+    // Set the state that the UI will listen to.
+    pendingPairRequest.value = PairRequestState(req, completer);
+
+    return completer.future;
   }
 }
