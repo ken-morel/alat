@@ -57,6 +57,7 @@ class AppState extends ChangeNotifier {
         await configDir.create(recursive: true);
       }
       _alatInstance = await AppState.createInstance(configDir.path);
+      _alatInstance!.registerPairRequestHandler(pairRequestHandler);
     } else {
       _alatInstance = dalat.AlatInstance.get(instances[0]);
     }
@@ -91,5 +92,12 @@ class AppState extends ChangeNotifier {
   void dispose() {
     _alatInstance?.dispose();
     super.dispose();
+  }
+
+  Future<dalat.PairResponse> pairRequestHandler(dalat.PairRequest req) async {
+    return dalat.PairResponse(
+      accepted: false,
+      reason: "Did not query the user",
+    );
   }
 }

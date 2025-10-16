@@ -5,7 +5,6 @@ import 'package:dalat/dalat.dart';
 import 'package:ffi/ffi.dart';
 
 import 'bindings.dart';
-import 'models.dart';
 import 'pair.dart';
 
 typedef PairRequestHandler = Future<PairResponse> Function(PairRequest);
@@ -16,7 +15,6 @@ typedef PairRequestHandler = Future<PairResponse> Function(PairRequest);
 /// Dart-idiomatic interface to the underlying Go implementation.
 class AlatInstance {
   final int handle;
-  PairRequestHandler? pairRequestHandler;
 
   AlatInstance._(this.handle);
 
@@ -107,7 +105,7 @@ class AlatInstance {
           Void Function(Int, Pointer<Char>, Pointer<Char>, Pointer<Char>)
         >(_pairRequestHandler);
     bindings.register_async_pair_request_callback(handle, fnPointer);
-    pairRequestHandler = fun;
+    _pairRequestHandlers[handle] = fun;
   }
 
   void dispose() {
@@ -278,25 +276,26 @@ class AlatInstance {
       bindings.free_string(ptr.cast());
     }
   }
+}
 
-  void _pairRequestHandler(
-    int handle,
-    Pointer<Char> requestIdC,
-    Pointer<Char> pairTokenC,
-    Pointer<Char> deviceDetailsC,
-  ) {
-    if (pairRequestHandler == null) return;
-    PairRequestHandler handler = pairRequestHandler!;
-    final requestid = requestIdC.cast<Utf8>().toDartString();
-    final token = Uint8ListConverter().fromJson(
-      jsonDecode(pairTokenC.cast<Utf8>().toDartString()),
-    );
-    final device = DeviceDetails.fromJson(
-      jsonDecode(deviceDetailsC.cast<Utf8>().toDartString()),
-    );
-    handler(
-      PairRequest(requestid: requestid, token: token, device: device),
-    ).then((response) {
+final Map<int, PairRequestHandler> _pairRequestHandlers = {};
+void _pairRequestHandler(
+  int handle,
+  Pointer<Char> requestIdC,
+  Pointer<Char> pairTokenC,
+  Pointer<Char> deviceDetailsC,
+) {
+  if (!_pairRequestHandlers.containsKey(handle)) return;
+  PairRequestHandler handler = _pairRequestHandlers[handle]!;
+  final requestid = requestIdC.cast<Utf8>().toDartString();
+  final token = Uint8ListConverter().fromJson(
+    jsonDecode(pairTokenC.cast<Utf8>().toDartString()),
+  );
+  final device = DeviceDetails.fromJson(
+    jsonDecode(deviceDetailsC.cast<Utf8>().toDartString()),
+  );
+  handler(PairRequest(requestid: requestid, token: token, device: device)).then(
+    (response) {
       final newRequestIdC = requestid.toNativeUtf8();
       final reasonC = response.reason.toNativeUtf8();
       try {
@@ -310,7 +309,7 @@ class AlatInstance {
         malloc.free(newRequestIdC);
         malloc.free(reasonC);
       }
-    });
-    return;
-  }
+    },
+  );
+  return;
 }
