@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:alat/components/devicebatteryview.dart';
 import 'package:alat/pages/dashboard/base.dart';
 import 'package:alat/pages/dashboard/deviceview.dart';
 import 'package:alat/state.dart';
@@ -91,7 +92,7 @@ class _ConnectedDevicesListState extends State<_ConnectedDevicesList> {
             child: ListTile(
               leading: CircleAvatar(
                 backgroundColor: deviceColor,
-                child: CircularProgressIndicator(value: 50),
+                child: DeviceBatteryView(connectedDevice: device),
               ),
               title: Text(device.info.name),
               subtitle: Text(device.info.type),

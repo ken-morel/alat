@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:alat/state.dart';
 import 'package:flutter/material.dart';
@@ -21,50 +20,60 @@ class DeviceBatteryView extends StatefulWidget {
 
 class _DeviceBatteryViewState extends State<DeviceBatteryView> {
   double? percent;
+  double? targetPercent;
   String? error;
   late Timer timer;
+  late Timer updateTimer;
+  late AppState _appState;
   bool charging = false;
+  void _fetchData() async {
+    try {
+      final info = _appState.node!.queryConnectedDeviceSysInfo(
+        widget.connectedDevice.info.id,
+      );
+      setState(() {
+        error = null;
+        charging = info.batteryCharging;
+        targetPercent = info.batteryPercent;
+      });
+    } catch (e) {
+      setState(() {
+        error = e.toString();
+        percent = null;
+        targetPercent = null;
+      });
+    }
+  }
+
   @override
   void initState() {
-    const nTimes = 20;
-    const animDuration = 2000;
-    final appState = context.read<AppState>();
-    timer = Timer.periodic(Duration(seconds: 5), (_) {
-      try {
-        final info = appState.node!.queryConnectedDeviceSysInfo(
-          widget.connectedDevice.info.id,
-        );
-        setState(() {
-          error = null;
-          charging = info.batteryCharging;
-          if (percent == null) {
-            () async {
-              sleep(Duration(seconds: 1));
-              for (double p = 0; p <= info.batteryPercent; p++) {
-                sleep(Duration(milliseconds: (animDuration / nTimes).round()));
-                setState(() {
-                  percent = p;
-                });
-              }
-            }();
-          } else {
-            percent = info.batteryPercent;
-          }
-        });
-      } catch (e) {
-        setState(() {
-          error = e.toString();
-          percent = null;
-        });
-      }
+    _appState = context.read<AppState>();
+    _fetchData();
+    timer = Timer.periodic(Duration(seconds: 2), (_) => _fetchData());
+    updateTimer = Timer.periodic(Duration(milliseconds: 100), (_) {
+      if (targetPercent == null) return;
+      percent ??= 0;
+      setState(() {
+        if (percent! >= targetPercent!) {
+          percent = targetPercent;
+        } else {
+          final diff = (targetPercent! - percent!);
+          percent = percent! + (diff > 10 ? diff : 10) / 5;
+        }
+      });
     });
-
     super.initState();
   }
 
   @override
+  void dispose() {
+    timer.cancel();
+    updateTimer.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
     return SizedBox(
       width: widget.size,
       height: widget.size,
@@ -83,10 +92,15 @@ class _DeviceBatteryViewState extends State<DeviceBatteryView> {
                     ? Icons.battery_full_rounded
                     : Icons.battery_0_bar_rounded,
                 size: widget.size / 3,
-                color: textTheme.bodySmall?.color,
+                color: Color.fromRGBO(
+                  widget.connectedDevice.info.color.r,
+                  widget.connectedDevice.info.color.g,
+                  widget.connectedDevice.info.color.b,
+                  1,
+                ),
               ),
               CircularProgressIndicator(
-                value: 0.5,
+                value: (percent ?? 100) / 100,
                 color: Theme.of(context).colorScheme.primary,
                 backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                 valueColor: Animation.fromValueListenable(
