@@ -117,11 +117,7 @@ class AppState extends ChangeNotifier {
   Future<dalat.PairResponse> pairRequestHandler(dalat.PairRequest req) async {
     final completer = Completer<dalat.PairResponse>();
 
-    // The payload for the notification is the JSON representation of the request.
-    final payload = jsonEncode(req);
-
-    // Trigger the notification.
-    notificationService.showPairingRequest(req.device.name, payload);
+    notificationService.showPairingRequest(req);
 
     // Set the state that the UI will listen to.
     pendingPairRequest.value = PairRequestState(req, completer);
