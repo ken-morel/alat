@@ -1,7 +1,6 @@
 package sysinfo
 
 import (
-	"alat/pkg/core/pair"
 	"alat/pkg/core/security"
 	"alat/pkg/pbuf"
 	"context"
@@ -9,15 +8,14 @@ import (
 
 type SysInfoServer struct {
 	pbuf.UnimplementedSysInfoServiceServer
-	Service     *Service
-	PairManager *pair.PairManager
+	Service *Service
 }
 
 func (s *SysInfoServer) GetSysInfo(ctx context.Context, req *pbuf.GetSysInfoRequest) (*pbuf.GetSysInfoResponse, error) {
 	var info *SysInfo
 	var msg string
 	var status pbuf.ServiceCallStatus
-	if s.PairManager.IsTokenValid(security.PairToken(req.GetToken())) {
+	if s.Service.pairManager.IsTokenValid(security.PairToken(req.GetToken())) {
 		if s.Service.Enabled() {
 			var err error
 			info, err = s.Service.Get()

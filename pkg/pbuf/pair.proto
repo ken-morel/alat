@@ -97,8 +97,9 @@ service FileSendService {
 }
 
 message InitialSendFileRequest {
-  FileMetadata metadata = 1;
-  DeviceInfo sender_info = 2;
+  bytes token = 1;
+  FileMetadata metadata = 2;
+  DeviceInfo sender_info = 3;
 }
 
 message FileMetadata {

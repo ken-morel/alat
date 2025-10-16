@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 
+	"alat/pkg/core/device"
 	"alat/pkg/core/pair"
 	"alat/pkg/pbuf"
 
@@ -49,10 +50,12 @@ func (s *FileSendServer) SendFile(stream pbuf.FileSendService_SendFileServer) er
 	}
 
 	metadata := initialReq.GetMetadata()
-	senderInfo := initialReq.GetSenderInfo()
-	if metadata == nil || senderInfo == nil {
+	senderInfoPBUF := initialReq.GetSenderInfo()
+	if metadata == nil || senderInfoPBUF == nil {
 		return fmt.Errorf("protocol error: initial request is missing metadata or sender info")
 	}
+
+	senderInfo := device.PbufToInfo(senderInfoPBUF)
 
 	// Create the file
 	dest := rcfilepath(s.Service.config.SaveFolder, metadata.GetName())

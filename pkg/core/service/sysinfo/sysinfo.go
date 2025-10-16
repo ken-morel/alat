@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"alat/pkg/core/config"
+	"alat/pkg/core/pair"
 )
 
 type Service struct {
@@ -12,6 +13,8 @@ type Service struct {
 	ready    bool
 	cache    *SysInfo
 	cacheAge time.Time
+
+	pairManager *pair.PairManager
 }
 
 func (s *Service) Enabled() bool {
@@ -38,11 +41,12 @@ func (s *Service) Configure(c config.SysInfoConfig) {
 	s.config = c
 }
 
-func CreateService(conf config.SysInfoConfig) Service {
+func CreateService(conf config.SysInfoConfig, p *pair.PairManager) Service {
 	return Service{
-		cacheAge: time.Now(),
-		cache:    nil,
-		ready:    true,
-		config:   conf,
+		cacheAge:    time.Now(),
+		cache:       nil,
+		ready:       true,
+		config:      conf,
+		pairManager: p,
 	}
 }

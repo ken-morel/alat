@@ -810,8 +810,9 @@ func (x *GetSysInfoResponse) GetInfo() *SysInfo {
 
 type InitialSendFileRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Metadata      *FileMetadata          `protobuf:"bytes,1,opt,name=metadata,proto3" json:"metadata,omitempty"`
-	SenderInfo    *DeviceInfo            `protobuf:"bytes,2,opt,name=sender_info,json=senderInfo,proto3" json:"sender_info,omitempty"`
+	Token         []byte                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	Metadata      *FileMetadata          `protobuf:"bytes,2,opt,name=metadata,proto3" json:"metadata,omitempty"`
+	SenderInfo    *DeviceInfo            `protobuf:"bytes,3,opt,name=sender_info,json=senderInfo,proto3" json:"sender_info,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -844,6 +845,13 @@ func (x *InitialSendFileRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use InitialSendFileRequest.ProtoReflect.Descriptor instead.
 func (*InitialSendFileRequest) Descriptor() ([]byte, []int) {
 	return file_pair_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *InitialSendFileRequest) GetToken() []byte {
+	if x != nil {
+		return x.Token
+	}
+	return nil
 }
 
 func (x *InitialSendFileRequest) GetMetadata() *FileMetadata {
@@ -1148,10 +1156,11 @@ const file_pair_proto_rawDesc = "" +
 	"\x12GetSysInfoResponse\x122\n" +
 	"\x06status\x18\x01 \x01(\x0e2\x1a.pbuf.v1.ServiceCallStatusR\x06status\x12\x10\n" +
 	"\x03msg\x18\x02 \x01(\tR\x03msg\x12$\n" +
-	"\x04info\x18\x03 \x01(\v2\x10.pbuf.v1.SysInfoR\x04info\"\x81\x01\n" +
-	"\x16InitialSendFileRequest\x121\n" +
-	"\bmetadata\x18\x01 \x01(\v2\x15.pbuf.v1.FileMetadataR\bmetadata\x124\n" +
-	"\vsender_info\x18\x02 \x01(\v2\x13.pbuf.v1.DeviceInfoR\n" +
+	"\x04info\x18\x03 \x01(\v2\x10.pbuf.v1.SysInfoR\x04info\"\x97\x01\n" +
+	"\x16InitialSendFileRequest\x12\x14\n" +
+	"\x05token\x18\x01 \x01(\fR\x05token\x121\n" +
+	"\bmetadata\x18\x02 \x01(\v2\x15.pbuf.v1.FileMetadataR\bmetadata\x124\n" +
+	"\vsender_info\x18\x03 \x01(\v2\x13.pbuf.v1.DeviceInfoR\n" +
 	"senderInfo\"J\n" +
 	"\fFileMetadata\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +

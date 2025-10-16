@@ -6,7 +6,7 @@ import (
 )
 
 func (n *Node) QueryDeviceSysInfo(p *connected.Connected) (*sysinfo.SysInfo, error) {
-	inf, err := sysinfo.QueryDeviceSysInfo(p.IP, p.Port, p.PairedDevice.Token)
+	inf, err := n.services.SysInfo.QueryDeviceSysInfo(p.IP, p.Port, p.PairedDevice.Token)
 	if err != nil {
 		return nil, err
 	} else {

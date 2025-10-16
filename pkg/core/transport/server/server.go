@@ -50,8 +50,8 @@ func (s *Server) Start() (int, error) {
 	s.listener = lis
 	s.grpcServer = grpc.NewServer()
 	pbuf.RegisterAlatServiceServer(s.grpcServer, s)
-	pbuf.RegisterFileSendServiceServer(s.grpcServer, &filesend.FileSendServer{Service: &s.Services.FileSend, PairManager: s.PairManager})
-	pbuf.RegisterSysInfoServiceServer(s.grpcServer, &sysinfo.SysInfoServer{Service: &s.Services.SysInfo, PairManager: s.PairManager})
+	pbuf.RegisterFileSendServiceServer(s.grpcServer, &filesend.FileSendServer{Service: &s.Services.FileSend})
+	pbuf.RegisterSysInfoServiceServer(s.grpcServer, &sysinfo.SysInfoServer{Service: &s.Services.SysInfo})
 
 	fmt.Printf("Server listening at %v\n", lis.Addr())
 	go func() {
