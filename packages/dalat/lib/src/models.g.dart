@@ -236,8 +236,8 @@ DeviceFileTransferStatus _$DeviceFileTransferStatusFromJson(
   Map<String, dynamic> json,
 ) => DeviceFileTransferStatus(
   device: DeviceInfo.fromJson(json['device'] as Map<String, dynamic>),
-  transfers: (json['transfers'] as List<dynamic>)
-      .map((e) => SingleFileTransferStatus.fromJson(e as Map<String, dynamic>))
+  transfers: (json['transfers'] as List<dynamic>?)
+      ?.map((e) => SingleFileTransferStatus.fromJson(e as Map<String, dynamic>))
       .toList(),
   percent: (json['percent'] as num).toDouble(),
 );
@@ -255,11 +255,11 @@ FileTransfersStatus _$FileTransfersStatusFromJson(
 ) => FileTransfersStatus(
   percentSending: (json['percentSending'] as num).toDouble(),
   percentReceiving: (json['percentReceiving'] as num).toDouble(),
-  sending: (json['sending'] as List<dynamic>)
-      .map((e) => DeviceFileTransferStatus.fromJson(e as Map<String, dynamic>))
+  sending: (json['sending'] as List<dynamic>?)
+      ?.map((e) => DeviceFileTransferStatus.fromJson(e as Map<String, dynamic>))
       .toList(),
-  receiving: (json['receiving'] as List<dynamic>)
-      .map((e) => DeviceFileTransferStatus.fromJson(e as Map<String, dynamic>))
+  receiving: (json['receiving'] as List<dynamic>?)
+      ?.map((e) => DeviceFileTransferStatus.fromJson(e as Map<String, dynamic>))
       .toList(),
 );
 

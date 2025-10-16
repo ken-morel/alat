@@ -76,7 +76,7 @@ func submit_pair_response(handle C.int, requestID_C *C.char, accepted C.bool, re
 
 	err := instance.node.SubmitPairResponse(requestID, bool(accepted), reason)
 	if err != nil {
-		alatError = err
+		setError(err)
 		return -2 // Error submitting response
 	}
 

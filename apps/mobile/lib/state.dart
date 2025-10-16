@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:alat/services/transfer_notification_service.dart';
@@ -9,7 +8,6 @@ import 'package:path_provider/path_provider.dart';
 
 import 'services/notification_service.dart';
 
-/// A state object to hold a pending pair request and the completer to resolve it.
 class PairRequestState {
   final dalat.PairRequest request;
   final Completer<dalat.PairResponse> completer;
@@ -118,7 +116,9 @@ class AppState extends ChangeNotifier {
 
   void _startTransferStatusUpdates() {
     _transferStatusTimer?.cancel(); // Cancel any existing timer
-    _transferStatusTimer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+    _transferStatusTimer = Timer.periodic(const Duration(seconds: 1), (
+      timer,
+    ) async {
       try {
         final status = await _alatInstance?.getFileTransfersStatus();
         if (status != null) {

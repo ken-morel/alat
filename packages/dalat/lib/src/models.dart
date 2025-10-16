@@ -307,7 +307,7 @@ class DeviceFileTransferStatus {
   @JsonKey(name: 'device')
   DeviceInfo device;
   @JsonKey(name: 'transfers')
-  List<SingleFileTransferStatus> transfers;
+  List<SingleFileTransferStatus>? transfers;
   @JsonKey(name: 'percent')
   double percent;
   DeviceFileTransferStatus({
@@ -327,9 +327,9 @@ class FileTransfersStatus {
   @JsonKey(name: 'percentReceiving')
   double percentReceiving;
   @JsonKey(name: 'sending')
-  List<DeviceFileTransferStatus> sending;
+  List<DeviceFileTransferStatus>? sending;
   @JsonKey(name: 'receiving')
-  List<DeviceFileTransferStatus> receiving;
+  List<DeviceFileTransferStatus>? receiving;
   FileTransfersStatus({
     required this.percentSending,
     required this.percentReceiving,

@@ -25,8 +25,8 @@ class TransferNotificationService {
   }
 
   Future<void> showTransferProgress(dalat.FileTransfersStatus status) async {
-    for (final deviceStatus in status.sending) {
-      for (final transfer in deviceStatus.transfers) {
+    for (final deviceStatus in status.sending ?? []) {
+      for (final transfer in deviceStatus.transfers ?? []) {
         final notificationId = _generateNotificationId(
           deviceStatus.device.id,
           transfer.fileName,
@@ -44,8 +44,8 @@ class TransferNotificationService {
       }
     }
 
-    for (final deviceStatus in status.receiving) {
-      for (final transfer in deviceStatus.transfers) {
+    for (final deviceStatus in status.receiving ?? []) {
+      for (final transfer in deviceStatus.transfers ?? []) {
         final notificationId = _generateNotificationId(
           deviceStatus.device.id,
           transfer.fileName,
