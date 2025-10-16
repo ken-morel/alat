@@ -305,39 +305,43 @@ void _pairRequestHandler(
   Pointer<Char> pairTokenC,
   Pointer<Char> deviceDetailsC,
 ) {
-  print("Dart had it succesful");
   final handler = _pairRequestHandlers[handle];
-  if (handler == null) return;
+  try {
+    if (handler == null) return;
+    final requestId = requestIdC.cast<Utf8>().toDartString();
+    final pairToken = Uint8ListConverter().fromJson(
+      jsonDecode(pairTokenC.cast<Utf8>().toDartString()),
+    );
+    final deviceDetails = DeviceDetails.fromJson(
+      jsonDecode(deviceDetailsC.cast<Utf8>().toDartString()),
+    );
 
-  final requestId = requestIdC.cast<Utf8>().toDartString();
-  final pairToken = Uint8ListConverter().fromJson(
-    jsonDecode(pairTokenC.cast<Utf8>().toDartString()),
-  );
-  final deviceDetails = DeviceDetails.fromJson(
-    jsonDecode(deviceDetailsC.cast<Utf8>().toDartString()),
-  );
-
-  print("Dart Received, invoking handler");
-
-  // The handler is already being called on the correct isolate, so
-  // another `Isolate.run` is not necessary.
-  handler(
-    PairRequest(requestid: requestId, token: pairToken, device: deviceDetails),
-  ).then((response) {
-    print("Received handler response");
-    final newRequestIdC = requestId.toNativeUtf8();
-    final reasonC = response.reason.toNativeUtf8();
-    try {
-      bindings.submit_pair_response(
-        handle,
-        newRequestIdC.cast(),
-        response.accepted,
-        reasonC.cast(),
-      );
-    } finally {
-      malloc.free(newRequestIdC);
-      malloc.free(reasonC);
-    }
-  });
-  return;
+    // The handler is already being called on the correct isolate, so
+    // another `Isolate.run` is not necessary.
+    handler(
+      PairRequest(
+        requestid: requestId,
+        token: pairToken,
+        device: deviceDetails,
+      ),
+    ).then((response) {
+      final newRequestIdC = requestId.toNativeUtf8();
+      final reasonC = response.reason.toNativeUtf8();
+      try {
+        bindings.submit_pair_response(
+          handle,
+          newRequestIdC.cast(),
+          response.accepted,
+          reasonC.cast(),
+        );
+      } finally {
+        malloc.free(newRequestIdC);
+        malloc.free(reasonC);
+      }
+    });
+  } finally {
+    malloc.free(requestIdC);
+    malloc.free(pairTokenC);
+    malloc.free(deviceDetailsC);
+  }
 }
