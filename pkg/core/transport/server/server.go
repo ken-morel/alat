@@ -6,6 +6,7 @@ import (
 	"net"
 
 	"alat/pkg/core/service/filesend"
+	"alat/pkg/core/service/sysinfo"
 
 	"alat/pkg/core"
 	"alat/pkg/core/pair"
@@ -49,7 +50,8 @@ func (s *Server) Start() (int, error) {
 	s.listener = lis
 	s.grpcServer = grpc.NewServer()
 	pbuf.RegisterAlatServiceServer(s.grpcServer, s)
-	pbuf.RegisterFileSendServiceServer(s.grpcServer, &filesend.FileSendServer{Service: &s.Services.FileSend})
+	pbuf.RegisterFileSendServiceServer(s.grpcServer, &filesend.FileSendServer{Service: &s.Services.FileSend, PairManager: s.PairManager})
+	pbuf.RegisterSysInfoServiceServer(s.grpcServer, &sysinfo.SysInfoServer{Service: &s.Services.SysInfo, PairManager: s.PairManager})
 
 	fmt.Printf("Server listening at %v\n", lis.Addr())
 	go func() {

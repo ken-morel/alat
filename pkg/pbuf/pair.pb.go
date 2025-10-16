@@ -1177,12 +1177,13 @@ const file_pair_proto_rawDesc = "" +
 	"\x19SERVICE_CALL_STATUS_ERROR\x10\x01\x12$\n" +
 	" SERVICE_CALL_STATUS_UNAUTHORIZED\x10\x02\x12 \n" +
 	"\x1cSERVICE_CALL_STATUS_DISABLED\x10\x03\x12\x1f\n" +
-	"\x1bSERVICE_CALL_STATUS_UNKNOWN\x10\x042\xa3\x02\n" +
+	"\x1bSERVICE_CALL_STATUS_UNKNOWN\x10\x042\xdc\x01\n" +
 	"\vAlatService\x12H\n" +
 	"\vRequestPair\x12\x1b.pbuf.v1.RequestPairRequest\x1a\x1c.pbuf.v1.RequestPairResponse\x12E\n" +
 	"\n" +
 	"GetDetails\x12\x1a.pbuf.v1.GetDetailsRequest\x1a\x1b.pbuf.v1.GetDetailsResponse\x12<\n" +
-	"\aGetInfo\x12\x17.pbuf.v1.GetInfoRequest\x1a\x18.pbuf.v1.GetInfoResponse\x12E\n" +
+	"\aGetInfo\x12\x17.pbuf.v1.GetInfoRequest\x1a\x18.pbuf.v1.GetInfoResponse2W\n" +
+	"\x0eSysInfoService\x12E\n" +
 	"\n" +
 	"GetSysInfo\x12\x1a.pbuf.v1.GetSysInfoRequest\x1a\x1b.pbuf.v1.GetSysInfoResponse2T\n" +
 	"\x0fFileSendService\x12A\n" +
@@ -1242,12 +1243,12 @@ var file_pair_proto_depIdxs = []int32{
 	5,  // 15: pbuf.v1.AlatService.RequestPair:input_type -> pbuf.v1.RequestPairRequest
 	7,  // 16: pbuf.v1.AlatService.GetDetails:input_type -> pbuf.v1.GetDetailsRequest
 	9,  // 17: pbuf.v1.AlatService.GetInfo:input_type -> pbuf.v1.GetInfoRequest
-	12, // 18: pbuf.v1.AlatService.GetSysInfo:input_type -> pbuf.v1.GetSysInfoRequest
+	12, // 18: pbuf.v1.SysInfoService.GetSysInfo:input_type -> pbuf.v1.GetSysInfoRequest
 	17, // 19: pbuf.v1.FileSendService.SendFile:input_type -> pbuf.v1.SendFileRequest
 	6,  // 20: pbuf.v1.AlatService.RequestPair:output_type -> pbuf.v1.RequestPairResponse
 	8,  // 21: pbuf.v1.AlatService.GetDetails:output_type -> pbuf.v1.GetDetailsResponse
 	10, // 22: pbuf.v1.AlatService.GetInfo:output_type -> pbuf.v1.GetInfoResponse
-	13, // 23: pbuf.v1.AlatService.GetSysInfo:output_type -> pbuf.v1.GetSysInfoResponse
+	13, // 23: pbuf.v1.SysInfoService.GetSysInfo:output_type -> pbuf.v1.GetSysInfoResponse
 	18, // 24: pbuf.v1.FileSendService.SendFile:output_type -> pbuf.v1.SendFileResponse
 	20, // [20:25] is the sub-list for method output_type
 	15, // [15:20] is the sub-list for method input_type
@@ -1273,7 +1274,7 @@ func file_pair_proto_init() {
 			NumEnums:      2,
 			NumMessages:   17,
 			NumExtensions: 0,
-			NumServices:   2,
+			NumServices:   3,
 		},
 		GoTypes:           file_pair_proto_goTypes,
 		DependencyIndexes: file_pair_proto_depIdxs,

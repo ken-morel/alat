@@ -20,7 +20,7 @@ func QueryDeviceSysInfo(addr net.IP, port int, token security.PairToken) (*pbuf.
 		return nil, err
 	}
 	defer conn.Close()
-	client := pbuf.NewAlatServiceClient(conn)
+	client := pbuf.NewSysInfoServiceClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 

@@ -1,21 +1,26 @@
-package server
+package sysinfo
 
 import (
-	"context"
-
+	"alat/pkg/core/pair"
 	"alat/pkg/core/security"
-	"alat/pkg/core/service/sysinfo"
 	"alat/pkg/pbuf"
+	"context"
 )
 
-func (s *Server) GetSysInfo(ctx context.Context, req *pbuf.GetSysInfoRequest) (*pbuf.GetSysInfoResponse, error) {
-	var info *sysinfo.SysInfo
+type SysInfoServer struct {
+	pbuf.UnimplementedSysInfoServiceServer
+	Service     *Service
+	PairManager *pair.PairManager
+}
+
+func (s *SysInfoServer) GetSysInfo(ctx context.Context, req *pbuf.GetSysInfoRequest) (*pbuf.GetSysInfoResponse, error) {
+	var info *SysInfo
 	var msg string
 	var status pbuf.ServiceCallStatus
 	if s.PairManager.IsTokenValid(security.PairToken(req.GetToken())) {
-		if s.Services.SysInfo.Enabled() {
+		if s.Service.Enabled() {
 			var err error
-			info, err = s.Services.SysInfo.Get()
+			info, err = s.Service.Get()
 			if err != nil {
 				msg = err.Error()
 				status = pbuf.ServiceCallStatus_SERVICE_CALL_STATUS_ERROR

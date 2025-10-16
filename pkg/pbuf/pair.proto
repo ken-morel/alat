@@ -86,6 +86,9 @@ service AlatService {
   rpc RequestPair(RequestPairRequest) returns (RequestPairResponse);
   rpc GetDetails(GetDetailsRequest) returns (GetDetailsResponse);
   rpc GetInfo(GetInfoRequest) returns (GetInfoResponse);
+}
+
+service SysInfoService {
   rpc GetSysInfo(GetSysInfoRequest) returns (GetSysInfoResponse);
 }
 

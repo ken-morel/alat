@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 
+	"alat/pkg/core/pair"
 	"alat/pkg/pbuf"
 
 	"github.com/labstack/gommon/log"
@@ -13,13 +14,14 @@ import (
 
 type FileSendServer struct {
 	pbuf.UnimplementedFileSendServiceServer
-	Service *Service
+	Service     *Service
+	PairManager *pair.PairManager
 }
 
 func rcfilepath(folder string, name string) string {
 	newName := name
 	ext := path.Ext(name)
-	stem := name[:len(ext)]
+	stem := name[:len(name)-len(ext)-1]
 	for i := range 1000 {
 		if i != 0 {
 			newName = fmt.Sprintf("%s-%d.%s", stem, i, ext)
