@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ServiceSysInfoGet } from "$lib/wails/wailsjs/go/app/App";
+  import { QueryDeviceSysInfo } from "$lib/wails/wailsjs/go/app/App";
   import type { connected } from "$lib/wails/wailsjs/go/models";
   import { ProgressRing } from "@skeletonlabs/skeleton-svelte";
   import { onMount } from "svelte";
@@ -25,7 +25,7 @@
   let meterStroke = $derived("stroke-" + stroke + "-700-300");
   onMount(() => {
     const interval = setInterval(() => {
-      ServiceSysInfoGet(dev)
+      QueryDeviceSysInfo(dev)
         .then((info) => {
           error = null;
           loaded = true;

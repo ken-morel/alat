@@ -1,35 +1,27 @@
 package app
 
 import (
+	"alat/pkg/core"
+	"alat/pkg/core/node"
 	"context"
 	"embed"
-	"fmt"
-
-	"alat/pkg/core"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 	"github.com/wailsapp/wails/v2/pkg/options/linux"
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
+	rt "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-func NewApp(fs embed.FS) *App {
-	return &App{assets: fs}
+func NewApp(fs embed.FS, n *node.Node) *App {
+	return &App{assets: fs, node: n}
 }
 
 func (app *App) startup(ctx context.Context) {
 	app.ctx = ctx
-	if app.initConfig() {
-		app.initNode()
-		if app.settings.SetupComplete {
-			err := app.node.Start()
-			fmt.Println("Started node, got error: ", err)
-		} else {
-			fmt.Println("Not starting node, setup not complete")
-		}
+	rt.WindowSetDarkTheme(ctx)
 
-	}
 }
 
 func (app *App) Run() error {

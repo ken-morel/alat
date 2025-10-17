@@ -58,13 +58,13 @@ export namespace color {
 
 export namespace config {
 	
-	export class FileSendSettings {
+	export class FileSendConfig {
 	    enabled: boolean;
 	    maxSize: number;
 	    saveFolder: string;
 	
 	    static createFrom(source: any = {}) {
-	        return new FileSendSettings(source);
+	        return new FileSendConfig(source);
 	    }
 	
 	    constructor(source: any = {}) {
@@ -74,12 +74,12 @@ export namespace config {
 	        this.saveFolder = source["saveFolder"];
 	    }
 	}
-	export class SysInfoSettings {
+	export class SysInfoConfig {
 	    enabled: boolean;
 	    cacheSeconds: number;
 	
 	    static createFrom(source: any = {}) {
-	        return new SysInfoSettings(source);
+	        return new SysInfoConfig(source);
 	    }
 	
 	    constructor(source: any = {}) {
@@ -343,19 +343,19 @@ export namespace node {
 
 }
 
-export namespace pbuf {
+export namespace sysinfo {
 	
 	export class SysInfo {
-	    hostName?: string;
-	    os?: string;
-	    platform?: string;
-	    memTotal?: number;
-	    memUsed?: number;
-	    diskTotal?: number;
-	    diskUsed?: number;
-	    batteryCharging?: boolean;
-	    batteryPercent?: number;
-	    cpuUsage?: number;
+	    hostname: string;
+	    os: string;
+	    platform: string;
+	    memTotal: number;
+	    memUsed: number;
+	    diskTotal: number;
+	    diskUsed: number;
+	    batteryCharging: boolean;
+	    batteryPercent: number;
+	    cpuUsage: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new SysInfo(source);
@@ -363,7 +363,7 @@ export namespace pbuf {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.hostName = source["hostName"];
+	        this.hostname = source["hostname"];
 	        this.os = source["os"];
 	        this.platform = source["platform"];
 	        this.memTotal = source["memTotal"];

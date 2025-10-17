@@ -1,4 +1,6 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+import 'package:flutter_local_notifications_linux/src/model/hint.dart';
 import 'package:dalat/dalat.dart' as dalat;
 
 class TransferNotificationService {
@@ -112,8 +114,16 @@ class TransferNotificationService {
           progress: progress,
         );
 
-    const LinuxNotificationDetails linuxPlatformChannelSpecifics =
-        LinuxNotificationDetails(urgency: LinuxNotificationUrgency.low);
+    final LinuxNotificationDetails linuxPlatformChannelSpecifics =
+        LinuxNotificationDetails(
+          urgency: LinuxNotificationUrgency.low,
+          customHints: [
+            LinuxNotificationCustomHint(
+              'value',
+              LinuxHintStringValue(progress.toString()),
+            ),
+          ],
+        );
 
     final NotificationDetails platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,

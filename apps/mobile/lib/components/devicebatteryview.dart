@@ -31,17 +31,21 @@ class _DeviceBatteryViewState extends State<DeviceBatteryView> {
       final info = await _appState.node!.queryConnectedDeviceSysInfo(
         widget.connectedDevice.info.id,
       );
-      setState(() {
-        error = null;
-        charging = info.batteryCharging;
-        targetPercent = info.batteryPercent;
-      });
+      if (mounted) {
+        setState(() {
+          error = null;
+          charging = info.batteryCharging;
+          targetPercent = info.batteryPercent;
+        });
+      }
     } catch (e) {
-      setState(() {
-        error = e.toString();
-        percent = null;
-        targetPercent = null;
-      });
+      if (mounted) {
+        setState(() {
+          error = e.toString();
+          percent = null;
+          targetPercent = null;
+        });
+      }
     }
   }
 

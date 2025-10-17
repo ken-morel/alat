@@ -34,6 +34,10 @@ export function GetPairedDevices() {
   return window['go']['app']['App']['GetPairedDevices']();
 }
 
+export function QueryDeviceSysInfo(arg1) {
+  return window['go']['app']['App']['QueryDeviceSysInfo'](arg1);
+}
+
 export function RequestPairingFoundDevice(arg1) {
   return window['go']['app']['App']['RequestPairingFoundDevice'](arg1);
 }
@@ -48,10 +52,6 @@ export function ServiceGetFileSendStatus() {
 
 export function ServiceStartSendFilesToDevice(arg1, arg2) {
   return window['go']['app']['App']['ServiceStartSendFilesToDevice'](arg1, arg2);
-}
-
-export function ServiceSysInfoGet(arg1) {
-  return window['go']['app']['App']['ServiceSysInfoGet'](arg1);
 }
 
 export function SettingsGetDeviceColorName() {

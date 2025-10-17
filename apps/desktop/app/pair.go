@@ -11,7 +11,7 @@ import (
 )
 
 func (app *App) GetFoundDevices() []discovery.FoundDevice {
-	return app.node.GetDiscoverer().GetFoundDevices()
+	return app.node.GetFoundDevices()
 }
 
 type RequestPairingResult struct {
@@ -31,10 +31,6 @@ func (app *App) RequestPairingFoundDevice(deviceID string) (*RequestPairingResul
 		return nil, err
 	}
 	if response.GetAccepted() {
-		app.nodeStore.AddPaired(device.PairedDevice{
-			Certificate: security.Certificate(response.GetDetails().GetCertificate()),
-			Token:       security.PairToken(response.GetToken()),
-		})
 		go rt.MessageDialog(app.ctx, rt.MessageDialogOptions{
 			Type:    rt.InfoDialog,
 			Title:   "Pairing success",
@@ -44,7 +40,7 @@ func (app *App) RequestPairingFoundDevice(deviceID string) (*RequestPairingResul
 		go rt.MessageDialog(app.ctx, rt.MessageDialogOptions{
 			Type:    rt.ErrorDialog,
 			Title:   "Pairing error",
-			Message: response.GetDetails().GetName() + " was not pair, reason: " + response.GetReason(),
+			Message: response.GetDetails().GetName() + " was not paired, reason: " + response.GetReason(),
 		})
 	}
 	return &RequestPairingResult{

@@ -6,8 +6,8 @@ import {connected} from '../models';
 import {discovery} from '../models';
 import {node} from '../models';
 import {device} from '../models';
+import {sysinfo} from '../models';
 import {filesend} from '../models';
-import {pbuf} from '../models';
 import {config} from '../models';
 
 export function AskFileSharingDestDirectory():Promise<string>;
@@ -26,6 +26,8 @@ export function GetNodeStatus():Promise<node.Status>;
 
 export function GetPairedDevices():Promise<Array<device.PairedDevice>>;
 
+export function QueryDeviceSysInfo(arg1:connected.Connected):Promise<sysinfo.SysInfo>;
+
 export function RequestPairingFoundDevice(arg1:string):Promise<app.RequestPairingResult>;
 
 export function Run():Promise<void>;
@@ -34,22 +36,20 @@ export function ServiceGetFileSendStatus():Promise<filesend.FileTransfersStatus>
 
 export function ServiceStartSendFilesToDevice(arg1:connected.Connected,arg2:Array<string>):Promise<void>;
 
-export function ServiceSysInfoGet(arg1:connected.Connected):Promise<pbuf.SysInfo>;
-
 export function SettingsGetDeviceColorName():Promise<string>;
 
 export function SettingsGetDeviceName():Promise<string>;
 
-export function SettingsGetFileSend():Promise<config.FileSendSettings>;
+export function SettingsGetFileSend():Promise<config.FileSendConfig>;
 
-export function SettingsGetSysInfo():Promise<config.SysInfoSettings>;
+export function SettingsGetSysInfo():Promise<config.SysInfoConfig>;
 
 export function SettingsSetDeviceColorName(arg1:string):Promise<void>;
 
 export function SettingsSetDeviceName(arg1:string):Promise<void>;
 
-export function SettingsSetFileSend(arg1:config.FileSendSettings):Promise<void>;
+export function SettingsSetFileSend(arg1:config.FileSendConfig):Promise<void>;
 
 export function SettingsSetSetupComplete(arg1:boolean):Promise<void>;
 
-export function SettingsSetSysInfo(arg1:config.SysInfoSettings):Promise<void>;
+export function SettingsSetSysInfo(arg1:config.SysInfoConfig):Promise<void>;
