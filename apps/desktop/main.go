@@ -48,7 +48,7 @@ func main() {
 
 	a := app.NewApp(assets, n)
 
-	go systray.Run(func() {
+	systray.Register(func() {
 		if len(iconPngData) > 0 {
 			systray.SetIcon(iconPngData)
 		}
@@ -56,6 +56,7 @@ func main() {
 		systray.SetTooltip("Alat desktop application")
 
 		mShow := systray.AddMenuItem("Show", "Show the app")
+		mHide := systray.AddMenuItem("Hide", "Hide the app")
 		mQuit := systray.AddMenuItem("Quit", "Close and stop alat")
 
 		go func() {
@@ -63,6 +64,8 @@ func main() {
 				select {
 				case <-mShow.ClickedCh:
 					a.Show()
+				case <-mHide.ClickedCh:
+					a.Hide()
 				case <-mQuit.ClickedCh:
 					systray.Quit()
 				}
