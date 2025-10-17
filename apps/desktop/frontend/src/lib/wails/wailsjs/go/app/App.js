@@ -34,8 +34,16 @@ export function GetPairedDevices() {
   return window['go']['app']['App']['GetPairedDevices']();
 }
 
+export function Hide() {
+  return window['go']['app']['App']['Hide']();
+}
+
 export function QueryDeviceSysInfo(arg1) {
   return window['go']['app']['App']['QueryDeviceSysInfo'](arg1);
+}
+
+export function Quit() {
+  return window['go']['app']['App']['Quit']();
 }
 
 export function RequestPairingFoundDevice(arg1) {
@@ -88,4 +96,8 @@ export function SettingsSetSetupComplete(arg1) {
 
 export function SettingsSetSysInfo(arg1) {
   return window['go']['app']['App']['SettingsSetSysInfo'](arg1);
+}
+
+export function Show() {
+  return window['go']['app']['App']['Show']();
 }

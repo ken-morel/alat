@@ -1,34 +1,35 @@
 package main
 
 import (
-	"alat/apps/desktop/app"
 	"embed"
-)
-
-import (
 	"log"
 	"os"
 	"path"
 
+	"alat/apps/desktop/app"
 	"alat/pkg/core"
 	"alat/pkg/core/config"
 	"alat/pkg/core/device"
 	"alat/pkg/core/node"
 	"alat/pkg/core/storage"
+
+	"github.com/getlantern/systray"
 )
 
 //go:embed all:frontend/build
 var assets embed.FS
 
-func main() {
+//go:embed logos/tray.png
+var iconPngData []byte
 
+func createNode() *node.Node {
 	configDir, err := os.UserConfigDir()
 	if err != nil {
 		configDir = path.Join(os.TempDir(), core.DesktopAppID)
 	} else {
 		configDir = path.Join(configDir, core.DesktopAppID)
 	}
-	_ = os.MkdirAll(configDir, 0755)
+	_ = os.MkdirAll(configDir, 0o755)
 
 	appConfig := config.DefaultAppConfig()
 	appConfig.DeviceType = device.DesktopDevice
@@ -39,12 +40,36 @@ func main() {
 	if err != nil {
 		log.Fatal("Error creating node", err)
 	}
-	err = app.NewApp(assets, n).Run()
-	if err != nil {
-		println("Error:", err.Error())
-	}
-	err = app.NewApp(assets, n).Run()
-	if err != nil {
-		println("Error:", err.Error())
-	}
+	return n
+}
+
+func main() {
+	n := createNode()
+
+	a := app.NewApp(assets, n)
+
+	go systray.Run(func() {
+		if len(iconPngData) > 0 {
+			systray.SetIcon(iconPngData)
+		}
+		systray.SetTitle("Alat")
+		systray.SetTooltip("Alat desktop application")
+
+		mShow := systray.AddMenuItem("Show", "Show the app")
+		mQuit := systray.AddMenuItem("Quit", "Close and stop alat")
+
+		go func() {
+			for {
+				select {
+				case <-mShow.ClickedCh:
+					a.Show()
+				case <-mQuit.ClickedCh:
+					systray.Quit()
+				}
+			}
+		}()
+	}, func() {
+		a.Quit()
+	})
+	a.Run()
 }

@@ -1,10 +1,11 @@
 package app
 
 import (
-	"alat/pkg/core"
-	"alat/pkg/core/node"
 	"context"
 	"embed"
+
+	"alat/pkg/core"
+	"alat/pkg/core/node"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -15,13 +16,13 @@ import (
 )
 
 func NewApp(fs embed.FS, n *node.Node) *App {
-	return &App{assets: fs, node: n}
+	return &App{assets: fs, node: n, started: false}
 }
 
 func (app *App) startup(ctx context.Context) {
 	app.ctx = ctx
 	rt.WindowSetDarkTheme(ctx)
-
+	app.started = true
 }
 
 func (app *App) Run() error {
