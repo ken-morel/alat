@@ -22,7 +22,6 @@ func rcfilepath(folder string, name string) string {
 	newName := name
 	ext := path.Ext(name)
 	stem := name[:len(name)-len(ext)]
-	fmt.Printf("stem: '%s', name: '%s', ext: '%s'", stem, name, ext)
 	for i := range 1_000_000 {
 		if i != 0 {
 			newName = fmt.Sprintf("%s-%d.%s", stem, i, ext)
@@ -67,7 +66,6 @@ func (s *FileSendServer) SendFile(stream pbuf.FileSendService_SendFileServer) er
 	dest := rcfilepath(s.Service.config.SaveFolder, metadata.GetName())
 
 	file, err := os.OpenFile(dest, os.O_CREATE|os.O_WRONLY, os.FileMode(metadata.Mode))
-	fmt.Println("Saving file to: ", dest)
 	if err != nil {
 		return fmt.Errorf("failed to open file %s: %w", metadata.Name, err)
 	}
