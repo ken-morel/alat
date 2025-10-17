@@ -11,6 +11,7 @@ func (app *App) ConfigReady() bool {
 	conf, err := app.node.GetAppConfig()
 	return err == nil && conf.SetupComplete
 }
+
 func (app *App) SettingsGetDeviceName() string {
 	conf, err := app.node.GetAppConfig()
 	if err != nil {
@@ -61,7 +62,11 @@ func (app *App) SettingsSetSetupComplete(complete bool) error {
 		return err
 	} else {
 		conf.SetupComplete = complete
-		return app.node.SetAppConfig(*conf)
+		err := app.node.SetAppConfig(*conf)
+		if err != nil {
+			return err
+		}
+		return app.node.Start()
 	}
 }
 

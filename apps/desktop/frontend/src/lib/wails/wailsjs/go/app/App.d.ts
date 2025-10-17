@@ -26,7 +26,15 @@ export function GetNodeStatus():Promise<node.Status>;
 
 export function GetPairedDevices():Promise<Array<device.PairedDevice>>;
 
+export function Hide():Promise<void>;
+
+export function IsSearchingDevices():Promise<boolean>;
+
+export function OpenSendFilesPage():Promise<void>;
+
 export function QueryDeviceSysInfo(arg1:connected.Connected):Promise<sysinfo.SysInfo>;
+
+export function Quit():Promise<void>;
 
 export function RequestPairingFoundDevice(arg1:string):Promise<app.RequestPairingResult>;
 
@@ -53,3 +61,5 @@ export function SettingsSetFileSend(arg1:config.FileSendConfig):Promise<void>;
 export function SettingsSetSetupComplete(arg1:boolean):Promise<void>;
 
 export function SettingsSetSysInfo(arg1:config.SysInfoConfig):Promise<void>;
+
+export function Show():Promise<void>;
