@@ -2,10 +2,8 @@ package app
 
 import (
 	"context"
-	"embed"
 
 	"alat/pkg/core"
-	"alat/pkg/core/node"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -14,10 +12,6 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
 	rt "github.com/wailsapp/wails/v2/pkg/runtime"
 )
-
-func NewApp(fs embed.FS, n *node.Node) *App {
-	return &App{assets: fs, node: n, started: false}
-}
 
 func (app *App) startup(ctx context.Context) {
 	app.ctx = ctx
@@ -61,7 +55,11 @@ func (app *App) Run() error {
 		},
 	})
 }
-func (app *App) onSecondInstance(options.SecondInstanceData) {}
+
+func (app *App) onSecondInstance(options.SecondInstanceData) {
+	rt.WindowUnminimise(app.ctx)
+	rt.Show(app.ctx)
+}
 
 func (app *App) beforeClose(context.Context) bool {
 	return false

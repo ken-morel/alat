@@ -37,7 +37,7 @@ func (s *Server) Start() (int, error) {
 	var lis net.Listener
 	var err error
 
-	for s.Port = core.DefaultPort; s.Port < core.MaxPort; s.Port++ {
+	for s.Port = core.DefaultPort; s.Port <= core.MaxPort; s.Port++ {
 		lis, err = net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", s.Port))
 		if err == nil {
 			break
@@ -53,7 +53,6 @@ func (s *Server) Start() (int, error) {
 	pbuf.RegisterFileSendServiceServer(s.grpcServer, &filesend.FileSendServer{Service: &s.Services.FileSend})
 	pbuf.RegisterSysInfoServiceServer(s.grpcServer, &sysinfo.SysInfoServer{Service: &s.Services.SysInfo})
 
-	fmt.Printf("Server listening at %v\n", lis.Addr())
 	go func() {
 		s.Running = true
 		if err := s.grpcServer.Serve(lis); err != nil {
@@ -68,7 +67,6 @@ func (s *Server) Start() (int, error) {
 func (s *Server) Stop() {
 	if s.grpcServer != nil {
 		s.grpcServer.GracefulStop()
-		fmt.Println("gRPC server stopped.")
 	}
 	if s.listener != nil {
 		s.listener.Close()

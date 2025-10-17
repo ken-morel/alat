@@ -110,6 +110,8 @@ func main() {
 		systray.AddSeparator()
 		mSendFiles := systray.AddMenuItem("Send files", "Select files and a device to send them")
 		systray.AddSeparator()
+		mAutoStart := systray.AddMenuItemCheckbox("Launch on Startup", "Automatically start Alat when you log in", a.IsAutostartEnabled())
+		systray.AddSeparator()
 
 		mQuit := systray.AddMenuItem("Quit", "Close and stop alat")
 
@@ -126,6 +128,14 @@ func main() {
 					n.Start()
 				case <-mSendFiles.ClickedCh:
 					a.OpenSendFilesPage()
+				case <-mAutoStart.ClickedCh:
+					if mAutoStart.Checked() {
+						a.DisableAutostart()
+						mAutoStart.Uncheck()
+					} else {
+						a.EnableAutostart()
+						mAutoStart.Check()
+					}
 				case <-mQuit.ClickedCh:
 					systray.Quit()
 				}
