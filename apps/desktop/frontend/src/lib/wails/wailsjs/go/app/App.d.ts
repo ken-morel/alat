@@ -28,6 +28,10 @@ export function GetPairedDevices():Promise<Array<device.PairedDevice>>;
 
 export function Hide():Promise<void>;
 
+export function IsSearchingDevices():Promise<boolean>;
+
+export function OpenSendFilesPage():Promise<void>;
+
 export function QueryDeviceSysInfo(arg1:connected.Connected):Promise<sysinfo.SysInfo>;
 
 export function Quit():Promise<void>;

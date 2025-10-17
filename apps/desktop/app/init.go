@@ -26,6 +26,8 @@ func (app *App) startup(ctx context.Context) {
 }
 
 func (app *App) Run() error {
+	conf, _ := app.node.GetAppConfig()
+	setupComplete := conf != nil && conf.SetupComplete
 	return wails.Run(&options.App{
 		Title:  "Alat",
 		Width:  800,
@@ -36,6 +38,7 @@ func (app *App) Run() error {
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 100},
 		OnStartup:        app.startup,
 		OnShutdown:       app.shutdown,
+		StartHidden:      setupComplete,
 		Bind: []any{
 			app,
 		},

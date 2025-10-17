@@ -38,6 +38,14 @@ export function Hide() {
   return window['go']['app']['App']['Hide']();
 }
 
+export function IsSearchingDevices() {
+  return window['go']['app']['App']['IsSearchingDevices']();
+}
+
+export function OpenSendFilesPage() {
+  return window['go']['app']['App']['OpenSendFilesPage']();
+}
+
 export function QueryDeviceSysInfo(arg1) {
   return window['go']['app']['App']['QueryDeviceSysInfo'](arg1);
 }

@@ -14,7 +14,7 @@
   <div class="content flex w-full flex-grow overflow-y-auto">
     {#key $page.url.pathname}
       {#await ConfigReady()}
-        <ProgressRing value={null} />
+        <Navigation />
       {:then ready}
         {#if ready}
           <Navigation />

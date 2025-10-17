@@ -3,6 +3,7 @@
     GetFoundDevices,
     RequestPairingFoundDevice,
     GetConnectedDevices,
+    IsSearchingDevices,
   } from "$lib/wails/wailsjs/go/app/App";
   import { onMount } from "svelte";
   import { ProgressRing } from "@skeletonlabs/skeleton-svelte";
@@ -10,6 +11,7 @@
   import FoundDeviceTile from "$lib/components/tiles/FoundDeviceTile.svelte";
   import { pairDialogOptions } from "../PairDialog.svelte";
   let devices: discovery.FoundDevice[] = $state([]);
+  let isSearching: boolean = $state(false);
 
   onMount(() => {
     const searchInterval = setInterval(async () => {
@@ -20,6 +22,7 @@
         }
         return true;
       });
+      isSearching = await IsSearchingDevices();
     }, 500);
     return () => {
       clearInterval(searchInterval);
@@ -50,13 +53,15 @@
         <p class="text-surface-300-700">No device found</p>
       {/each}
     </div>
-    <div class=" flex mt-8">
-      <ProgressRing
-        value={null}
-        size="size-10"
-        meterStroke="stroke-tertiary-600-400"
-      />
-      <span class="m-3 text-surface-600-400">Searching devices</span>
-    </div>
+    {#if isSearching}
+      <div class=" flex mt-8">
+        <ProgressRing
+          value={null}
+          size="size-10"
+          meterStroke="stroke-tertiary-600-400"
+        />
+        <span class="m-3 text-surface-600-400">Searching devices</span>
+      </div>
+    {/if}
   </div>
 </div>

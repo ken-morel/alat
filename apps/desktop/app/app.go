@@ -39,3 +39,7 @@ func (app *App) Quit() {
 		rt.Quit(app.ctx)
 	}
 }
+
+func (app *App) OpenSendFilesPage() {
+	rt.EventsEmit(app.ctx, "send-files")
+}
