@@ -124,82 +124,68 @@ class AlatInstance {
   }
 
   Future<AppConfig> getAppConfig() async {
-    return Isolate.run(
-      () => _jsonHelper(bindings.get_app_config_json, AppConfig.fromJson),
-    );
+    return _jsonHelper(bindings.get_app_config_json, AppConfig.fromJson);
   }
 
   Future<void> setAppConfig(AppConfig settings) async {
-    return Isolate.run(
-      () => _jsonSetterHelper(settings.toJson(), bindings.set_app_config_json),
-    );
+    return _jsonSetterHelper(settings.toJson(), bindings.set_app_config_json);
   }
 
   Future<ServiceConfig> getServiceConfig() {
-    return Isolate.run(
-      () =>
-          _jsonHelper(bindings.get_service_config_json, ServiceConfig.fromJson),
+    return _jsonHelper(
+      bindings.get_service_config_json,
+      ServiceConfig.fromJson,
     );
   }
 
   Future<void> setServiceConfig(ServiceConfig settings) {
-    return Isolate.run(
-      () => _jsonSetterHelper(
-        settings.toJson(),
-        bindings.set_service_config_json,
-      ),
+    return _jsonSetterHelper(
+      settings.toJson(),
+      bindings.set_service_config_json,
     );
   }
 
   Future<List<FoundDevice>> getFoundDevices() {
-    return Isolate.run(
-      () => _jsonListHelper(
-        bindings.get_found_devices_json,
-        FoundDevice.fromJson,
-      ),
+    return _jsonListHelper(
+      bindings.get_found_devices_json,
+      FoundDevice.fromJson,
     );
   }
 
   Future<List<PairedDevice>> getPairedDevices() {
-    return Isolate.run(
-      () => _jsonListHelper(
-        bindings.get_paired_devices_json,
-        PairedDevice.fromJson,
-      ),
+    return _jsonListHelper(
+      bindings.get_paired_devices_json,
+      PairedDevice.fromJson,
     );
   }
 
   Future<List<ConnectedDevice>> getConnectedDevices() {
-    return Isolate.run(
-      () => _jsonListHelper(
-        bindings.get_connected_devices_json,
-        ConnectedDevice.fromJson,
-      ),
+    return _jsonListHelper(
+      bindings.get_connected_devices_json,
+      ConnectedDevice.fromJson,
     );
   }
 
   Future<NodeStatus> getNodeStatus() {
-    return Isolate.run(
-      () => _jsonHelper(bindings.get_node_status_json, NodeStatus.fromJson),
-    );
+    return _jsonHelper(bindings.get_node_status_json, NodeStatus.fromJson);
   }
 
   Future<List<DeviceColor>> getAlatColors() {
-    return Isolate.run(() {
-      final ptr = bindings.get_alat_device_colors_json();
-      if (ptr == nullptr) {
-        return [];
-      }
-      try {
-        final jsonStr = ptr.cast<Utf8>().toDartString();
-        final List<dynamic> decoded = jsonDecode(jsonStr);
-        return decoded
+    final ptr = bindings.get_alat_device_colors_json();
+    if (ptr == nullptr) {
+      return Future.value([]);
+    }
+    try {
+      final jsonStr = ptr.cast<Utf8>().toDartString();
+      final List<dynamic> decoded = jsonDecode(jsonStr);
+      return Future.value(
+        decoded
             .map((item) => DeviceColor.fromJson(item as Map<String, dynamic>))
-            .toList();
-      } finally {
-        bindings.free_string(ptr);
-      }
-    });
+            .toList(),
+      );
+    } finally {
+      bindings.free_string(ptr);
+    }
   }
 
   Future<T> _jsonHelper<T>(
@@ -247,7 +233,7 @@ class AlatInstance {
     final jsonStr = jsonEncode(jsonData);
     final jsonStrC = jsonStr.toNativeUtf8();
     try {
-      final result = await Isolate.run(() => ffiFunc(handle, jsonStrC.cast()));
+      final result = ffiFunc(handle, jsonStrC.cast());
       if (result != 0) {
         throw Exception(
           'Failed to set data in Go core. Code: $result ${getAlatError()}',
@@ -284,21 +270,28 @@ class AlatInstance {
   Future<RequestPairResponse> requestPair(String deviceId) {
     return Isolate.run(() {
       final deviceIdC = deviceId.toNativeUtf8();
-      final ptr = bindings.request_pair_found_device(handle, deviceIdC.cast());
-      if (ptr == nullptr) {
-        return RequestPairResponse(
-          status: -1,
-          error: "Alat sent no reponse",
-          accepted: false,
-          reason: "Could not query device",
+      try {
+        final ptr = bindings.request_pair_found_device(
+          handle,
+          deviceIdC.cast(),
         );
-      } else {
-        try {
-          final result = ptr.cast<Utf8>().toDartString();
-          return RequestPairResponse.fromJson(jsonDecode(result));
-        } finally {
-          bindings.free_string(ptr);
+        if (ptr == nullptr) {
+          return RequestPairResponse(
+            status: -1,
+            error: "Alat sent no reponse",
+            accepted: false,
+            reason: "Could not query device",
+          );
+        } else {
+          try {
+            final result = ptr.cast<Utf8>().toDartString();
+            return RequestPairResponse.fromJson(jsonDecode(result));
+          } finally {
+            bindings.free_string(ptr);
+          }
         }
+      } finally {
+        malloc.free(deviceIdC);
       }
     });
   }
@@ -358,11 +351,9 @@ class AlatInstance {
   }
 
   Future<FileTransfersStatus> getFileTransfersStatus() {
-    return Isolate.run(
-      () => _jsonHelper(
-        bindings.get_file_transfers_status,
-        FileTransfersStatus.fromJson,
-      ),
+    return _jsonHelper(
+      bindings.get_file_transfers_status,
+      FileTransfersStatus.fromJson,
     );
   }
 }

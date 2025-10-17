@@ -60,6 +60,15 @@ ThemeData createDarkTheme() {
   return ThemeData(
     useMaterial3: true,
     colorScheme: colorScheme,
+    buttonTheme: ButtonThemeData(
+      minWidth: 95,
+      height: 40,
+      padding: EdgeInsets.all(5),
+      shape: RoundedRectangleBorder(
+        side: BorderSide(),
+        borderRadius: BorderRadiusGeometry.all(Radius.circular(25)),
+      ),
+    ),
     appBarTheme: AppBarTheme(
       backgroundColor: colorScheme.surface,
       foregroundColor: colorScheme.onSurface,

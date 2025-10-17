@@ -81,16 +81,15 @@ class AppState extends ChangeNotifier {
         await configDir.create(recursive: true);
       }
       _alatInstance = await AppState.createInstance(configDir.path);
-      _alatInstance!.registerPairRequestHandler(pairRequestHandler);
     } else {
       _alatInstance = dalat.AlatInstance.get(instances[0]);
-      _alatInstance!.registerPairRequestHandler(pairRequestHandler);
     }
 
     _appSettings = await _alatInstance!.getAppConfig();
     if (_appSettings!.setupComplete) {
       _alatInstance!.start();
       _startTransferStatusUpdates();
+      _alatInstance!.registerPairRequestHandler(pairRequestHandler);
     }
     _serviceSettings = await _alatInstance!.getServiceConfig();
 
@@ -105,6 +104,7 @@ class AppState extends ChangeNotifier {
     _appSettings!.setupComplete = true;
     await _alatInstance!.setAppConfig(_appSettings!);
     _alatInstance!.start();
+    _alatInstance!.registerPairRequestHandler(pairRequestHandler);
     _startTransferStatusUpdates();
     notifyListeners();
   }
