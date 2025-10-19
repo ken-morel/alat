@@ -12,6 +12,10 @@
 
 @import "@fontsource/open-sans";
 
+:root {
+    color-scheme: dark;
+}
+
 body {
   height: 100%;
 }

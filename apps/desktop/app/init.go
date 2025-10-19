@@ -1,8 +1,9 @@
 package app
 
 import (
-	"alat/pkg/core"
 	"context"
+
+	"alat/pkg/core"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"

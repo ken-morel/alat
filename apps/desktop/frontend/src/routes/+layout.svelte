@@ -10,7 +10,7 @@
   let { children } = $props();
 </script>
 
-<div class="flex h-screen flex-col">
+<div class="bg-surface-950 flex h-screen flex-col">
   <div class="content flex w-full flex-grow overflow-y-auto">
     {#key $page.url.pathname}
       {#await ConfigReady()}
