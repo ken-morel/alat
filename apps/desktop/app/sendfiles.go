@@ -14,9 +14,9 @@ type SendFile struct {
 	Size uint32
 }
 
-func (app *App) AskFilesSend(to string) (sendFiles []SendFile, err error) {
+func (app *App) AskFilesSend() (sendFiles []SendFile, err error) {
 	names, err := rt.OpenMultipleFilesDialog(app.ctx, rt.OpenDialogOptions{
-		Title:           "Select files to send to " + to,
+		Title:           "Select files to send",
 		ShowHiddenFiles: true,
 		ResolvesAliases: true,
 	})

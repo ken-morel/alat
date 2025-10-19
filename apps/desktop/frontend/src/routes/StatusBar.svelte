@@ -71,7 +71,7 @@
                   />
                   <span class="text-sm">
                     {status.discoveryRunning
-                      ? `Device visible at port ${status.Port}`
+                      ? `Device visible at port ${status.port}`
                       : "Device hidden"}
                   </span>
                 </div>

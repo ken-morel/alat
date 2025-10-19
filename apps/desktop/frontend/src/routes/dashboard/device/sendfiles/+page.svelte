@@ -17,7 +17,7 @@
   function selectFiles() {
     const device = $dev;
     if (!device) return;
-    AskFilesSend(device.info.name).then((selectedFiles) => {
+    AskFilesSend().then((selectedFiles) => {
       sendingFiles.update((files) => {
         return selectedFiles.concat(files);
       });
