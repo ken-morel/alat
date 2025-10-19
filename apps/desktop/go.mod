@@ -3,7 +3,6 @@ module alat/apps/desktop
 go 1.23.0
 
 require (
-	github.com/emersion/go-autostart v0.0.0-20250403115856-34830d6457d2
 	github.com/getlantern/systray v1.2.2
 	github.com/wailsapp/wails/v2 v2.10.2
 )
