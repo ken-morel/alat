@@ -5,8 +5,8 @@
   "name": "alat",
   "outputfilename": "alat",
   "frontend:install": "bun install",
-  "frontend:build": "bun run build",
-  "frontend:dev:watcher": "bun run dev",
+  "frontend:build": "npm run build",
+  "frontend:dev:watcher": "npm run dev",
   "frontend:dev:serverUrl": "http://localhost:5173",
   "nsisType": "single",
   "info": {

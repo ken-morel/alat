@@ -6,6 +6,7 @@ import (
 
 func main() {
 	appConfig.Load()
+	appConfig.Save()
 	autostartCheck() // exits
 	n := createNode()
 	conf, _ := n.GetAppConfig()
