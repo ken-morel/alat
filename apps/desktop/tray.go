@@ -19,6 +19,8 @@ func showTray(n *node.Node, a *app.App) {
 		mShow := systray.AddMenuItem("Show", "Show the app")
 		mHide := systray.AddMenuItem("Hide", "Hide the app")
 		systray.AddSeparator()
+		mAutoStart := systray.AddMenuItemCheckbox("Autostart", "Launch alat on startup", appConfig.Autostart)
+		systray.AddSeparator()
 		mNode := systray.AddMenuItem("Node", "")
 		mNodeStatus := mNode.AddSubMenuItem("Node stalked", "Node status")
 		mNodeStatus.Disable()
@@ -74,6 +76,14 @@ func showTray(n *node.Node, a *app.App) {
 					a.OpenSendFilesPage()
 				case <-mQuit.ClickedCh:
 					systray.Quit()
+				case <-mAutoStart.ClickedCh:
+					appConfig.Autostart = !mAutoStart.Checked()
+					if mAutoStart.Checked() {
+						mAutoStart.Uncheck()
+					} else {
+						mAutoStart.Check()
+					}
+					appConfig.Save()
 				}
 			}
 		}()
