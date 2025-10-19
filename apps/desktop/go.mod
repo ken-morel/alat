@@ -5,6 +5,7 @@ go 1.23.0
 require (
 	github.com/getlantern/systray v1.2.2
 	github.com/wailsapp/wails/v2 v2.10.2
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
