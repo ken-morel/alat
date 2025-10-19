@@ -19,7 +19,6 @@ yarn-error.log*
 .flutter-plugins
 .flutter-plugins-dependencies
 .packages
-build/
 ios/Pods/
 ios/Flutter/App.framework
 ios/Flutter/engine
@@ -27,8 +26,6 @@ ios/Flutter/flutter_assets
 ios/Flutter/Generated.xcconfig
 ios/Runner/GeneratedPluginRegistrant.*
 
-# Wails
-build/bin/*
 
 # OS-specific
 .DS_Store

@@ -29,6 +29,8 @@ contents:
     dst: /usr/share/applications/alat.desktop
   - src: ../../logo/static/logo.svg
     dst: /usr/share/icons/hicolor/scalable/apps/alat.svg
+  - src: ./build/darwin/alat-autostart.desktop
+    dst: /etc/xdg/autostart/alat.desktop
   # copy icons to Yaru theme as well. For some reason Ubuntu didn't pick up fileicons from hicolor theme
   - src: ../../logo/static/logo.svg
     dst: /usr/share/icons/Yaru/scalable/apps/alat.svg

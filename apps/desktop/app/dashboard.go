@@ -5,6 +5,5 @@ import (
 )
 
 func (app *App) GetPairedDevices() []device.PairedDevice {
-	return app.GetPairedDevices()
-
+	return app.node.GetPairedDevices()
 }

@@ -16,10 +16,6 @@ export function AskFilesSend(arg1:string):Promise<Array<app.SendFile>>;
 
 export function ConfigReady():Promise<boolean>;
 
-export function DisableAutostart():Promise<void>;
-
-export function EnableAutostart():Promise<void>;
-
 export function GetAlatColors():Promise<Array<color.Color>>;
 
 export function GetConnectedDevices():Promise<Array<connected.Connected>>;
@@ -31,8 +27,6 @@ export function GetNodeStatus():Promise<node.Status>;
 export function GetPairedDevices():Promise<Array<device.PairedDevice>>;
 
 export function Hide():Promise<void>;
-
-export function IsAutostartEnabled():Promise<boolean>;
 
 export function IsSearchingDevices():Promise<boolean>;
 
