@@ -64,6 +64,8 @@ func main() {
 
 	a := app.NewApp(assets, n)
 
+	n.OnPairRequest(a.HandlePairRequest)
+
 	systray.Register(func() {
 		systray.SetTitle("Alat")
 		systray.SetTooltip("Alat desktop application")
