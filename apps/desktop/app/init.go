@@ -48,6 +48,7 @@ func (app *App) Run() error {
 			WebviewIsTransparent: true,
 			BackdropType:         windows.Acrylic,
 			WindowClassName:      core.DesktopAppID,
+			Theme:                windows.Dark,
 		},
 		Linux: &linux.Options{
 			WindowIsTranslucent: true,
