@@ -34,6 +34,10 @@ export function GetPairedDevices() {
   return window['go']['app']['App']['GetPairedDevices']();
 }
 
+export function HandlePairRequest(arg1, arg2, arg3) {
+  return window['go']['app']['App']['HandlePairRequest'](arg1, arg2, arg3);
+}
+
 export function Hide() {
   return window['go']['app']['App']['Hide']();
 }

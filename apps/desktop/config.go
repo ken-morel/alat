@@ -28,12 +28,12 @@ func (a *AppConfig) Load() error {
 }
 
 func (a *AppConfig) Save() error {
-	f, err := os.Open(path.Join(getConfigDir(), "config.yml"))
+	data, err := yaml.Marshal(a)
 	if err != nil {
 		return err
 	}
-	defer f.Close()
-	return yaml.NewEncoder(f).Encode(a)
+
+	return os.WriteFile(path.Join(getConfigDir(), "config.yml"), data, 0o644)
 }
 
 func getConfigDir() string {

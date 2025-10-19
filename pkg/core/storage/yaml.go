@@ -53,12 +53,15 @@ func (ns *YAMLNodeStorage) AddPairedDevice(newDevice device.PairedDevice) error 
 
 	return os.WriteFile(ns.PairedDevicesPath(), data, 0o644)
 }
+
 func (ns *YAMLNodeStorage) AppConfigPath() string {
 	return path.Join(ns.path, "app.yml")
 }
+
 func (ns *YAMLNodeStorage) ServiceConfigPath() string {
 	return path.Join(ns.path, "services.yml")
 }
+
 func (ns *YAMLNodeStorage) PairedDevicesPath() string {
 	return path.Join(ns.path, "paired.yml")
 }
@@ -74,13 +77,13 @@ func (ns *YAMLNodeStorage) GetAppConfig() (*config.AppConfig, error) {
 	}
 	return &settings, nil
 }
+
 func (ns *YAMLNodeStorage) SetAppConfig(conf config.AppConfig) error {
 	data, err := yaml.Marshal(conf)
 	if err != nil {
 		return err
 	}
 	return os.WriteFile(ns.AppConfigPath(), data, 0o644)
-
 }
 
 func (ns *YAMLNodeStorage) GetServiceConfig() (*config.ServiceConfig, error) {
@@ -94,8 +97,8 @@ func (ns *YAMLNodeStorage) GetServiceConfig() (*config.ServiceConfig, error) {
 		return nil, err
 	}
 	return &settings, nil
-
 }
+
 func (ns *YAMLNodeStorage) SetServiceConfig(conf config.ServiceConfig) error {
 	data, err := yaml.Marshal(conf)
 	if err != nil {

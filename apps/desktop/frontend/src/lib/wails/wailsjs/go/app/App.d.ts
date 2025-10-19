@@ -6,6 +6,7 @@ import {connected} from '../models';
 import {discovery} from '../models';
 import {node} from '../models';
 import {device} from '../models';
+import {security} from '../models';
 import {sysinfo} from '../models';
 import {filesend} from '../models';
 import {config} from '../models';
@@ -25,6 +26,8 @@ export function GetFoundDevices():Promise<Array<discovery.FoundDevice>>;
 export function GetNodeStatus():Promise<node.Status>;
 
 export function GetPairedDevices():Promise<Array<device.PairedDevice>>;
+
+export function HandlePairRequest(arg1:string,arg2:security.PairToken,arg3:device.Details):Promise<void>;
 
 export function Hide():Promise<void>;
 
