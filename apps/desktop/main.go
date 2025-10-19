@@ -78,7 +78,6 @@ func main() {
 		mNodeStatus.Disable()
 		mNodeStop := mNode.AddSubMenuItem("Stop", "Stop the node")
 		mNodeStart := mNode.AddSubMenuItem("Start", "Start the node")
-		systray.AddSeparator()
 
 		go func() {
 			lastRunning := false
