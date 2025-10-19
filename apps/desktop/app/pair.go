@@ -49,17 +49,17 @@ func (app *App) RequestPairingFoundDevice(deviceID string) (*RequestPairingResul
 	}, nil
 }
 
-func (app *App) handlePairRequest(token *security.PairToken, details *device.Details) (bool, string) {
+func (app *App) handlePairRequest(reqId string, token *security.PairToken, details *device.Details) {
 	response, err := rt.MessageDialog(app.ctx, rt.MessageDialogOptions{
 		Type:    rt.QuestionDialog,
 		Title:   "Pair request",
 		Message: fmt.Sprintf("%s device '%s'(colored %s) want's to connect token: %s", details.Type, details.Name, details.Color.Name, details.Certificate.ID()[:5]),
 	})
 	if err != nil {
-		return false, "Failed to get user response"
+		app.node.SubmitPairResponse(reqId, false, fmt.Sprintf("User did not respond: %s", err.Error()))
 	} else if response == "Yes" {
-		return true, ""
+		app.node.SubmitPairResponse(reqId, true, "")
 	} else {
-		return false, "User rejected the pair request"
+		app.node.SubmitPairResponse(reqId, false, "User rejected the pair request")
 	}
 }
