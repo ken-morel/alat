@@ -4,6 +4,8 @@ function dev
     wails dev -tags webkit2_41 -v 2
 end
 function build-windows
+    set -gx CGO_ENABLED 1
+    set -gx GO111MODULE on
     wails build -v 2 -tags webkit2_41 -platform windows -nsis
 end
 function package-linux

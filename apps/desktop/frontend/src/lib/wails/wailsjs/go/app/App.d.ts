@@ -6,6 +6,7 @@ import {connected} from '../models';
 import {discovery} from '../models';
 import {node} from '../models';
 import {device} from '../models';
+import {security} from '../models';
 import {sysinfo} from '../models';
 import {filesend} from '../models';
 import {config} from '../models';
@@ -15,10 +16,6 @@ export function AskFileSharingDestDirectory():Promise<string>;
 export function AskFilesSend(arg1:string):Promise<Array<app.SendFile>>;
 
 export function ConfigReady():Promise<boolean>;
-
-export function DisableAutostart():Promise<void>;
-
-export function EnableAutostart():Promise<void>;
 
 export function GetAlatColors():Promise<Array<color.Color>>;
 
@@ -30,9 +27,9 @@ export function GetNodeStatus():Promise<node.Status>;
 
 export function GetPairedDevices():Promise<Array<device.PairedDevice>>;
 
-export function Hide():Promise<void>;
+export function HandlePairRequest(arg1:string,arg2:security.PairToken,arg3:device.Details):Promise<void>;
 
-export function IsAutostartEnabled():Promise<boolean>;
+export function Hide():Promise<void>;
 
 export function IsSearchingDevices():Promise<boolean>;
 

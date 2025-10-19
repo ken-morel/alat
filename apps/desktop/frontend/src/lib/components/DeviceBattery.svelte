@@ -19,10 +19,6 @@
   let loaded: boolean = $state(false);
   let error: string | null = $state(null);
 
-  let stroke: string = $derived(
-    error ? "error" : loaded ? (charging ? "success" : "tertiary") : "warning",
-  );
-  let meterStroke = $derived("stroke-" + stroke + "-700-300");
   onMount(() => {
     const interval = setInterval(() => {
       QueryDeviceSysInfo(dev)
@@ -42,11 +38,11 @@
   });
 </script>
 
-<Tooltip classes="p-4 rounded-xl bg-{error ? 'error' : 'surface'}-300-700">
+<Tooltip classes="p-4 rounded-xl bg-surface-300-700">
   <ProgressRing
     value={loaded && !error ? percent.current : null}
     size="size-20"
-    {meterStroke}
+    meterStroke="stroke-primary-300-700"
   >
     {#if error}
       <IconError size={iconSize} />

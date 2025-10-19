@@ -14,14 +14,6 @@ export function ConfigReady() {
   return window['go']['app']['App']['ConfigReady']();
 }
 
-export function DisableAutostart() {
-  return window['go']['app']['App']['DisableAutostart']();
-}
-
-export function EnableAutostart() {
-  return window['go']['app']['App']['EnableAutostart']();
-}
-
 export function GetAlatColors() {
   return window['go']['app']['App']['GetAlatColors']();
 }
@@ -42,12 +34,12 @@ export function GetPairedDevices() {
   return window['go']['app']['App']['GetPairedDevices']();
 }
 
-export function Hide() {
-  return window['go']['app']['App']['Hide']();
+export function HandlePairRequest(arg1, arg2, arg3) {
+  return window['go']['app']['App']['HandlePairRequest'](arg1, arg2, arg3);
 }
 
-export function IsAutostartEnabled() {
-  return window['go']['app']['App']['IsAutostartEnabled']();
+export function Hide() {
+  return window['go']['app']['App']['Hide']();
 }
 
 export function IsSearchingDevices() {

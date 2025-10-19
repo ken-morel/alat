@@ -1,0 +1,8 @@
+[Desktop Entry]
+Categories=Office
+Exec=/usr/bin/alat %u
+Icon=alat
+Name=alat
+Terminal=false
+Type=Application
+MimeType=x-scheme-handler/alat;

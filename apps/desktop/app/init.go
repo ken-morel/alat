@@ -1,9 +1,8 @@
 package app
 
 import (
-	"context"
-
 	"alat/pkg/core"
+	"context"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -48,6 +47,7 @@ func (app *App) Run() error {
 			WebviewIsTransparent: true,
 			BackdropType:         windows.Acrylic,
 			WindowClassName:      core.DesktopAppID,
+			Theme:                windows.Dark,
 		},
 		Linux: &linux.Options{
 			WindowIsTranslucent: true,
@@ -62,6 +62,7 @@ func (app *App) onSecondInstance(options.SecondInstanceData) {
 }
 
 func (app *App) beforeClose(context.Context) bool {
-	return false
+	app.Hide()
+	return true
 }
 func (app *App) shutdown(context.Context) {}

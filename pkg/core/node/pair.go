@@ -3,9 +3,8 @@ package node
 import (
 	"alat/pkg/core/device"
 	"alat/pkg/core/security"
-	"fmt"
-
 	"alat/pkg/pbuf"
+	"fmt"
 )
 
 func (n *Node) RequestPairFoundDevice(id string) (*pbuf.RequestPairResponse, error) {
