@@ -42,7 +42,7 @@
   <ProgressRing
     value={loaded && !error ? percent.current : null}
     size="size-20"
-    meterStroke="stroke-primary-300-700"
+    meterStroke="stroke-primary-800-200"
   >
     {#if error}
       <IconError size={iconSize} />
