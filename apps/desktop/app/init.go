@@ -1,9 +1,8 @@
 package app
 
 import (
-	"context"
-
 	"alat/pkg/core"
+	"context"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -15,8 +14,8 @@ import (
 
 func (app *App) startup(ctx context.Context) {
 	app.ctx = ctx
-	rt.WindowSetDarkTheme(ctx)
 	app.started = true
+	rt.WindowSetDarkTheme(ctx)
 }
 
 func (app *App) Run() error {
@@ -25,7 +24,7 @@ func (app *App) Run() error {
 	return wails.Run(&options.App{
 		Title:  "Alat",
 		Width:  800,
-		Height: 600,
+		Height: 1000,
 		AssetServer: &assetserver.Options{
 			Assets: app.assets,
 		},
@@ -33,6 +32,7 @@ func (app *App) Run() error {
 		OnStartup:        app.startup,
 		OnShutdown:       app.shutdown,
 		StartHidden:      setupComplete,
+		WindowStartState: options.Maximised,
 		Bind: []any{
 			app,
 		},

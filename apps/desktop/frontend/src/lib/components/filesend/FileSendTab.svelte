@@ -34,7 +34,6 @@
   function sendToDevices() {
     const filesToSend = $sendingFiles.map((f) => f.Path);
     if (filesToSend.length === 0 || choosedDevices.length === 0) {
-      // Maybe show a small error/notification to the user
       return;
     }
 
@@ -52,8 +51,8 @@
   }
 </script>
 
-<div {...accordion.root}>
-  <div class="border-b-[1px] border-surface-200-800 w-full" transition:slide>
+<div {...accordion.root} class="container p-4">
+  <div class="border-b-[1px] border-surface-200-800 w-full">
     <h5 {...files.heading} class="h5 w-full bg-secondary-600-400">
       <button {...files.trigger} class="w-full p-2"> Select files </button>
     </h5>
@@ -142,7 +141,10 @@
             >
               <article class="flex flex-grow items-start gap-4 p-1">
                 <div class="mt-1">
-                  <Icon color={dev.info.color.hex} class="h-10 w-10 opacity-80" />
+                  <Icon
+                    color={dev.info.color.hex}
+                    class="h-10 w-10 opacity-80"
+                  />
                 </div>
 
                 <div class="flex min-w-0 flex-col">

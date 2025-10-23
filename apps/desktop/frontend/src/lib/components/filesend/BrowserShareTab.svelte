@@ -165,30 +165,30 @@
           </span>
           <div class="bg-surface-50-950 w-full p-2">
             {#if webShareStatus && webShareStatus.sharedFiles.length > 0}
-              {#each webShareStatus.sharedFiles as file (file.UUID)}
+              {#each webShareStatus.sharedFiles as file (file.uuid)}
                 <div
                   transition:slide={{ duration: 100 }}
                   class="flex flex-2 text-[12px] text-surface-800-200 items-center"
                 >
                   <div class="flex-grow flex flex-col p-1.5">
-                    <span class="font-medium">{file.Name}</span>
+                    <span class="font-medium">{file.name}</span>
                     <span class="text-sm text-surface-600-400"
-                      >{fsizeText(file.Size)}</span
+                      >{fsizeText(file.size)}</span
                     >
                   </div>
                   <button
                     class="btn m-0 p-1.5"
-                    onclick={() => removeSharedFile(file.UUID)}
+                    onclick={() => removeSharedFile(file.uuid)}
                   >
-                    <CloseIcon
-                      size={20}
-                      color="var(--color-error-600-400)"
-                    />
+                    <CloseIcon size={20} color="var(--color-error-600-400)" />
                   </button>
                 </div>
               {/each}
             {:else}
-              <div transition:slide class="p-3 text-surface-300-700 text-center">
+              <div
+                transition:slide
+                class="p-3 text-surface-300-700 text-center"
+              >
                 No files are currently shared.
               </div>
             {/if}

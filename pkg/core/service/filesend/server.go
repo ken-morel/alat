@@ -1,14 +1,13 @@
 package filesend
 
 import (
+	"alat/pkg/core/device"
+	"alat/pkg/core/security"
+	"alat/pkg/pbuf"
 	"fmt"
 	"io"
 	"os"
 	"path"
-
-	"alat/pkg/core/device"
-	"alat/pkg/core/security"
-	"alat/pkg/pbuf"
 
 	"github.com/labstack/gommon/log"
 )
@@ -24,7 +23,7 @@ func rcfilepath(folder string, name string) string {
 	stem := name[:len(name)-len(ext)]
 	for i := range 1_000_000 {
 		if i != 0 {
-			newName = fmt.Sprintf("%s-%d.%s", stem, i, ext)
+			newName = fmt.Sprintf("%s-%d%s", stem, i, ext)
 		}
 		dest := path.Join(folder, newName)
 		_, err := os.Stat(dest)

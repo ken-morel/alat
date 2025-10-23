@@ -1,10 +1,9 @@
 package app
 
 import (
-	"os"
-
 	"alat/pkg/core/connected"
 	"alat/pkg/core/service/filesend"
+	"os"
 
 	rt "github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -40,8 +39,13 @@ func (app *App) AskFilesSend() (sendFiles []SendFile, err error) {
 }
 
 func (app *App) ServiceStartSendFilesToDevice(peer connected.Connected, files []string) error {
-	go app.node.QuerySendFiles(&peer, files)
-	return nil
+	var err error
+	for sendError := range app.node.QuerySendFiles(&peer, files) {
+		if sendError != nil {
+			err = sendError
+		}
+	}
+	return err
 }
 
 func (app *App) ServiceGetFileSendStatus() filesend.FileTransfersStatus {
