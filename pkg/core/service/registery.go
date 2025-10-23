@@ -17,6 +17,7 @@ type Registry struct {
 func (r *Registry) UpdateConfig(settings config.ServiceConfig) {
 	r.FileSend.Configure(settings.FileSend)
 	r.SysInfo.Configure(settings.SysInfo)
+	r.WebShare.Configure(settings.FileSend)
 }
 
 func CreateRegistry(settings *config.ServiceConfig, p *pair.PairManager) *Registry {

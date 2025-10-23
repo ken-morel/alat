@@ -1,6 +1,7 @@
 package webshare
 
 import (
+	"embed"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -8,6 +9,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"slices"
 	"strings"
 	"time"
 
@@ -90,9 +92,9 @@ func (s *Service) handleUploadFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	maxFileSize := int64(s.config.MaxFileSize)
+	maxFileSize := int64(s.config.MaxSize) * 1024 * 1024
 	if maxFileSize == 0 {
-		maxFileSize = 100 << 20 // Default to 100MB if 0 (unlimited) is configured, to prevent abuse
+		maxFileSize = 10 << 30 // Default to 10GB if 0 (unlimited) is configured, to prevent abuse
 	}
 
 	r.Body = http.MaxBytesReader(w, r.Body, maxFileSize)
@@ -184,12 +186,7 @@ func (s *Service) isValidSession(r *http.Request) bool {
 		return false
 	}
 	sessionToken := c.Value
-	for _, token := range s.sessions {
-		if token == sessionToken {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(s.sessions, sessionToken)
 }
 
 func handleUIContent(w http.ResponseWriter, r *http.Request) {

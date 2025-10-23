@@ -56,6 +56,10 @@ func CreateService(c *config.FileSendConfig, p *pair.PairManager) Service {
 	}
 }
 
+func (s *Service) Configure(c config.FileSendConfig) {
+	s.config = c
+}
+
 func CreatePasscode() string {
 	return uuid.NewString()[0:6]
 }
