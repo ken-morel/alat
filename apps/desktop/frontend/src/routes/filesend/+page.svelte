@@ -23,10 +23,28 @@
   import {
     AskFilesSend,
     ServiceStartSendFilesToDevice,
+    WebShareStart,
+    WebShareStop,
+    WebShareGetStatus,
+    WebShareAddSharedFiles,
+    WebShareRemoveSharedFile,
+    WebShareClearSharedFiles,
+    WebShareSetPasscode,
+    WebShareGetPasscode,
   } from "$lib/wails/wailsjs/go/app/App";
+  import type { webshare } from "$lib/wails/wailsjs/go/models";
   import fsizeText from "$lib/fsize";
   import { get } from "svelte/store";
   import type { app } from "$lib/wails/wailsjs/go/models";
+  import { onMount } from "svelte";
+
+  let webShareStatus: webshare.Status | null = $state(null);
+  let newPasscode: string = $state("");
+  let filesToShare: FileList | null = $state(null);
+
+  onMount(async () => {
+    webShareStatus = await WebShareGetStatus();
+  });
 
   const tabNames = ["filesend", "browsershare"];
   const tabs = new Tabs({
@@ -39,6 +57,77 @@
         return selectedFiles.concat(files);
       });
     });
+  }
+
+  async function startWebShare() {
+    try {
+      const port = await WebShareStart();
+      console.log(`WebShare started on port ${port}`);
+      await refreshWebShareStatus();
+    } catch (error) {
+      console.error("Failed to start WebShare:", error);
+    }
+  }
+
+  async function stopWebShare() {
+    try {
+      await WebShareStop();
+      console.log("WebShare stopped");
+      await refreshWebShareStatus();
+    } catch (error) {
+      console.error("Failed to stop WebShare:", error);
+    }
+  }
+
+  async function setWebSharePasscode() {
+    if (newPasscode) {
+      try {
+        await WebShareSetPasscode(newPasscode);
+        console.log("Passcode updated");
+        await refreshWebShareStatus();
+        newPasscode = ""; // Clear input after setting
+      } catch (error) {
+        console.error("Failed to set passcode:", error);
+      }
+    }
+  }
+
+  async function addFilesToWebShare() {
+    if (filesToShare && filesToShare.length > 0) {
+      const paths = Array.from(filesToShare).map((file) => file.path);
+      try {
+        await WebShareAddSharedFiles(paths);
+        console.log("Files added to web share");
+        await refreshWebShareStatus();
+        filesToShare = null; // Clear input
+      } catch (error) {
+        console.error("Failed to add files to web share:", error);
+      }
+    }
+  }
+
+  async function removeSharedFile(uuid: string) {
+    try {
+      await WebShareRemoveSharedFile(uuid);
+      console.log(`File with UUID ${uuid} removed`);
+      await refreshWebShareStatus();
+    } catch (error) {
+      console.error("Failed to remove file:", error);
+    }
+  }
+
+  async function clearAllSharedFiles() {
+    try {
+      await WebShareClearSharedFiles();
+      console.log("All shared files cleared");
+      await refreshWebShareStatus();
+    } catch (error) {
+      console.error("Failed to clear all shared files:", error);
+    }
+  }
+
+  async function refreshWebShareStatus() {
+    webShareStatus = await WebShareGetStatus();
   }
 </script>
 
@@ -196,8 +285,131 @@
         </div>
       </div>
       <div {...tabs.getContent(tabNames[1])}>
-        <div class="container">
-          <h4 class="h4">Browser share</h4>
+        <div class="container p-4">
+          <h4 class="h4 mb-4">Browser Share</h4>
+
+          <!-- Server Status and Controls -->
+          <div class="card mb-4 p-4">
+            <h2 class="h5 mb-3">Server Status</h2>
+            {#if webShareStatus}
+              <p class="mb-2">
+                Status: <span class="font-bold"
+                  >{webShareStatus.isRunning ? "Running" : "Stopped"}</span
+                >
+              </p>
+              {#if webShareStatus.isRunning}
+                <p class="mb-2">
+                  Port: <span class="font-bold">{webShareStatus.port}</span>
+                </p>
+                <p class="mb-2">
+                  Share URL: <a
+                    href={webShareStatus.shareURL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-blue-500 hover:underline"
+                    >{webShareStatus.shareURL}</a
+                  >
+                </p>
+                <p class="mb-4">
+                  Passcode: <span class="font-bold"
+                    >{webShareStatus.passcode}</span
+                  >
+                </p>
+                <button
+                  class="btn preset-filled-error-500-400 p-2 w-full"
+                  onclick={stopWebShare}
+                >
+                  Stop Server
+                </button>
+              {:else}
+                <button
+                  class="btn preset-filled-success-500-400 p-2 w-full"
+                  onclick={startWebShare}
+                >
+                  Start Server
+                </button>
+              {/if}
+            {:else}
+              <p>Loading status...</p>
+            {/if}
+          </div>
+
+          <!-- Set Passcode -->
+          <div class="card mb-4 p-4">
+            <h2 class="h5 mb-3">Set Custom Passcode</h2>
+            <div class="flex gap-2">
+              <input
+                type="text"
+                class="input flex-grow"
+                placeholder="New Passcode (e.g., 6-digit code)"
+                bind:value={newPasscode}
+              />
+              <button
+                class="btn preset-filled-primary-500-400 p-2"
+                onclick={setWebSharePasscode}
+                disabled={!newPasscode}
+              >
+                Set Passcode
+              </button>
+            </div>
+          </div>
+
+          <!-- Upload Files for Sharing -->
+          <div class="card mb-4 p-4">
+            <h2 class="h5 mb-3">Add Files to Share</h2>
+            <div class="flex gap-2">
+              <input
+                type="file"
+                class="input flex-grow"
+                onchange={(e) => (filesToShare = e.target?.files)}
+                multiple
+              />
+              <button
+                class="btn preset-filled-primary-500-400 p-2"
+                onclick={addFilesToWebShare}
+                disabled={!filesToShare || filesToShare.length === 0}
+              >
+                Add Files
+              </button>
+            </div>
+          </div>
+
+          <!-- List Shared Files -->
+          <div class="card p-4">
+            <h2 class="h5 mb-3">Currently Shared Files</h2>
+            {#if webShareStatus && webShareStatus.sharedFiles.length > 0}
+              <ul class="list-none p-0 m-0">
+                {#each webShareStatus.sharedFiles as file (file.uuid)}
+                  <li
+                    class="flex justify-between items-center py-2 border-b border-surface-200-800 last:border-b-0"
+                  >
+                    <div>
+                      <p class="font-medium">{file.name}</p>
+                      <p class="text-sm text-surface-600-400">
+                        {fsizeText(file.size)}
+                      </p>
+                    </div>
+                    <button
+                      class="btn preset-filled-error-500-400 p-1.5 text-sm"
+                      onclick={() => removeSharedFile(file.uuid)}
+                    >
+                      Remove
+                    </button>
+                  </li>
+                {/each}
+              </ul>
+              <button
+                class="btn preset-filled-error-500-400 p-2 w-full mt-4"
+                onclick={clearAllSharedFiles}
+              >
+                Clear All Shared Files
+              </button>
+            {:else}
+              <p class="text-center text-surface-600-400">
+                No files are currently shared via browser.
+              </p>
+            {/if}
+          </div>
         </div>
       </div>
     </div>

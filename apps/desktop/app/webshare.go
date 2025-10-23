@@ -33,3 +33,4 @@ func (app *App) WebShareSetPasscode(passcode string) {
 func (app *App) WebShareGetPasscode() string {
 	return app.node.GetServices().WebShare.GetPasscode()
 }
+
