@@ -2,11 +2,10 @@
 package app
 
 import (
-	"context"
-	"embed"
-
 	"alat/pkg/core/device/color"
 	"alat/pkg/core/node"
+	"context"
+	"embed"
 
 	rt "github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -29,6 +28,7 @@ func (app *App) GetAlatColors() []color.Color {
 func (app *App) Show() {
 	if app.started {
 		rt.Show(app.ctx)
+		rt.WindowMaximise(app.ctx)
 	}
 }
 

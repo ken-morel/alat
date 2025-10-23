@@ -1,9 +1,8 @@
 package sysinfo
 
 import (
-	"fmt"
-
 	"alat/pkg/pbuf"
+	"fmt"
 
 	"github.com/distatus/battery"
 	"github.com/shirou/gopsutil/v3/disk"
@@ -51,7 +50,7 @@ func GetSysInfo() (*SysInfo, error) {
 		DiskUsed:        diskInfo.Used,
 		BatteryCharging: charging,
 		BatteryPercent:  charge,
-		CpuUsage:        0,
+		CPUUsage:        0,
 	}, nil
 }
 
@@ -65,7 +64,7 @@ type SysInfo struct {
 	DiskUsed        uint64  `json:"diskUsed"`
 	BatteryCharging bool    `json:"batteryCharging"`
 	BatteryPercent  float64 `json:"batteryPercent"`
-	CpuUsage        float64 `json:"cpuUsage"`
+	CPUUsage        float64 `json:"cpuUsage"`
 }
 
 func (s *SysInfo) ToPBUF() *pbuf.SysInfo {
@@ -79,7 +78,7 @@ func (s *SysInfo) ToPBUF() *pbuf.SysInfo {
 		DiskUsed:        s.DiskUsed,
 		BatteryCharging: s.BatteryCharging,
 		BatteryPercent:  s.BatteryPercent,
-		CpuUsage:        s.CpuUsage,
+		CpuUsage:        s.CPUUsage,
 	}
 }
 
@@ -94,6 +93,6 @@ func SysInfoFromPBUF(i *pbuf.SysInfo) *SysInfo {
 		MemUsed:         i.MemUsed,
 		DiskTotal:       i.DiskTotal,
 		DiskUsed:        i.DiskUsed,
-		CpuUsage:        i.CpuUsage,
+		CPUUsage:        i.CpuUsage,
 	}
 }

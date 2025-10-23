@@ -1,0 +1,193 @@
+/* Basic styles for the webshare UI */
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+  margin: 0;
+  background-color: #f0f2f5;
+  color: #1c1e21;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  width: 100%;
+  max-width: 800px;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.view {
+  display: none;
+}
+
+.view.active {
+  display: block;
+}
+
+/* Login View */
+#login-view {
+  text-align: center;
+}
+
+.login-box {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  margin: auto;
+}
+
+.login-box h1 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.passcode-input {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #dddfe2;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  box-sizing: border-box;
+}
+
+.login-button {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: #1877f2;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.login-button:hover {
+  background-color: #166fe5;
+}
+
+#login-error {
+  color: #fa383e;
+  margin-top: 1rem;
+  min-height: 1.2em;
+}
+
+/* Files View */
+#files-view h1 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.card {
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+.card h2 {
+  margin-top: 0;
+  font-size: 1.3rem;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+#file-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.file-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.file-item:last-child {
+  border-bottom: none;
+}
+
+.file-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.file-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.file-size {
+  font-size: 0.85rem;
+  color: #606770;
+}
+
+.download-button {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  color: #fff;
+  background-color: #42b72a;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  transition: background-color 0.2s;
+}
+
+.download-button:hover {
+  background-color: #36a420;
+}
+
+#empty-list-message {
+  text-align: center;
+  color: #606770;
+  padding: 2rem;
+}
+
+/* Upload Section */
+.upload-form {
+  display: flex;
+  gap: 1rem;
+}
+
+.upload-input {
+  flex-grow: 1;
+  display: block;
+}
+
+.upload-button {
+  display: block;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: #1877f2;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.upload-button:hover {
+  background-color: #166fe5;
+}
+
+#upload-status {
+  margin-top: 1rem;
+  min-height: 1.2em;
+  color: #42b72a;
+}

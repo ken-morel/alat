@@ -10,10 +10,11 @@ import {security} from '../models';
 import {sysinfo} from '../models';
 import {filesend} from '../models';
 import {config} from '../models';
+import {webshare} from '../models';
 
 export function AskFileSharingDestDirectory():Promise<string>;
 
-export function AskFilesSend(arg1:string):Promise<Array<app.SendFile>>;
+export function AskFilesSend():Promise<Array<app.SendFile>>;
 
 export function ConfigReady():Promise<boolean>;
 
@@ -66,3 +67,19 @@ export function SettingsSetSetupComplete(arg1:boolean):Promise<void>;
 export function SettingsSetSysInfo(arg1:config.SysInfoConfig):Promise<void>;
 
 export function Show():Promise<void>;
+
+export function WebShareAddSharedFiles(arg1:Array<string>):Promise<void>;
+
+export function WebShareClearSharedFiles():Promise<void>;
+
+export function WebShareGetPasscode():Promise<string>;
+
+export function WebShareGetStatus():Promise<webshare.Status>;
+
+export function WebShareRemoveSharedFile(arg1:string):Promise<void>;
+
+export function WebShareSetPasscode(arg1:string):Promise<void>;
+
+export function WebShareStart():Promise<number>;
+
+export function WebShareStop():Promise<void>;

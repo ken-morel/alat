@@ -55,9 +55,9 @@
       receivingPercent = 100;
     } else {
       sendingPercent =
-        status.PercentSending === 0 ? 100 : status.PercentSending;
+        status.percentSending === 0 ? 100 : status.percentSending;
       receivingPercent =
-        status.PercentReceiving === 0 ? 100 : status.PercentReceiving;
+        status.percentReceiving === 0 ? 100 : status.percentReceiving;
     }
   });
   onMount(() => {
@@ -128,7 +128,7 @@
       <!-- Tab Content Area -->
       <div class="flex-1 h-[350px] overflow-hidden">
         <div class="h-full overflow-y-auto" {...tabs.getContent("sending")}>
-          {#if !status.Sending || status.Sending.length === 0}
+          {#if !status.sending || status.sending.length === 0}
             <div class="w-full h-full place-items-center grid">
               <div
                 class="card flex flex-col items-center justify-center text-surface-500"
@@ -139,12 +139,12 @@
               </div>
             </div>
           {:else}
-            {@render transferTab(status.Sending || [])}
+            {@render transferTab(status.sending || [])}
           {/if}
         </div>
 
         <div class="h-full overflow-y-auto" {...tabs.getContent("receiving")}>
-          {#if !status.Receiving || status.Receiving.length === 0}
+          {#if !status.receiving || status.receiving.length === 0}
             <div
               class="flex flex-col items-center justify-center h-full text-surface-500"
             >
@@ -153,7 +153,7 @@
               <p class="text-sm">Files you receive will appear here</p>
             </div>
           {:else}
-            {@render transferTab(status.Receiving || [])}
+            {@render transferTab(status.receiving || [])}
           {/if}
         </div>
       </div>
@@ -172,8 +172,8 @@
 </div>
 
 {#snippet transferTab(devices: filesend.FileTransfersStatusDevice[])}
-  {#each devices.toSorted( (a, b) => a.Device.id.localeCompare(b.Device.id), ) as device, i (device.Device.id)}
-    {@const Icon = guessIcon(device.Device.type)}
+  {#each devices.toSorted( (a, b) => a.device.id.localeCompare(b.device.id), ) as device, i (device.device.id)}
+    {@const Icon = guessIcon(device.device.type)}
     <div
       class="bg-surface-100-900 border border-surface-300-700 overflow-hidden hover:shadow-lg transition-all duration-200 hover:border-primary-500/30"
       in:fly={{ y: 20, duration: 300, delay: i * 100 }}
@@ -188,15 +188,15 @@
               <Icon
                 class="text-primary-500"
                 size={18}
-                color={device.Device.color.hex}
+                color={device.device.color.hex}
               />
             </div>
             <div>
               <h5 class="font-semibold text-surface-900-50">
-                {device.Device.name}
+                {device.device.name}
               </h5>
               <p class="text-xs text-surface-600-400">
-                {device.Transfers.length} file{device.Transfers.length !== 1
+                {device.transfers.length} file{device.transfers.length !== 1
                   ? "s"
                   : ""}
               </p>
@@ -204,7 +204,7 @@
           </div>
           <div class="text-right">
             <p class="text-sm font-medium text-surface-900-50">
-              {Math.round(device.Percent)}%
+              {Math.round(device.percent)}%
             </p>
           </div>
         </div>
@@ -212,7 +212,7 @@
         <!-- Overall Device Progress -->
         <div class="mt-3">
           <Progress
-            value={device.Percent}
+            value={device.percent}
             max={100}
             height="5px"
             classes="h-2 bg-surface-300-700  [&>*]:from-primary-500 [&>*]:to-secondary-500"
@@ -222,7 +222,7 @@
 
       <!-- Files List -->
       <div class="px-1 max-h-80 overflow-y-auto">
-        {#each device.Transfers.toSorted( (a, b) => a.FileName.localeCompare(b.FileName), ) as transfer, j (transfer.FileName)}
+        {#each device.transfers.toSorted( (a, b) => a.fileName.localeCompare(b.fileName), ) as transfer, j (transfer.fileName)}
           <div
             class="flex items-center justify-between p-1 bg-surface-50-950 border border-surface-200-800 hover:border-primary-500/20 transition-colors"
             in:fly={{ x: -20, duration: 200, delay: j * 50 }}
@@ -234,20 +234,20 @@
               <div class="flex-1 min-w-0">
                 <p
                   class="font-medium text-sm text-surface-900-50 truncate"
-                  title={transfer.FileName}
+                  title={transfer.fileName}
                 >
-                  {transfer.FileName.split("/").at(-1)}
+                  {transfer.fileName.replaceAll("\\", "/").split("/").at(-1)}
                 </p>
                 <div class="flex items-center justify-between">
                   <Progress
-                    value={transfer.Percent}
+                    value={transfer.percent}
                     max={100}
                     classes="h-1.5 bg-surface-300-700 flex-1 mr-3  [&>*]:to-primary-500 [&>*]:rounded-full"
                   />
                   <span
                     class="text-xs text-surface-600-400 font-medium tabular-nums"
                   >
-                    {Math.round(transfer.Percent)}%
+                    {Math.round(transfer.percent)}%
                   </span>
                 </div>
               </div>
@@ -255,14 +255,14 @@
 
             <!-- Transfer Status Indicator -->
             <div class="flex-shrink-0 ml-3">
-              {#if transfer.Percent === 100}
+              {#if transfer.percent === 100}
                 <div class="w-5 h-5 bg-success-500 rounded-full"></div>
-              {:else if transfer.Percent > 0}
+              {:else if transfer.percent > 0}
                 <div
                   class="w-5 h-5 bg-primary-500 rounded-full animate-pulse"
                 ></div>
               {:else}
-                <div class="w-5 h-5 bg-surface-400-600 rounded-full"></div>
+                <div class="w-5 h-5 bg-warning-400-600 rounded-full"></div>
               {/if}
             </div>
           </div>

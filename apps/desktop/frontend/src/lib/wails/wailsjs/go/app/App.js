@@ -6,8 +6,8 @@ export function AskFileSharingDestDirectory() {
   return window['go']['app']['App']['AskFileSharingDestDirectory']();
 }
 
-export function AskFilesSend(arg1) {
-  return window['go']['app']['App']['AskFilesSend'](arg1);
+export function AskFilesSend() {
+  return window['go']['app']['App']['AskFilesSend']();
 }
 
 export function ConfigReady() {
@@ -112,4 +112,36 @@ export function SettingsSetSysInfo(arg1) {
 
 export function Show() {
   return window['go']['app']['App']['Show']();
+}
+
+export function WebShareAddSharedFiles(arg1) {
+  return window['go']['app']['App']['WebShareAddSharedFiles'](arg1);
+}
+
+export function WebShareClearSharedFiles() {
+  return window['go']['app']['App']['WebShareClearSharedFiles']();
+}
+
+export function WebShareGetPasscode() {
+  return window['go']['app']['App']['WebShareGetPasscode']();
+}
+
+export function WebShareGetStatus() {
+  return window['go']['app']['App']['WebShareGetStatus']();
+}
+
+export function WebShareRemoveSharedFile(arg1) {
+  return window['go']['app']['App']['WebShareRemoveSharedFile'](arg1);
+}
+
+export function WebShareSetPasscode(arg1) {
+  return window['go']['app']['App']['WebShareSetPasscode'](arg1);
+}
+
+export function WebShareStart() {
+  return window['go']['app']['App']['WebShareStart']();
+}
+
+export function WebShareStop() {
+  return window['go']['app']['App']['WebShareStop']();
 }

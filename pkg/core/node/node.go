@@ -25,7 +25,7 @@ type Node struct {
 func CreateNode(store storage.NodeStorage) (*Node, error) {
 	serviceConfig, err := store.GetServiceConfig()
 	if err != nil {
-		return nil, fmt.Errorf("Error geting initial service configuraiton: %v", err)
+		return nil, fmt.Errorf("error getting initial service configuraiton: %v", err)
 	}
 	appConfig, err := store.GetAppConfig()
 	if err != nil {
@@ -40,11 +40,11 @@ func CreateNode(store storage.NodeStorage) (*Node, error) {
 
 	registry := service.CreateRegistry(serviceConfig, pairManager)
 	if err != nil {
-		return nil, fmt.Errorf("Error creating pair manager: %v", err)
+		return nil, fmt.Errorf("error creating pair manager: %v", err)
 	}
 	discoveryManager, err := discovery.NewManager()
 	if err != nil {
-		return nil, fmt.Errorf("Error creating discovery manager: %v", err)
+		return nil, fmt.Errorf("error creating discovery manager: %v", err)
 	}
 
 	return &Node{
@@ -61,6 +61,7 @@ func CreateNode(store storage.NodeStorage) (*Node, error) {
 func (n *Node) SetDetails(details *device.Details) {
 	n.pairManager.SetDeviceDetails(details)
 }
+
 func (n *Node) GetDetails() *device.Details {
 	return n.pairManager.GetDeviceDetails()
 }
@@ -104,6 +105,7 @@ func (n *Node) Stop() {
 		n.StopWorker()
 	}
 }
+
 func (n *Node) GetFoundDevices() []discovery.FoundDevice {
 	return n.discovery.Discoverer.GetFoundDevices()
 }

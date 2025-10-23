@@ -2,6 +2,7 @@ package node
 
 import (
 	"alat/pkg/core/connected"
+	"alat/pkg/core/service/filesend"
 	"context"
 )
 
@@ -16,4 +17,8 @@ func (n *Node) QuerySendFiles(p *connected.Connected, files []string) <-chan err
 		close(channel)
 	}()
 	return channel
+}
+
+func (n *Node) GetFileTransfersStatus() *filesend.FileTransfersStatus {
+	return n.services.FileSend.GetStatus()
 }

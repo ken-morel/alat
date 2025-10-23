@@ -19,18 +19,22 @@
   let loaded: boolean = $state(false);
   let error: string | null = $state(null);
 
+  function fetchInfo() {
+    QueryDeviceSysInfo(dev)
+      .then((info) => {
+        error = null;
+        loaded = true;
+        percent.set(info.batteryPercent || 0);
+        charging = info.batteryCharging || info.batteryPercent == 100;
+      })
+      .catch((err: any) => {
+        error = err.toString();
+      });
+  }
   onMount(() => {
+    fetchInfo();
     const interval = setInterval(() => {
-      QueryDeviceSysInfo(dev)
-        .then((info) => {
-          error = null;
-          loaded = true;
-          percent.set(info.batteryPercent || 0);
-          charging = info.batteryCharging || info.batteryPercent == 100;
-        })
-        .catch((err: any) => {
-          error = err.toString();
-        });
+      fetchInfo();
     }, 5000);
     return () => {
       clearInterval(interval);
@@ -42,7 +46,7 @@
   <ProgressRing
     value={loaded && !error ? percent.current : null}
     size="size-20"
-    meterStroke="stroke-primary-300-700"
+    meterStroke="stroke-primary-800-200"
   >
     {#if error}
       <IconError size={iconSize} />

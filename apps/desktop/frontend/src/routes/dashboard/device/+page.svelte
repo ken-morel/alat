@@ -2,6 +2,8 @@
   import { connectedDevice } from "$lib/store";
   import guessIcon from "$lib/icons";
   import DeviceBattery from "$lib/components/DeviceBattery.svelte";
+  import { sendingDevices, isSendingTo } from "$lib/filesend";
+  import { goto } from "$app/navigation";
   let dev = $derived($connectedDevice);
 </script>
 
@@ -22,9 +24,13 @@
             <DeviceBattery {dev} />
           </div>
         </div>
-        <a
+        <button
           class="btn preset-filled-primary-700-300"
-          href="/dashboard/device/sendfiles">Send files</a
+          onclick={() => {
+            if (!isSendingTo(dev))
+              sendingDevices.update((devices) => devices.concat([dev]));
+            goto("/filesend");
+          }}>Send files</button
         >
       </header>
     </div>

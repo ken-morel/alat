@@ -2,11 +2,10 @@
 package filesend
 
 import (
-	"sync"
-
 	"alat/pkg/core/config"
 	"alat/pkg/core/device"
 	"alat/pkg/core/pair"
+	"sync"
 )
 
 // TransferStatus defines the state of a file transfer.
@@ -78,16 +77,14 @@ func (s *Service) UpdateOutgoingStatus(peerInfo *device.Info, status *FileTransf
 
 func (s *Service) AddPendingTransfers(peerInfo *device.Info, files []string) {
 	session := s.getOrCreateSession(peerInfo)
-	session.Lock()
-	defer session.Unlock()
 	for _, file := range files {
 		if _, ok := session.OutgoingTransfers[file]; !ok {
-			session.OutgoingTransfers[file] = &FileTransferStatus{
+			s.UpdateOutgoingStatus(peerInfo, &FileTransferStatus{
 				Status:          TransferStatusPending,
 				Filename:        file,
 				TotalSize:       1,
 				TransferredSize: 0,
-			}
+			})
 		}
 	}
 }

@@ -1,15 +1,14 @@
 package filesend
 
 import (
+	"alat/pkg/core/security"
+	"alat/pkg/pbuf"
 	"context"
 	"fmt"
 	"io"
 	"net"
 	"os"
 	"strconv"
-
-	"alat/pkg/core/security"
-	"alat/pkg/pbuf"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -67,7 +66,7 @@ func (s *Service) SendFile(ctx context.Context, ip net.IP, port int, token *secu
 	buffer := make([]byte, 1024*1024) // 1MB chunks
 	var transferredSize int64
 	status := &FileTransferStatus{
-		Filename:        fileInfo.Name(),
+		Filename:        filePath,
 		TotalSize:       fileInfo.Size(),
 		TransferredSize: 0,
 		Status:          TransferStatusTransferring,

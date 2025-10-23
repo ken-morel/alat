@@ -1,14 +1,13 @@
 package filesend
 
 import (
+	"alat/pkg/core/device"
+	"alat/pkg/core/security"
+	"alat/pkg/pbuf"
 	"fmt"
 	"io"
 	"os"
 	"path"
-
-	"alat/pkg/core/device"
-	"alat/pkg/core/security"
-	"alat/pkg/pbuf"
 
 	"github.com/labstack/gommon/log"
 )
@@ -24,7 +23,7 @@ func rcfilepath(folder string, name string) string {
 	stem := name[:len(name)-len(ext)]
 	for i := range 1_000_000 {
 		if i != 0 {
-			newName = fmt.Sprintf("%s-%d.%s", stem, i, ext)
+			newName = fmt.Sprintf("%s-%d%s", stem, i, ext)
 		}
 		dest := path.Join(folder, newName)
 		_, err := os.Stat(dest)
@@ -38,7 +37,7 @@ func rcfilepath(folder string, name string) string {
 
 func (s *FileSendServer) SendFile(stream pbuf.FileSendService_SendFileServer) error {
 	if !s.Service.Enabled() {
-		return fmt.Errorf("Sending files to this device(%s) is disabled", s.Service.pairManager.GetDeviceDetails().Name)
+		return fmt.Errorf("sending files to this device(%s) is disabled", s.Service.pairManager.GetDeviceDetails().Name)
 	}
 	req, err := stream.Recv()
 	if err != nil {
@@ -52,7 +51,7 @@ func (s *FileSendServer) SendFile(stream pbuf.FileSendService_SendFileServer) er
 
 	token := security.PairToken(initialReq.GetToken())
 	if !s.Service.pairManager.IsTokenValid(token) {
-		return fmt.Errorf("File sending unauthorized(device is not authorized to send files to %s), device received invalid pair token", s.Service.pairManager.GetDeviceDetails().Name)
+		return fmt.Errorf("file sending unauthorized(device is not authorized to send files to %s), device received invalid pair token", s.Service.pairManager.GetDeviceDetails().Name)
 	}
 
 	metadata := initialReq.GetMetadata()
