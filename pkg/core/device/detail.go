@@ -7,10 +7,10 @@ import (
 )
 
 type Details struct {
-	Color       color.Color
-	Name        string
-	Type        DeviceType
-	Certificate security.Certificate
+	Color       color.Color          `yaml:"color"       json:"color"`
+	Name        string               `yaml:"name"        json:"name"`
+	Type        DeviceType           `yaml:"type"        json:"type"`
+	Certificate security.Certificate `yaml:"certificate" json:"certificate"`
 }
 
 func (d *Details) ToPBUF() *pbuf.DeviceDetails {

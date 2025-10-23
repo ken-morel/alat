@@ -1,141 +1,122 @@
-<h1 style="text-align: center; font-size: xxx-large;">
-  <img src="./logo/animated/logo.svg" alt="Animated logo" style="display: inline;height: 1em;position: relative;top: 5px; right: -10px;" />
-  lat
-</h1>
+# Alat
 
-[![wakatime](https://wakatime.com/badge/github/ken-morel/alat.svg)](https://wakatime.com/badge/github/ken-morel/alat)
+**Alat: Your devices, unified.**
 
+Alat is a cross-platform application that enables seamless communication and service sharing between your devices. It allows you to create a unified workspace where you can easily share files, receive notifications, and control your devices from a single place.
 
-Alat is a set of services and applications aimed at providing a seamless interface common to all devices to connect them together. Its work is greatly inspired by [KDE Connect](https://kdeconnect.kde.org/), though they don't have any direct relationship.
+## Features
 
-For it to work, Alat exposes features to paired devices through services, which you can configure and control.
+*   **Cross-Platform**: Alat is available for desktop (Windows, macOS, Linux) and mobile (Android, iOS) devices.
+*   **P2P Communication**: Devices communicate directly with each other using a secure peer-to-peer connection.
+*   **Service Sharing**: Share files, clipboard content, and more between your devices.
+*   **Extensible**: The modular architecture allows for the addition of new services and features.
 
-**⚠️ Early Development Notice**: Alat has barely started its development, and very breaking changes are expected.
+## Applications
 
-## Architecture Overview
+### Mobile Application
 
-Alat operates on a **peer-to-peer (P2P) model** where each device acts as both a client and server, enabling seamless bidirectional communication and service sharing.
+The mobile application is built with Flutter and provides a user-friendly interface for managing your devices and services on the go. It interacts with the Alat core through the `dalat` Dart FFI plugin.
 
-```
-┌─────────────────┐    gRPC/Protocol Buffers    ┌─────────────────┐
-│   Desktop App   │◄──────────────────────────►│   Mobile App    │
-│                 │                              │                 │
-│ ┌─────────────┐ │                              │ ┌─────────────┐ │
-│ │P2P Server   │ │          Discovery           │ │P2P Server   │ │
-│ │- sysinfo    │ │◄────────(mDNS/Local)───────►│ │- sysinfo    │ │
-│ │- rcfile     │ │                              │ │- rcfile     │ │
-│ │- media      │ │                              │ │- media      │ │
-│ └─────────────┘ │                              │ └─────────────┘ │
-│ ┌─────────────┐ │                              │ ┌─────────────┐ │
-│ │P2P Client   │ │         Service Calls        │ │P2P Client   │ │
-│ │- discovery  │ │◄──────────────────────────►│ │- discovery  │ │
-│ │- pairing    │ │                              │ │- pairing    │ │
-│ └─────────────┘ │                              │ └─────────────┘ │
-└─────────────────┘                              └─────────────────┘
-         ▲                                                ▲
-         │                                                │
-         ▼                                                ▼
-┌─────────────────┐                              ┌─────────────────┐
-│ Headless Server │                              │  Other Devices  │
-│                 │                              │   (TV, IoT...)  │
-└─────────────────┘                              └─────────────────┘
-```
+### Desktop Application
 
-### Service-Based Architecture
+The desktop application is built with Wails, using Go for the backend and SvelteKit for the frontend. It provides a rich user experience with access to all of Alat's features.
 
-Each Alat node exposes **services** that other paired devices can consume:
+## Alat Core
 
-- **sysinfo**: System information and monitoring
-- **rcfile**: Remote file operations
-- **media**: Media playback control
-- **notifications**: Cross-device notifications
-- **clipboard**: Shared clipboard functionality
-- _(More services planned...)_
+The core of Alat is a Go module that contains the P2P runtime, services, and business logic. It is completely platform-agnostic and can be embedded in any application.
 
-## Project Structure
+### `libalat` Shared Library
 
-```
-alat/
-├── proto/              # gRPC and Protocol Buffer definitions
-├── pkg/                # Shared Go packages
-│   ├── core/          # Core P2P runtime, services, client/server
-│   └── mobile_bridge/ # Go-Dart FFI bridge for mobile
-├── apps/
-│   ├── desktop/       # Wails + SvelteKit desktop app
-│   ├── mobile/        # Flutter mobile app
-│   └── server/        # Headless server (planned)
-├── logo/
-│   ├── animated/      # Animated SVG logos
-│   └── static/        # Static SVG and PNG logos
-├── go.work           # Go workspace configuration
-└── manage.fish       # Development automation scripts
-```
+`libalat` is a C-style shared library that wraps the Alat core, making it accessible from other languages. It uses an opaque pointer pattern to provide a high-level, stateful API.
 
-## Features (Planned)
+### `dalat` Dart FFI Bindings
 
-- 🔗 **Seamless P2P Connection**: Automatic device discovery and pairing
-- 🔒 **Secure Communication**: Encrypted gRPC channels
-- 🎛️ **Service Framework**: Modular, extensible service system
-- 🖥️ **Cross-Platform**: Desktop (Linux/Windows/macOS) and Mobile (Android/iOS)
-- ⚙️ **Configurable**: Per-device and per-service configuration
-- 🔄 **Real-time Sync**: Live service state synchronization
+`dalat` is a Dart FFI plugin that consumes the `libalat` shared library. It provides a clean, idiomatic Dart API for Flutter applications to use, hiding all the FFI complexity.
 
-## Building
+## How It Works
 
-The app should be pretty easy to build. Make sure you have the Go programming language installed, then use it to install the Wails CLI (check https://wails.io), then just build as a normal Wails application or using the `manage.fish` scripts.
+Alat operates on a peer-to-peer model where each device on the network acts as both a client and a server. This enables direct communication and service sharing without relying on a central server.
 
-### Prerequisites
+### 1. Discovery
 
-- [Go](https://golang.org/) 1.21+
-- [Wails CLI](https://wails.io/docs/gettingstarted/installation)
-- For mobile: [Flutter SDK](https://flutter.dev/docs/get-started/install)
+-   **mDNS**: When you start Alat on a device, it broadcasts its presence on the local network using multicast DNS (mDNS).
+-   **Service Publishing**: Each Alat instance publishes a service with its device name, IP address, and port number.
+-   **Listening**: Alat also listens for other devices publishing the same service, automatically discovering peers on the network.
 
-### Quick Start
+### 2. Communication
+
+-   **gRPC**: Once a device is discovered, a secure communication channel is established using gRPC, a high-performance RPC framework.
+-   **Protocol Buffers**: The API for communication is defined using Protocol Buffers (`.proto` files). This ensures that data is serialized efficiently and that the API contract between devices is consistent.
+-   **Pairing**: The first connection requires pairing to ensure that only trusted devices can connect to each other.
+
+### 3. Services
+
+-   **Modular Architecture**: Alat's functionality is built around a modular, service-based architecture. Each feature, like file sharing or system information, is implemented as a separate service.
+-   **Service Registry**: The core of Alat includes a service registry that manages all available services.
+-   **Extensibility**: This design makes it easy to add new features and services to Alat without modifying the core communication logic.
+
+## Building from Source
+
+To build Alat from source, you will need the following prerequisites:
+
+*   Go 1.21+
+*   Wails CLI
+*   Flutter SDK
+*   Fish shell
+*   Protobuf compiler (`protoc`)
+
+### Building Everything
+
+The `mng.fish` script in the root of the project can be used to build everything.
 
 ```bash
-# Build and run desktop app
-./manage.fish desktop build
-./manage.fish desktop dev
+# From the root directory:
 
-# Build mobile app (development)
-./manage.fish mobile dev
+# 1. Generate Go and Dart code from .proto files
+./mng.fish proto
 
-# Generate protocol buffer code
-./manage.fish proto
+# 2. Build the `libalat` shared library and the `dalat` Dart package
+./mng.fish dalat make
+
+# 3. Build the desktop app
+./mng.fish desktop build
 ```
 
-**Notice**: The dev commands are targeted for devices running Ubuntu 25.04 on amd64.
+### Building for Mobile
 
-## Development Scripts
+To work on the mobile app, you must first build the Go library and generate the Dart bindings.
 
-The root `manage.fish` script orchestrates common development tasks:
+```bash
+# From the `packages/dalat` directory:
 
-- `./manage.fish proto` - Compile protobuf files to Go and Dart
-- `./manage.fish desktop <command>` - Desktop app operations
-- `./manage.fish mobile <command>` - Mobile app operations  
-- `./manage.fish server <command>` - Headless server operations
+# 1. Build the Go library and generate the C header and Dart bindings
+./mng.fish make
+```
+
+This command will:
+
+1.  Build the `libalat` shared library.
+2.  Generate the Dart FFI bindings from the C header.
+3.  Generate the JSON serialization models.
+
+Once the `dalat` plugin is built, you can run the mobile app like any standard Flutter project.
+
+```bash
+# From the `apps/mobile` directory:
+flutter run
+```
+
+### Building for Desktop
+
+```bash
+# From the `apps/desktop` directory:
+./mng.fish dev
+```
 
 ## Contributing
 
-Alat is structured as a Go workspace with a core package and multiple applications. A more detailed explanation of how the project works internally can be found in [./GEMINI.md](./GEMINI.md).
+Contributions are welcome! Please read the [development conventions](GEMINI.md#development-conventions) for more information.
 
-### Current Status
+## License
 
-- ✅ Project structure and architecture defined
-- ✅ gRPC protocol definitions
-- 🚧 Desktop app (Wails + SvelteKit + TypeScript + Sass)
-- 🚧 Mobile app (Flutter with Go FFI bridge)
-- 📋 Headless server (planned)
-- 📋 Core services implementation
-
-### Tech Stack
-
-- **Backend**: Go with gRPC
-- **Desktop**: Wails + SvelteKit + TypeScript + Sass
-- **Mobile**: Flutter + Dart with Go FFI bridge
-- **Protocol**: Protocol Buffers over gRPC
-- **Architecture**: Peer-to-peer with service-oriented design
-
----
-
-**Thanks for your interest in Alat!** 🚀
+Alat is licensed under a custom license. Please see the [LICENSE](LICENSE) file for more details.

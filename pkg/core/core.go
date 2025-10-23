@@ -1,7 +1,12 @@
 // Package core store's alat core
+// [N!]N(.N)*[{a|b|rc}N][.postN][.devN] versioning
 package core
 
 const (
-	AppID    = "cm.engon.alat"
-	AlatPort = 12121
+	AppID        = "cm.engon.alat"
+	DesktopAppID = "cm.engon.alat.desktop"
+	MobileAppID  = "cm.engon.alat.mobile"
+	ServerAppID  = "cm.engon.alat.server"
+	DefaultPort  = 25280
+	MaxPort      = 50000
 )

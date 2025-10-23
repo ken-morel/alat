@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ServiceSysInfoGet } from "$lib/wails/wailsjs/go/app/App";
+  import { QueryDeviceSysInfo } from "$lib/wails/wailsjs/go/app/App";
   import type { connected } from "$lib/wails/wailsjs/go/models";
   import { ProgressRing } from "@skeletonlabs/skeleton-svelte";
   import { onMount } from "svelte";
@@ -19,22 +19,22 @@
   let loaded: boolean = $state(false);
   let error: string | null = $state(null);
 
-  let stroke: string = $derived(
-    error ? "error" : loaded ? (charging ? "success" : "tertiary") : "warning",
-  );
-  let meterStroke = $derived("stroke-" + stroke + "-700-300");
+  function fetchInfo() {
+    QueryDeviceSysInfo(dev)
+      .then((info) => {
+        error = null;
+        loaded = true;
+        percent.set(info.batteryPercent || 0);
+        charging = info.batteryCharging || info.batteryPercent == 100;
+      })
+      .catch((err: any) => {
+        error = err.toString();
+      });
+  }
   onMount(() => {
+    fetchInfo();
     const interval = setInterval(() => {
-      ServiceSysInfoGet(dev)
-        .then((info) => {
-          error = null;
-          loaded = true;
-          percent.set(info.batteryPercent || 0);
-          charging = info.batteryCharging || info.batteryPercent == 100;
-        })
-        .catch((err: any) => {
-          error = err.toString();
-        });
+      fetchInfo();
     }, 5000);
     return () => {
       clearInterval(interval);
@@ -42,11 +42,11 @@
   });
 </script>
 
-<Tooltip classes="p-4 rounded-xl bg-{error ? 'error' : 'surface'}-300-700">
+<Tooltip classes="p-4 rounded-xl bg-surface-300-700">
   <ProgressRing
     value={loaded && !error ? percent.current : null}
     size="size-20"
-    {meterStroke}
+    meterStroke="stroke-primary-800-200"
   >
     {#if error}
       <IconError size={iconSize} />

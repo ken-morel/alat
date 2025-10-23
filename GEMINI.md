@@ -6,95 +6,144 @@ This file provides a comprehensive overview of the `alat` project, its architect
 
 `alat` is a cross-platform application that enables seamless communication and service sharing between devices. It operates on a peer-to-peer (P2P) model, where each device acts as both a client and a server. The project is heavily inspired by KDE Connect but does not share any code with it.
 
-The project is in its early stages of development, so breaking changes are expected.
+## Architecture
 
-### Architecture
+### Technical Deep Dive: How It Works
 
-`alat` has a service-based architecture. Each device (or "node") exposes a set of services that other paired devices can consume. The communication between devices is handled by gRPC over a secure channel.
+Alat's core functionality can be broken down into three main areas: Discovery, Communication, and Services.
 
-The core services include:
+#### 1. Discovery (`pkg/core/discovery`)
 
-*   **sysinfo**: Provides system information and monitoring.
-*   **rcfile**: Enables remote file operations.
-*   **media**: Controls media playback.
-*   **notifications**: Shares notifications across devices.
-*   **clipboard**: Provides a shared clipboard.
+-   **Mechanism**: Alat uses **multicast DNS (mDNS)** for peer discovery on the local network. This is a zero-configuration service that allows devices to find each other without a central DNS server.
+-   **Implementation**: The `discovery.Manager` in the Go core is responsible for both broadcasting the device's presence and listening for other Alat instances.
+-   **Process**: When an Alat node starts, it registers an mDNS service, advertising its IP address, port, and device information. Simultaneously, it browses for other instances of the same service.
+
+#### 2. Communication (`pkg/core/transport`)
+
+-   **Framework**: Communication between paired devices is handled by **gRPC**, a high-performance, open-source RPC framework.
+-   **Schema**: The services and message formats are defined in `.proto` files located in `pkg/pbuf`. These files serve as the definitive API contract. The `protoc` compiler is used to generate Go code from these definitions.
+-   **Server**: Each Alat node runs a gRPC server (`transport/server/server.go`) to handle incoming requests from other devices. It listens on a port within the range of `25280-25289`.
+-   **Security**: The initial connection requires a pairing process to establish trust. Subsequent connections will require a valid token/certificate (details in `pkg/core/pair` and `pkg/core/security`).
+
+#### 3. Services (`pkg/core/service`)
+
+-   **Modularity**: All high-level features in Alat are implemented as distinct "services" (e.g., `SysInfo`, `FileSend`).
+-   **Registry**: A central `service.Registry` is used to register and manage all available services within a node.
+-   **Extensibility**: This modular design allows new features to be added by simply creating a new service and registering it, without needing to alter the core discovery or communication logic.
+
+### Core & FFI
+
+*   **`pkg/core`**: A pure Go module containing the core P2P runtime, services, and business logic. It is completely platform-agnostic.
+*   **`pkg/libalat`**: A Go module that acts as a C-style shared library wrapper around the `core` module. It uses the "Opaque Pointer" (or "Handle") pattern to expose a high-level, stateful API. All complex data is serialized to JSON for safe and flexible transport across the FFI boundary.
+*   **`packages/dalat`**: A distributable Dart FFI plugin that consumes the `libalat` shared library. It provides a clean, idiomatic Dart API (`AlatInstance`) for Flutter applications to use, hiding all the FFI complexity.
+
+### Platform-Specific Applications
+
+*   **`apps/desktop`**: A Wails application (Go + SvelteKit) for desktop platforms. It interacts directly with the `pkg/core` module.
+*   **`apps/mobile`**: A Flutter application for mobile platforms. It interacts with the Go core exclusively through the `dalat` plugin.
 
 ### Tech Stack
 
-*   **Backend**: Go with gRPC
-*   **Desktop**: Wails + SvelteKit + TypeScript + Tailwind CSS
-*   **Mobile**: Flutter + Dart with Go FFI bridge (planned)
-*   **Protocol**: Protocol Buffers over gRPC
+*   **Core Logic**: Go
+*   **P2P Communication**: gRPC over a secure channel
+*   **Desktop Frontend**: Wails + SvelteKit + TypeScript + Tailwind CSS
+*   **Mobile Frontend**: Flutter + Dart (using the `provider` package for state management)
+*   **FFI Bridge**: Go (`cgo`) -> C Shared Library -> Dart (`dart:ffi`)
 
 ## Project Structure
-
-The project is organized as a Go workspace with the following structure:
 
 ```
 alat/
 ├── apps/
 │   ├── desktop/       # Wails + SvelteKit desktop app
-│   └── server/        # Headless server (planned)
+│   └── mobile/        # Flutter mobile app
+├── packages/
+│   └── dalat/         # Distributable Dart FFI plugin
 ├── pkg/
-│   ├── core/          # Core P2P runtime, services, client/server
-│   ├── dalat/         # Shared Go packages
+│   ├── core/          # Core P2P runtime and services
+│   ├── libalat/       # Go FFI shared library wrapper
 │   └── pbuf/          # gRPC and Protocol Buffer definitions
-├── go.work           # Go workspace configuration
-└── mng.fish          # Development automation scripts
+├── go.work
+└── mng.fish
 ```
 
 ## Building and Running
 
-The project uses a `mng.fish` script to automate common development tasks.
+The project uses `mng.fish` scripts to automate common development tasks.
 
 ### Prerequisites
 
 *   Go 1.21+
 *   Wails CLI
-*   Flutter SDK (for mobile development)
+*   Flutter SDK
 *   Fish shell
+*   Protobuf compiler (`protoc`)
 
-### Quick Start
+### Building everything from scratch
 
-The main `mng.fish` script is a command dispatcher that calls the `manage.fish` scripts in the subdirectories.
-
-#### Desktop
-
-To build and run the desktop application, use the following commands from the `apps/desktop` directory:
+The `mng.fish` script in the root of the project can be used to build everything.
 
 ```bash
-# Start the development server
-fish manage.fish dev
+# From the root directory:
 
-# Build the application
-fish manage.fish build
+# 1. Generate Go and Dart code from .proto files
+./mng.fish proto
 
-# Build the application for Windows
-fish manage.fish build-windows
+# 2. Build the `libalat` shared library and the `dalat` Dart package
+./mng.fish dalat make
+
+# 3. Build the desktop app
+./mng.fish desktop build
 ```
 
-#### Protocol Buffers
+### Building `libalat` and `dalat` for the mobile app
 
-To generate the Go and Dart code from the `.proto` files, use the following command from the root directory:
+To work on the mobile app, you must first build the Go library and generate the Dart bindings.
 
 ```bash
-# Generate protocol buffer code
-fish mng.fish proto
+# From the `packages/dalat` directory:
+
+# 1. Build the Go library and generate the C header and Dart bindings
+./mng.fish make
 ```
 
-**Note**: The `dev` commands are targeted for devices running Ubuntu 25.04 on amd64.
+This command will:
+
+1.  Build the `libalat` shared library.
+2.  Generate the Dart FFI bindings from the C header.
+3.  Generate the JSON serialization models.
+
+### Running the Desktop App
+
+```bash
+# From the `apps/desktop` directory:
+./mng.fish dev
+```
+
+### Running the Mobile App
+
+Once the `dalat` plugin is built, you can run the mobile app like any standard Flutter project.
+
+```bash
+# From the `apps/mobile` directory:
+flutter run
+```
 
 ## Development Conventions
 
-### Backend
+### Git Workflow: Simplified Git Flow
 
-The backend is written in Go and follows standard Go conventions. The code is organized into packages, with each package having a specific responsibility.
+This project uses a structured branching strategy for maintainability.
 
-### Frontend
+*   **`main`**: Always stable and represents the latest official release. Commits are only merged from `release/*` or `hotfix/*` branches.
+*   **`dev`**: The primary development branch for the next release. All feature branches are merged into `dev`.
+*   **`feature/<name>`**: Branched from `dev`. For developing new features. Merged back to `dev` via a Pull Request.
+*   **`release/vX.X.X`**: Branched from `dev`. For release stabilization (bug fixes, version bumps). Merged into both `main` and `dev`.
+*   **`hotfix/<name>`**: Branched from `main`. For critical production bug fixes. Merged into both `main` and `dev`.
 
-The frontend of the desktop application is a SvelteKit project. It uses TypeScript for type safety and Tailwind CSS for styling. The code is organized into components, with each component having its own file.
+### Backend Code
 
-### Commits
-
-The project does not have a strict commit message format, but it is recommended to write clear and concise commit messages that explain the changes made.
+*   The backend is written in Go and follows standard Go conventions.
+*   Core logic should be platform-agnostic and placed in `pkg/core`.
+*   Platform-specific code or UI-related logic should be in the respective `apps/*` directory.
+*   Libraries intended for cross-language use (like `libalat`) should not make assumptions about the caller's filesystem and should receive explicit paths from the caller.

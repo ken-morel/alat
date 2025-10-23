@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alat Web Share</title>
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="icon" href="/favicon.png" />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Login View -->
+      <div id="login-view" class="view">
+        <div class="login-box">
+          <h1>Alat Web Share</h1>
+          <form id="login-form">
+            <input
+              type="password"
+              id="passcode-input"
+              class="passcode-input"
+              placeholder="Enter Passcode"
+              required
+            />
+            <button type="submit" class="login-button">Login</button>
+          </form>
+          <p id="login-error"></p>
+        </div>
+      </div>
+
+      <!-- Files View -->
+      <div id="files-view" class="view">
+        <h1>Shared Files</h1>
+        <div class="card">
+          <h2>Upload File</h2>
+          <form id="upload-form" class="upload-form">
+            <input
+              type="file"
+              id="upload-input"
+              class="upload-input"
+              required
+            />
+            <button type="submit" class="upload-button">Upload</button>
+          </form>
+          <p id="upload-status"></p>
+        </div>
+
+        <div class="card">
+          <h2>Available Files</h2>
+          <ul id="file-list">
+            <!-- Files will be rendered here by JavaScript -->
+          </ul>
+          <p id="empty-list-message" style="display: none">
+            No files are currently shared.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script src="/script.js"></script>
+  </body>
+</html>

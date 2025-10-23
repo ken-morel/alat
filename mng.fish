@@ -10,6 +10,8 @@ function help
     echo "  help     - Shows this help message."
     echo "  desktop  - Manage apps/desktop."
     echo "  mobile   - Manage apps/mobile."
+    echo "  libalat  - Manage pkg/libalat"
+    echo "  dalat    - Manage packages/dalat"
     echo "  server   - Manage apps/server."
 end
 
@@ -34,7 +36,16 @@ switch "$argv[1]"
         fish mng.fish $argv[2..]
     case mobile
         cd apps/mobile
-        ./mng.fish $argv[2..]
+        fish mng.fish $argv[2..]
+    case server
+        cd apps/server
+        fish mng.fish $argv[2..]
+    case dalat
+        cd packages/dalat
+        fish mng.fish $argv[2..]
+    case libalat
+        cd lib/libalat
+        fish mng.fish $argv[2..]
     case server
         cd apps/server
         fish mng.fish $argv[2..]

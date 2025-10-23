@@ -50,9 +50,9 @@
       >
         <div>
           <div class="flex flex-col space-y-4">
-            <h3 class="h3">Pair with {options.info.Name}?</h3>
+            <h3 class="h3">Pair with {options.info.name}?</h3>
             <p class="text-surface-600-400">
-              If you pair with <strong>{options.info.Name}</strong>, the device
+              If you pair with <strong>{options.info.name}</strong>, the device
               will be able to access services you have enabled. You can manage
               permissions in <a href="/settings" class="anchor">Settings</a>.
             </p>

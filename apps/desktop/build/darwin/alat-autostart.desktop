@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=alat (Autostart)
+Exec=/usr/bin/alat --autostart
+Icon=alat
+Terminal=false
+X-GNOME-Autostart-enabled=true

@@ -25,7 +25,7 @@ func (s *Server) Start(port int) error {
 		return err
 	}
 	s.Running = true
-	s.zero, err = zeroconf.Register(hostname, "_alat._tcp", "local.", port, []string{"txtv=0", "lo=1", "la=2"}, nil)
+	s.zero, err = zeroconf.Register(fmt.Sprintf("%s%d", hostname, port), "_alat._tcp", "local.", port, []string{"txtv=0", "lo=1", "la=2"}, nil)
 	if err != nil {
 		s.Running = false
 		return fmt.Errorf("failed to register mdns server: %w", err)

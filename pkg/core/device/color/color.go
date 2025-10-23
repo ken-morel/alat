@@ -4,11 +4,11 @@ package color
 import "alat/pkg/pbuf"
 
 type Color struct {
-	Name string
-	Hex  string
-	R    uint8
-	G    uint8
-	B    uint8
+	Name string `yaml:"name" json:"name"`
+	Hex  string `yaml:"hex" json:"hex"`
+	R    uint8  `yaml:"r" json:"r"`
+	G    uint8  `yaml:"g" json:"g"`
+	B    uint8  `yaml:"b" json:"b"`
 }
 
 var Colors = []Color{

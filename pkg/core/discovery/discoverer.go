@@ -22,9 +22,9 @@ type Discoverer struct {
 }
 
 type FoundDevice struct {
-	IP   net.IP
-	Port int
-	Info device.Info
+	IP   net.IP      `yaml:"ip"   json:"ip"`
+	Port int         `yaml:"port" json:"port"`
+	Info device.Info `yaml:"info" json:"info"`
 }
 
 func NewDiscoverer() (*Discoverer, error) {

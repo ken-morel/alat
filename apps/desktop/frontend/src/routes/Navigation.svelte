@@ -12,6 +12,7 @@
   import IconDashboard from "@lucide/svelte/icons/hotel";
   import IconDevices from "@lucide/svelte/icons/phone";
   import IconSettings from "@lucide/svelte/icons/settings";
+  import IconFileSend from "@lucide/svelte/icons/file";
 </script>
 
 <div class="">
@@ -40,15 +41,22 @@
       >
         <IconDevices />
       </Navigation.Tile>
+      <Navigation.Tile
+        selected={page.url.pathname == "/filesend"}
+        label="Send files"
+        href="/filesend"
+      >
+        <IconFileSend />
+      </Navigation.Tile>
       {#if $connectedDevice}
-        {@const Icon = guessIcon($connectedDevice.Info.Type)}
+        {@const Icon = guessIcon($connectedDevice.info.type)}
         <div transition:slide>
           <Navigation.Tile
             selected={page.url.pathname == "/dashboard/device"}
-            label={$connectedDevice.Info.Name}
+            label={$connectedDevice.info.name}
             href="/dashboard/device"
           >
-            <Icon color={$connectedDevice.Info.Color.Hex} />
+            <Icon color={$connectedDevice.info.color.hex} />
           </Navigation.Tile>
         </div>
       {/if}

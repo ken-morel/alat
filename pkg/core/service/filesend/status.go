@@ -3,25 +3,25 @@ package filesend
 import "alat/pkg/core/device"
 
 type FileTransfersStatusTransfer struct {
-	FileName string
-	Percent  float32
-	FileSize uint64
-	Status   TransferStatus
+	FileName string         `json:"fileName" yaml:"fileName"`
+	Percent  float32        `json:"percent"  yaml:"percent"`
+	FileSize uint64         `json:"fileSize" yaml:"fileSize"`
+	Status   TransferStatus `json:"status"   yaml:"status"`
 }
 type FileTransfersStatusDevice struct {
-	Device    device.Info
-	Transfers []FileTransfersStatusTransfer
-	Percent   float32
+	Device    device.Info                   `json:"device"    yaml:"device"`
+	Transfers []FileTransfersStatusTransfer `json:"transfers" yaml:"transfers"`
+	Percent   float32                       `json:"percent"   yaml:"percent"`
 }
 type FileTransfersStatus struct {
-	PercentSending   float32
-	PercentReceiving float32
-	Sending          []FileTransfersStatusDevice
-	Receiving        []FileTransfersStatusDevice
+	PercentSending   float32                     `json:"percentSending"   yaml:"percentSending"`
+	PercentReceiving float32                     `json:"percentReceiving" yaml:"percentReceiving"`
+	Sending          []FileTransfersStatusDevice `json:"sending"          yaml:"sending"`
+	Receiving        []FileTransfersStatusDevice `json:"receiving"        yaml:"receiving"`
 }
 
-func (s *Service) GetStatus() FileTransfersStatus {
-	transfers := FileTransfersStatus{}
+func (s *Service) GetStatus() *FileTransfersStatus {
+	transfers := &FileTransfersStatus{}
 
 	// Process incoming transfers
 	for _, session := range s.sessions {
@@ -30,7 +30,7 @@ func (s *Service) GetStatus() FileTransfersStatus {
 		}
 
 		incomingStatus := FileTransfersStatusDevice{
-			Device: *device.PbufToInfo(session.PeerInfo),
+			Device: *session.PeerInfo,
 		}
 		numIncoming := float32(len(session.IncomingTransfers))
 
@@ -64,7 +64,7 @@ func (s *Service) GetStatus() FileTransfersStatus {
 		}
 
 		sendingStatus := FileTransfersStatusDevice{
-			Device: *device.PbufToInfo(session.PeerInfo),
+			Device: *session.PeerInfo,
 		}
 		numSending := float32(len(session.OutgoingTransfers))
 

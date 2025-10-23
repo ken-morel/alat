@@ -2,16 +2,11 @@
 package filesend
 
 import (
+	"alat/pkg/core/config"
+	"alat/pkg/core/device"
+	"alat/pkg/core/pair"
 	"sync"
-
-	"alat/pkg/pbuf"
 )
-
-type Config struct {
-	Enabled     bool
-	SaveFolder  string
-	FileMaxSize uint32
-}
 
 // TransferStatus defines the state of a file transfer.
 type TransferStatus string
@@ -20,6 +15,7 @@ const (
 	TransferStatusTransferring TransferStatus = "transferring"
 	TransferStatusCompleted    TransferStatus = "completed"
 	TransferStatusFailed       TransferStatus = "failed"
+	TransferStatusPending      TransferStatus = "pending"
 )
 
 // FileTransferStatus holds the detailed progress of a single file transfer.
@@ -32,7 +28,7 @@ type FileTransferStatus struct {
 
 // PeerTransferSession manages all transfers associated with a single peer.
 type PeerTransferSession struct {
-	PeerInfo          *pbuf.DeviceInfo
+	PeerInfo          *device.Info
 	IncomingTransfers map[string]*FileTransferStatus // Keyed by filename
 	OutgoingTransfers map[string]*FileTransferStatus // Keyed by filename
 	sync.RWMutex
@@ -40,18 +36,19 @@ type PeerTransferSession struct {
 
 // Service manages all file transfer sessions.
 type Service struct {
-	config        Config
+	config        config.FileSendConfig
 	ready         bool
 	sessions      map[string]*PeerTransferSession // Keyed by peer ID
 	sessionsMutex sync.RWMutex
+	pairManager   *pair.PairManager
 }
 
 // getOrCreateSession retrieves an existing session or creates a new one for a peer.
-func (s *Service) getOrCreateSession(peerInfo *pbuf.DeviceInfo) *PeerTransferSession {
+func (s *Service) getOrCreateSession(peerInfo *device.Info) *PeerTransferSession {
 	s.sessionsMutex.Lock()
 	defer s.sessionsMutex.Unlock()
 
-	if session, ok := s.sessions[peerInfo.Id]; ok {
+	if session, ok := s.sessions[peerInfo.ID]; ok {
 		return session
 	}
 
@@ -60,27 +57,38 @@ func (s *Service) getOrCreateSession(peerInfo *pbuf.DeviceInfo) *PeerTransferSes
 		IncomingTransfers: make(map[string]*FileTransferStatus),
 		OutgoingTransfers: make(map[string]*FileTransferStatus),
 	}
-	s.sessions[peerInfo.Id] = session
+	s.sessions[peerInfo.ID] = session
 	return session
 }
 
-// UpdateIncomingStatus updates the status of an incoming file transfer.
-func (s *Service) UpdateIncomingStatus(peerInfo *pbuf.DeviceInfo, status *FileTransferStatus) {
+func (s *Service) UpdateIncomingStatus(peerInfo *device.Info, status *FileTransferStatus) {
 	session := s.getOrCreateSession(peerInfo)
 	session.Lock()
 	defer session.Unlock()
 	session.IncomingTransfers[status.Filename] = status
 }
 
-// UpdateOutgoingStatus updates the status of an outgoing file transfer.
-func (s *Service) UpdateOutgoingStatus(peerInfo *pbuf.DeviceInfo, status *FileTransferStatus) {
+func (s *Service) UpdateOutgoingStatus(peerInfo *device.Info, status *FileTransferStatus) {
 	session := s.getOrCreateSession(peerInfo)
 	session.Lock()
 	defer session.Unlock()
 	session.OutgoingTransfers[status.Filename] = status
 }
 
-// GetSession returns the transfer session for a given peer ID.
+func (s *Service) AddPendingTransfers(peerInfo *device.Info, files []string) {
+	session := s.getOrCreateSession(peerInfo)
+	for _, file := range files {
+		if _, ok := session.OutgoingTransfers[file]; !ok {
+			s.UpdateOutgoingStatus(peerInfo, &FileTransferStatus{
+				Status:          TransferStatusPending,
+				Filename:        file,
+				TotalSize:       1,
+				TransferredSize: 0,
+			})
+		}
+	}
+}
+
 func (s *Service) GetSession(peerID string) (*PeerTransferSession, bool) {
 	s.sessionsMutex.RLock()
 	defer s.sessionsMutex.RUnlock()
@@ -92,14 +100,15 @@ func (s *Service) Enabled() bool {
 	return s.config.Enabled
 }
 
-func (s *Service) Configure(c Config) {
+func (s *Service) Configure(c config.FileSendConfig) {
 	s.config = c
 }
 
-func CreateService(conf Config) Service {
+func CreateService(conf config.FileSendConfig, p *pair.PairManager) Service {
 	return Service{
-		ready:    true,
-		config:   conf,
-		sessions: make(map[string]*PeerTransferSession),
+		ready:       true,
+		config:      conf,
+		sessions:    make(map[string]*PeerTransferSession),
+		pairManager: p,
 	}
 }

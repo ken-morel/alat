@@ -5,25 +5,30 @@
   import StatusBar from "./StatusBar.svelte";
   import PairDialog from "./PairDialog.svelte";
   import { ConfigReady } from "$lib/wails/wailsjs/go/app/App";
-  import { ProgressRing } from "@skeletonlabs/skeleton-svelte";
   import { page } from "$app/stores";
   let { children } = $props();
 </script>
 
-<div class="flex h-screen flex-col">
-  <div class="content flex w-full flex-grow overflow-y-auto">
+<div class="bg-surface-950 flex h-screen flex-col">
+  <div
+    class="content flex w-full flex-grow"
+    style="max-height: calc(100% - 72px);"
+  >
     {#key $page.url.pathname}
       {#await ConfigReady()}
-        <ProgressRing value={null} />
+        <Navigation />
       {:then ready}
         {#if ready}
           <Navigation />
         {/if}
       {/await}
     {/key}
-    {@render children?.()}
+    <div class="w-full overflow-y-auto p-8">
+      <!-- I want the content here to be scrollable -->
+      {@render children?.()}
+    </div>
   </div>
-  <div class="h-18 w-full">
+  <div class="">
     <StatusBar />
   </div>
   <PairDialog />

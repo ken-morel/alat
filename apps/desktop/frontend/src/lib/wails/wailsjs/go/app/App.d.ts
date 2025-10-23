@@ -6,13 +6,15 @@ import {connected} from '../models';
 import {discovery} from '../models';
 import {node} from '../models';
 import {device} from '../models';
+import {security} from '../models';
+import {sysinfo} from '../models';
 import {filesend} from '../models';
-import {pbuf} from '../models';
 import {config} from '../models';
+import {webshare} from '../models';
 
 export function AskFileSharingDestDirectory():Promise<string>;
 
-export function AskFilesSend(arg1:string):Promise<Array<app.SendFile>>;
+export function AskFilesSend():Promise<Array<app.SendFile>>;
 
 export function ConfigReady():Promise<boolean>;
 
@@ -26,6 +28,18 @@ export function GetNodeStatus():Promise<node.Status>;
 
 export function GetPairedDevices():Promise<Array<device.PairedDevice>>;
 
+export function HandlePairRequest(arg1:string,arg2:security.PairToken,arg3:device.Details):Promise<void>;
+
+export function Hide():Promise<void>;
+
+export function IsSearchingDevices():Promise<boolean>;
+
+export function OpenSendFilesPage():Promise<void>;
+
+export function QueryDeviceSysInfo(arg1:connected.Connected):Promise<sysinfo.SysInfo>;
+
+export function Quit():Promise<void>;
+
 export function RequestPairingFoundDevice(arg1:string):Promise<app.RequestPairingResult>;
 
 export function Run():Promise<void>;
@@ -34,22 +48,38 @@ export function ServiceGetFileSendStatus():Promise<filesend.FileTransfersStatus>
 
 export function ServiceStartSendFilesToDevice(arg1:connected.Connected,arg2:Array<string>):Promise<void>;
 
-export function ServiceSysInfoGet(arg1:connected.Connected):Promise<pbuf.SysInfo>;
-
 export function SettingsGetDeviceColorName():Promise<string>;
 
 export function SettingsGetDeviceName():Promise<string>;
 
-export function SettingsGetFileSend():Promise<config.FileSendSettings>;
+export function SettingsGetFileSend():Promise<config.FileSendConfig>;
 
-export function SettingsGetSysInfo():Promise<config.SysInfoSettings>;
+export function SettingsGetSysInfo():Promise<config.SysInfoConfig>;
 
 export function SettingsSetDeviceColorName(arg1:string):Promise<void>;
 
 export function SettingsSetDeviceName(arg1:string):Promise<void>;
 
-export function SettingsSetFileSend(arg1:config.FileSendSettings):Promise<void>;
+export function SettingsSetFileSend(arg1:config.FileSendConfig):Promise<void>;
 
 export function SettingsSetSetupComplete(arg1:boolean):Promise<void>;
 
-export function SettingsSetSysInfo(arg1:config.SysInfoSettings):Promise<void>;
+export function SettingsSetSysInfo(arg1:config.SysInfoConfig):Promise<void>;
+
+export function Show():Promise<void>;
+
+export function WebShareAddSharedFiles(arg1:Array<string>):Promise<void>;
+
+export function WebShareClearSharedFiles():Promise<void>;
+
+export function WebShareGetPasscode():Promise<string>;
+
+export function WebShareGetStatus():Promise<webshare.Status>;
+
+export function WebShareRemoveSharedFile(arg1:string):Promise<void>;
+
+export function WebShareSetPasscode(arg1:string):Promise<void>;
+
+export function WebShareStart():Promise<number>;
+
+export function WebShareStop():Promise<void>;

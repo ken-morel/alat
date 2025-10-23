@@ -1,10 +1,9 @@
 package app
 
 import (
-	"os"
-
 	"alat/pkg/core/connected"
 	"alat/pkg/core/service/filesend"
+	"os"
 
 	rt "github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -14,9 +13,9 @@ type SendFile struct {
 	Size uint32
 }
 
-func (app *App) AskFilesSend(to string) (sendFiles []SendFile, err error) {
+func (app *App) AskFilesSend() (sendFiles []SendFile, err error) {
 	names, err := rt.OpenMultipleFilesDialog(app.ctx, rt.OpenDialogOptions{
-		Title:           "Select files to send to " + to,
+		Title:           "Select files to send",
 		ShowHiddenFiles: true,
 		ResolvesAliases: true,
 	})
@@ -40,12 +39,15 @@ func (app *App) AskFilesSend(to string) (sendFiles []SendFile, err error) {
 }
 
 func (app *App) ServiceStartSendFilesToDevice(peer connected.Connected, files []string) error {
-	for _, file := range files {
-		go app.serviceRegistery.FileSend.SendFile(app.ctx, &peer, app.nodeDetails, file)
+	var err error
+	for sendError := range app.node.QuerySendFiles(&peer, files) {
+		if sendError != nil {
+			err = sendError
+		}
 	}
-	return nil
+	return err
 }
 
 func (app *App) ServiceGetFileSendStatus() filesend.FileTransfersStatus {
-	return app.serviceRegistery.FileSend.GetStatus()
+	return *app.node.GetFileTransfersStatus()
 }

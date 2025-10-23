@@ -10,10 +10,10 @@ import (
 )
 
 type Connected struct {
-	Info         device.Info
-	PairedDevice device.PairedDevice
-	IP           net.IP
-	Port         int
+	Info         device.Info         `yaml:"info"         json:"info"`
+	PairedDevice device.PairedDevice `yaml:"pairedDevice" json:"pairedDevice"`
+	IP           net.IP              `yaml:"ip"           json:"ip"`
+	Port         int                 `yaml:"port"         json:"port"`
 }
 type Manager struct {
 	devices     []Connected
@@ -48,7 +48,7 @@ func (m *Manager) RefreshConnections() error {
 		}
 	}
 	clear(m.devices)
-	// fmt.Printf("There are %d found devices In %d found devices, and %d paired\n", len(connected), len(m.discoverer.GetFoundDevices()), len(m.pairManager.GetPairedDevices()))
 	m.devices = connected
+	// fmt.Printf("There are %d connected devices In %d found devices, and %d paired\n", len(connected), len(m.discoverer.GetFoundDevices()), len(m.pairManager.GetPairedDevices()))
 	return nil
 }

@@ -7,10 +7,10 @@ import (
 )
 
 type Info struct {
-	ID    string
-	Name  string
-	Color color.Color
-	Type  DeviceType
+	ID    string      `yaml:"id"    json:"id"`
+	Name  string      `yaml:"name"  json:"name"`
+	Color color.Color `yaml:"color" json:"color"`
+	Type  DeviceType  `yaml:"type"  json:"type"`
 }
 
 func (info *Info) ToPBUF() *pbuf.DeviceInfo {
@@ -32,6 +32,26 @@ const (
 	ArduinoDevice     DeviceType = "arduino"
 	UnspecifiedDevice DeviceType = "unspecified"
 )
+
+func DeviceTypeFromString(t string) DeviceType {
+	switch t {
+	case string(MobileDevice):
+		return MobileDevice
+	case string(DesktopDevice):
+		return DesktopDevice
+	case string(TVDevice):
+		return TVDevice
+	case string(WebDevice):
+		return WebDevice
+	case string(ArduinoDevice):
+		return ArduinoDevice
+	default:
+		return UnspecifiedDevice
+	}
+}
+func (t DeviceType) ToString() string {
+	return string(t)
+}
 
 func (t DeviceType) ToPBUF() pbuf.DeviceType {
 	switch t {

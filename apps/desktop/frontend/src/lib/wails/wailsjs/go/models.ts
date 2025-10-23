@@ -34,11 +34,11 @@ export namespace app {
 export namespace color {
 	
 	export class Color {
-	    Name: string;
-	    Hex: string;
-	    R: number;
-	    G: number;
-	    B: number;
+	    name: string;
+	    hex: string;
+	    r: number;
+	    g: number;
+	    b: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new Color(source);
@@ -46,11 +46,11 @@ export namespace color {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.Name = source["Name"];
-	        this.Hex = source["Hex"];
-	        this.R = source["R"];
-	        this.G = source["G"];
-	        this.B = source["B"];
+	        this.name = source["name"];
+	        this.hex = source["hex"];
+	        this.r = source["r"];
+	        this.g = source["g"];
+	        this.b = source["b"];
 	    }
 	}
 
@@ -58,34 +58,34 @@ export namespace color {
 
 export namespace config {
 	
-	export class FileSendSettings {
-	    Enabled: boolean;
-	    MaxSize: number;
-	    SaveFolder: string;
+	export class FileSendConfig {
+	    enabled: boolean;
+	    maxSize: number;
+	    saveFolder: string;
 	
 	    static createFrom(source: any = {}) {
-	        return new FileSendSettings(source);
+	        return new FileSendConfig(source);
 	    }
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.Enabled = source["Enabled"];
-	        this.MaxSize = source["MaxSize"];
-	        this.SaveFolder = source["SaveFolder"];
+	        this.enabled = source["enabled"];
+	        this.maxSize = source["maxSize"];
+	        this.saveFolder = source["saveFolder"];
 	    }
 	}
-	export class SysInfoSettings {
-	    Enabled: boolean;
-	    CacheSeconds: number;
+	export class SysInfoConfig {
+	    enabled: boolean;
+	    cacheSeconds: number;
 	
 	    static createFrom(source: any = {}) {
-	        return new SysInfoSettings(source);
+	        return new SysInfoConfig(source);
 	    }
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.Enabled = source["Enabled"];
-	        this.CacheSeconds = source["CacheSeconds"];
+	        this.enabled = source["enabled"];
+	        this.cacheSeconds = source["cacheSeconds"];
 	    }
 	}
 
@@ -94,10 +94,10 @@ export namespace config {
 export namespace connected {
 	
 	export class Connected {
-	    Info: device.Info;
-	    PairedDevice: device.PairedDevice;
-	    IP: number[];
-	    Port: number;
+	    info: device.Info;
+	    pairedDevice: device.PairedDevice;
+	    ip: number[];
+	    port: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new Connected(source);
@@ -105,10 +105,10 @@ export namespace connected {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.Info = this.convertValues(source["Info"], device.Info);
-	        this.PairedDevice = this.convertValues(source["PairedDevice"], device.PairedDevice);
-	        this.IP = source["IP"];
-	        this.Port = source["Port"];
+	        this.info = this.convertValues(source["info"], device.Info);
+	        this.pairedDevice = this.convertValues(source["pairedDevice"], device.PairedDevice);
+	        this.ip = source["ip"];
+	        this.port = source["port"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -134,11 +134,47 @@ export namespace connected {
 
 export namespace device {
 	
+	export class Details {
+	    color: color.Color;
+	    name: string;
+	    type: string;
+	    certificate: number[];
+	
+	    static createFrom(source: any = {}) {
+	        return new Details(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.color = this.convertValues(source["color"], color.Color);
+	        this.name = source["name"];
+	        this.type = source["type"];
+	        this.certificate = source["certificate"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class Info {
-	    ID: string;
-	    Name: string;
-	    Color: color.Color;
-	    Type: string;
+	    id: string;
+	    name: string;
+	    color: color.Color;
+	    type: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Info(source);
@@ -146,10 +182,10 @@ export namespace device {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.ID = source["ID"];
-	        this.Name = source["Name"];
-	        this.Color = this.convertValues(source["Color"], color.Color);
-	        this.Type = source["Type"];
+	        this.id = source["id"];
+	        this.name = source["name"];
+	        this.color = this.convertValues(source["color"], color.Color);
+	        this.type = source["type"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -171,8 +207,8 @@ export namespace device {
 		}
 	}
 	export class PairedDevice {
-	    Certificate: number[];
-	    Token: number[];
+	    certificate: number[];
+	    token: number[];
 	
 	    static createFrom(source: any = {}) {
 	        return new PairedDevice(source);
@@ -180,8 +216,8 @@ export namespace device {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.Certificate = source["Certificate"];
-	        this.Token = source["Token"];
+	        this.certificate = source["certificate"];
+	        this.token = source["token"];
 	    }
 	}
 
@@ -190,9 +226,9 @@ export namespace device {
 export namespace discovery {
 	
 	export class FoundDevice {
-	    IP: number[];
-	    Port: number;
-	    Info: device.Info;
+	    ip: number[];
+	    port: number;
+	    info: device.Info;
 	
 	    static createFrom(source: any = {}) {
 	        return new FoundDevice(source);
@@ -200,9 +236,9 @@ export namespace discovery {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.IP = source["IP"];
-	        this.Port = source["Port"];
-	        this.Info = this.convertValues(source["Info"], device.Info);
+	        this.ip = source["ip"];
+	        this.port = source["port"];
+	        this.info = this.convertValues(source["info"], device.Info);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -229,10 +265,10 @@ export namespace discovery {
 export namespace filesend {
 	
 	export class FileTransfersStatusTransfer {
-	    FileName: string;
-	    Percent: number;
-	    FileSize: number;
-	    Status: string;
+	    fileName: string;
+	    percent: number;
+	    fileSize: number;
+	    status: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new FileTransfersStatusTransfer(source);
@@ -240,16 +276,16 @@ export namespace filesend {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.FileName = source["FileName"];
-	        this.Percent = source["Percent"];
-	        this.FileSize = source["FileSize"];
-	        this.Status = source["Status"];
+	        this.fileName = source["fileName"];
+	        this.percent = source["percent"];
+	        this.fileSize = source["fileSize"];
+	        this.status = source["status"];
 	    }
 	}
 	export class FileTransfersStatusDevice {
-	    Device: device.Info;
-	    Transfers: FileTransfersStatusTransfer[];
-	    Percent: number;
+	    device: device.Info;
+	    transfers: FileTransfersStatusTransfer[];
+	    percent: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new FileTransfersStatusDevice(source);
@@ -257,9 +293,9 @@ export namespace filesend {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.Device = this.convertValues(source["Device"], device.Info);
-	        this.Transfers = this.convertValues(source["Transfers"], FileTransfersStatusTransfer);
-	        this.Percent = source["Percent"];
+	        this.device = this.convertValues(source["device"], device.Info);
+	        this.transfers = this.convertValues(source["transfers"], FileTransfersStatusTransfer);
+	        this.percent = source["percent"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -281,10 +317,10 @@ export namespace filesend {
 		}
 	}
 	export class FileTransfersStatus {
-	    PercentSending: number;
-	    PercentReceiving: number;
-	    Sending: FileTransfersStatusDevice[];
-	    Receiving: FileTransfersStatusDevice[];
+	    percentSending: number;
+	    percentReceiving: number;
+	    sending: FileTransfersStatusDevice[];
+	    receiving: FileTransfersStatusDevice[];
 	
 	    static createFrom(source: any = {}) {
 	        return new FileTransfersStatus(source);
@@ -292,10 +328,10 @@ export namespace filesend {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.PercentSending = source["PercentSending"];
-	        this.PercentReceiving = source["PercentReceiving"];
-	        this.Sending = this.convertValues(source["Sending"], FileTransfersStatusDevice);
-	        this.Receiving = this.convertValues(source["Receiving"], FileTransfersStatusDevice);
+	        this.percentSending = source["percentSending"];
+	        this.percentReceiving = source["percentReceiving"];
+	        this.sending = this.convertValues(source["sending"], FileTransfersStatusDevice);
+	        this.receiving = this.convertValues(source["receiving"], FileTransfersStatusDevice);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -323,9 +359,10 @@ export namespace filesend {
 export namespace node {
 	
 	export class Status {
-	    DiscoveryRunning: boolean;
-	    ServerRunning: boolean;
-	    WorkerRunning: boolean;
+	    discoveryRunning: boolean;
+	    serverRunning: boolean;
+	    workerRunning: boolean;
+	    port: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new Status(source);
@@ -333,27 +370,28 @@ export namespace node {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.DiscoveryRunning = source["DiscoveryRunning"];
-	        this.ServerRunning = source["ServerRunning"];
-	        this.WorkerRunning = source["WorkerRunning"];
+	        this.discoveryRunning = source["discoveryRunning"];
+	        this.serverRunning = source["serverRunning"];
+	        this.workerRunning = source["workerRunning"];
+	        this.port = source["port"];
 	    }
 	}
 
 }
 
-export namespace pbuf {
+export namespace sysinfo {
 	
 	export class SysInfo {
-	    hostName?: string;
-	    os?: string;
-	    platform?: string;
-	    memTotal?: number;
-	    memUsed?: number;
-	    diskTotal?: number;
-	    diskUsed?: number;
-	    batteryCharging?: boolean;
-	    batteryPercent?: number;
-	    cpuUsage?: number;
+	    hostname: string;
+	    os: string;
+	    platform: string;
+	    memTotal: number;
+	    memUsed: number;
+	    diskTotal: number;
+	    diskUsed: number;
+	    batteryCharging: boolean;
+	    batteryPercent: number;
+	    cpuUsage: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new SysInfo(source);
@@ -361,7 +399,7 @@ export namespace pbuf {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.hostName = source["hostName"];
+	        this.hostname = source["hostname"];
 	        this.os = source["os"];
 	        this.platform = source["platform"];
 	        this.memTotal = source["memTotal"];
@@ -372,6 +410,67 @@ export namespace pbuf {
 	        this.batteryPercent = source["batteryPercent"];
 	        this.cpuUsage = source["cpuUsage"];
 	    }
+	}
+
+}
+
+export namespace webshare {
+	
+	export class SharedFile {
+	    uuid: string;
+	    path: string;
+	    name: string;
+	    size: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new SharedFile(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.uuid = source["uuid"];
+	        this.path = source["path"];
+	        this.name = source["name"];
+	        this.size = source["size"];
+	    }
+	}
+	export class Status {
+	    isRunning: boolean;
+	    port: number;
+	    passcode: string;
+	    sharedFiles: SharedFile[];
+	    shareURL: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new Status(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.isRunning = source["isRunning"];
+	        this.port = source["port"];
+	        this.passcode = source["passcode"];
+	        this.sharedFiles = this.convertValues(source["sharedFiles"], SharedFile);
+	        this.shareURL = source["shareURL"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 
 }

@@ -1,47 +1,52 @@
 package app
 
 import (
-	"fmt"
-	"time"
-
-	"alat/apps/desktop/app/config"
+	"alat/pkg/core/config"
 	"alat/pkg/core/device/color"
-	"alat/pkg/core/service/filesend"
-	"alat/pkg/core/service/sysinfo"
 
 	rt "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
+func (app *App) ConfigReady() bool {
+	conf, err := app.node.GetAppConfig()
+	return err == nil && conf.SetupComplete
+}
+
 func (app *App) SettingsGetDeviceName() string {
-	return app.settings.DeviceName
+	conf, err := app.node.GetAppConfig()
+	if err != nil {
+		return ""
+	} else {
+		return conf.DeviceName
+	}
 }
 
 func (app *App) SettingsSetDeviceName(name string) error {
-	app.settings.DeviceName = name
-	err := app.updateNode()
+	conf, err := app.node.GetAppConfig()
 	if err != nil {
 		return err
 	}
-	return config.SaveAppSettings(app.settings)
+	conf.DeviceName = name
+	return app.node.SetAppConfig(*conf)
 }
 
-func (app *App) SettingsGetDeviceColorName() string {
-	return app.settings.DeviceColor.Name
+func (app *App) SettingsGetDeviceColorName() (string, error) {
+	conf, err := app.node.GetAppConfig()
+	if err != nil {
+		return "", err
+	} else {
+		return conf.DeviceColor.Name, nil
+	}
 }
 
 func (app *App) SettingsSetDeviceColorName(colName string) error {
 	col := color.FromString(colName)
-	if col == nil {
-		return fmt.Errorf("color not registerred")
-	} else {
-
-		app.settings.DeviceColor = *col
-		err := app.updateNode()
-		if err != nil {
-			return err
-		}
-		return config.SaveAppSettings(app.settings)
+	conf, err := app.node.GetAppConfig()
+	if err != nil {
+		return err
 	}
+	conf.DeviceColor = *col
+	return app.node.SetAppConfig(*conf)
 }
 
 func (app *App) AskFileSharingDestDirectory() string {
@@ -52,44 +57,53 @@ func (app *App) AskFileSharingDestDirectory() string {
 }
 
 func (app *App) SettingsSetSetupComplete(complete bool) error {
-	app.settings.SetupComplete = complete
-	if app.node != nil && !app.node.GetStatus().DiscoveryRunning && !app.node.GetStatus().ServerRunning {
-		fmt.Println("Node is not running, starting")
-		err := app.node.Start()
-		if err != nil {
-			fmt.Println("Error starting node after setup complete:", err)
-		}
+	conf, err := app.node.GetAppConfig()
+	if err != nil {
+		return err
 	} else {
-		fmt.Println("Node is already running, not starting")
+		conf.SetupComplete = complete
+		err := app.node.SetAppConfig(*conf)
+		if err != nil {
+			return err
+		}
+		return app.node.Start()
 	}
-
-	return config.SaveAppSettings(app.settings)
 }
 
-func (app *App) SettingsGetSysInfo() config.SysInfoSettings {
-	return app.serviceSettings.SysInfo
+func (app *App) SettingsGetSysInfo() (*config.SysInfoConfig, error) {
+	conf, err := app.node.GetServiceConfig()
+	if err != nil {
+		return nil, err
+	} else {
+		return &conf.SysInfo, err
+	}
 }
 
-func (app *App) SettingsSetSysInfo(conf config.SysInfoSettings) error {
-	app.serviceRegistery.SysInfo.Configure(sysinfo.Config{
-		Enabled:   conf.Enabled,
-		CacheTime: time.Duration(conf.CacheSeconds) * time.Second,
-	})
-	app.serviceSettings.SysInfo = conf
-
-	return config.SaveServiceSettings(app.serviceSettings)
+func (app *App) SettingsSetSysInfo(newConfig config.SysInfoConfig) error {
+	conf, err := app.node.GetServiceConfig()
+	if err != nil {
+		return err
+	} else {
+		conf.SysInfo = newConfig
+		return app.node.SetServiceConfig(*conf)
+	}
 }
 
-func (app *App) SettingsGetFileSend() config.FileSendSettings {
-	return app.serviceSettings.FileSend
+func (app *App) SettingsGetFileSend() (*config.FileSendConfig, error) {
+	conf, err := app.node.GetServiceConfig()
+	if err != nil {
+		return nil, err
+	} else {
+		return &conf.FileSend, err
+	}
 }
 
-func (app *App) SettingsSetFileSend(conf config.FileSendSettings) error {
-	app.serviceRegistery.FileSend.Configure(filesend.Config{
-		Enabled:     conf.Enabled,
-		SaveFolder:  conf.SaveFolder,
-		FileMaxSize: uint32(conf.MaxSize),
-	})
-	app.serviceSettings.FileSend = conf
-	return config.SaveServiceSettings(app.serviceSettings)
+func (app *App) SettingsSetFileSend(newConfig config.FileSendConfig) error {
+	conf, err := app.node.GetServiceConfig()
+	if err != nil {
+		return err
+	} else {
+		conf.FileSend = newConfig
+		return app.node.SetServiceConfig(*conf)
+	}
 }

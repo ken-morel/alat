@@ -2,15 +2,22 @@ package main
 
 import (
 	"alat/apps/desktop/app"
-	"embed"
 )
 
-//go:embed all:frontend/build
-var assets embed.FS
-
 func main() {
-	err := app.NewApp(assets).Run()
-	if err != nil {
-		println("Error:", err.Error())
+	appConfig.Load()
+	appConfig.Save()
+	autostartCheck() // exits
+	n := createNode()
+	conf, _ := n.GetAppConfig()
+	if conf != nil && conf.SetupComplete {
+		n.Start()
 	}
+
+	a := app.NewApp(assets, n)
+
+	n.OnPairRequest(a.HandlePairRequest)
+
+	showTray(n, a)
+	a.Run()
 }
