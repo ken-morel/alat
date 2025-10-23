@@ -20,7 +20,7 @@ func (s *Service) CreateSession() string {
 }
 
 func (s *Service) SessionExists(sessionID string) bool {
-	s.sessionsLock.Lock()
-	defer s.sessionsLock.Unlock()
+	s.sessionsLock.RLock()
+	defer s.sessionsLock.RUnlock()
 	return slices.Contains(s.sessions, sessionID)
 }
