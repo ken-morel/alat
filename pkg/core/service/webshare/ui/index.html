@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en" data-theme="alat">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Alat webshare</title>
+    <link href="/w3.css" rel="stylesheet" />
+    <link href="/favicon.png" rel="icon" />
+    <script src="/angular.js"></script>
+    <style>
+      input {
+        transition: all 0.2s ease-out;
+      }
+      input.ng-invalid {
+        border-color: #aa333377 !important;
+        background-color: #ffcccc !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="app"
+      data-ng-app="webshare"
+      data-ng-controller="webshareCtrl"
+      class="w3-modal-content"
+      name="app"
+    >
+      <h1 class="w3-center">Alat webshae</h1>
+      <div
+        name="passcodeForm"
+        class="w3-center"
+        style="max-width: 300px; margin: auto"
+      >
+        <header class="w3-container w3-gray w3-large">Passcode</header>
+        <input
+          type="text"
+          class="w3-input w3-border w3-large"
+          pattern="[a-z0-9]+"
+          data-ng-model="passcode"
+          data-ng-change="onCodeChange()"
+          name="passcode"
+        />
+        <label class="w3-text-red w3-tiny" data-ng-show="passcodeInvalid">
+          is an invalid code
+        </label>
+      </div>
+    </div>
+    <script>
+      const app = angular.module("webshare", []);
+      app.controller("webshareCtrl", function ($scope, $http) {
+        $scope.passcode = "";
+        $scope.passcodeInvalid = false;
+        $scope.session = "";
+        window.$scope = $scope;
+        window.$http = $http;
+        $scope.onCodeChange = (e) => {};
+      });
+    </script>
+  </body>
+</html>

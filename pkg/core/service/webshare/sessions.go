@@ -1,23 +1,30 @@
 package webshare
 
-import "github.com/google/uuid"
+import (
+	"slices"
+
+	"github.com/google/uuid"
+)
 
 func (s *Service) CreateSession() string {
 	s.sessionsLock.Lock()
 	defer s.sessionsLock.Unlock()
-	sessionId := uuid.New().String()
-	s.sessions = append(s.sessions, sessionId)
-	return sessionId
-}
-
-func (s *Service) SessionExists(sessionId string) bool {
-	s.sessionsLock.Lock()
-	defer s.sessionsLock.Unlock()
-	for _, session := range s.sessions {
-		if session == sessionId {
-			return true
+	sessionID := uuid.New().String()
+	if len(s.sessions) > 50 {
+		newSessions := make([]string, 50)
+		starts := len(s.sessions) - 50
+		for i := range 50 {
+			newSessions = append(newSessions, s.sessions[starts+i])
 		}
+		s.sessions = newSessions
 	}
 
-	return false
+	s.sessions = append(s.sessions, sessionID)
+	return sessionID
+}
+
+func (s *Service) SessionExists(sessionID string) bool {
+	s.sessionsLock.Lock()
+	defer s.sessionsLock.Unlock()
+	return slices.Contains(s.sessions, sessionID)
 }

@@ -23,5 +23,6 @@ func CreateRegistry(settings *config.ServiceConfig, p *pair.PairManager) *Regist
 	return &Registry{
 		FileSend: filesend.CreateService(settings.FileSend, p),
 		SysInfo:  sysinfo.CreateService(settings.SysInfo, p),
+		WebShare: webshare.CreateService(&settings.FileSend, p),
 	}
 }
