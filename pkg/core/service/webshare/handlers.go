@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"os"
 	"path"
-	"path/filepath"
 	"slices"
 	"strings"
 	"time"
@@ -92,17 +91,6 @@ func (s *Service) handleUploadFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	maxFileSize := int64(s.config.MaxSize) * 1024 * 1024
-	if maxFileSize == 0 {
-		maxFileSize = 10 << 30 // Default to 10GB if 0 (unlimited) is configured, to prevent abuse
-	}
-
-	r.Body = http.MaxBytesReader(w, r.Body, maxFileSize)
-	if err := r.ParseMultipartForm(maxFileSize); err != nil {
-		http.Error(w, fmt.Sprintf("File too large: %v", err), http.StatusBadRequest)
-		return
-	}
-
 	file, handler, err := r.FormFile("file")
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error retrieving file: %v", err), http.StatusBadRequest)
@@ -110,21 +98,10 @@ func (s *Service) handleUploadFile(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	// Use the configured SaveFolder
-	saveFolder := s.config.SaveFolder
-	if saveFolder == "" {
-		// Fallback to user's downloads if SaveFolder is not configured
-		homeDir, err := os.UserHomeDir()
-		if err != nil {
-			http.Error(w, "Could not determine user home directory", http.StatusInternalServerError)
-			return
-		}
-		saveFolder = filepath.Join(homeDir, "Downloads")
-	}
-	os.MkdirAll(saveFolder, os.ModePerm) // Ensure it exists
+	os.MkdirAll(s.config.SaveFolder, os.ModePerm) // Ensure it exists
 
-	// Determine the destination path using rcfilepath to handle duplicates
-	dstPath := rcfilepath(saveFolder, handler.Filename)
+	dstPath := rcfilepath(s.config.SaveFolder, handler.Filename)
+
 	dst, err := os.Create(dstPath)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error creating file: %v", err), http.StatusInternalServerError)
@@ -133,19 +110,19 @@ func (s *Service) handleUploadFile(w http.ResponseWriter, r *http.Request) {
 	defer dst.Close()
 
 	// Copy the uploaded file data
-	if _, err := io.Copy(dst, file); err != nil {
+	buffer := make([]byte, 1<<20)
+
+	if _, err := io.CopyBuffer(dst, file, buffer); err != nil {
 		http.Error(w, fmt.Sprintf("Error saving file: %v", err), http.StatusInternalServerError)
 		return
 	}
 
-	// Add the file to the shared list
 	if err := s.AddSharedFiles([]string{dstPath}); err != nil {
 		http.Error(w, fmt.Sprintf("Error sharing file: %v", err), http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintln(w, "File uploaded and shared successfully")
 }
 
 func (s *Service) handleLogin(w http.ResponseWriter, r *http.Request) {

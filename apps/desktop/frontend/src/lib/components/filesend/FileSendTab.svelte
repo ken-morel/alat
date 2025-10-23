@@ -3,7 +3,7 @@
   import { slide } from "svelte/transition";
   import { connectedDevices } from "$lib/connected";
   import guessIcon from "$lib/icons";
-  import { sendingFiles } from "$lib/store";
+  import { sendingFiles, sendingDevices, isSendingTo } from "$lib/filesend";
   import UploadIcon from "@lucide/svelte/icons/upload";
   import CloseIcon from "@lucide/svelte/icons/x";
   import {
@@ -11,9 +11,7 @@
     ServiceStartSendFilesToDevice,
   } from "$lib/wails/wailsjs/go/app/App";
   import fsizeText from "$lib/fsize";
-  import type { connected } from "$lib/wails/wailsjs/go/models";
-
-  let choosedDevices: string[] = $state([]);
+  import { get } from "svelte/store";
 
   const accordion = new Accordion();
   const devices: AccordionItem<{ id: string }> = accordion.getItem({
@@ -31,23 +29,20 @@
     });
   }
 
-  function sendToDevices() {
+  function sendFiles() {
     const filesToSend = $sendingFiles.map((f) => f.Path);
-    if (filesToSend.length === 0 || choosedDevices.length === 0) {
+    const devicesToSend = get(sendingDevices);
+    if (filesToSend.length === 0 || devicesToSend.length === 0) {
       return;
     }
 
-    const selectedPeers = $connectedDevices.filter((dev) =>
-      choosedDevices.includes(dev.info.id),
-    );
-
-    for (const peer of selectedPeers) {
+    for (const peer of devicesToSend) {
       ServiceStartSendFilesToDevice(peer, filesToSend);
     }
 
     // Clear selections after sending
     $sendingFiles = [];
-    choosedDevices = [];
+    $sendingDevices = [];
   }
 </script>
 
@@ -118,7 +113,7 @@
           {#each $connectedDevices as dev}
             {@const Icon = guessIcon(dev.info.type)}
             <div
-              class:bg-surface-200-800={choosedDevices.includes(dev.info.id)}
+              class:bg-surface-200-800={isSendingTo(dev)}
               class="group card flex flex-col justify-between overflow-hidden
          bg-surface-100-900 ring-1 ring-surface-300/50 transition-all
          duration-300 ease-in-out hover:shadow-xl
@@ -129,13 +124,12 @@
               tabindex="0"
               onkeydown={() => null}
               onclick={() => {
-                if (choosedDevices.includes(dev.info.id)) {
-                  choosedDevices = choosedDevices.filter(
-                    (d) => d != dev.info.id,
+                if (isSendingTo(dev)) {
+                  sendingDevices.update((devices) =>
+                    devices.filter((d) => d.info.id != dev.info.id),
                   );
                 } else {
-                  choosedDevices.push(dev.info.id);
-                  choosedDevices = choosedDevices;
+                  sendingDevices.update((devices) => devices.concat([dev]));
                 }
               }}
             >
@@ -166,10 +160,10 @@
   <div>
     <button
       class="btn preset-filled-surface-300-700 p-3 w-full"
-      onclick={sendToDevices}
-      disabled={$sendingFiles.length === 0 || choosedDevices.length === 0}
+      onclick={sendFiles}
+      disabled={$sendingFiles.length === 0 || $sendingDevices.length === 0}
     >
-      Send {$sendingFiles.length} files to {choosedDevices.length} devices
+      Send {$sendingFiles.length} files to {$sendingDevices.length} devices
     </button>
   </div>
 </div>
