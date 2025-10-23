@@ -14,7 +14,7 @@
     !define INFO_PRODUCTNAME "Alat"
 !endif
 !ifndef INFO_PRODUCTVERSION
-    !define INFO_PRODUCTVERSION "0.1.1"
+    !define INFO_PRODUCTVERSION "0.1.0"
 !endif
 !ifndef INFO_COPYRIGHT
     !define INFO_COPYRIGHT "Copyright (c) 2025 Engon Ken Morel. All Rights Reserved."

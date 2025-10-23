@@ -5,14 +5,14 @@
   "name": "alat",
   "outputfilename": "alat",
   "frontend:install": "bun install",
-  "frontend:build": "npm run build",
-  "frontend:dev:watcher": "npm run dev",
+  "frontend:build": "bun run build",
+  "frontend:dev:watcher": "bun dev",
   "frontend:dev:serverUrl": "http://localhost:5173",
   "nsisType": "single",
   "info": {
     "companyName": "Engon Ken Morel",
     "productName": "Alat",
-    "productVersion": "0.1.1",
+    "productVersion": "0.1.0",
     "copyright": "Copyright (c) 2025 Engon Ken Morel. All Rights Reserved.",
     "comments": "Alat desktop client",
     "protocols": [
