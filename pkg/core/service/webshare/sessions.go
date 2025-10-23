@@ -10,13 +10,9 @@ func (s *Service) CreateSession() string {
 	s.sessionsLock.Lock()
 	defer s.sessionsLock.Unlock()
 	sessionID := uuid.New().String()
-	if len(s.sessions) > 50 {
-		newSessions := make([]string, 50)
-		starts := len(s.sessions) - 50
-		for i := range 50 {
-			newSessions = append(newSessions, s.sessions[starts+i])
-		}
-		s.sessions = newSessions
+
+	if len(s.sessions) >= 50 {
+		s.sessions = s.sessions[len(s.sessions)-49:] // Keep the last 49 sessions, plus the new one
 	}
 
 	s.sessions = append(s.sessions, sessionID)
