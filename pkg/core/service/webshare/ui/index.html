@@ -37,7 +37,7 @@
           class="w3-input w3-border w3-large"
           pattern="[a-z0-9]+"
           data-ng-model="passcode"
-          data-ng-change="onCodeChange()"
+          data-ng-change="await onCodeChange()"
           name="passcode"
         />
         <label class="w3-text-red w3-tiny" data-ng-show="passcodeInvalid">
@@ -51,9 +51,27 @@
         $scope.passcode = "";
         $scope.passcodeInvalid = false;
         $scope.session = "";
+        $scope.sharedfiles = [];
         window.$scope = $scope;
         window.$http = $http;
-        $scope.onCodeChange = (e) => {};
+
+        $scope.onCodeChange = await (e) => {
+          const data = (await $http.get("/api/login?passcode=" + encodeURIComponent($scope.passcode))).data;
+          if(data.status == 406) {
+            $scope.passcodeInvalid = true;
+          } else if(data.status == 200) {
+            $scope.session = data.session;
+            await fetchInfo();
+          }
+        };
+        async function fetchInfo() {
+          const data = (await $http.get("/api/sharedfiles?session=" + encodeURIComponent($scope.session))).data;
+          if(data.status == 200) {
+            $scope.sharedfiles = data.files;
+          } else {
+            $scope.sharedfiles = [];
+          }
+        }
       });
     </script>
   </body>
