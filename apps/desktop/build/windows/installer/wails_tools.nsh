@@ -11,7 +11,7 @@
     !define INFO_COMPANYNAME "Engon Ken Morel"
 !endif
 !ifndef INFO_PRODUCTNAME
-    !define INFO_PRODUCTNAME "Alat desktop"
+    !define INFO_PRODUCTNAME "Alat"
 !endif
 !ifndef INFO_PRODUCTVERSION
     !define INFO_PRODUCTVERSION "0.1.1"
