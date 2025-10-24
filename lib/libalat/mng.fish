@@ -49,8 +49,7 @@ function build-android -a out_dir
         set -x CGO_ENABLED 1
         set -x CGO_CFLAGS -fPIC
 
-        go build -buildmode=c-shared -o "$out_path/libalat.so" .; and echo "Done !"; and continue
-        echo "Error building!"
+        build "$out_path"
     end
 end
 

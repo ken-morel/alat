@@ -2,7 +2,6 @@
 
 /* package libalat */
 
-
 #line 1 "cgo-builtin-export-prolog"
 
 #include <stddef.h>
@@ -11,7 +10,10 @@
 #define GO_CGO_EXPORT_PROLOGUE_H
 
 #ifndef GO_CGO_GOSTRING_TYPEDEF
-typedef struct { const char *p; ptrdiff_t n; } _GoString_;
+typedef struct {
+  const char *p;
+  ptrdiff_t n;
+} _GoString_;
 extern size_t _GoStringLen(_GoString_ s);
 extern const char *_GoStringPtr(_GoString_ s);
 #endif
@@ -20,16 +22,11 @@ extern const char *_GoStringPtr(_GoString_ s);
 
 /* Start of preamble from import "C" comments.  */
 
-
 #line 3 "async_pair.go"
 
 #include "async_pair.h"
 
 #line 1 "cgo-generated-wrapper"
-
-
-
-
 
 #line 4 "libalat.go"
 
@@ -37,13 +34,7 @@ extern const char *_GoStringPtr(_GoString_ s);
 
 #line 1 "cgo-generated-wrapper"
 
-
-
-
-
-
 /* End of preamble from import "C" comments.  */
-
 
 /* Start of boilerplate cgo prologue.  */
 #line 1 "cgo-gcc-export-header-prolog"
@@ -83,15 +74,23 @@ typedef double _Complex GoComplex128;
   static assertion to make sure the file is being used on architecture
   at least with matching size of GoInt.
 */
-typedef char _check_for_64_bit_pointer_matching_GoInt[sizeof(void*)==64/8 ? 1:-1];
+typedef char
+    _check_for_64_bit_pointer_matching_GoInt[sizeof(void *) == 64 / 8 ? 1 : -1];
 
 #ifndef GO_CGO_GOSTRING_TYPEDEF
 typedef _GoString_ GoString;
 #endif
 typedef void *GoMap;
 typedef void *GoChan;
-typedef struct { void *t; void *v; } GoInterface;
-typedef struct { void *data; GoInt len; GoInt cap; } GoSlice;
+typedef struct {
+  void *t;
+  void *v;
+} GoInterface;
+typedef struct {
+  void *data;
+  GoInt len;
+  GoInt cap;
+} GoSlice;
 
 #endif
 
@@ -101,40 +100,45 @@ typedef struct { void *data; GoInt len; GoInt cap; } GoSlice;
 extern "C" {
 #endif
 
-extern int register_async_pair_request_callback(int handle, async_pair_request_callback callback);
-extern int submit_pair_response(int handle, char* requestIDC, _Bool accepted, char* reasonC);
-extern char* default_app_config(void);
-extern char* default_service_config(void);
-extern char* get_error(void);
-extern char* get_file_transfers_status(int handle);
-extern int query_send_files_to_connected_device(int handle, char* deviceIDC, char* filesJSONC);
-extern char* get_instances(void);
-extern int create_instance(char* configPathC, char* appConfigC, char* serviceConfigC);
+extern int
+register_async_pair_request_callback(int handle,
+                                     async_pair_request_callback callback);
+extern int submit_pair_response(int handle, char *requestIDC, _Bool accepted,
+                                char *reasonC);
+extern char *default_app_config(void);
+extern char *default_service_config(void);
+extern char *get_error(void);
+extern char *get_file_transfers_status(int handle);
+extern int query_send_files_to_connected_device(int handle, char *deviceIDC,
+                                                char *filesJSONC);
+extern char *get_instances(void);
+extern int create_instance(char *configPathC, char *appConfigC,
+                           char *serviceConfigC);
 extern int start_instance(int handle);
 extern void stop_instance(int handle);
 extern GoInt get_port(int handle);
 extern void destroy_instance(int handle);
-extern char* get_node_status_json(int handle);
-extern void free_string(char* s);
-extern char* request_pair_found_device(int handleC, char* deviceIDC);
-extern char* get_app_config_json(int handle);
-extern int set_app_config_json(int handle, char* settingsJSON);
-extern char* get_service_config_json(int handle);
-extern int set_service_config_json(int handle, char* settingsJSON);
-extern char* get_found_devices_json(int handle);
-extern char* get_paired_devices_json(int handle);
-extern char* get_connected_devices_json(int handle);
-extern char* get_alat_device_colors_json(void);
-extern char* query_connected_device_sysinfo(int handle, char* deviceIDC);
-extern char* get_sysinfo(int handle);
-extern char* wehsbare_get_status_json(int handle);
-extern int webshare_add_shared_files(int handle, char* file);
-extern int webshare_remove_shared_files_by_uuids(int handle, char* filesC);
-extern int webshare_remove_shared_files_by_paths(int handle, char* filesC);
+extern char *get_node_status_json(int handle);
+extern void free_string(char *s);
+extern char *request_pair_found_device(int handleC, char *deviceIDC);
+extern char *get_app_config_json(int handle);
+extern int set_app_config_json(int handle, char *settingsJSON);
+extern char *get_service_config_json(int handle);
+extern int set_service_config_json(int handle, char *settingsJSON);
+extern char *get_found_devices_json(int handle);
+extern char *get_paired_devices_json(int handle);
+extern char *get_connected_devices_json(int handle);
+extern char *get_alat_device_colors_json(void);
+extern char *query_connected_device_sysinfo(int handle, char *deviceIDC);
+extern char *get_sysinfo(int handle);
+extern char *wehsbare_get_status_json(int handle);
+extern int webshare_add_shared_files(int handle, char *file);
+extern int webshare_remove_shared_files_by_uuids(int handle, char *filesC);
+extern int webshare_remove_shared_files_by_paths(int handle, char *filesC);
 extern int webshare_clear_shared_files(int handle);
-extern char* webshare_get_shared_files_json(int handle);
-extern char* webshare_get_passcode(int handle);
-extern int webshare_set_passcode(int handle, char* passcodeC);
+extern char *webshare_get_shared_files_json(int handle);
+extern char *webshare_get_passcode(int handle);
+extern int webshare_set_passcode(int handle, char *passcodeC);
 extern int webshare_get_port(int handle);
 extern int webshare_is_running(int handle);
 extern int webshare_start(int handle);
