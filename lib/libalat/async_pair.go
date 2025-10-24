@@ -55,24 +55,24 @@ func register_async_pair_request_callback(handle C.int, callback C.async_pair_re
 			return
 		}
 
-		requestID_C := C.CString(requestID)
-		tokenJSON_C := C.CString(string(tokenBytes))
-		detailsJSON_C := C.CString(string(detailsBytes))
-		C.call_async_callback_bridge(cb, handle, requestID_C, tokenJSON_C, detailsJSON_C)
+		requestIDC := C.CString(requestID)
+		tokenJSONC := C.CString(string(tokenBytes))
+		detailsJSONC := C.CString(string(detailsBytes))
+		C.call_async_callback_bridge(cb, handle, requestIDC, tokenJSONC, detailsJSONC)
 	})
 
 	return 0
 }
 
 //export submit_pair_response
-func submit_pair_response(handle C.int, requestID_C *C.char, accepted C.bool, reason_C *C.char) C.int {
+func submit_pair_response(handle C.int, requestIDC *C.char, accepted C.bool, reasonC *C.char) C.int {
 	instance := getInstance(handle)
 	if instance == nil {
 		return -1 // Instance not found
 	}
 
-	requestID := C.GoString(requestID_C)
-	reason := C.GoString(reason_C)
+	requestID := C.GoString(requestIDC)
+	reason := C.GoString(reasonC)
 
 	err := instance.node.SubmitPairResponse(requestID, bool(accepted), reason)
 	if err != nil {

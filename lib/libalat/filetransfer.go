@@ -10,31 +10,31 @@ import "C"
 func get_file_transfers_status(handle C.int) *C.char {
 	instance := getInstance(handle)
 	if instance == nil {
-		setError(fmt.Errorf("Alat instance %d does not exist", handle))
+		setError(fmt.Errorf("alat instance %d does not exist", handle))
 		return nil
 	}
 	return toJSON(*instance.node.GetFileTransfersStatus())
 }
 
 //export query_send_files_to_connected_device
-func query_send_files_to_connected_device(handle C.int, deviceIdC *C.char, filesJsonC *C.char) C.int {
-	filesJson := C.GoString(filesJsonC)
+func query_send_files_to_connected_device(handle C.int, deviceIDC *C.char, filesJSONC *C.char) C.int {
+	filesJSON := C.GoString(filesJSONC)
 	instance := getInstance(handle)
 	if instance == nil {
-		setError(fmt.Errorf("Instance %d does not exist", handle))
+		setError(fmt.Errorf("instance %d does not exist", handle))
 		return -1
 	}
-	deviceId := C.GoString(deviceIdC)
+	deviceID := C.GoString(deviceIDC)
 
-	device := instance.node.GetConnectedDeviceByID(deviceId)
+	device := instance.node.GetConnectedDeviceByID(deviceID)
 
 	if device == nil {
-		setError(fmt.Errorf("Device disconnected"))
+		setError(fmt.Errorf("device disconnected"))
 		return -2
 	}
 	var files []string
-	if err := json.Unmarshal([]byte(filesJson), &files); err != nil {
-		setError(fmt.Errorf("Error decoding list of files to send from json: %v", err))
+	if err := json.Unmarshal([]byte(filesJSON), &files); err != nil {
+		setError(fmt.Errorf("error decoding list of files to send from json: %v", err))
 	}
 
 	defer instance.node.QuerySendFiles(device, files)

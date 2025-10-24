@@ -13,7 +13,7 @@ import (
 func get_app_config_json(handle C.int) *C.char {
 	instance := getInstance(handle)
 	if instance == nil {
-		setError(fmt.Errorf("Instance %d does not exist", handle))
+		setError(fmt.Errorf("instance %d does not exist", handle))
 		return nil
 	}
 	config, err := instance.node.GetAppConfig()

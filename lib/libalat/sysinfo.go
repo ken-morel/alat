@@ -4,22 +4,22 @@ import "C"
 import "fmt"
 
 //export query_connected_device_sysinfo
-func query_connected_device_sysinfo(handle C.int, deviceIdC *C.char) *C.char {
-	deviceId := C.GoString(deviceIdC)
+func query_connected_device_sysinfo(handle C.int, deviceIDC *C.char) *C.char {
+	deviceID := C.GoString(deviceIDC)
 	instance := getInstance(handle)
 	if instance == nil {
-		setError(fmt.Errorf("Instance %d does not exist", handle))
+		setError(fmt.Errorf("instance %d does not exist", handle))
 		return nil
 	}
-	device := instance.node.GetConnectedDeviceByID(deviceId)
+	device := instance.node.GetConnectedDeviceByID(deviceID)
 	if device == nil {
-		setError(fmt.Errorf("Connected device not found, device surely not connected"))
+		setError(fmt.Errorf("connected device not found, device surely not connected"))
 		return nil
 	}
 
 	info, err := instance.node.QueryDeviceSysInfo(device)
 	if err != nil {
-		setError(fmt.Errorf("Error getting system information from %s: %s", device.Info.Name, err.Error()))
+		setError(fmt.Errorf("error getting system information from %s: %s", device.Info.Name, err.Error()))
 		return nil
 	}
 	return toJSON(info)

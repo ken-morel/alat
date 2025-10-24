@@ -59,7 +59,7 @@ func create_instance(configPathC *C.char, appConfigC *C.char, serviceConfigC *C.
 
 	node, err := node.CreateNode(store)
 	if err != nil {
-		setError(fmt.Errorf("Error creating node: %v", err))
+		setError(fmt.Errorf("error creating node: %v", err))
 		return -3
 	}
 	instance := &AlatInstance{
