@@ -18,7 +18,7 @@ func get_error() *C.char {
 	_alatErrorLock.Lock()
 	defer _alatErrorLock.Unlock()
 	if _alatError == nil {
-		message = "Unknown error"
+		message = "unknown error"
 	} else {
 		message = _alatError.Error()
 	}
@@ -32,5 +32,5 @@ func setError(err error) {
 }
 
 func noSuchInstance(handle C.int) {
-	setError(fmt.Errorf("Alat instance id %d does not exist", handle))
+	setError(fmt.Errorf("alat instance id %d does not exist", handle))
 }

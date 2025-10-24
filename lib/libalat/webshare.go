@@ -83,7 +83,7 @@ func webshare_get_passcode(handle C.int) *C.char {
 	}
 }
 
-//export webshare_get_passcode
+//export webshare_set_passcode
 func webshare_set_passcode(handle C.int, passcodeC *C.char) C.int {
 	if instance := getInstance(handle); instance != nil {
 		instance.node.Services.WebShare.SetPasscode(C.GoString(passcodeC))
@@ -120,10 +120,10 @@ func webshare_start(handle C.int) C.int {
 	if instance := getInstance(handle); instance != nil {
 		port, err := instance.node.Services.WebShare.Start()
 		if err != nil {
-			setError(fmt.Errorf("Failed to start webshare service: %v", err))
+			setError(fmt.Errorf("failed to start webshare service: %v", err))
 			return -2
 		} else {
-			return port
+			return C.int(port)
 		}
 	} else {
 		return -1
@@ -135,7 +135,7 @@ func webshare_stop(handle C.int) C.int {
 	if instance := getInstance(handle); instance != nil {
 		err := instance.node.Services.WebShare.Stop()
 		if err != nil {
-			setError(fmt.Errorf("Failed to stop webshare service: %v", err))
+			setError(fmt.Errorf("failed to stop webshare service: %v", err))
 			return -2
 		} else {
 			return 0

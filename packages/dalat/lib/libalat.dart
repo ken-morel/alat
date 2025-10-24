@@ -1708,11 +1708,11 @@ class AlatBindings {
 
   int submit_pair_response(
     int handle,
-    ffi.Pointer<ffi.Char> requestID_C,
+    ffi.Pointer<ffi.Char> requestIDC,
     bool accepted,
-    ffi.Pointer<ffi.Char> reason_C,
+    ffi.Pointer<ffi.Char> reasonC,
   ) {
-    return _submit_pair_response(handle, requestID_C, accepted, reason_C);
+    return _submit_pair_response(handle, requestIDC, accepted, reasonC);
   }
 
   late final _submit_pair_responsePtr =
@@ -1777,10 +1777,10 @@ class AlatBindings {
 
   int query_send_files_to_connected_device(
     int handle,
-    ffi.Pointer<ffi.Char> deviceIdC,
-    ffi.Pointer<ffi.Char> filesJsonC,
+    ffi.Pointer<ffi.Char> deviceIDC,
+    ffi.Pointer<ffi.Char> filesJSONC,
   ) {
-    return _query_send_files_to_connected_device(handle, deviceIdC, filesJsonC);
+    return _query_send_files_to_connected_device(handle, deviceIDC, filesJSONC);
   }
 
   late final _query_send_files_to_connected_devicePtr =
@@ -1898,9 +1898,9 @@ class AlatBindings {
 
   ffi.Pointer<ffi.Char> request_pair_found_device(
     int handleC,
-    ffi.Pointer<ffi.Char> deviceIdC,
+    ffi.Pointer<ffi.Char> deviceIDC,
   ) {
-    return _request_pair_found_device(handleC, deviceIdC);
+    return _request_pair_found_device(handleC, deviceIDC);
   }
 
   late final _request_pair_found_devicePtr =
@@ -2002,9 +2002,9 @@ class AlatBindings {
 
   ffi.Pointer<ffi.Char> query_connected_device_sysinfo(
     int handle,
-    ffi.Pointer<ffi.Char> deviceIdC,
+    ffi.Pointer<ffi.Char> deviceIDC,
   ) {
-    return _query_connected_device_sysinfo(handle, deviceIdC);
+    return _query_connected_device_sysinfo(handle, deviceIDC);
   }
 
   late final _query_connected_device_sysinfoPtr =
@@ -2018,6 +2018,153 @@ class AlatBindings {
           .asFunction<
             ffi.Pointer<ffi.Char> Function(int, ffi.Pointer<ffi.Char>)
           >();
+
+  ffi.Pointer<ffi.Char> get_sysinfo(int handle) {
+    return _get_sysinfo(handle);
+  }
+
+  late final _get_sysinfoPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function(ffi.Int)>>(
+        'get_sysinfo',
+      );
+  late final _get_sysinfo = _get_sysinfoPtr
+      .asFunction<ffi.Pointer<ffi.Char> Function(int)>();
+
+  ffi.Pointer<ffi.Char> wehsbare_get_status_json(int handle) {
+    return _wehsbare_get_status_json(handle);
+  }
+
+  late final _wehsbare_get_status_jsonPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function(ffi.Int)>>(
+        'wehsbare_get_status_json',
+      );
+  late final _wehsbare_get_status_json = _wehsbare_get_status_jsonPtr
+      .asFunction<ffi.Pointer<ffi.Char> Function(int)>();
+
+  int webshare_add_shared_files(int handle, ffi.Pointer<ffi.Char> file) {
+    return _webshare_add_shared_files(handle, file);
+  }
+
+  late final _webshare_add_shared_filesPtr =
+      _lookup<
+        ffi.NativeFunction<ffi.Int Function(ffi.Int, ffi.Pointer<ffi.Char>)>
+      >('webshare_add_shared_files');
+  late final _webshare_add_shared_files = _webshare_add_shared_filesPtr
+      .asFunction<int Function(int, ffi.Pointer<ffi.Char>)>();
+
+  int webshare_remove_shared_files_by_uuids(
+    int handle,
+    ffi.Pointer<ffi.Char> filesC,
+  ) {
+    return _webshare_remove_shared_files_by_uuids(handle, filesC);
+  }
+
+  late final _webshare_remove_shared_files_by_uuidsPtr =
+      _lookup<
+        ffi.NativeFunction<ffi.Int Function(ffi.Int, ffi.Pointer<ffi.Char>)>
+      >('webshare_remove_shared_files_by_uuids');
+  late final _webshare_remove_shared_files_by_uuids =
+      _webshare_remove_shared_files_by_uuidsPtr
+          .asFunction<int Function(int, ffi.Pointer<ffi.Char>)>();
+
+  int webshare_remove_shared_files_by_paths(
+    int handle,
+    ffi.Pointer<ffi.Char> filesC,
+  ) {
+    return _webshare_remove_shared_files_by_paths(handle, filesC);
+  }
+
+  late final _webshare_remove_shared_files_by_pathsPtr =
+      _lookup<
+        ffi.NativeFunction<ffi.Int Function(ffi.Int, ffi.Pointer<ffi.Char>)>
+      >('webshare_remove_shared_files_by_paths');
+  late final _webshare_remove_shared_files_by_paths =
+      _webshare_remove_shared_files_by_pathsPtr
+          .asFunction<int Function(int, ffi.Pointer<ffi.Char>)>();
+
+  int webshare_clear_shared_files(int handle) {
+    return _webshare_clear_shared_files(handle);
+  }
+
+  late final _webshare_clear_shared_filesPtr =
+      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Int)>>(
+        'webshare_clear_shared_files',
+      );
+  late final _webshare_clear_shared_files = _webshare_clear_shared_filesPtr
+      .asFunction<int Function(int)>();
+
+  ffi.Pointer<ffi.Char> webshare_get_shared_files_json(int handle) {
+    return _webshare_get_shared_files_json(handle);
+  }
+
+  late final _webshare_get_shared_files_jsonPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function(ffi.Int)>>(
+        'webshare_get_shared_files_json',
+      );
+  late final _webshare_get_shared_files_json =
+      _webshare_get_shared_files_jsonPtr
+          .asFunction<ffi.Pointer<ffi.Char> Function(int)>();
+
+  ffi.Pointer<ffi.Char> webshare_get_passcode(int handle) {
+    return _webshare_get_passcode(handle);
+  }
+
+  late final _webshare_get_passcodePtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function(ffi.Int)>>(
+        'webshare_get_passcode',
+      );
+  late final _webshare_get_passcode = _webshare_get_passcodePtr
+      .asFunction<ffi.Pointer<ffi.Char> Function(int)>();
+
+  int webshare_set_passcode(int handle, ffi.Pointer<ffi.Char> passcodeC) {
+    return _webshare_set_passcode(handle, passcodeC);
+  }
+
+  late final _webshare_set_passcodePtr =
+      _lookup<
+        ffi.NativeFunction<ffi.Int Function(ffi.Int, ffi.Pointer<ffi.Char>)>
+      >('webshare_set_passcode');
+  late final _webshare_set_passcode = _webshare_set_passcodePtr
+      .asFunction<int Function(int, ffi.Pointer<ffi.Char>)>();
+
+  int webshare_get_port(int handle) {
+    return _webshare_get_port(handle);
+  }
+
+  late final _webshare_get_portPtr =
+      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Int)>>(
+        'webshare_get_port',
+      );
+  late final _webshare_get_port = _webshare_get_portPtr
+      .asFunction<int Function(int)>();
+
+  int webshare_is_running(int handle) {
+    return _webshare_is_running(handle);
+  }
+
+  late final _webshare_is_runningPtr =
+      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Int)>>(
+        'webshare_is_running',
+      );
+  late final _webshare_is_running = _webshare_is_runningPtr
+      .asFunction<int Function(int)>();
+
+  int webshare_start(int handle) {
+    return _webshare_start(handle);
+  }
+
+  late final _webshare_startPtr =
+      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Int)>>('webshare_start');
+  late final _webshare_start = _webshare_startPtr
+      .asFunction<int Function(int)>();
+
+  int webshare_stop(int handle) {
+    return _webshare_stop(handle);
+  }
+
+  late final _webshare_stopPtr =
+      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Int)>>('webshare_stop');
+  late final _webshare_stop = _webshare_stopPtr.asFunction<int Function(int)>();
 }
 
 final class max_align_t extends ffi.Opaque {}
