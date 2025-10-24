@@ -1,8 +1,6 @@
 package filesend
 
 import (
-	"alat/pkg/core/security"
-	"alat/pkg/pbuf"
 	"context"
 	"fmt"
 	"io"
@@ -10,14 +8,17 @@ import (
 	"os"
 	"strconv"
 
+	"alat/pkg/core/connected"
+	"alat/pkg/pbuf"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 // SendFile connects to a peer and sends a file.
 // This is a self-contained method that handles the entire client-side lifecycle.
-func (s *Service) SendFile(ctx context.Context, ip net.IP, port int, token *security.PairToken, filePath string) error {
-	fullAddress := net.JoinHostPort(ip.To4().String(), strconv.Itoa(port))
+func (s *Service) SendFile(ctx context.Context, device *connected.Connected, filePath string) error {
+	fullAddress := net.JoinHostPort(device.IP.To4().String(), strconv.Itoa(device.Port))
 
 	conn, err := grpc.NewClient(fullAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
@@ -54,7 +55,7 @@ func (s *Service) SendFile(ctx context.Context, ip net.IP, port int, token *secu
 					Mode: int32(fileInfo.Mode().Perm()),
 				},
 				SenderInfo: senderInfoPBUF,
-				Token:      token[:],
+				Token:      device.PairedDevice.Token[:],
 			},
 		},
 	}
@@ -71,7 +72,7 @@ func (s *Service) SendFile(ctx context.Context, ip net.IP, port int, token *secu
 		TransferredSize: 0,
 		Status:          TransferStatusTransferring,
 	}
-	s.UpdateOutgoingStatus(senderInfo, status)
+	s.UpdateOutgoingStatus(&device.Info, status)
 
 	for {
 		n, err := file.Read(buffer)
