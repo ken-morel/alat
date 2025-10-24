@@ -248,6 +248,5 @@ func (s *Service) Stop() error {
 	s.port = 0
 	s.server = nil
 	s.listener = nil
-	fmt.Println("Webshare server stopped.")
 	return nil
 }
