@@ -3,34 +3,33 @@ package app
 import "alat/pkg/core/service/webshare"
 
 func (app *App) WebShareStart() (int, error) {
-	return app.node.GetServices().WebShare.Start()
+	return app.node.Services.WebShare.Start()
 }
 
 func (app *App) WebShareStop() error {
-	return app.node.GetServices().WebShare.Stop()
+	return app.node.Services.WebShare.Stop()
 }
 
 func (app *App) WebShareGetStatus() *webshare.Status {
-	return app.node.GetServices().WebShare.GetStatus()
+	return app.node.Services.WebShare.GetStatus()
 }
 
 func (app *App) WebShareAddSharedFiles(paths []string) error {
-	return app.node.GetServices().WebShare.AddSharedFiles(paths)
+	return app.node.Services.WebShare.AddSharedFiles(paths)
 }
 
 func (app *App) WebShareRemoveSharedFile(uuid string) {
-	app.node.GetServices().WebShare.RemoveSharedFile(uuid)
+	app.node.Services.WebShare.RemoveSharedFilesByUUIDS([]string{uuid})
 }
 
 func (app *App) WebShareClearSharedFiles() {
-	app.node.GetServices().WebShare.ClearSharedFiles()
+	app.node.Services.WebShare.ClearSharedFiles()
 }
 
 func (app *App) WebShareSetPasscode(passcode string) {
-	app.node.GetServices().WebShare.SetPasscode(passcode)
+	app.node.Services.WebShare.SetPasscode(passcode)
 }
 
 func (app *App) WebShareGetPasscode() string {
-	return app.node.GetServices().WebShare.GetPasscode()
+	return app.node.Services.WebShare.GetPasscode()
 }
-
