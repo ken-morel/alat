@@ -2,8 +2,6 @@
 package webshare
 
 import (
-	"alat/pkg/core/config"
-	"alat/pkg/core/pair"
 	"context"
 	"errors"
 	"fmt"
@@ -13,6 +11,9 @@ import (
 	"path/filepath"
 	"sync"
 	"time"
+
+	"alat/pkg/core/config"
+	"alat/pkg/core/pair"
 
 	"github.com/google/uuid"
 )
@@ -99,14 +100,41 @@ func (s *Service) AddSharedFiles(paths []string) error {
 	return nil
 }
 
-// RemoveSharedFile removes a file from the list of shared files by its UUID.
-func (s *Service) RemoveSharedFile(uuid string) {
+// RemoveSharedFilesByUUIDS removes files from the list of shared files by its UUID.
+func (s *Service) RemoveSharedFilesByUUIDS(uuids []string) {
 	s.sharedFilesLock.Lock()
 	defer s.sharedFilesLock.Unlock()
 
 	newFiles := []SharedFile{}
 	for _, f := range s.sharedFiles {
-		if f.UUID != uuid {
+		ignore := false
+		for _, uuid := range uuids {
+			if f.UUID != uuid {
+				ignore = true
+				break
+			}
+		}
+		if !ignore {
+			newFiles = append(newFiles, f)
+		}
+	}
+	s.sharedFiles = newFiles
+}
+
+func (s *Service) RemoveSharedFilesByPaths(paths []string) {
+	s.sharedFilesLock.Lock()
+	defer s.sharedFilesLock.Unlock()
+
+	newFiles := []SharedFile{}
+	for _, f := range s.sharedFiles {
+		ignore := false
+		for _, path := range paths {
+			if f.Path != path {
+				ignore = true
+				break
+			}
+		}
+		if !ignore {
 			newFiles = append(newFiles, f)
 		}
 	}
@@ -124,7 +152,6 @@ func (s *Service) ClearSharedFiles() {
 func (s *Service) GetSharedFiles() []SharedFile {
 	s.sharedFilesLock.RLock()
 	defer s.sharedFilesLock.RUnlock()
-	// Return a copy to be safe
 	filesCopy := make([]SharedFile, len(s.sharedFiles))
 	copy(filesCopy, s.sharedFiles)
 	return filesCopy

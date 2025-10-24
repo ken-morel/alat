@@ -13,7 +13,7 @@ func get_file_transfers_status(handle C.int) *C.char {
 		setError(fmt.Errorf("alat instance %d does not exist", handle))
 		return nil
 	}
-	return toJSON(*instance.node.GetFileTransfersStatus())
+	return toJSON(*instance.node.Services.FileSend.GetStatus())
 }
 
 //export query_send_files_to_connected_device
@@ -37,6 +37,6 @@ func query_send_files_to_connected_device(handle C.int, deviceIDC *C.char, files
 		setError(fmt.Errorf("error decoding list of files to send from json: %v", err))
 	}
 
-	defer instance.node.QuerySendFiles(device, files)
+	defer instance.node.Services.FileSend.SendFiles(device, files)
 	return 0
 }

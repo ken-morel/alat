@@ -6,15 +6,15 @@ import (
 	"net"
 	"time"
 
-	"alat/pkg/core/security"
+	"alat/pkg/core/connected"
 	"alat/pkg/pbuf"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func (s *Service) QueryDeviceSysInfo(addr net.IP, port int, token security.PairToken) (*pbuf.SysInfo, error) {
-	fullAddress := net.JoinHostPort(addr.String(), fmt.Sprintf("%d", port))
+func (s *Service) Query(device *connected.Connected) (*SysInfo, error) {
+	fullAddress := net.JoinHostPort(device.IP.String(), fmt.Sprintf("%d", device.Port))
 	conn, err := grpc.NewClient(fullAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, err
@@ -25,14 +25,14 @@ func (s *Service) QueryDeviceSysInfo(addr net.IP, port int, token security.PairT
 	defer cancel()
 
 	resp, err := client.GetSysInfo(ctx, &pbuf.GetSysInfoRequest{
-		Token: token[:],
+		Token: device.PairedDevice.Token[:],
 	})
 	if err != nil {
 		return nil, err
 	}
 	switch resp.Status {
 	case pbuf.ServiceCallStatus_SERVICE_CALL_STATUS_OK:
-		return resp.Info, nil
+		return SysInfoFromPBUF(resp.Info), nil
 	default:
 		return nil, fmt.Errorf("error getting system info: %s", resp.Msg)
 	}

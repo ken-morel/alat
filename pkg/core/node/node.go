@@ -2,6 +2,8 @@
 package node
 
 import (
+	"fmt"
+
 	"alat/pkg/core/connected"
 	"alat/pkg/core/device"
 	"alat/pkg/core/discovery"
@@ -9,15 +11,14 @@ import (
 	"alat/pkg/core/service"
 	"alat/pkg/core/storage"
 	"alat/pkg/core/transport/server"
-	"fmt"
 )
 
 type Node struct {
 	workerState workerState
 	storage     storage.NodeStorage
-	pairManager *pair.PairManager
+	PairManager *pair.PairManager
 	discovery   *discovery.Manager
-	services    *service.Registry
+	Services    *service.Registry
 	server      *server.Server
 	connected   *connected.Manager
 }
@@ -49,9 +50,9 @@ func CreateNode(store storage.NodeStorage) (*Node, error) {
 
 	return &Node{
 		server:      server.NewServer(registry, pairManager),
-		services:    registry,
+		Services:    registry,
 		storage:     store,
-		pairManager: pairManager,
+		PairManager: pairManager,
 		discovery:   discoveryManager,
 		connected:   connected.NewManageer(pairManager, discoveryManager.Discoverer),
 		workerState: workerState{},
@@ -59,11 +60,11 @@ func CreateNode(store storage.NodeStorage) (*Node, error) {
 }
 
 func (n *Node) SetDetails(details *device.Details) {
-	n.pairManager.SetDeviceDetails(details)
+	n.PairManager.SetDeviceDetails(details)
 }
 
 func (n *Node) GetDetails() *device.Details {
-	return n.pairManager.GetDeviceDetails()
+	return n.PairManager.GetDeviceDetails()
 }
 
 func (n *Node) GetPort() int {

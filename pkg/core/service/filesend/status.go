@@ -1,6 +1,8 @@
 package filesend
 
-import "alat/pkg/core/device"
+import (
+	"alat/pkg/core/device"
+)
 
 type FileTransfersStatusTransfer struct {
 	FileName string         `json:"fileName" yaml:"fileName"`

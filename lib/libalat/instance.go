@@ -118,5 +118,9 @@ func destroy_instance(handle C.int) {
 func getInstance(handle C.int) *AlatInstance {
 	instancesMutex.Lock()
 	defer instancesMutex.Unlock()
-	return instances[int(handle)]
+	instance := instances[int(handle)]
+	if instance == nil {
+		noSuchInstance(handle)
+	}
+	return instance
 }

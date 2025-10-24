@@ -121,3 +121,16 @@ func (s *Service) SendFile(ctx context.Context, device *connected.Connected, fil
 	s.UpdateOutgoingStatus(senderInfo, status)
 	return nil
 }
+
+func (s *Service) SendFiles(p *connected.Connected, files []string) <-chan error {
+	channel := make(chan error)
+	ctx := context.TODO()
+	go func() {
+		s.AddPendingTransfers(&p.Info, files)
+		for _, file := range files {
+			channel <- s.SendFile(ctx, p, file)
+		}
+		close(channel)
+	}()
+	return channel
+}
