@@ -341,3 +341,48 @@ class FileTransfersStatus {
       _$FileTransfersStatusFromJson(json);
   Map<String, dynamic> toJson() => _$FileTransfersStatusToJson(this);
 }
+
+@JsonSerializable()
+class SharedFile {
+  @JsonKey(name: 'uuid')
+  String uuid;
+  @JsonKey(name: 'path')
+  String path;
+  @JsonKey(name: 'name')
+  String name;
+  @JsonKey(name: 'size')
+  int size;
+  SharedFile({
+    required this.uuid,
+    required this.path,
+    required this.name,
+    required this.size,
+  });
+  factory SharedFile.fromJson(Map<String, dynamic> json) =>
+      _$SharedFileFromJson(json);
+  Map<String, dynamic> toJson() => _$SharedFileToJson(this);
+}
+
+@JsonSerializable()
+class WebshareStatus {
+  @JsonKey(name: 'running')
+  bool running;
+  @JsonKey(name: 'port')
+  int port;
+  @JsonKey(name: 'passcode')
+  String passcode;
+  @JsonKey(name: 'sharedFiles')
+  List<SharedFile> sharedFiles;
+  @JsonKey(name: 'shareURLs')
+  List<String> shareURLs;
+  WebshareStatus({
+    required this.running,
+    required this.port,
+    required this.passcode,
+    required this.sharedFiles,
+    required this.shareURLs,
+  });
+  factory WebshareStatus.fromJson(Map<String, dynamic> json) =>
+      _$WebshareStatusFromJson(json);
+  Map<String, dynamic> toJson() => _$WebshareStatusToJson(this);
+}

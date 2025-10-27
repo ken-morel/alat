@@ -3,11 +3,11 @@ package webshare
 import "fmt"
 
 type Status struct {
-	IsRunning   bool         `json:"isRunning"`
+	Running     bool         `json:"running"`
 	Port        int          `json:"port"`
 	Passcode    string       `json:"passcode"`
 	SharedFiles []SharedFile `json:"sharedFiles"`
-	ShareURL    string       `json:"shareURL"`
+	ShareURLs   []string     `json:"shareURLs"`
 }
 
 func (s *Service) GetStatus() *Status {
@@ -19,10 +19,10 @@ func (s *Service) GetStatus() *Status {
 	}
 
 	return &Status{
-		IsRunning:   s.IsRunning(),
+		Running:     s.IsRunning(),
 		Port:        port,
 		Passcode:    s.GetPasscode(),
 		SharedFiles: s.GetSharedFiles(),
-		ShareURL:    url,
+		ShareURLs:   []string{url},
 	}
 }

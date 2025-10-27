@@ -16,9 +16,9 @@ func wehsbare_get_status_json(handle C.int) *C.char {
 }
 
 //export webshare_add_shared_files
-func webshare_add_shared_files(handle C.int, file *C.char) C.int {
+func webshare_add_shared_files(handle C.int, filesC *C.char) C.int {
 	if instance := getInstance(handle); instance != nil {
-		filePathsCombo := C.GoString(file)
+		filePathsCombo := C.GoString(filesC)
 		files := strings.Split(filePathsCombo, ";")
 		err := instance.node.Services.WebShare.AddSharedFiles(files)
 		if err != nil {
@@ -88,28 +88,6 @@ func webshare_set_passcode(handle C.int, passcodeC *C.char) C.int {
 	if instance := getInstance(handle); instance != nil {
 		instance.node.Services.WebShare.SetPasscode(C.GoString(passcodeC))
 		return 0
-	} else {
-		return -1
-	}
-}
-
-//export webshare_get_port
-func webshare_get_port(handle C.int) C.int {
-	if instance := getInstance(handle); instance != nil {
-		return C.int(instance.node.Services.WebShare.GetPort())
-	} else {
-		return -1
-	}
-}
-
-//export webshare_is_running
-func webshare_is_running(handle C.int) C.int {
-	if instance := getInstance(handle); instance != nil {
-		if instance.node.Services.WebShare.IsRunning() {
-			return 1
-		} else {
-			return 0
-		}
 	} else {
 		return -1
 	}
