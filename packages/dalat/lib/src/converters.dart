@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:dalat/dalat.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 typedef DeviceType = String;

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 
 class FilesSelectionComponent extends StatefulWidget {
-  final Future<void> Function(List<PlatformFile>) onSubmit;
-  const FilesSelectionComponent({super.key, required this.onSubmit});
+  final Future<void> Function(List<PlatformFile>) onChange;
+  const FilesSelectionComponent({super.key, required this.onChange});
   @override
   State<StatefulWidget> createState() => _FilesSelectionComponentState();
 }
@@ -47,6 +47,7 @@ class _FilesSelectionComponentState extends State<FilesSelectionComponent> {
                                   setState(() {
                                     selectedFiles.remove(file);
                                   });
+                                  widget.onChange(selectedFiles);
                                 },
                                 icon: Icon(Icons.cancel_rounded),
                               ),
@@ -87,32 +88,7 @@ class _FilesSelectionComponentState extends State<FilesSelectionComponent> {
               color: Theme.of(context).colorScheme.error,
             ),
           ),
-        Divider(),
-        Padding(
-          padding: EdgeInsetsGeometry.symmetric(horizontal: 15, vertical: 10),
-          child: SizedBox(
-            width: double.infinity,
-            child: FilledButton(
-              onPressed: () {
-                () async {
-                  try {
-                    widget.onSubmit(selectedFiles);
-                    setState(() {
-                      error = null;
-                      selectedFiles.removeWhere((_) => true);
-                      Navigator.of(context).pop();
-                    });
-                  } catch (e) {
-                    setState(() {
-                      error = e.toString();
-                    });
-                  }
-                }();
-              },
-              child: Text("Send files"),
-            ),
-          ),
-        ),
+
         SizedBox(height: 5),
       ],
     );

@@ -3,7 +3,6 @@ import 'dart:ffi';
 import 'dart:isolate';
 
 import 'package:dalat/dalat.dart';
-import 'package:dalat/src/config.dart';
 import 'package:dalat/src/helpers.dart';
 import 'package:dalat/src/webshare.dart';
 import 'package:ffi/ffi.dart';

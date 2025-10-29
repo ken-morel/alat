@@ -48,7 +48,7 @@ class AppState extends ChangeNotifier {
   }
 
   static dalat.AppConfig createAppConfig() {
-    final config = dalat.AlatInstance.createAppConfig();
+    final config = dalat.InstanceConfig.createAppConfig();
     config.deviceType = dalat.deviceTypeMobile;
     if (Platform.isLinux || Platform.isMacOS || Platform.isWindows) {
       config.deviceType = dalat.deviceTypeDesktop;
@@ -57,7 +57,7 @@ class AppState extends ChangeNotifier {
   }
 
   static Future<dalat.ServiceConfig> createServiceConfig() async {
-    final config = dalat.AlatInstance.createServiceConfig();
+    final config = dalat.InstanceConfig.createServiceConfig();
     config.fileSend.saveFolder =
         ((await getDownloadsDirectory()) ?? Directory(".")).path;
     return config;

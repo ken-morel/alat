@@ -1,4 +1,5 @@
 import 'package:alat/components/pairing_dialog.dart';
+import 'package:alat/pages/dashboard/devicefilesend.dart';
 import 'package:alat/pages/dashboard/pair.dart';
 import 'package:alat/state.dart';
 import 'package:flutter/material.dart';
@@ -53,6 +54,8 @@ class AlatApplication extends StatelessWidget {
                   return MaterialPageRoute(
                     builder: (_) => SetupAssistantPageView(),
                   );
+                case '/sendfiles':
+                  return MaterialPageRoute(builder: (_) => SendFilesPage());
                 default:
                   return MaterialPageRoute(builder: (_) => const StartPage());
               }
