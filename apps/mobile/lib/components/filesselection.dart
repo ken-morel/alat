@@ -70,6 +70,7 @@ class _FilesSelectionComponentState extends State<FilesSelectionComponent> {
                             setState(() {
                               selectedFiles.addAll(files.files);
                             });
+                            widget.onChange(selectedFiles);
                           },
                         );
                       },

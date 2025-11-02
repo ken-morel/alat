@@ -13,7 +13,7 @@ class SendFilesPage extends DashboardBase {
   });
   @override
   AppBar buildAppBar(BuildContext context) {
-    return AppBar(leading: BackButton(), title: Text("Select files"));
+    return AppBar(title: Text("Send files"));
   }
 
   @override

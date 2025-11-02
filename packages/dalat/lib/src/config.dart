@@ -6,11 +6,11 @@ import 'package:dalat/src/bindings.dart';
 import 'package:ffi/ffi.dart';
 
 mixin InstanceConfig {
-  Future<void> _jsonSetterHelper(
-    Map<String, dynamic> jsonData,
+  Future<void> jsonSetterHelper(
+    dynamic jsonData,
     int Function(int, Pointer<Char>) ffiFunc,
   );
-  Future<T> _jsonHelper<T>(
+  Future<T> jsonGetterHelper<T>(
     Pointer<Char> Function(int) ffiFunc,
     T Function(Map<String, dynamic>) fromJson,
   );
@@ -46,25 +46,24 @@ mixin InstanceConfig {
   int get handle;
 
   Future<AppConfig> getAppConfig() async {
-    return _jsonHelper(bindings.get_app_config_json, AppConfig.fromJson);
+    return jsonGetterHelper(bindings.get_app_config_json, AppConfig.fromJson);
   }
 
   Future<void> setAppConfig(AppConfig settings) async {
-    return _jsonSetterHelper(settings.toJson(), bindings.set_app_config_json);
+    return jsonSetterHelper(settings.toJson(), bindings.set_app_config_json);
   }
 
   Future<ServiceConfig> getServiceConfig() {
-    return _jsonHelper(
+    return jsonGetterHelper(
       bindings.get_service_config_json,
       ServiceConfig.fromJson,
     );
   }
 
   Future<void> setServiceConfig(ServiceConfig settings) {
-    return _jsonSetterHelper(
+    return jsonSetterHelper(
       settings.toJson(),
       bindings.set_service_config_json,
     );
   }
 }
-

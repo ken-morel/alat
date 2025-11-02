@@ -68,6 +68,13 @@ class DashboardBase extends StatelessWidget {
               routeName: "/dashboard/pair",
             ),
             const Divider(),
+            _buildDrawerItem(
+              context,
+              icon: Icons.file_copy_rounded,
+              label: "Send files",
+              routeName: "/sendfiles",
+            ),
+            const Divider(),
             const ThemeSwitcher(),
           ],
         ),
