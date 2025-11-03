@@ -9,6 +9,7 @@ class ShareHandlerPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    /*
     final appState = context.watch<AppState>();
     final sharedFiles = appState.sharedFiles.value;
 
@@ -60,6 +61,17 @@ class ShareHandlerPage extends StatelessWidget {
                 ),
               ],
             ),
+    );
+    */
+
+    // The share feature has been disabled.
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Share Files (Disabled)'),
+      ),
+      body: const Center(
+        child: Text('This feature is currently disabled.'),
+      ),
     );
   }
 }

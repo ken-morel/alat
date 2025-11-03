@@ -20,7 +20,11 @@ void main() async {
     notificationService: notificationService,
     transferNotificationService: transferNotificationService,
   );
-  await appState.initialize();
+  try {
+    await appState.initialize();
+  } catch (e) {
+    print("Error initializing application: $e");
+  }
 
   runApp(
     ChangeNotifierProvider.value(

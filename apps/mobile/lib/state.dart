@@ -6,7 +6,7 @@ import 'package:dalat/dalat.dart' as dalat;
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:receive_sharing_intent/receive_sharing_intent.dart';
+/* import 'package:receive_sharing_intent/receive_sharing_intent.dart'; */
 
 import 'services/notification_service.dart';
 
@@ -31,7 +31,7 @@ class AppState extends ChangeNotifier {
   final ValueNotifier<PairRequestState?> pendingPairRequest = ValueNotifier(
     null,
   );
-  final ValueNotifier<List<String>> sharedFiles = ValueNotifier([]);
+  /* final ValueNotifier<List<String>> sharedFiles = ValueNotifier([]); */
 
   AppState({
     required this.notificationService,
@@ -100,6 +100,7 @@ class AppState extends ChangeNotifier {
     }
     _serviceSettings = await _alatInstance!.getServiceConfig();
 
+    /*
     // Listen for incoming shared files
     ReceiveSharingIntent.instance.getMediaStream().listen((List<SharedMediaFile> value) {
       sharedFiles.value = value.map((f) => f.path).toList();
@@ -114,6 +115,7 @@ class AppState extends ChangeNotifier {
         notifyListeners();
       }
     });
+    */
 
     notifyListeners();
     return _appSettings!.setupComplete;

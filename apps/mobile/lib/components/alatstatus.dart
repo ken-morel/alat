@@ -25,6 +25,8 @@ class AlatStatusWidget extends StatelessWidget {
     final theme = Theme.of(context);
     final okay =
         status.discoveryRunning && status.serverRunning && status.workerRunning;
+    final bool anyRunning =
+        status.discoveryRunning || status.serverRunning || status.workerRunning;
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -91,6 +93,16 @@ class AlatStatusWidget extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+              FilledButton.tonal(
+                onPressed: () {
+                  if (anyRunning) {
+                    node.stop();
+                  } else {
+                    node.start();
+                  }
+                },
+                child: Text(anyRunning ? "Stop" : "Start"),
               ),
             ],
           ),

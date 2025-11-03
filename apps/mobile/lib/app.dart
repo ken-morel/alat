@@ -35,9 +35,9 @@ class AlatApplication extends StatelessWidget {
                 if (!appState.isReady) {
                   return const StartPage(); // Or a loading indicator
                 }
-                if (appState.sharedFiles.value.isNotEmpty) {
+                /* if (appState.sharedFiles.value.isNotEmpty) {
                   return const ShareHandlerPage();
-                } else if (appState.settings?.setupComplete ?? false) {
+                } else */ if (appState.settings?.setupComplete ?? false) {
                   return const DashboardPage();
                 } else {
                   return SetupAssistantPageView();
