@@ -52,6 +52,6 @@ mixin InstanceWebShare on InstanceHelpers {
   }
 
   Future<void> startWebshare() {
-    return helper(bindings.webshare_stop);
+    return helper(bindings.webshare_start);
   }
 }

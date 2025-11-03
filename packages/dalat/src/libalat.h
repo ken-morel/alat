@@ -128,15 +128,13 @@ extern char* get_alat_device_colors_json(void);
 extern char* query_connected_device_sysinfo(int handle, char* deviceIDC);
 extern char* get_sysinfo(int handle);
 extern char* wehsbare_get_status_json(int handle);
-extern int webshare_add_shared_files(int handle, char* file);
+extern int webshare_add_shared_files(int handle, char* filesC);
 extern int webshare_remove_shared_files_by_uuids(int handle, char* filesC);
 extern int webshare_remove_shared_files_by_paths(int handle, char* filesC);
 extern int webshare_clear_shared_files(int handle);
 extern char* webshare_get_shared_files_json(int handle);
 extern char* webshare_get_passcode(int handle);
 extern int webshare_set_passcode(int handle, char* passcodeC);
-extern int webshare_get_port(int handle);
-extern int webshare_is_running(int handle);
 extern int webshare_start(int handle);
 extern int webshare_stop(int handle);
 

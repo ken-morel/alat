@@ -74,6 +74,12 @@ class DashboardBase extends StatelessWidget {
               label: "Send files",
               routeName: "/sendfiles",
             ),
+            _buildDrawerItem(
+              context,
+              icon: Icons.open_in_browser_rounded,
+              label: "Web share",
+              routeName: "/webshare",
+            ),
             const Divider(),
             const ThemeSwitcher(),
           ],

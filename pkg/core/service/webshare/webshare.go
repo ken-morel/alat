@@ -218,7 +218,6 @@ func (s *Service) Start() (int, error) {
 
 	go func() {
 		if err := s.server.Serve(s.listener); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			fmt.Printf("Webshare server error: %v\n", err)
 			s.runningLock.Lock()
 			s.running = false
 			s.runningLock.Unlock()

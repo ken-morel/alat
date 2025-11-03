@@ -41,7 +41,7 @@ mixin InstanceHelpers {
 
   Future<void> helper(int Function(int) ffiFunc) async {
     final result = ffiFunc(handle);
-    if (result != 0) {
+    if (result < 0) {
       throw Exception(
         'Failed to set data in Go core. Code: $result ${getAlatError()}',
       );
@@ -82,7 +82,7 @@ mixin InstanceHelpers {
     final jsonStrC = data.toNativeUtf8();
     try {
       final result = ffiFunc(handle, jsonStrC.cast());
-      if (result != 0) {
+      if (result < 0) {
         throw Exception(
           'Failed to set data in Go core. Code: $result ${getAlatError()}',
         );

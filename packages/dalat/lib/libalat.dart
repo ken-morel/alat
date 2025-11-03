@@ -2041,8 +2041,8 @@ class AlatBindings {
   late final _wehsbare_get_status_json = _wehsbare_get_status_jsonPtr
       .asFunction<ffi.Pointer<ffi.Char> Function(int)>();
 
-  int webshare_add_shared_files(int handle, ffi.Pointer<ffi.Char> file) {
-    return _webshare_add_shared_files(handle, file);
+  int webshare_add_shared_files(int handle, ffi.Pointer<ffi.Char> filesC) {
+    return _webshare_add_shared_files(handle, filesC);
   }
 
   late final _webshare_add_shared_filesPtr =
@@ -2126,28 +2126,6 @@ class AlatBindings {
       >('webshare_set_passcode');
   late final _webshare_set_passcode = _webshare_set_passcodePtr
       .asFunction<int Function(int, ffi.Pointer<ffi.Char>)>();
-
-  int webshare_get_port(int handle) {
-    return _webshare_get_port(handle);
-  }
-
-  late final _webshare_get_portPtr =
-      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Int)>>(
-        'webshare_get_port',
-      );
-  late final _webshare_get_port = _webshare_get_portPtr
-      .asFunction<int Function(int)>();
-
-  int webshare_is_running(int handle) {
-    return _webshare_is_running(handle);
-  }
-
-  late final _webshare_is_runningPtr =
-      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Int)>>(
-        'webshare_is_running',
-      );
-  late final _webshare_is_running = _webshare_is_runningPtr
-      .asFunction<int Function(int)>();
 
   int webshare_start(int handle) {
     return _webshare_start(handle);

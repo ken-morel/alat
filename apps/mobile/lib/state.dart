@@ -5,6 +5,7 @@ import 'package:alat/services/transfer_notification_service.dart';
 import 'package:dalat/dalat.dart' as dalat;
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:file_picker/file_picker.dart';
 
 import 'services/notification_service.dart';
 
@@ -19,10 +20,12 @@ class AppState extends ChangeNotifier {
   final NotificationService notificationService;
   final TransferNotificationService transferNotificationService;
   Timer? _transferStatusTimer;
+  Timer? _webShareStatusTimer;
 
   dalat.AlatInstance? _alatInstance;
   dalat.AppConfig? _appSettings;
   dalat.ServiceConfig? _serviceSettings;
+  dalat.WebshareStatus? _webShareStatus;
 
   final ValueNotifier<PairRequestState?> pendingPairRequest = ValueNotifier(
     null,
@@ -36,6 +39,7 @@ class AppState extends ChangeNotifier {
   dalat.AlatInstance? get node => _alatInstance;
   dalat.AppConfig? get settings => _appSettings;
   dalat.ServiceConfig? get serviceSettings => _serviceSettings;
+  dalat.WebshareStatus? get webShareStatus => _webShareStatus;
 
   bool get isReady => _alatInstance != null && _appSettings != null;
 
@@ -89,6 +93,7 @@ class AppState extends ChangeNotifier {
     if (_appSettings!.setupComplete) {
       _alatInstance!.start();
       _startTransferStatusUpdates();
+      _startWebShareStatusUpdates();
       _alatInstance!.registerPairRequestHandler(pairRequestHandler);
     }
     _serviceSettings = await _alatInstance!.getServiceConfig();
@@ -106,6 +111,7 @@ class AppState extends ChangeNotifier {
     _alatInstance!.start();
     _alatInstance!.registerPairRequestHandler(pairRequestHandler);
     _startTransferStatusUpdates();
+    _startWebShareStatusUpdates();
     notifyListeners();
   }
 
@@ -131,9 +137,58 @@ class AppState extends ChangeNotifier {
     });
   }
 
+  void _startWebShareStatusUpdates() {
+    _webShareStatusTimer?.cancel();
+    _webShareStatusTimer = Timer.periodic(const Duration(seconds: 1), (
+      timer,
+    ) async {
+      await _updateWebShareStatus();
+    });
+  }
+
+  Future<void> _updateWebShareStatus() async {
+    _webShareStatus = await _alatInstance?.getWebshareStatus();
+    notifyListeners();
+  }
+
+  Future<void> webShareStart() async {
+    await _alatInstance?.startWebshare();
+    await _updateWebShareStatus();
+  }
+
+  Future<void> webShareStop() async {
+    await _alatInstance?.stopWebshare();
+    await _updateWebShareStatus();
+  }
+
+  Future<void> webShareSetPasscode(String passcode) async {
+    await _alatInstance?.setWebsharePasscode(passcode);
+    await _updateWebShareStatus();
+  }
+
+  Future<void> webShareAddFiles() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true);
+    if (result != null) {
+      List<String> filePaths = result.files.map((file) => file.path!).toList();
+      await _alatInstance?.addSharedFiles(filePaths);
+      await _updateWebShareStatus();
+    }
+  }
+
+  Future<void> webShareRemoveFile(String uuid) async {
+    await _alatInstance?.removeSharedFilesByUUIDs([uuid]);
+    await _updateWebShareStatus();
+  }
+
+  Future<void> webShareClearFiles() async {
+    await _alatInstance?.clearSharedFiles();
+    await _updateWebShareStatus();
+  }
+
   @override
   void dispose() {
     _transferStatusTimer?.cancel();
+    _webShareStatusTimer?.cancel();
     _alatInstance?.dispose();
     super.dispose();
   }
