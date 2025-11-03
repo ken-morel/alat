@@ -7,26 +7,32 @@ plugins {
 
 android {
     namespace = "cm.engon.alat.mobile"
-    compileSdk = 34
-
-    kotlin {
-        jvmToolchain(17)
-    }
+    compileSdk = 36
 
     defaultConfig {
-        applicationId = "cm.engon.alat.mobile"
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id).
+        applicationId = "com.example.alat"
         // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
+        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
         minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        targetSdk = 34
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+    }
+
+    compileOptions {
+        isCoreLibraryDesugaringEnabled = true
+    }
+
+
+    kotlin {
+        jvmToolchain(8)
     }
 
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
+            // See https://developer.android.com/studio/publish/app-signing#secure-your-key for more information.
             signingConfig = signingConfigs.getByName("debug")
         }
     }
