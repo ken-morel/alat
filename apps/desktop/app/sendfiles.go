@@ -40,7 +40,7 @@ func (app *App) AskFilesSend() (sendFiles []SendFile, err error) {
 
 func (app *App) ServiceStartSendFilesToDevice(peer connected.Connected, files []string) error {
 	var err error
-	for sendError := range app.node.QuerySendFiles(&peer, files) {
+	for sendError := range app.node.Services.FileSend.SendFiles(&peer, files) {
 		if sendError != nil {
 			err = sendError
 		}
@@ -49,5 +49,5 @@ func (app *App) ServiceStartSendFilesToDevice(peer connected.Connected, files []
 }
 
 func (app *App) ServiceGetFileSendStatus() filesend.FileTransfersStatus {
-	return *app.node.GetFileTransfersStatus()
+	return *app.node.Services.FileSend.GetStatus()
 }

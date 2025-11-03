@@ -20,7 +20,6 @@ void main() async {
     notificationService: notificationService,
     transferNotificationService: transferNotificationService,
   );
-
   await appState.initialize();
 
   runApp(

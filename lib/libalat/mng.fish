@@ -30,6 +30,8 @@ function build-android -a out_dir
     set -l go_archs arm arm64 386 amd64
     set -l jni_archs armeabi-v7a arm64-v8a x86 x86_64
 
+    echo "BUilding libalat for $(count $targets) architectures on api $api with ndk at $ndk_path"
+
     for i in (seq (count $targets))
         set -l target $targets[$i]
         set -l go_arch $go_archs[$i]
@@ -38,19 +40,18 @@ function build-android -a out_dir
         set -l out_path "$out_dir/android/src/main/jniLibs/$jni_arch"
         mkdir -p "$out_path"
 
-        echo "Building for $target -> $out_path"
+        echo "Building libalat for $target \($go_arch, $jni_arch\) -> $out_path"
 
         set -x CC "$toolchain/bin/$target$api-clang"
         set -x CXX "$toolchain/bin/$target$api-clang++"
         set -x GOOS android
         set -x GOARCH $go_arch
         set -x CGO_ENABLED 1
-        set -x CGO_CFLAGS "-fPIC"
+        set -x CGO_CFLAGS -fPIC
 
-        go build -buildmode=c-shared -o "$out_path/libalat.so" .
+        build "$out_path"
     end
 end
-
 
 switch "$argv[1]"
     case build

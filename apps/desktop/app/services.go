@@ -6,5 +6,5 @@ import (
 )
 
 func (app *App) QueryDeviceSysInfo(dev connected.Connected) (*sysinfo.SysInfo, error) {
-	return app.node.QueryDeviceSysInfo(&dev)
+	return app.node.Services.SysInfo.Query(&dev)
 }

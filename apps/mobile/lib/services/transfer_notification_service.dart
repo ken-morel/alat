@@ -31,6 +31,7 @@ class TransferNotificationService {
 
   Future<void> showTransferProgress(dalat.FileTransfersStatus status) async {
     final Set<int> currentProgressIds = {};
+    final Set<int> allCurrentIds = {};
 
     // Combine sending and receiving into a single list for easier processing
     final allDeviceStatuses = [
@@ -49,6 +50,7 @@ class TransferNotificationService {
           deviceStatus.device.id,
           transfer.fileName,
         );
+        allCurrentIds.add(notificationId);
 
         final isFinished =
             transfer.status == 'completed' || transfer.status == 'failed';
@@ -68,6 +70,12 @@ class TransferNotificationService {
                 '$type ${deviceStatus.device.name}: ${transfer.fileName}';
             await _showFinalNotification(notificationId, title, body);
             _shownFinalNotificationIds.add(notificationId);
+
+            // Automatically cancel the final notification after a delay,
+            // but keep it in the "shown" set to prevent reappearance.
+            Future.delayed(const Duration(seconds: 5), () {
+              _flutterLocalNotificationsPlugin.cancel(notificationId);
+            });
           }
         } else {
           // This is an ongoing transfer.
@@ -92,6 +100,10 @@ class TransferNotificationService {
 
     _activeProgressNotificationIds.clear();
     _activeProgressNotificationIds.addAll(currentProgressIds);
+
+    // Clean up the final notification tracking set.
+    // Remove any IDs that are no longer being reported by the backend.
+    _shownFinalNotificationIds.removeWhere((id) => !allCurrentIds.contains(id));
   }
 
   Future<void> _showProgressNotification(

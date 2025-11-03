@@ -1,7 +1,11 @@
 package main
 
 import "C"
-import "sync"
+
+import (
+	"fmt"
+	"sync"
+)
 
 var (
 	_alatErrorLock = &sync.Mutex{}
@@ -14,7 +18,7 @@ func get_error() *C.char {
 	_alatErrorLock.Lock()
 	defer _alatErrorLock.Unlock()
 	if _alatError == nil {
-		message = "Unknown error"
+		message = "unknown error"
 	} else {
 		message = _alatError.Error()
 	}
@@ -25,4 +29,8 @@ func setError(err error) {
 	_alatErrorLock.Lock()
 	_alatError = err
 	_alatErrorLock.Unlock()
+}
+
+func noSuchInstance(handle C.int) {
+	setError(fmt.Errorf("alat instance id %d does not exist", handle))
 }

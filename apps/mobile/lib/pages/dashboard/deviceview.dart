@@ -64,8 +64,7 @@ class DeviceView extends DashboardBase {
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (_) =>
-                          DeviceFileSendPage(connectedDevice: device),
+                      builder: (_) => SendFilesPage(devices: [device]),
                     ),
                   );
                 },

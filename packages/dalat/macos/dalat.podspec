@@ -4,14 +4,14 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'dalat'
-  s.version          = '0.0.1'
-  s.summary          = 'Alat lib dart plugin'
+  s.version          = '0.1.0'
+  s.summary          = 'Alat library dart plugin'
   s.description      = <<-DESC
-Alat lib dart plugin
+Alat library dart plugin
                        DESC
-  s.homepage         = 'http://example.com'
+  s.homepage         = 'https://github.com/ken-morel/alat'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Your Company' => 'email@example.com' }
+  s.author           = { 'Engon Ken Morel' => 'engonken8@gmail.com' }
 
   # This will ensure the source files in Classes/ are included in the native
   # builds of apps using this FFI plugin. Podspec does not support relative

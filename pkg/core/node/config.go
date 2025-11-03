@@ -7,11 +7,12 @@ import (
 )
 
 func (n *Node) SetServiceConfig(conf config.ServiceConfig) error {
-	n.services.UpdateConfig(conf)
+	n.Services.UpdateConfig(conf)
 	return n.storage.SetServiceConfig(conf)
 }
+
 func (n *Node) SetAppConfig(conf config.AppConfig) error {
-	n.pairManager.SetDeviceDetails(&device.Details{
+	n.PairManager.SetDeviceDetails(&device.Details{
 		Color:       conf.DeviceColor,
 		Name:        conf.DeviceName,
 		Type:        conf.DeviceType,
@@ -23,13 +24,15 @@ func (n *Node) SetAppConfig(conf config.AppConfig) error {
 func (n *Node) GetAppConfig() (*config.AppConfig, error) {
 	return n.storage.GetAppConfig()
 }
+
 func (n *Node) GetServiceConfig() (*config.ServiceConfig, error) {
 	return n.storage.GetServiceConfig()
 }
 
 func (n *Node) GetPairedDevices() []device.PairedDevice {
-	return n.pairManager.GetPairedDevices()
+	return n.PairManager.GetPairedDevices()
 }
+
 func (n *Node) GetConnectedDevices() []connected.Connected {
 	return n.connected.GetConnectedDevices()
 }

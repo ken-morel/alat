@@ -1,5 +1,8 @@
 import 'package:alat/components/pairing_dialog.dart';
+import 'package:alat/pages/dashboard/devicefilesend.dart';
 import 'package:alat/pages/dashboard/pair.dart';
+import 'package:alat/pages/dashboard/webshare.dart';
+import 'package:alat/pages/share_handler_page.dart';
 import 'package:alat/state.dart';
 import 'package:flutter/material.dart';
 import 'package:alat/pages/dashboard/dashboard.dart';
@@ -27,7 +30,20 @@ class AlatApplication extends StatelessWidget {
             supportedLocales: AppLocalizations.supportedLocales,
             themeMode: themeProvider.themeMode,
             navigatorKey: navigatorKey, // Assign the global key
-            home: const StartPage(),
+            home: Consumer<AppState>(
+              builder: (context, appState, _) {
+                if (!appState.isReady) {
+                  return const StartPage(); // Or a loading indicator
+                }
+                if (appState.sharedFiles.value.isNotEmpty) {
+                  return const ShareHandlerPage();
+                } else if (appState.settings?.setupComplete ?? false) {
+                  return const DashboardPage();
+                } else {
+                  return SetupAssistantPageView();
+                }
+              },
+            ),
             // Use onGenerateRoute to handle showing the dialog from a notification.
             onGenerateRoute: (settings) {
               if (settings.name == '/pair-request') {
@@ -52,6 +68,18 @@ class AlatApplication extends StatelessWidget {
                 case '/setup':
                   return MaterialPageRoute(
                     builder: (_) => SetupAssistantPageView(),
+                  );
+                case '/sendfiles':
+                  return MaterialPageRoute(
+                    builder: (_) => const SendFilesPage(),
+                  );
+                case '/webshare':
+                  return MaterialPageRoute(
+                    builder: (_) => const WebSharePage(),
+                  );
+                case ShareHandlerPage.routeName:
+                  return MaterialPageRoute(
+                    builder: (_) => const ShareHandlerPage(),
                   );
                 default:
                   return MaterialPageRoute(builder: (_) => const StartPage());

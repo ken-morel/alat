@@ -6,24 +6,34 @@ import 'package:flutter/material.dart';
 import 'package:dalat/dalat.dart' as dalat;
 import 'package:provider/provider.dart';
 
-class FoundDevicesList extends StatefulWidget {
-  final void Function(dalat.FoundDevice) onConnectionUserRequest;
-  const FoundDevicesList({super.key, required this.onConnectionUserRequest});
+class ConnecedDevicesSelection extends StatefulWidget {
+  final void Function(List<dalat.ConnectedDevice>) onChange;
+  final List<dalat.ConnectedDevice> selecedDevices;
+  const ConnecedDevicesSelection({
+    super.key,
+    required this.onChange,
+    this.selecedDevices = const [],
+  });
 
   @override
-  State<FoundDevicesList> createState() => _FoundDeviceListState();
+  State<ConnecedDevicesSelection> createState() =>
+      _ConnectedDeviceSelectionState();
 }
 
-class _FoundDeviceListState extends State<FoundDevicesList> {
-  List<dalat.FoundDevice> _foundDevices = [];
-  Timer? _timer;
+class _ConnectedDeviceSelectionState extends State<ConnecedDevicesSelection> {
   late AppState _appState;
+  late List<dalat.ConnectedDevice> connectedDevices;
+  late List<dalat.ConnectedDevice> choosedDevices;
+  Timer? _timer;
 
   @override
   void initState() {
-    super.initState();
     _appState = context.read<AppState>();
-    _startDeviceDiscovery();
+    connectedDevices = widget.selecedDevices;
+    choosedDevices = connectedDevices;
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) => _fetchDevices());
+    _fetchDevices();
+    super.initState();
   }
 
   @override
@@ -32,32 +42,24 @@ class _FoundDeviceListState extends State<FoundDevicesList> {
     super.dispose();
   }
 
-  void _startDeviceDiscovery() {
-    _fetchDevices();
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) => _fetchDevices());
-  }
-
   Future<void> _fetchDevices() async {
-    final devices = await _appState.node?.getFoundDevices();
+    final devices = await _appState.node?.getConnectedDevices();
     if (devices != null && mounted) {
       setState(() {
-        _foundDevices = devices;
+        connectedDevices = devices;
+        connectedDevices.sort((a, b) {
+          var list = [a.info.id, b.info.id];
+          list.sort();
+          return list[0] == a.info.id ? 1 : -1;
+        });
       });
     }
   }
 
-  IconData _deviceTypeToIcon(dalat.DeviceType type) {
-    switch (type) {
-      case "desktop":
-        return Icons.desktop_windows;
-      case "mobile":
-        return Icons.phone_iphone;
-      default:
-        return Icons.devices_other;
-    }
-  }
-
-  void _showDeviceDetailsSheet(BuildContext context, dalat.FoundDevice device) {
+  void _showDeviceDetailsSheet(
+    BuildContext context,
+    dalat.ConnectedDevice device,
+  ) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -114,24 +116,6 @@ class _FoundDeviceListState extends State<FoundDevicesList> {
                     title: const Text('Port'),
                     subtitle: Text(device.port.toString()),
                   ),
-                  const SizedBox(height: 24),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      OutlinedButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('Cancel'),
-                      ),
-                      const SizedBox(width: 12),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          widget.onConnectionUserRequest(device);
-                        },
-                        child: const Text('Connect'),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ],
@@ -143,9 +127,9 @@ class _FoundDeviceListState extends State<FoundDevicesList> {
 
   @override
   Widget build(BuildContext context) {
-    return _foundDevices.isEmpty
+    return connectedDevices.isEmpty
         ? _buildNoDevicesFound(context)
-        : _buildFoundDevicesList(context);
+        : _buildConnecedDevicesSelection(context);
   }
 
   Widget _buildNoDevicesFound(BuildContext context) {
@@ -155,18 +139,12 @@ class _FoundDeviceListState extends State<FoundDevicesList> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.search, size: 80, color: Colors.grey.shade400),
-            const SizedBox(height: 20),
             Text(
-              "Searching for devices...",
-              style: Theme.of(context).textTheme.headlineSmall,
+              "No connected device",
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(color: Colors.grey),
               textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              "Make sure other devices are on the same Wi-Fi network and have Alat open.",
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(height: 30),
             const CircularProgressIndicator(),
@@ -176,11 +154,11 @@ class _FoundDeviceListState extends State<FoundDevicesList> {
     );
   }
 
-  Widget _buildFoundDevicesList(BuildContext context) {
+  Widget _buildConnecedDevicesSelection(BuildContext context) {
     return ListView.builder(
-      itemCount: _foundDevices.length,
+      itemCount: connectedDevices.length,
       itemBuilder: (BuildContext context, int index) {
-        final device = _foundDevices[index];
+        final device = connectedDevices[index];
         final deviceColor = Color.fromRGBO(
           device.info.color.r,
           device.info.color.g,
@@ -188,15 +166,46 @@ class _FoundDeviceListState extends State<FoundDevicesList> {
           1,
         );
         return Card(
+          color: _isSelected(device)
+              ? Theme.of(context).colorScheme.tertiaryContainer
+              : null,
           margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           child: ListTile(
             leading: CircleAvatar(backgroundColor: deviceColor),
             title: Text(device.info.name),
             subtitle: Text(device.info.type),
-            onTap: () => _showDeviceDetailsSheet(context, device),
+            onLongPress: () => _showDeviceDetailsSheet(context, device),
+            onTap: () =>
+                _isSelected(device) ? _unselect(device) : _select(device),
           ),
         );
       },
     );
+  }
+
+  bool _isSelected(dalat.ConnectedDevice dev) {
+    for (final device in choosedDevices) {
+      if (device.info.id == dev.info.id) return true;
+    }
+    return false;
+  }
+
+  void _select(dalat.ConnectedDevice dev) {
+    if (_isSelected(dev)) return;
+    setState(() {
+      var devs = choosedDevices.map((d) => d).toList();
+      devs.add(dev);
+      choosedDevices = devs;
+    });
+    widget.onChange(choosedDevices);
+  }
+
+  void _unselect(dalat.ConnectedDevice dev) {
+    setState(() {
+      var devs = choosedDevices.map((d) => d).toList();
+      devs.removeWhere((device) => device.info.id == dev.info.id);
+      choosedDevices = devs;
+    });
+    widget.onChange(choosedDevices);
   }
 }

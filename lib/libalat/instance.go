@@ -59,7 +59,7 @@ func create_instance(configPathC *C.char, appConfigC *C.char, serviceConfigC *C.
 
 	node, err := node.CreateNode(store)
 	if err != nil {
-		setError(fmt.Errorf("Error creating node: %v", err))
+		setError(fmt.Errorf("error creating node: %v", err))
 		return -3
 	}
 	instance := &AlatInstance{
@@ -118,5 +118,9 @@ func destroy_instance(handle C.int) {
 func getInstance(handle C.int) *AlatInstance {
 	instancesMutex.Lock()
 	defer instancesMutex.Unlock()
-	return instances[int(handle)]
+	instance := instances[int(handle)]
+	if instance == nil {
+		noSuchInstance(handle)
+	}
+	return instance
 }

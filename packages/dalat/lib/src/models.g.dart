@@ -271,3 +271,40 @@ Map<String, dynamic> _$FileTransfersStatusToJson(
   'sending': instance.sending,
   'receiving': instance.receiving,
 };
+
+SharedFile _$SharedFileFromJson(Map<String, dynamic> json) => SharedFile(
+  uuid: json['uuid'] as String,
+  path: json['path'] as String,
+  name: json['name'] as String,
+  size: (json['size'] as num).toInt(),
+);
+
+Map<String, dynamic> _$SharedFileToJson(SharedFile instance) =>
+    <String, dynamic>{
+      'uuid': instance.uuid,
+      'path': instance.path,
+      'name': instance.name,
+      'size': instance.size,
+    };
+
+WebshareStatus _$WebshareStatusFromJson(Map<String, dynamic> json) =>
+    WebshareStatus(
+      running: json['running'] as bool,
+      port: (json['port'] as num).toInt(),
+      passcode: json['passcode'] as String,
+      sharedFiles: (json['sharedFiles'] as List<dynamic>)
+          .map((e) => SharedFile.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      shareURLs: (json['shareURLs'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+    );
+
+Map<String, dynamic> _$WebshareStatusToJson(WebshareStatus instance) =>
+    <String, dynamic>{
+      'running': instance.running,
+      'port': instance.port,
+      'passcode': instance.passcode,
+      'sharedFiles': instance.sharedFiles,
+      'shareURLs': instance.shareURLs,
+    };

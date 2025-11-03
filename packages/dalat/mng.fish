@@ -1,11 +1,12 @@
 #!/usr/bin/fish
 
 function build-libalat -a platform
-    echo "Building libalat"
     cd ../../lib/libalat
-    if test "$platform" = "android"
+    if test "$platform" = android
+        echo "Building libalat for android"
         ./mng.fish build-android ../../packages/dalat
     else
+        echo "Building libalat for current system"
         ./mng.fish build ../../packages/dalat/src
     end
     cd ../../packages/dalat/
