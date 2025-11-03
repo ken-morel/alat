@@ -6,6 +6,7 @@ import 'package:dalat/dalat.dart' as dalat;
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 import 'services/notification_service.dart';
 
@@ -30,6 +31,7 @@ class AppState extends ChangeNotifier {
   final ValueNotifier<PairRequestState?> pendingPairRequest = ValueNotifier(
     null,
   );
+  final ValueNotifier<List<String>> sharedFiles = ValueNotifier([]);
 
   AppState({
     required this.notificationService,
@@ -97,6 +99,21 @@ class AppState extends ChangeNotifier {
       _alatInstance!.registerPairRequestHandler(pairRequestHandler);
     }
     _serviceSettings = await _alatInstance!.getServiceConfig();
+
+    // Listen for incoming shared files
+    ReceiveSharingIntent.instance.getMediaStream().listen((List<SharedMediaFile> value) {
+      sharedFiles.value = value.map((f) => f.path).toList();
+      notifyListeners();
+    }, onError: (err) {
+      print("getMediaStream error: $err");
+    });
+
+    ReceiveSharingIntent.instance.getInitialMedia().then((List<SharedMediaFile> value) {
+      if (value.isNotEmpty) {
+        sharedFiles.value = value.map((f) => f.path).toList();
+        notifyListeners();
+      }
+    });
 
     notifyListeners();
     return _appSettings!.setupComplete;
@@ -167,7 +184,9 @@ class AppState extends ChangeNotifier {
   }
 
   Future<void> webShareAddFiles() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true);
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+    );
     if (result != null) {
       List<String> filePaths = result.files.map((file) => file.path!).toList();
       await _alatInstance?.addSharedFiles(filePaths);
