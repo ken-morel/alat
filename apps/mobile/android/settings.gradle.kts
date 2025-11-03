@@ -24,9 +24,3 @@ plugins {
 }
 
 include(":app")
-
-jvmToolchainManagement {
-    repositories {
-        foojay() // Allows Gradle to download JDKs
-    }
-}
