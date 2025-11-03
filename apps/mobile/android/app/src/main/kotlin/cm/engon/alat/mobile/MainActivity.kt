@@ -1,4 +1,4 @@
-package cm.engon.alat.alat
+package cm.engon.alat.mobile
 
 import io.flutter.embedding.android.FlutterActivity
 

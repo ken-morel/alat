@@ -1,63 +1,48 @@
-# Alat
+# Alat: Your Devices, Unified.
 
-**Alat: Your devices, unified.**
+<p align="center">
+  <img src="./logo.png" alt="Alat Logo" width="200"/>
+</p>
 
-Alat is a cross-platform application that enables seamless communication and service sharing between your devices. It allows you to create a unified workspace where you can easily share files, receive notifications, and control your devices from a single place.
+**Alat is a powerful, cross-platform tool that creates a seamless bridge between all your devices.** Inspired by the functionality of KDE Connect, Alat is built from the ground up to be a modern, fast, and intuitive way to make your digital life more connected.
 
-## Features
+Whether you're at your desktop or on the go with your phone, Alat allows your devices to talk to each other, share information, and work together as one.
 
-*   **Cross-Platform**: Alat is available for desktop (Windows, macOS, Linux) and mobile (Android, iOS) devices.
-*   **P2P Communication**: Devices communicate directly with each other using a secure peer-to-peer connection.
-*   **Service Sharing**: Share files, clipboard content, and more between your devices.
-*   **Extensible**: The modular architecture allows for the addition of new services and features.
+## What Can Alat Do For You?
 
-## Applications
+Alat is more than just a utility; it's a suite of services designed to streamline your workflow. As the project evolves, more services will be added, but here's what you can do right now:
 
-### Mobile Application
+*   **Send Files Instantly**: Quickly send files from your phone to your PC or from your laptop to your tablet. Alat handles the transfer seamlessly over your local network, no cloud storage required.
 
-The mobile application is built with Flutter and provides a user-friendly interface for managing your devices and services on the go. It interacts with the Alat core through the `dalat` Dart FFI plugin.
+*   **Share with Anyone (WebShare)**: Need to share a file with someone who doesn't have Alat? The WebShare service starts a mini web server on your device. Just give someone the link and a passcode, and they can download files from—or upload files to—your device directly through their web browser. It's perfect for quick, secure sharing with friends or colleagues on the same network.
 
-### Desktop Application
+*   **Cross-Platform Native Experience**: Alat is designed to feel at home on every operating system. It provides a native desktop application for Windows, macOS, and Linux, and a fluid mobile app for Android and iOS.
 
-The desktop application is built with Wails, using Go for the backend and SvelteKit for the frontend. It provides a rich user experience with access to all of Alat's features.
+*   **OS Integration**: On mobile, Alat integrates directly into the Android share sheet. This means you can share files from any app directly to Alat, choosing whether to send them to another device or add them to a WebShare session.
 
-## Alat Core
+## How Does It Work?
 
-The core of Alat is a Go module that contains the P2P runtime, services, and business logic. It is completely platform-agnostic and can be embedded in any application.
+Alat works its magic by creating a secure peer-to-peer (P2P) network between your devices. When you install Alat on your phone and your computer, they automatically discover each other on your local Wi-Fi network. After a simple one-time pairing process to ensure security, your devices are connected.
 
-### `libalat` Shared Library
+There's no central server and your data never leaves your local network, ensuring your privacy and security.
 
-`libalat` is a C-style shared library that wraps the Alat core, making it accessible from other languages. It uses an opaque pointer pattern to provide a high-level, stateful API.
+## The Evolution of Alat
 
-### `dalat` Dart FFI Bindings
+Alat is a project in active development, constantly growing and improving. The goal is to build a comprehensive and indispensable tool for multi-device workflows. Here’s a glimpse of the journey so far:
 
-`dalat` is a Dart FFI plugin that consumes the `libalat` shared library. It provides a clean, idiomatic Dart API for Flutter applications to use, hiding all the FFI complexity.
+*   **Foundation**: Established the core P2P communication layer using gRPC and a robust service-based architecture in Go.
+*   **File Sharing**: Implemented the initial `FileSend` service, allowing direct device-to-device transfers.
+*   **WebShare Service**: Introduced a powerful new way to share files with non-Alat devices via a web browser, complete with passcode protection and a modern UI.
+*   **Mobile Integration**: Made Alat a native share target on Android, allowing any app to share files directly into the Alat ecosystem.
+*   **UI/UX Refinements**: Continuously improving the user experience on both desktop and mobile, with a focus on intuitive design and native feel.
 
-## How It Works
+Future development will focus on adding more services (like clipboard sharing, notification sync, and remote control) and further refining the user experience across all platforms.
 
-Alat operates on a peer-to-peer model where each device on the network acts as both a client and a server. This enables direct communication and service sharing without relying on a central server.
+## Getting Started
 
-### 1. Discovery
+To get started with Alat, you can build the applications from the source code.
 
--   **mDNS**: When you start Alat on a device, it broadcasts its presence on the local network using multicast DNS (mDNS).
--   **Service Publishing**: Each Alat instance publishes a service with its device name, IP address, and port number.
--   **Listening**: Alat also listens for other devices publishing the same service, automatically discovering peers on the network.
-
-### 2. Communication
-
--   **gRPC**: Once a device is discovered, a secure communication channel is established using gRPC, a high-performance RPC framework.
--   **Protocol Buffers**: The API for communication is defined using Protocol Buffers (`.proto` files). This ensures that data is serialized efficiently and that the API contract between devices is consistent.
--   **Pairing**: The first connection requires pairing to ensure that only trusted devices can connect to each other.
-
-### 3. Services
-
--   **Modular Architecture**: Alat's functionality is built around a modular, service-based architecture. Each feature, like file sharing or system information, is implemented as a separate service.
--   **Service Registry**: The core of Alat includes a service registry that manages all available services.
--   **Extensibility**: This design makes it easy to add new features and services to Alat without modifying the core communication logic.
-
-## Building from Source
-
-To build Alat from source, you will need the following prerequisites:
+### Prerequisites
 
 *   Go 1.21+
 *   Wails CLI
@@ -65,57 +50,13 @@ To build Alat from source, you will need the following prerequisites:
 *   Fish shell
 *   Protobuf compiler (`protoc`)
 
-### Building Everything
+### Building the Apps
 
-The `mng.fish` script in the root of the project can be used to build everything.
-
-```bash
-# From the root directory:
-
-# 1. Generate Go and Dart code from .proto files
-./mng.fish proto
-
-# 2. Build the `libalat` shared library and the `dalat` Dart package
-./mng.fish dalat make
-
-# 3. Build the desktop app
-./mng.fish desktop build
-```
-
-### Building for Mobile
-
-To work on the mobile app, you must first build the Go library and generate the Dart bindings.
-
-```bash
-# From the `packages/dalat` directory:
-
-# 1. Build the Go library and generate the C header and Dart bindings
-./mng.fish make
-```
-
-This command will:
-
-1.  Build the `libalat` shared library.
-2.  Generate the Dart FFI bindings from the C header.
-3.  Generate the JSON serialization models.
-
-Once the `dalat` plugin is built, you can run the mobile app like any standard Flutter project.
-
-```bash
-# From the `apps/mobile` directory:
-flutter run
-```
-
-### Building for Desktop
-
-```bash
-# From the `apps/desktop` directory:
-./mng.fish dev
-```
+For detailed instructions on how to build the desktop and mobile applications, please refer to the [**Building from Source**](GEMINI.md#building-and-running) section in our technical documentation.
 
 ## Contributing
 
-Contributions are welcome! Please read the [development conventions](GEMINI.md#development-conventions) for more information.
+Alat is an open-source project, and contributions are always welcome! Whether it's by reporting a bug, suggesting a new feature, or writing code, you can help make Alat better. Please read the [development conventions](GEMINI.md#development-conventions) to get started.
 
 ## License
 

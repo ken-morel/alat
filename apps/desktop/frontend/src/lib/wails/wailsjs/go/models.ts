@@ -435,11 +435,11 @@ export namespace webshare {
 	    }
 	}
 	export class Status {
-	    isRunning: boolean;
+	    running: boolean;
 	    port: number;
 	    passcode: string;
 	    sharedFiles: SharedFile[];
-	    shareURL: string;
+	    shareURLs: string[];
 	
 	    static createFrom(source: any = {}) {
 	        return new Status(source);
@@ -447,11 +447,11 @@ export namespace webshare {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.isRunning = source["isRunning"];
+	        this.running = source["running"];
 	        this.port = source["port"];
 	        this.passcode = source["passcode"];
 	        this.sharedFiles = this.convertValues(source["sharedFiles"], SharedFile);
-	        this.shareURL = source["shareURL"];
+	        this.shareURLs = source["shareURLs"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
