@@ -92,13 +92,17 @@ class AppState extends ChangeNotifier {
     }
 
     _appSettings = await _alatInstance!.getAppConfig();
+
+    _serviceSettings = await _alatInstance!.getServiceConfig();
+
+    notifyListeners();
+
     if (_appSettings!.setupComplete) {
       _alatInstance!.start();
       _startTransferStatusUpdates();
       _startWebShareStatusUpdates();
       _alatInstance!.registerPairRequestHandler(pairRequestHandler);
     }
-    _serviceSettings = await _alatInstance!.getServiceConfig();
 
     /*
     // Listen for incoming shared files
@@ -117,7 +121,6 @@ class AppState extends ChangeNotifier {
     });
     */
 
-    notifyListeners();
     return _appSettings!.setupComplete;
   }
 

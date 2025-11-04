@@ -54,6 +54,12 @@ class StartPage extends StatelessWidget {
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                   ),
+                  FilledButton.tonal(
+                    onPressed: () => Navigator.of(
+                      context,
+                    ).pushReplacementNamed("/dashboard"),
+                    child: Text("Continue"),
+                  ),
                 ],
               );
             }
