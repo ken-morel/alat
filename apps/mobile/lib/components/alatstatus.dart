@@ -22,7 +22,11 @@ class _AlatStatusWidgetState extends State<AlatStatusWidget> {
   @override
   void initState() {
     appState = context.read();
-    timer = Timer.periodic(Duration(seconds: 1), (_) async => _fetchStatus());
+    timer = Timer.periodic(
+      Duration(milliseconds: 200),
+      (_) async => _fetchStatus(),
+    );
+    _fetchStatus();
     super.initState();
   }
 
@@ -149,5 +153,11 @@ class _AlatStatusWidgetState extends State<AlatStatusWidget> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 }
