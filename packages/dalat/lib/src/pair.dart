@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:ffi';
-import 'dart:isolate';
 
 import 'package:dalat/dalat.dart';
 import 'package:dalat/src/bindings.dart';
@@ -37,33 +36,28 @@ mixin InstancePair on InstanceHelpers {
     pairRequestHandlers.remove(handle);
   }
 
-  Future<RequestPairResponse> requestPair(String deviceId) {
-    return Isolate.run(() {
-      final deviceIdC = deviceId.toNativeUtf8();
-      try {
-        final ptr = bindings.request_pair_found_device(
-          handle,
-          deviceIdC.cast(),
+  Future<RequestPairResponse> requestPair(String deviceId) async {
+    final deviceIdC = deviceId.toNativeUtf8();
+    try {
+      final ptr = bindings.request_pair_found_device(handle, deviceIdC.cast());
+      if (ptr == nullptr) {
+        return RequestPairResponse(
+          status: -1,
+          error: "Alat sent no reponse",
+          accepted: false,
+          reason: "Could not query device",
         );
-        if (ptr == nullptr) {
-          return RequestPairResponse(
-            status: -1,
-            error: "Alat sent no reponse",
-            accepted: false,
-            reason: "Could not query device",
-          );
-        } else {
-          try {
-            final result = ptr.cast<Utf8>().toDartString();
-            return RequestPairResponse.fromJson(jsonDecode(result));
-          } finally {
-            bindings.free_string(ptr);
-          }
+      } else {
+        try {
+          final result = ptr.cast<Utf8>().toDartString();
+          return RequestPairResponse.fromJson(jsonDecode(result));
+        } finally {
+          bindings.free_string(ptr);
         }
-      } finally {
-        malloc.free(deviceIdC);
       }
-    });
+    } finally {
+      malloc.free(deviceIdC);
+    }
   }
 
   Future<List<FoundDevice>> getFoundDevices() {

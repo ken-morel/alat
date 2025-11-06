@@ -1,4 +1,3 @@
-import 'dart:isolate';
 import 'dart:async';
 
 import 'package:alat/state.dart';
@@ -78,6 +77,19 @@ class _AlatStatusWidgetState extends State<AlatStatusWidget> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text("Port", style: Theme.of(context).textTheme.headlineSmall),
+
+              Switch(
+                value: anyRunning,
+                onChanged: (val) {
+                  () async {
+                    if (anyRunning) {
+                      node.stop();
+                    } else {
+                      node.start();
+                    }
+                  }();
+                },
+              ),
               Text("Status", style: Theme.of(context).textTheme.headlineSmall),
             ],
           ),
@@ -137,18 +149,6 @@ class _AlatStatusWidgetState extends State<AlatStatusWidget> {
                 ],
               ),
             ],
-          ),
-          FilledButton.tonal(
-            onPressed: () {
-              Isolate.run(() {
-                if (anyRunning) {
-                  node.stop();
-                } else {
-                  node.start();
-                }
-              });
-            },
-            child: Text(anyRunning ? "Stop" : "Start"),
           ),
         ],
       ),

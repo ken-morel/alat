@@ -108,6 +108,8 @@ extern int submit_pair_response(int handle, char* requestIDC, _Bool accepted, ch
 extern char* default_app_config(void);
 extern char* default_service_config(void);
 extern int discovery_provide_found_devices_json(int handle, char* devicesJsonC);
+extern int discovery_disable(int handle);
+extern int discovery_enabled(int handle);
 extern char* get_error(void);
 extern char* get_file_transfers_status(int handle);
 extern int query_send_files_to_connected_device(int handle, char* deviceIDC, char* filesJSONC);

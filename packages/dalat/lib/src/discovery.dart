@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io'; // Import for RawDatagramSocket
 import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
@@ -11,7 +12,11 @@ import 'helpers.dart';
 import 'models.dart'; // For FoundDevice and DeviceInfo
 
 class DartDiscovery {
-  final MDnsClient _client = MDnsClient();
+  final MDnsClient _client = MDnsClient(
+    rawDatagramSocketFactory: (dynamic host, int port, {bool? reuseAddress, bool? reusePort, int? ttl}) {
+      return RawDatagramSocket.bind(host, port, reuseAddress: true, reusePort: false, ttl: ttl ?? 255);
+    },
+  );
   Timer? _discoveryTimer;
   final int _instanceHandle; // To pass to Go FFI calls
 
