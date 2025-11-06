@@ -1753,6 +1753,21 @@ class AlatBindings {
   late final _default_service_config = _default_service_configPtr
       .asFunction<ffi.Pointer<ffi.Char> Function()>();
 
+  int discovery_provide_found_devices_json(
+    int handle,
+    ffi.Pointer<ffi.Char> devicesJsonC,
+  ) {
+    return _discovery_provide_found_devices_json(handle, devicesJsonC);
+  }
+
+  late final _discovery_provide_found_devices_jsonPtr =
+      _lookup<
+        ffi.NativeFunction<ffi.Int Function(ffi.Int, ffi.Pointer<ffi.Char>)>
+      >('discovery_provide_found_devices_json');
+  late final _discovery_provide_found_devices_json =
+      _discovery_provide_found_devices_jsonPtr
+          .asFunction<int Function(int, ffi.Pointer<ffi.Char>)>();
+
   ffi.Pointer<ffi.Char> get_error() {
     return _get_error();
   }
@@ -1798,6 +1813,22 @@ class AlatBindings {
           .asFunction<
             int Function(int, ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>)
           >();
+
+  ffi.Pointer<ffi.Char> query_device_info_json(
+    ffi.Pointer<ffi.Char> ipJsonC,
+    int portC,
+  ) {
+    return _query_device_info_json(ipJsonC, portC);
+  }
+
+  late final _query_device_info_jsonPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<ffi.Char> Function(ffi.Pointer<ffi.Char>, ffi.Int)
+        >
+      >('query_device_info_json');
+  late final _query_device_info_json = _query_device_info_jsonPtr
+      .asFunction<ffi.Pointer<ffi.Char> Function(ffi.Pointer<ffi.Char>, int)>();
 
   ffi.Pointer<ffi.Char> get_instances() {
     return _get_instances();

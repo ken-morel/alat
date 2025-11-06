@@ -30,7 +30,7 @@ function build
 end
 
 function help
-    echo "Usage: ./mng.fish <command>"
+    echo "Usage: ./mng <command>"
     echo ""
     echo "Commands:"
     echo "  dev              - Start the development server."

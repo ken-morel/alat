@@ -119,3 +119,7 @@ func (n *Node) GetConnectedDeviceByID(id string) *connected.Connected {
 	}
 	return nil
 }
+
+func (n *Node) SetFoundDevices(devices []discovery.FoundDevice) {
+	n.discovery.Discoverer.ProvideFoundDevices(devices)
+}

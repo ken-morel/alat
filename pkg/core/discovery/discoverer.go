@@ -27,15 +27,12 @@ type FoundDevice struct {
 	Info device.Info `yaml:"info" json:"info"`
 }
 
-func NewDiscoverer() (*Discoverer, error) {
-	resolver, err := zeroconf.NewResolver(nil)
-	if err != nil {
-		return nil, fmt.Errorf("failed to initialize resolver: %w", err)
-	}
+func NewDiscoverer() *Discoverer {
+	resolver, _ := zeroconf.NewResolver(nil)
 	return &Discoverer{
 		resolver:     resolver,
 		foundDevices: nil,
-	}, nil
+	}
 }
 
 func (d *Discoverer) IsRunning() bool {
@@ -44,7 +41,17 @@ func (d *Discoverer) IsRunning() bool {
 	return d.searching
 }
 
+func (d *Discoverer) ProvideFoundDevices(devices []FoundDevice) {
+	d.foundDevicesLock.Lock()
+	defer d.foundDevicesLock.Unlock()
+	d.foundDevices = devices
+}
+
 func (d *Discoverer) StartDeviceSearch() error {
+	if d.resolver == nil {
+		return nil
+	}
+
 	d.searchingLock.Lock()
 	if d.searching {
 		d.searchingLock.Unlock()

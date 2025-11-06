@@ -11,6 +11,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final navigationService = NavigationService();
+
   final notificationService = NotificationService(navigationService);
   await notificationService.init();
   final transferNotificationService = TransferNotificationService();
