@@ -9,6 +9,8 @@ import 'package:ffi/ffi.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'pair.g.dart';
 
+typedef PairRequestHandler = Future<PairResponse> Function(PairRequest);
+
 mixin InstancePair on InstanceHelpers {
   void registerPairRequestHandler(PairRequestHandler fun) {
     final nativeCallback =

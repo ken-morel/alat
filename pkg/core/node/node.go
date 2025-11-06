@@ -123,3 +123,10 @@ func (n *Node) GetConnectedDeviceByID(id string) *connected.Connected {
 func (n *Node) SetFoundDevices(devices []discovery.FoundDevice) {
 	n.discovery.Discoverer.ProvideFoundDevices(devices)
 }
+
+func (n *Node) DisableDiscovery() {
+	n.discovery.Discoverer.Disable()
+}
+func (n *Node) DiscoveryEnabled() bool {
+	return n.discovery.Discoverer.IsEnabled()
+}

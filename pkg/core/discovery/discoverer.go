@@ -35,6 +35,13 @@ func NewDiscoverer() *Discoverer {
 	}
 }
 
+func (d *Discoverer) Disable() {
+	d.resolver = nil
+}
+func (d *Discoverer) IsEnabled() bool {
+	return d.resolver != nil
+}
+
 func (d *Discoverer) IsRunning() bool {
 	d.searchingLock.Lock()
 	defer d.searchingLock.Unlock()

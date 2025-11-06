@@ -3,3 +3,4 @@ export 'src/models.dart';
 export 'src/converters.dart';
 export 'src/pair.dart';
 export 'src/config.dart';
+export 'src/discovery.dart';

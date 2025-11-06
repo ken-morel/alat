@@ -1768,6 +1768,28 @@ class AlatBindings {
       _discovery_provide_found_devices_jsonPtr
           .asFunction<int Function(int, ffi.Pointer<ffi.Char>)>();
 
+  int discovery_disable(int handle) {
+    return _discovery_disable(handle);
+  }
+
+  late final _discovery_disablePtr =
+      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Int)>>(
+        'discovery_disable',
+      );
+  late final _discovery_disable = _discovery_disablePtr
+      .asFunction<int Function(int)>();
+
+  int discovery_enabled(int handle) {
+    return _discovery_enabled(handle);
+  }
+
+  late final _discovery_enabledPtr =
+      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Int)>>(
+        'discovery_enabled',
+      );
+  late final _discovery_enabled = _discovery_enabledPtr
+      .asFunction<int Function(int)>();
+
   ffi.Pointer<ffi.Char> get_error() {
     return _get_error();
   }

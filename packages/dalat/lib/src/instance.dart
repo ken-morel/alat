@@ -9,8 +9,6 @@ import 'package:ffi/ffi.dart';
 
 import 'bindings.dart';
 
-typedef PairRequestHandler = Future<PairResponse> Function(PairRequest);
-
 /// A high-level, platform-agnostic API for interacting with the Alat core.
 ///
 /// This class encapsulates the FFI handle management and provides a clean,
@@ -19,6 +17,8 @@ class AlatInstance
     with InstanceHelpers, InstanceWebShare, InstancePair, InstanceConfig {
   @override
   final int handle;
+
+  DartDiscovery? _dartDiscovery;
 
   AlatInstance._(this.handle);
 
@@ -75,6 +75,9 @@ class AlatInstance
 
   void start() {
     final result = bindings.start_instance(handle);
+    if (bindings.discovery_enabled(handle) == 0) {
+      startDartDiscovery();
+    }
     if (result != 0) {
       final msgPointer = bindings.get_error();
       try {
@@ -91,12 +94,23 @@ class AlatInstance
   }
 
   void stop() {
+    stopDartDiscovery();
     bindings.stop_instance(handle);
   }
 
   void dispose() {
+    _dartDiscovery?.stopDiscovery();
     bindings.destroy_instance(handle);
     unregisterPairRequestHandler();
+  }
+
+  void startDartDiscovery({Duration interval = const Duration(seconds: 5)}) {
+    _dartDiscovery ??= DartDiscovery(handle);
+    _dartDiscovery!.startDiscovery(interval: interval);
+  }
+
+  void stopDartDiscovery() {
+    _dartDiscovery?.stopDiscovery();
   }
 
   Future<NodeStatus> getNodeStatus() {

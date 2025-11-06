@@ -22,3 +22,27 @@ func discovery_provide_found_devices_json(handle C.int, devicesJsonC *C.char) C.
 		return -1
 	}
 }
+
+//export discovery_disable
+func discovery_disable(handle C.int) C.int {
+	if instance := getInstance(handle); instance != nil {
+		instance.node.DisableDiscovery()
+		return 0
+
+	} else {
+		return -1
+	}
+}
+
+//export discovery_enabled
+func discovery_enabled(handle C.int) C.int {
+	if instance := getInstance(handle); instance != nil {
+		if instance.node.DiscoveryEnabled() {
+			return 1
+		} else {
+			return 0
+		}
+	} else {
+		return -1
+	}
+}
