@@ -13,12 +13,15 @@ import 'bindings.dart';
 ///
 /// This class encapsulates the FFI handle management and provides a clean,
 /// Dart-idiomatic interface to the underlying Go implementation.
+import 'package:dalat/src/advertiser.dart';
+
 class AlatInstance
     with InstanceHelpers, InstanceWebShare, InstancePair, InstanceConfig {
   @override
   final int handle;
 
   DartDiscovery? _dartDiscovery;
+  DartAdvertiser? _dartAdvertiser;
 
   AlatInstance._(this.handle);
 
@@ -74,9 +77,12 @@ class AlatInstance
   }
 
   void start() {
+    bindings.discovery_disable(handle);
     final result = bindings.start_instance(handle);
+    bindings.discovery_disable(handle);
     if (bindings.discovery_enabled(handle) == 0) {
       startDartDiscovery();
+      startAdvertising();
     }
     if (result != 0) {
       final msgPointer = bindings.get_error();
@@ -95,22 +101,39 @@ class AlatInstance
 
   void stop() {
     stopDartDiscovery();
+    stopAdvertising();
     bindings.stop_instance(handle);
   }
 
   void dispose() {
     _dartDiscovery?.stopDiscovery();
+    _dartAdvertiser?.stop();
     bindings.destroy_instance(handle);
     unregisterPairRequestHandler();
   }
 
-  void startDartDiscovery({Duration interval = const Duration(seconds: 5)}) {
+  void startDartDiscovery({Duration reportingInterval = const Duration(seconds: 5)}) {
     _dartDiscovery ??= DartDiscovery(handle);
-    _dartDiscovery!.startDiscovery(interval: interval);
+    _dartDiscovery!.startDiscovery(reportingInterval: reportingInterval);
   }
 
   void stopDartDiscovery() {
     _dartDiscovery?.stopDiscovery();
+  }
+
+  Future<void> startAdvertising() async {
+    _dartAdvertiser ??= DartAdvertiser();
+    final status = await getNodeStatus();
+    final deviceName = (await getAppConfig()).deviceName;
+    if (status.port > 0) {
+      await _dartAdvertiser!.start(deviceName, status.port);
+    } else {
+      print('Could not start advertiser: port is not available.');
+    }
+  }
+
+  void stopAdvertising() {
+    _dartAdvertiser?.stop();
   }
 
   Future<NodeStatus> getNodeStatus() {

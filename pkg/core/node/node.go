@@ -125,8 +125,8 @@ func (n *Node) SetFoundDevices(devices []discovery.FoundDevice) {
 }
 
 func (n *Node) DisableDiscovery() {
-	n.discovery.Discoverer.Disable()
+	n.discovery.Disable()
 }
 func (n *Node) DiscoveryEnabled() bool {
-	return n.discovery.Discoverer.IsEnabled()
+	return n.discovery.IsEnabled()
 }

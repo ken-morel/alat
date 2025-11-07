@@ -95,6 +95,9 @@ class AppLocalizationsFr extends AppLocalizations {
       '#Services are the different features of your device you want to make available to connected devices. You can disable them at any time.';
 
   @override
+  String get noActiveDevice => '#No active device';
+
+  @override
   String get systemInformationAndStats => '#System Information and Stats';
 
   @override
@@ -114,6 +117,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get setupComplete => '#Setup complete';
+
+  @override
+  String get connectANewDevice => '#Connect a new device';
 
   @override
   String get cacheRefreshInterval => '#Cache Refresh Interval';

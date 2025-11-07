@@ -55,16 +55,19 @@ func (d *Discoverer) ProvideFoundDevices(devices []FoundDevice) {
 }
 
 func (d *Discoverer) StartDeviceSearch() error {
-
 	d.searchingLock.Lock()
-	if d.searching {
-		d.searchingLock.Unlock()
-		return nil
-	}
-	d.searching = true
+	{
+		if d.searching {
+			d.searchingLock.Unlock()
+			fmt.Println("Search already in progress.")
+			return nil
+		} else if d.resolver == nil {
+			d.searching = false
+			return nil
+		} else {
+			d.searching = true
 
-	if d.resolver == nil {
-		return nil
+		}
 	}
 	d.searchingLock.Unlock()
 

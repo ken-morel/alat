@@ -3,19 +3,13 @@ import 'dart:io';
 
 import 'package:alat/services/transfer_notification_service.dart';
 import 'package:dalat/dalat.dart' as dalat;
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:file_picker/file_picker.dart';
+
 /* import 'package:receive_sharing_intent/receive_sharing_intent.dart'; */
 
 import 'services/notification_service.dart';
-
-class PairRequestState {
-  final dalat.PairRequest request;
-  final Completer<dalat.PairResponse> completer;
-
-  PairRequestState(this.request, this.completer);
-}
 
 class AppState extends ChangeNotifier {
   final NotificationService notificationService;
@@ -31,52 +25,39 @@ class AppState extends ChangeNotifier {
   final ValueNotifier<PairRequestState?> pendingPairRequest = ValueNotifier(
     null,
   );
-  /* final ValueNotifier<List<String>> sharedFiles = ValueNotifier([]); */
+  // final ValueNotifier<List<String>> sharedFiles = ValueNotifier([]);
 
   AppState({
     required this.notificationService,
     required this.transferNotificationService,
   });
 
+  bool get isReady => _alatInstance != null && _appSettings != null;
   dalat.AlatInstance? get node => _alatInstance;
-  dalat.AppConfig? get settings => _appSettings;
   dalat.ServiceConfig? get serviceSettings => _serviceSettings;
+  dalat.AppConfig? get settings => _appSettings;
+
   dalat.WebshareStatus? get webShareStatus => _webShareStatus;
 
-  bool get isReady => _alatInstance != null && _appSettings != null;
-
-  static Future<Directory> getAlatDir() async {
-    try {
-      return await getLibraryDirectory();
-    } catch (e) {
-      return await getApplicationSupportDirectory();
+  Future<void> completeSetup() async {
+    if (_alatInstance == null || _appSettings == null) {
+      throw "Cannot complete setup, setings or instance not set";
     }
+    _appSettings!.setupComplete = true;
+    await _alatInstance!.setAppConfig(_appSettings!);
+    _alatInstance!.start();
+    _alatInstance!.registerPairRequestHandler(pairRequestHandler);
+    _startTransferStatusUpdates();
+    _startWebShareStatusUpdates();
+    notifyListeners();
   }
 
-  static dalat.AppConfig createAppConfig() {
-    final config = dalat.InstanceConfig.createAppConfig();
-    config.deviceType = dalat.deviceTypeMobile;
-    if (Platform.isLinux || Platform.isMacOS || Platform.isWindows) {
-      config.deviceType = dalat.deviceTypeDesktop;
-    }
-    return config;
-  }
-
-  static Future<dalat.ServiceConfig> createServiceConfig() async {
-    final config = dalat.InstanceConfig.createServiceConfig();
-    config.fileSend.saveFolder =
-        ((await getDownloadsDirectory()) ?? Directory(".")).path;
-    return config;
-  }
-
-  static Future<dalat.AlatInstance> createInstance(String configPath) async {
-    final appConfig = AppState.createAppConfig();
-    final serviceConfig = await AppState.createServiceConfig();
-    return dalat.AlatInstance.create(
-      configPath: configPath,
-      serviceConfig: serviceConfig,
-      appConfig: appConfig,
-    );
+  @override
+  void dispose() {
+    _transferStatusTimer?.cancel();
+    _webShareStatusTimer?.cancel();
+    _alatInstance?.dispose();
+    super.dispose();
   }
 
   Future<bool> initialize() async {
@@ -101,8 +82,8 @@ class AppState extends ChangeNotifier {
       _alatInstance!.start();
       _startTransferStatusUpdates();
       _startWebShareStatusUpdates();
-      _alatInstance!.registerPairRequestHandler(pairRequestHandler);
     }
+    _alatInstance!.registerPairRequestHandler(pairRequestHandler);
 
     /*
     // Listen for incoming shared files
@@ -124,22 +105,56 @@ class AppState extends ChangeNotifier {
     return _appSettings!.setupComplete;
   }
 
-  Future<void> completeSetup() async {
-    if (_alatInstance == null || _appSettings == null) {
-      throw "Cannot complete setup, setings or instance not set";
-    }
-    _appSettings!.setupComplete = true;
-    await _alatInstance!.setAppConfig(_appSettings!);
-    _alatInstance!.start();
-    _alatInstance!.registerPairRequestHandler(pairRequestHandler);
-    _startTransferStatusUpdates();
-    _startWebShareStatusUpdates();
-    notifyListeners();
+  Future<dalat.PairResponse> pairRequestHandler(dalat.PairRequest req) async {
+    final completer = Completer<dalat.PairResponse>();
+
+    notificationService.showPairingRequest(req);
+
+    // Set the state that the UI will listen to.
+    pendingPairRequest.value = PairRequestState(req, completer);
+
+    return completer.future;
   }
 
   Future<void> saveSettings() async {
     await _alatInstance!.setAppConfig(_appSettings!);
     await _alatInstance!.setServiceConfig(_serviceSettings!);
+  }
+
+  Future<void> webShareAddFiles() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+    );
+    if (result != null) {
+      List<String> filePaths = result.files.map((file) => file.path!).toList();
+      await _alatInstance?.addSharedFiles(filePaths);
+      await _updateWebShareStatus();
+    }
+  }
+
+  Future<void> webShareClearFiles() async {
+    await _alatInstance?.clearSharedFiles();
+    await _updateWebShareStatus();
+  }
+
+  Future<void> webShareRemoveFile(String uuid) async {
+    await _alatInstance?.removeSharedFilesByUUIDs([uuid]);
+    await _updateWebShareStatus();
+  }
+
+  Future<void> webShareSetPasscode(String passcode) async {
+    await _alatInstance?.setWebsharePasscode(passcode);
+    await _updateWebShareStatus();
+  }
+
+  Future<void> webShareStart() async {
+    await _alatInstance?.startWebshare();
+    await _updateWebShareStatus();
+  }
+
+  Future<void> webShareStop() async {
+    await _alatInstance?.stopWebshare();
+    await _updateWebShareStatus();
   }
 
   void _startTransferStatusUpdates() {
@@ -173,58 +188,44 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> webShareStart() async {
-    await _alatInstance?.startWebshare();
-    await _updateWebShareStatus();
+  static dalat.AppConfig createAppConfig() {
+    final config = dalat.InstanceConfig.createAppConfig();
+    config.deviceType = dalat.deviceTypeMobile;
+    if (Platform.isLinux || Platform.isMacOS || Platform.isWindows) {
+      config.deviceType = dalat.deviceTypeDesktop;
+    }
+    return config;
   }
 
-  Future<void> webShareStop() async {
-    await _alatInstance?.stopWebshare();
-    await _updateWebShareStatus();
-  }
-
-  Future<void> webShareSetPasscode(String passcode) async {
-    await _alatInstance?.setWebsharePasscode(passcode);
-    await _updateWebShareStatus();
-  }
-
-  Future<void> webShareAddFiles() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      allowMultiple: true,
+  static Future<dalat.AlatInstance> createInstance(String configPath) async {
+    final appConfig = AppState.createAppConfig();
+    final serviceConfig = await AppState.createServiceConfig();
+    return dalat.AlatInstance.create(
+      configPath: configPath,
+      serviceConfig: serviceConfig,
+      appConfig: appConfig,
     );
-    if (result != null) {
-      List<String> filePaths = result.files.map((file) => file.path!).toList();
-      await _alatInstance?.addSharedFiles(filePaths);
-      await _updateWebShareStatus();
+  }
+
+  static Future<dalat.ServiceConfig> createServiceConfig() async {
+    final config = dalat.InstanceConfig.createServiceConfig();
+    config.fileSend.saveFolder =
+        ((await getDownloadsDirectory()) ?? Directory(".")).path;
+    return config;
+  }
+
+  static Future<Directory> getAlatDir() async {
+    try {
+      return await getLibraryDirectory();
+    } catch (e) {
+      return await getApplicationSupportDirectory();
     }
   }
+}
 
-  Future<void> webShareRemoveFile(String uuid) async {
-    await _alatInstance?.removeSharedFilesByUUIDs([uuid]);
-    await _updateWebShareStatus();
-  }
+class PairRequestState {
+  final dalat.PairRequest request;
+  final Completer<dalat.PairResponse> completer;
 
-  Future<void> webShareClearFiles() async {
-    await _alatInstance?.clearSharedFiles();
-    await _updateWebShareStatus();
-  }
-
-  @override
-  void dispose() {
-    _transferStatusTimer?.cancel();
-    _webShareStatusTimer?.cancel();
-    _alatInstance?.dispose();
-    super.dispose();
-  }
-
-  Future<dalat.PairResponse> pairRequestHandler(dalat.PairRequest req) async {
-    final completer = Completer<dalat.PairResponse>();
-
-    notificationService.showPairingRequest(req);
-
-    // Set the state that the UI will listen to.
-    pendingPairRequest.value = PairRequestState(req, completer);
-
-    return completer.future;
-  }
+  PairRequestState(this.request, this.completer);
 }

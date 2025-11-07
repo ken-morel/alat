@@ -29,8 +29,10 @@ switch "$argv[1]"
         gen-json
     case make
         build-libalat "$argv[2]"
-        gen-ffi
-        gen-json
+        if ! test "$argv[2]" = android
+            gen-ffi
+            gen-json
+        end
     case "*"
         echo "No command specified, use ./mng.fish <command>"
 end

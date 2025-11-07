@@ -11,10 +11,14 @@ const (
 type Manager struct {
 	Discoverer *Discoverer
 	Server     *Server
+	disabled   bool
 }
 
 func (m *Manager) Expose(port int) error {
-	return m.Server.Start(port)
+	if m.IsEnabled() {
+		return m.Server.Start(port)
+	}
+	return nil
 }
 
 func (m *Manager) Stop() {
@@ -32,4 +36,13 @@ func NewManager() (*Manager, error) {
 		Discoverer: discoverer,
 		Server:     server,
 	}, nil
+}
+
+func (m *Manager) Disable() {
+	m.Stop()
+	m.disabled = true
+	m.Discoverer.resolver = nil
+}
+func (m *Manager) IsEnabled() bool {
+	return !m.disabled
 }

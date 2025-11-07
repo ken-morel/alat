@@ -25,7 +25,6 @@ class _AlatStatusWidgetState extends State<AlatStatusWidget> {
       Duration(milliseconds: 200),
       (_) async => _fetchStatus(),
     );
-    _fetchStatus();
     super.initState();
   }
 
