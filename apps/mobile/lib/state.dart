@@ -61,7 +61,7 @@ class AppState extends ChangeNotifier {
   }
 
   Future<bool> initialize() async {
-    final instances = dalat.AlatInstance.getInstances();
+    final instances = await dalat.AlatInstance.getInstances();
     if (instances.isEmpty) {
       final configDir = await AppState.getAlatDir();
       if (!await configDir.exists()) {
@@ -69,7 +69,7 @@ class AppState extends ChangeNotifier {
       }
       _alatInstance = await AppState.createInstance(configDir.path);
     } else {
-      _alatInstance = dalat.AlatInstance.get(instances[0]);
+      _alatInstance = await dalat.AlatInstance.get(instances[0]);
     }
 
     _appSettings = await _alatInstance!.getAppConfig();

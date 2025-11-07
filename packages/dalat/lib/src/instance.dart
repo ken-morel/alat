@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:ffi';
+import 'dart:ffi'; // Still needed for FFI related types and utility functions
 import 'dart:isolate';
 
 import 'package:dalat/dalat.dart';
@@ -7,7 +7,8 @@ import 'package:dalat/src/helpers.dart';
 import 'package:dalat/src/webshare.dart';
 import 'package:ffi/ffi.dart';
 
-import 'bindings.dart';
+import 'bindings.dart'; // Still needed as FfiIsolate.run will call bindings
+import 'isolate_helper.dart'; // New import for FfiIsolate manager
 
 /// A high-level, platform-agnostic API for interacting with the Alat core.
 ///
@@ -54,8 +55,8 @@ class AlatInstance
     }
   }
 
-  factory AlatInstance.get(int handle) {
-    final instances = AlatInstance.getInstances();
+  static Future<AlatInstance> get(int handle) async {
+    final instances = await AlatInstance.getInstances();
     if (instances.contains(handle)) {
       return AlatInstance._(handle);
     } else {
@@ -63,56 +64,49 @@ class AlatInstance
     }
   }
 
-  static List<int> getInstances() {
-    final ptr = bindings.get_instances();
-    if (ptr == nullptr) {
+  static Future<List<int>> getInstances() async {
+    final jsonStr = await FfiIsolate.run('get_instances', []) as String?;
+    if (jsonStr == null || jsonStr.isEmpty) {
       return [];
     }
-    try {
-      final jsonStr = ptr.cast<Utf8>().toDartString();
-      return (jsonDecode(jsonStr) as List).map((k) => k as int).toList();
-    } finally {
-      bindings.free_string(ptr.cast());
-    }
+    return (jsonDecode(jsonStr) as List).map((k) => k as int).toList();
   }
 
-  void start() {
-    bindings.discovery_disable(handle);
-    final result = bindings.start_instance(handle);
-    bindings.discovery_disable(handle);
-    if (bindings.discovery_enabled(handle) == 0) {
+  Future<void> start() async {
+    // Note: discovery_disable is an FFI call, but it does not throw
+    // if the module is disabled. We can call it freely.
+    await helper('discovery_disable');
+
+    // This call will throw on error via the isolate, and return null on success.
+    await FfiIsolate.run('start_instance', [handle]);
+
+    await helper('discovery_disable'); // Called again, as in original code
+
+    final discoveryEnabled =
+        await FfiIsolate.run('discovery_enabled', [handle]) as int? ?? -1;
+    if (discoveryEnabled == 0) {
       startDartDiscovery();
       startAdvertising();
     }
-    if (result != 0) {
-      final msgPointer = bindings.get_error();
-      try {
-        final error = msgPointer == nullptr
-            ? "Unknown error"
-            : msgPointer.cast<Utf8>().toDartString();
-        throw Exception(
-          'Failed to start AlatInstance. Code: $result, Error: $error',
-        );
-      } finally {
-        bindings.free_string(msgPointer);
-      }
-    }
+    // The error check for start_instance is now handled by the await on FfiIsolate.run
   }
 
-  void stop() {
+  Future<void> stop() async {
     stopDartDiscovery();
     stopAdvertising();
-    bindings.stop_instance(handle);
+    await helper('stop_instance');
   }
 
-  void dispose() {
+  Future<void> dispose() async {
     _dartDiscovery?.stopDiscovery();
     _dartAdvertiser?.stop();
-    bindings.destroy_instance(handle);
+    await helper('destroy_instance');
     unregisterPairRequestHandler();
   }
 
-  void startDartDiscovery({Duration reportingInterval = const Duration(seconds: 5)}) {
+  void startDartDiscovery({
+    Duration reportingInterval = const Duration(seconds: 5),
+  }) {
     _dartDiscovery ??= DartDiscovery(handle);
     _dartDiscovery!.startDiscovery(reportingInterval: reportingInterval);
   }
@@ -137,55 +131,31 @@ class AlatInstance
   }
 
   Future<NodeStatus> getNodeStatus() {
-    return jsonGetterHelper(bindings.get_node_status_json, NodeStatus.fromJson);
+    return jsonGetterHelper('get_node_status_json', NodeStatus.fromJson);
   }
 
-  Future<SysInfo> queryConnectedDeviceSysInfo(String deviceId) {
-    return Isolate.run(() {
-      final deviceIdC = deviceId.toNativeUtf8();
-      try {
-        final infoC = bindings.query_connected_device_sysinfo(
-          handle,
-          deviceIdC.cast(),
-        );
-        if (infoC == nullptr) {
-          throw "Failed getting system information: ${InstanceHelpers.getAlatError()}";
-        }
-        try {
-          final info = infoC.cast<Utf8>().toDartString();
-          return SysInfo.fromJson(jsonDecode(info));
-        } finally {
-          bindings.free_string(infoC);
-        }
-      } finally {
-        malloc.free(deviceIdC);
-      }
-    });
+  Future<SysInfo> queryConnectedDeviceSysInfo(String deviceId) async {
+    final infoJson = await FfiIsolate.run(
+      'query_connected_device_sysinfo',
+      [handle, deviceId],
+    ) as String?;
+
+    if (infoJson == null) {
+      throw "Failed getting system information: ${InstanceHelpers.getAlatError()}";
+    }
+    return SysInfo.fromJson(jsonDecode(infoJson));
   }
 
-  Future<void> querySendFilesToDevice(String deviceId, List<String> files) {
-    return Isolate.run(() {
-      final deviceIdC = deviceId.toNativeUtf8();
-      final filesJsonC = jsonEncode(files).toNativeUtf8();
-      try {
-        final response = bindings.query_send_files_to_connected_device(
-          handle,
-          deviceIdC.cast(),
-          filesJsonC.cast(),
-        );
-        if (response < 0) {
-          throw "Error sending files: ${InstanceHelpers.getAlatError()}";
-        }
-      } finally {
-        malloc.free(deviceIdC);
-        malloc.free(filesJsonC);
-      }
-    });
+  Future<void> querySendFilesToDevice(String deviceId, List<String> files) async {
+    await FfiIsolate.run(
+      'query_send_files_to_connected_device',
+      [handle, deviceId, jsonEncode(files)],
+    );
   }
 
   Future<FileTransfersStatus> getFileTransfersStatus() {
     return jsonGetterHelper(
-      bindings.get_file_transfers_status,
+      'get_file_transfers_status',
       FileTransfersStatus.fromJson,
     );
   }

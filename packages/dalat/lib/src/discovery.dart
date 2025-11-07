@@ -35,11 +35,10 @@ class DartDiscovery {
   Future<void> startDiscovery(
       {Duration reportingInterval = const Duration(seconds: 3)}) async {
     if (_isDiscovering) {
-      print('DartDiscovery already running.');
       return;
     }
     _isDiscovering = true;
-    print('Starting Dart mDNS discovery...');
+    // print('Starting Dart mDNS discovery...'); // Too noisy
 
     await _client.start();
 
@@ -56,7 +55,7 @@ class DartDiscovery {
         // Consider restarting or handling the error.
       },
       onDone: () {
-        print('Dart mDNS discovery stream closed.');
+        // print('Dart mDNS discovery stream closed.'); // Too noisy
         if (_isDiscovering) {
           // If the stream closes unexpectedly, try to restart it.
           // This can happen on network changes.
@@ -75,7 +74,7 @@ class DartDiscovery {
     if (!_isDiscovering) {
       return;
     }
-    print('Stopping Dart mDNS discovery...');
+    // print('Stopping Dart mDNS discovery...'); // Too noisy
     _isDiscovering = false;
     _discoverySubscription?.cancel();
     _reportingTimer?.cancel();
@@ -96,12 +95,11 @@ class DartDiscovery {
           final key = '$deviceIp:$devicePort';
 
           // If we already have this device, don't query it again.
-          // A more advanced implementation could have a TTL for cache eviction.
           if (_foundDevices.containsKey(key)) {
             continue;
           }
 
-          print('  Discovered new device at $key. Querying info...');
+          print('Discovered new device at $key. Querying info...');
           await _queryAndAddDevice(deviceIp, devicePort);
         }
       }
