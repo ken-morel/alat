@@ -52,14 +52,11 @@ func (n *Node) StartWorker() {
 }
 
 func (n *Node) StopWorker() {
-	running := true
-	for running {
-		time.Sleep(time.Millisecond * 500)
-		n.workerState.lock.Lock()
-		{
-			n.workerState.shouldStop = true
-			running = n.workerState.running
-		}
+	n.workerState.lock.Lock()
+	for n.workerState.running {
+		n.workerState.shouldStop = true
 		n.workerState.lock.Unlock()
+		time.Sleep(time.Millisecond * 10)
+		n.workerState.lock.Lock()
 	}
 }

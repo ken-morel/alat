@@ -45,6 +45,10 @@ class AppState extends ChangeNotifier {
     }
     _appSettings!.setupComplete = true;
     await _alatInstance!.setAppConfig(_appSettings!);
+
+    // Request permissions before starting services that need them.
+    await notificationService.requestPermissions();
+
     _alatInstance!.start();
     _alatInstance!.registerPairRequestHandler(pairRequestHandler);
     _startTransferStatusUpdates();

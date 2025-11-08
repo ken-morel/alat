@@ -83,10 +83,7 @@ func (n *Node) Start() error {
 
 	}
 	if !status.DiscoveryRunning {
-		err := n.discovery.Server.Start(listeningPort)
-		if err != nil {
-			return err
-		}
+		n.discovery.Server.Start(listeningPort)
 	}
 	if !status.WorkerRunning {
 		n.StartWorker()

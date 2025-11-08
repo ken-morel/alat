@@ -14,7 +14,7 @@ dependencies:
   json_annotation: ^4.9.0
   ffi: ^2.1.4
   nsd: ^4.0.0
-  multicast_dns: ^0.3.3
+
 
 dev_dependencies:
   ffigen: ^13.0.0
