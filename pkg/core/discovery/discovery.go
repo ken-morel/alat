@@ -1,6 +1,8 @@
 // Package discovery: handles mdns network discovery
 package discovery
 
+import "fmt"
+
 type Status int
 
 const (

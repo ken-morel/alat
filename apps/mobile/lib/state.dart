@@ -111,11 +111,21 @@ class AppState extends ChangeNotifier {
 
   Future<dalat.PairResponse> pairRequestHandler(dalat.PairRequest req) async {
     final completer = Completer<dalat.PairResponse>();
+    final requestState = PairRequestState(req, completer);
 
-    notificationService.showPairingRequest(req);
+    // Use the navigator key to get a context that can show the dialog.
+    final context = notificationService.navigatorKey.currentContext;
 
-    // Set the state that the UI will listen to.
-    pendingPairRequest.value = PairRequestState(req, completer);
+    if (context != null) {
+      // Set the state and immediately try to show the dialog.
+      pendingPairRequest.value = requestState;
+      showPairingDialog(context, requestState);
+    } else {
+      // Fallback to a notification if the context isn't available
+      // (e.g., app is in a weird state).
+      notificationService.showPairingRequest(req);
+      pendingPairRequest.value = requestState;
+    }
 
     return completer.future;
   }
@@ -123,6 +133,23 @@ class AppState extends ChangeNotifier {
   Future<void> saveSettings() async {
     await _alatInstance!.setAppConfig(_appSettings!);
     await _alatInstance!.setServiceConfig(_serviceSettings!);
+  }
+
+  Future<void> showPairingDialog(
+      BuildContext context, PairRequestState requestState) async {
+    // Show the dialog and wait for it to be dismissed.
+    await showDialog(
+      context: context,
+      barrierDismissible: false, // User must respond
+      builder: (BuildContext dialogContext) {
+        return PairingDialog(pairRequestState: requestState);
+      },
+    ).whenComplete(() {
+      // This is crucial: clear the pending request state after the dialog is closed.
+      if (pendingPairRequest.value == requestState) {
+        pendingPairRequest.value = null;
+      }
+    });
   }
 
   Future<void> webShareAddFiles() async {

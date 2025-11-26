@@ -201,12 +201,17 @@ func (s *Service) Start() (int, error) {
 	var err error
 	port := DefaultPort
 	for {
+		fmt.Println("Starting server at port", port)
 		if port > MaxPort {
+			fmt.Println("All ports used")
 			return 0, fmt.Errorf("could not find a free port to start webshare server")
 		}
 		lis, err = net.Listen("tcp", fmt.Sprintf(":%d", port))
 		if err == nil {
+			fmt.Println("Found port ", port)
 			break
+		} else {
+			fmt.Println("Error using port, ", err)
 		}
 		port++
 	}
@@ -217,11 +222,16 @@ func (s *Service) Start() (int, error) {
 	s.running = true
 
 	go func() {
+		fmt.Println("Starting the server")
+		s.running = true
 		if err := s.server.Serve(s.listener); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			s.runningLock.Lock()
-			s.running = false
-			s.runningLock.Unlock()
+			fmt.Println("Error starting the server", err)
 		}
+		fmt.Println("Server stoped or killed")
+
+		s.runningLock.Lock()
+		s.running = false
+		s.runningLock.Unlock()
 	}()
 
 	return s.port, nil

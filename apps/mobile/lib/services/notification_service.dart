@@ -9,9 +9,9 @@ import 'navigation_service.dart';
 class NotificationService {
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
-  final NavigationService _navigationService;
+  final GlobalKey<NavigatorState> navigatorKey;
 
-  NotificationService(this._navigationService);
+  NotificationService(this.navigatorKey);
 
   Future<void> init() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
