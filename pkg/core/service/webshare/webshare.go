@@ -3,7 +3,6 @@ package webshare
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net"
 	"net/http"
@@ -183,10 +182,7 @@ func (s *Service) IsRunning() bool {
 }
 
 func (s *Service) Start() (int, error) {
-	s.runningLock.Lock()
-	defer s.runningLock.Unlock()
-
-	if s.running {
+	if s.IsRunning() {
 		return s.port, nil
 	}
 
@@ -219,15 +215,18 @@ func (s *Service) Start() (int, error) {
 	s.port = port
 	s.listener = lis
 	s.server = &http.Server{Handler: mux}
-	s.running = true
 
 	go func() {
-		fmt.Println("Starting the server")
+		s.runningLock.Lock()
 		s.running = true
-		if err := s.server.Serve(s.listener); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			fmt.Println("Error starting the server", err)
+		s.runningLock.Unlock()
+		fmt.Println("Starting the server")
+		err := s.server.Serve(s.listener)
+		if err != nil {
+			fmt.Println("Error running the server", err)
+		} else {
+			fmt.Println("Server stopped")
 		}
-		fmt.Println("Server stoped or killed")
 
 		s.runningLock.Lock()
 		s.running = false

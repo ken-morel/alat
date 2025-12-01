@@ -71,7 +71,9 @@ func showTray(n *node.Node, a *app.App) {
 				case <-mNodeStop.ClickedCh:
 					n.Stop()
 				case <-mNodeStart.ClickedCh:
-					n.Start()
+					if err := n.Start(); err != nil {
+						fmt.Println(err)
+					}
 				case <-mSendFiles.ClickedCh:
 					a.OpenSendFilesPage()
 				case <-mQuit.ClickedCh:
@@ -83,7 +85,9 @@ func showTray(n *node.Node, a *app.App) {
 					} else {
 						mAutoStart.Check()
 					}
-					appConfig.Save()
+					if err := appConfig.Save(); err != nil {
+						fmt.Println(err)
+					}
 				}
 			}
 		}()

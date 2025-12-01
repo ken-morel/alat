@@ -1,6 +1,5 @@
 <script lang="ts">
   import "../app.css";
-  // import "../color-fixer.js";
   import Navigation from "./Navigation.svelte";
   import StatusBar from "./StatusBar.svelte";
   import PairDialog from "./PairDialog.svelte";
@@ -24,7 +23,6 @@
       {/await}
     {/key}
     <div class="w-full overflow-y-auto p-8">
-      <!-- I want the content here to be scrollable -->
       {@render children?.()}
     </div>
   </div>

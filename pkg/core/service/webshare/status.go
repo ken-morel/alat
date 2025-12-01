@@ -17,6 +17,7 @@ func (s *Service) GetStatus() *Status {
 		// This should ideally resolve the local IP, but localhost is fine for development.
 		url = fmt.Sprintf("http://localhost:%d", port)
 	}
+	fmt.Println("Requested status")
 
 	return &Status{
 		Running:     s.IsRunning(),

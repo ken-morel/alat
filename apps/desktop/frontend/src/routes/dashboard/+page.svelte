@@ -38,9 +38,9 @@
         {#each connectedDevices as dev, i (i)}
           {@const Icon = guessIcon(dev.info.type)}
           <div
-            class="group card flex flex-col justify-between overflow-hidden rounded-lg
+            class="group card block w-full justify-between overflow-hidden rounded-lg
          bg-surface-100-900 ring-1 ring-surface-300/50 transition-all
-         duration-300 ease-in-out hover:shadow-xl hover:-translate-y-0.5
+         duration-300 ease-in-out hover:shadow-xl
           hover:bg-surface-200-800"
             style="--device-color: {dev.info.color.hex};"
             aria-label={"Select device " + dev.info.name}
