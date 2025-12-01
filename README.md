@@ -38,25 +38,31 @@ What's makes alat alat, is the fact it provides several services on most if not 
 
 Roadmap:
 
-- [x] File sharing
-  * [x] alat -> alat file sharing
-    * [ ] file verification with checksums
-    * [ ] partitioning files to gradually reconstitute and check
-  * [x] web sharing via local server and browser
-- [x] Device information
-- Sync
-  - [ ] Clipboard synchronization
-  - [ ] Notification synchronization
-  - [ ] Share text/url. Don't sync clipboard, just send text in dedicated window.
-- Control
-  - [ ] Media control
-  - [ ] Run commands
-- File system tools
-  * [ ] Folder synchonization
-  * [ ] File system exploration
-- Input tools
-  * [ ] Presentation control
-  * [ ] Remote keyboard input
-  * [ ] Remote mouse input
-- extras:
-  * [ ] Screen casting(good enough for presentations)
+### Implemented
+- [x] **Device Information**: Share basic device details.
+- [x] **File Sharing**
+  - [x] Direct device-to-device transfer.
+    - [ ] File verification.
+    - [ ] File partitioning for continuous verification.
+  - [x] Web sharing via a local server.
+
+### Phase 1: Core Syncing Features
+1. [ ] **Clipboard Synchronization**: Universal copy and paste.
+2. [ ] **Notification Synchronization**: Mirror notifications across devices.
+3. [ ] **Share Text/URL Snippet**: Send text directly to another device.
+
+### Phase 2: Remote Control & Input
+4. [ ] **Media Control**: Manage media playback remotely.
+5. [ ] **Presentation Control**: Use your phone as a presentation remote.
+6. [ ] **Remote Keyboard & Mouse**: Use your phone as a wireless keyboard/mouse.
+7. [ ] **Run Commands**: Trigger predefined commands on your devices.
+
+### Phase 3: Advanced Filesystem Operations
+8. [ ] **File System Exploration**: Browse remote files.
+9. [ ] **Folder Synchronization**: Keep folders in sync between devices.
+
+### Phase 4: Future Enhancements
+10. [ ] **Screen Casting**: Share your screen to another device.
+11. [ ] **File Transfer Enhancements**
+    - [ ] File verification with checksums.
+    - [ ] Partitioning for large files.
