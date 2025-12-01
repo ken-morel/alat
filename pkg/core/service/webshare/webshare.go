@@ -3,7 +3,6 @@ package webshare
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net"
 	"net/http"
@@ -183,10 +182,7 @@ func (s *Service) IsRunning() bool {
 }
 
 func (s *Service) Start() (int, error) {
-	s.runningLock.Lock()
-	defer s.runningLock.Unlock()
-
-	if s.running {
+	if s.IsRunning() {
 		return s.port, nil
 	}
 
@@ -201,12 +197,17 @@ func (s *Service) Start() (int, error) {
 	var err error
 	port := DefaultPort
 	for {
+		fmt.Println("Starting server at port", port)
 		if port > MaxPort {
+			fmt.Println("All ports used")
 			return 0, fmt.Errorf("could not find a free port to start webshare server")
 		}
 		lis, err = net.Listen("tcp", fmt.Sprintf(":%d", port))
 		if err == nil {
+			fmt.Println("Found port ", port)
 			break
+		} else {
+			fmt.Println("Error using port, ", err)
 		}
 		port++
 	}
@@ -214,14 +215,22 @@ func (s *Service) Start() (int, error) {
 	s.port = port
 	s.listener = lis
 	s.server = &http.Server{Handler: mux}
-	s.running = true
 
 	go func() {
-		if err := s.server.Serve(s.listener); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			s.runningLock.Lock()
-			s.running = false
-			s.runningLock.Unlock()
+		s.runningLock.Lock()
+		s.running = true
+		s.runningLock.Unlock()
+		fmt.Println("Starting the server")
+		err := s.server.Serve(s.listener)
+		if err != nil {
+			fmt.Println("Error running the server", err)
+		} else {
+			fmt.Println("Server stopped")
 		}
+
+		s.runningLock.Lock()
+		s.running = false
+		s.runningLock.Unlock()
 	}()
 
 	return s.port, nil

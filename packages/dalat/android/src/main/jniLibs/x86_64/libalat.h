@@ -31,6 +31,8 @@ extern const char *_GoStringPtr(_GoString_ s);
 
 
 
+
+
 #line 4 "libalat.go"
 
 #include <stdlib.h>
@@ -105,9 +107,13 @@ extern int register_async_pair_request_callback(int handle, async_pair_request_c
 extern int submit_pair_response(int handle, char* requestIDC, _Bool accepted, char* reasonC);
 extern char* default_app_config(void);
 extern char* default_service_config(void);
+extern int discovery_provide_found_devices_json(int handle, char* devicesJsonC);
+extern int discovery_disable(int handle);
+extern int discovery_enabled(int handle);
 extern char* get_error(void);
 extern char* get_file_transfers_status(int handle);
 extern int query_send_files_to_connected_device(int handle, char* deviceIDC, char* filesJSONC);
+extern char* query_device_info_json(char* ipJsonC, int portC);
 extern char* get_instances(void);
 extern int create_instance(char* configPathC, char* appConfigC, char* serviceConfigC);
 extern int start_instance(int handle);

@@ -88,10 +88,10 @@
           <div class="flex justify-between items-center">
             <span
               >Status: <span class="font-bold"
-                >{webShareStatus.isRunning ? "Running" : "Stopped"}</span
+                >{webShareStatus.running ? "Running" : "Stopped"}</span
               ></span
             >
-            {#if webShareStatus.isRunning}
+            {#if webShareStatus.running}
               <button
                 class="btn preset-filled-error-500-400 p-2"
                 onclick={stopWebShare}
@@ -107,16 +107,18 @@
               </button>
             {/if}
           </div>
-          {#if webShareStatus.isRunning}
+          {#if webShareStatus.running}
             <p>
               Share URL:
-              <a
-                href={webShareStatus.shareURL}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-blue-500 hover:underline"
-                >{webShareStatus.shareURL}</a
-              >
+              {#each webShareStatus.shareURLs as shareURL}
+                <a
+                  href={shareURL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-500 hover:underline"
+                  >{webShareStatus.shareURLs}</a
+                >
+              {/each}
             </p>
             <p>
               Passcode: <span class="font-bold">{webShareStatus.passcode}</span>

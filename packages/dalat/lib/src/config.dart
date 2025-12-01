@@ -3,18 +3,10 @@ import 'dart:ffi';
 
 import 'package:dalat/dalat.dart';
 import 'package:dalat/src/bindings.dart';
+import 'package:dalat/src/helpers.dart';
 import 'package:ffi/ffi.dart';
 
-mixin InstanceConfig {
-  Future<void> jsonSetterHelper(
-    dynamic jsonData,
-    int Function(int, Pointer<Char>) ffiFunc,
-  );
-  Future<T> jsonGetterHelper<T>(
-    Pointer<Char> Function(int) ffiFunc,
-    T Function(Map<String, dynamic>) fromJson,
-  );
-
+mixin InstanceConfig on InstanceHelpers {
   static AppConfig createAppConfig() {
     final ptr = bindings.default_app_config();
     if (ptr == nullptr) {
@@ -46,24 +38,24 @@ mixin InstanceConfig {
   int get handle;
 
   Future<AppConfig> getAppConfig() async {
-    return jsonGetterHelper(bindings.get_app_config_json, AppConfig.fromJson);
+    return jsonGetterHelper('get_app_config_json', AppConfig.fromJson);
   }
 
   Future<void> setAppConfig(AppConfig settings) async {
-    return jsonSetterHelper(settings.toJson(), bindings.set_app_config_json);
+    return jsonSetterHelper('set_app_config_json', settings.toJson());
   }
 
   Future<ServiceConfig> getServiceConfig() {
     return jsonGetterHelper(
-      bindings.get_service_config_json,
+      'get_service_config_json',
       ServiceConfig.fromJson,
     );
   }
 
   Future<void> setServiceConfig(ServiceConfig settings) {
     return jsonSetterHelper(
+      'set_service_config_json',
       settings.toJson(),
-      bindings.set_service_config_json,
     );
   }
 }

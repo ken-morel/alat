@@ -43,6 +43,7 @@ func (m *Manager) RefreshConnections() error {
 					IP:           found.IP,
 					Port:         found.Port,
 				})
+
 				break
 			}
 		}

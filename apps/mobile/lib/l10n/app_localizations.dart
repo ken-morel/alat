@@ -246,6 +246,12 @@ abstract class AppLocalizations {
   String
   get servicesAreTheDifferentFeaturesOfYourDeviceYouWantToMakeAvailableToConnectedDevicesYouCanDisableThemAtAnyTime;
 
+  /// No description provided for @noActiveDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'No active device'**
+  String get noActiveDevice;
+
   /// No description provided for @systemInformationAndStats.
   ///
   /// In en, this message translates to:
@@ -287,6 +293,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Setup complete'**
   String get setupComplete;
+
+  /// No description provided for @connectANewDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect a new device'**
+  String get connectANewDevice;
 
   /// No description provided for @cacheRefreshInterval.
   ///

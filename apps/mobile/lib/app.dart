@@ -32,29 +32,39 @@ class AlatApplication extends StatelessWidget {
             navigatorKey: navigatorKey, // Assign the global key
             home: Consumer<AppState>(
               builder: (context, appState, _) {
-                if (!appState.isReady) {
-                  return const StartPage(); // Or a loading indicator
-                }
-                /* if (appState.sharedFiles.value.isNotEmpty) {
-                  return const ShareHandlerPage();
-                } else */ if (appState.settings?.setupComplete ?? false) {
-                  return const DashboardPage();
-                } else {
-                  return SetupAssistantPageView();
-                }
+                // This builder will now also handle showing the pairing dialog.
+                return ValueListenableBuilder<PairRequestState?>(
+                  valueListenable: appState.pendingPairRequest,
+                  builder: (context, pairRequest, child) {
+                    // If there's a pending request and the dialog isn't already shown, show it.
+                    if (pairRequest != null) {
+                      // Use a post-frame callback to show the dialog after the build is complete.
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false, // User must respond
+                          builder: (BuildContext dialogContext) {
+                            return PairingDialog(pairRequestState: pairRequest);
+                          },
+                        );
+                      });
+                    }
+
+                    // Return the main page content based on the app state.
+                    if (!appState.isReady) {
+                      return const StartPage(); // Or a loading indicator
+                    }
+                    if (appState.settings?.setupComplete ?? false) {
+                      return const DashboardPage();
+                    } else {
+                      return SetupAssistantPageView();
+                    }
+                  },
+                );
               },
             ),
             // Use onGenerateRoute to handle showing the dialog from a notification.
             onGenerateRoute: (settings) {
-              if (settings.name == '/pair-request') {
-                return MaterialPageRoute(
-                  builder: (context) {
-                    // This page will be the one that shows the dialog.
-                    return const PairingRequestHandlerPage();
-                  },
-                  settings: settings,
-                );
-              }
               // Handle other routes normally.
               switch (settings.name) {
                 case '/dashboard':
@@ -88,35 +98,6 @@ class AlatApplication extends StatelessWidget {
           );
         },
       ),
-    );
-  }
-}
-
-/// A helper page that listens for the pairing request and shows the dialog.
-class PairingRequestHandlerPage extends StatelessWidget {
-  const PairingRequestHandlerPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final appState = Provider.of<AppState>(context, listen: false);
-
-    return ValueListenableBuilder<PairRequestState?>(
-      valueListenable: appState.pendingPairRequest,
-      builder: (context, value, child) {
-        if (value == null) {
-          // If the request is cleared, pop the page.
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            }
-          });
-          return const Scaffold(
-            body: Center(child: Text('No active pairing request.')),
-          );
-        }
-
-        return PairingDialog(pairRequestState: value);
-      },
     );
   }
 }

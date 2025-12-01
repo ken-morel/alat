@@ -1,27 +1,67 @@
+import 'dart:async';
+
+import 'package:alat/state.dart';
 import 'package:flutter/material.dart';
 import 'package:dalat/dalat.dart' as dalat;
+import 'package:provider/provider.dart';
 
-class AlatStatusWidget extends StatelessWidget {
+class AlatStatusWidget extends StatefulWidget {
   final dalat.AlatInstance node;
   const AlatStatusWidget({super.key, required this.node});
+  @override
+  State<StatefulWidget> createState() => _AlatStatusWidgetState();
+}
+
+class _AlatStatusWidgetState extends State<AlatStatusWidget> {
+  dalat.NodeStatus? status;
+  String? error;
+  Timer? timer;
+  late AppState appState;
+
+  @override
+  void initState() {
+    appState = context.read();
+    timer = Timer.periodic(
+      Duration(milliseconds: 200),
+      (_) async => _fetchStatus(),
+    );
+    super.initState();
+  }
+
+  void _fetchStatus() async {
+    dalat.NodeStatus? stat;
+    String? err;
+    try {
+      stat = await appState.node?.getNodeStatus();
+    } catch (e) {
+      err = e.toString();
+      stat = null;
+    } finally {
+      setState(() {
+        status = stat;
+        error = err;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<dalat.NodeStatus>(
-      future: node.getNodeStatus(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return _statusView(context, snapshot.data!);
-        } else if (snapshot.hasError) {
-          return const Icon(Icons.error, color: Colors.redAccent);
-        } else {
-          return const CircularProgressIndicator();
-        }
-      },
-    );
+    if (error != null) {
+      return Column(
+        children: [
+          Icon(Icons.error, color: Colors.redAccent),
+          Text(error!),
+        ],
+      );
+    } else if (status == null) {
+      return const CircularProgressIndicator();
+    } else {
+      return _statusView(context, status!);
+    }
   }
 
   Widget _statusView(BuildContext context, dalat.NodeStatus status) {
+    final node = widget.node;
     final theme = Theme.of(context);
     final okay =
         status.discoveryRunning && status.serverRunning && status.workerRunning;
@@ -36,6 +76,19 @@ class AlatStatusWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text("Port", style: Theme.of(context).textTheme.headlineSmall),
+
+              Switch(
+                value: anyRunning,
+                onChanged: (val) {
+                  () async {
+                    if (anyRunning) {
+                      node.stop();
+                    } else {
+                      node.start();
+                    }
+                  }();
+                },
+              ),
               Text("Status", style: Theme.of(context).textTheme.headlineSmall),
             ],
           ),
@@ -94,20 +147,16 @@ class AlatStatusWidget extends StatelessWidget {
                   ),
                 ],
               ),
-              FilledButton.tonal(
-                onPressed: () {
-                  if (anyRunning) {
-                    node.stop();
-                  } else {
-                    node.start();
-                  }
-                },
-                child: Text(anyRunning ? "Stop" : "Start"),
-              ),
             ],
           ),
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 }

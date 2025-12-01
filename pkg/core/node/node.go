@@ -83,10 +83,7 @@ func (n *Node) Start() error {
 
 	}
 	if !status.DiscoveryRunning {
-		err := n.discovery.Server.Start(listeningPort)
-		if err != nil {
-			return err
-		}
+		n.discovery.Server.Start(listeningPort)
 	}
 	if !status.WorkerRunning {
 		n.StartWorker()
@@ -118,4 +115,15 @@ func (n *Node) GetConnectedDeviceByID(id string) *connected.Connected {
 		}
 	}
 	return nil
+}
+
+func (n *Node) SetFoundDevices(devices []discovery.FoundDevice) {
+	n.discovery.Discoverer.ProvideFoundDevices(devices)
+}
+
+func (n *Node) DisableDiscovery() {
+	n.discovery.Disable()
+}
+func (n *Node) DiscoveryEnabled() bool {
+	return n.discovery.IsEnabled()
 }

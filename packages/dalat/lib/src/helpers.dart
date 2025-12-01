@@ -3,6 +3,7 @@ import 'dart:ffi';
 
 import 'package:dalat/dalat.dart';
 import 'package:dalat/src/bindings.dart';
+import 'package:dalat/src/isolate_helper.dart';
 import 'package:ffi/ffi.dart';
 
 mixin InstanceHelpers {
@@ -18,95 +19,59 @@ mixin InstanceHelpers {
   }
 
   Future<T> jsonGetterHelper<T>(
-    Pointer<Char> Function(int) ffiFunc,
+    String methodName,
     T Function(Map<String, dynamic>) fromJson,
   ) async {
-    return fromJson(jsonDecode(await getterHelper(ffiFunc)));
+    final jsonStr = await FfiIsolate.run(methodName, [handle]) as String?;
+    if (jsonStr == null) {
+      throw Exception(
+          'Failed to get data from Go core: function returned null pointer. ${getAlatError()}');
+    }
+    return fromJson(jsonDecode(jsonStr));
   }
 
-  Future<String> getterHelper<T>(Pointer<Char> Function(int) ffiFunc) async {
-    final ptr = ffiFunc(handle);
-    if (ptr == nullptr) {
-      throw Exception(
-        'Failed to get data from Go core: function returned null pointer. ${getAlatError()}',
-      );
-    }
-    try {
-      final jsonStr = ptr.cast<Utf8>().toDartString();
-      return jsonStr;
-    } finally {
-      bindings.free_string(ptr);
-    }
-  }
-
-  Future<void> helper(int Function(int) ffiFunc) async {
-    final result = ffiFunc(handle);
-    if (result < 0) {
-      throw Exception(
-        'Failed to set data in Go core. Code: $result ${getAlatError()}',
-      );
-    }
+  Future<void> helper(String methodName) async {
+    await FfiIsolate.run(methodName, [handle]);
   }
 
   Future<List<T>> jsonListGetterHelper<T>(
-    Pointer<Char> Function(int) ffiFunc,
+    String methodName,
     T Function(Map<String, dynamic>) fromJson,
   ) async {
-    final ptr = ffiFunc(handle);
-    if (ptr == nullptr) {
-      // An empty list is represented by a null pointer in this API
+    final jsonStr = await FfiIsolate.run(methodName, [handle]) as String?;
+    if (jsonStr == null) {
+      // An empty list can be represented by a null pointer.
       return [];
     }
-    try {
-      final jsonStr = ptr.cast<Utf8>().toDartString();
-      final List<dynamic> decoded = jsonDecode(jsonStr) ?? [];
-      return decoded
-          .map((item) => fromJson(item as Map<String, dynamic>))
-          .toList();
-    } finally {
-      bindings.free_string(ptr);
-    }
+    final List<dynamic> decoded = jsonDecode(jsonStr) ?? [];
+    return decoded
+        .map((item) => fromJson(item as Map<String, dynamic>))
+        .toList();
   }
 
   Future<void> jsonSetterHelper(
+    String methodName,
     dynamic jsonData,
-    int Function(int, Pointer<Char>) ffiFunc,
   ) async {
-    return setterHelper(jsonEncode(jsonData), ffiFunc);
+    await setterHelper(methodName, jsonEncode(jsonData));
   }
 
   Future<void> setterHelper(
+    String methodName,
     String data,
-    int Function(int, Pointer<Char>) ffiFunc,
   ) async {
-    final jsonStrC = data.toNativeUtf8();
-    try {
-      final result = ffiFunc(handle, jsonStrC.cast());
-      if (result < 0) {
-        throw Exception(
-          'Failed to set data in Go core. Code: $result ${getAlatError()}',
-        );
-      }
-    } finally {
-      malloc.free(jsonStrC);
-    }
+    await FfiIsolate.run(methodName, [handle, data]);
   }
 
-  Future<List<DeviceColor>> getAlatColors() {
-    final ptr = bindings.get_alat_device_colors_json();
-    if (ptr == nullptr) {
-      return Future.value([]);
+  Future<List<DeviceColor>> getAlatColors() async {
+    final jsonStr =
+        await FfiIsolate.run('get_alat_device_colors_json', []) as String?;
+    if (jsonStr == null) {
+      return [];
     }
-    try {
-      final jsonStr = ptr.cast<Utf8>().toDartString();
-      final List<dynamic> decoded = jsonDecode(jsonStr);
-      return Future.value(
-        decoded
-            .map((item) => DeviceColor.fromJson(item as Map<String, dynamic>))
-            .toList(),
-      );
-    } finally {
-      bindings.free_string(ptr);
-    }
+    final List<dynamic> decoded = jsonDecode(jsonStr) ?? [];
+    return decoded
+        .map((item) => DeviceColor.fromJson(item as Map<String, dynamic>))
+        .toList();
   }
 }

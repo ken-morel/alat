@@ -28,12 +28,13 @@ class DashboardPage extends DashboardBase {
         ),
         SizedBox(height: 10),
         _ConnectedDevicesList(),
-        SizedBox(height: 50),
+        SizedBox(height: 10),
         FilledButton.tonal(
           onPressed: () =>
               Navigator.of(context).pushReplacementNamed("/dashboard/pair"),
 
-          child: Text("Connect a new device"),
+          child: Text(AppLocalizations.of(context)!.connectANewDevice),
+          // automatically changed to localization, thanks to arb-util
         ),
       ],
     );
@@ -72,7 +73,7 @@ class _ConnectedDevicesListState extends State<_ConnectedDevicesList> {
     return Card(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-        child: Text("No active device"),
+        child: Text(AppLocalizations.of(context)!.noActiveDevice),
       ),
     );
   }
