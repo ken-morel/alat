@@ -1106,6 +1106,460 @@ func (x *SendFileResponse) GetMsg() string {
 	return ""
 }
 
+type ImageClipboardContent struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          []byte                 `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ImageClipboardContent) Reset() {
+	*x = ImageClipboardContent{}
+	mi := &file_pair_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ImageClipboardContent) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ImageClipboardContent) ProtoMessage() {}
+
+func (x *ImageClipboardContent) ProtoReflect() protoreflect.Message {
+	mi := &file_pair_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ImageClipboardContent.ProtoReflect.Descriptor instead.
+func (*ImageClipboardContent) Descriptor() ([]byte, []int) {
+	return file_pair_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *ImageClipboardContent) GetData() []byte {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type FileListClipboardContent struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Files         []string               `protobuf:"bytes,1,rep,name=files,proto3" json:"files,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FileListClipboardContent) Reset() {
+	*x = FileListClipboardContent{}
+	mi := &file_pair_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FileListClipboardContent) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FileListClipboardContent) ProtoMessage() {}
+
+func (x *FileListClipboardContent) ProtoReflect() protoreflect.Message {
+	mi := &file_pair_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FileListClipboardContent.ProtoReflect.Descriptor instead.
+func (*FileListClipboardContent) Descriptor() ([]byte, []int) {
+	return file_pair_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *FileListClipboardContent) GetFiles() []string {
+	if x != nil {
+		return x.Files
+	}
+	return nil
+}
+
+type TextClipboardContent struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Text          string                 `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TextClipboardContent) Reset() {
+	*x = TextClipboardContent{}
+	mi := &file_pair_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TextClipboardContent) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TextClipboardContent) ProtoMessage() {}
+
+func (x *TextClipboardContent) ProtoReflect() protoreflect.Message {
+	mi := &file_pair_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TextClipboardContent.ProtoReflect.Descriptor instead.
+func (*TextClipboardContent) Descriptor() ([]byte, []int) {
+	return file_pair_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *TextClipboardContent) GetText() string {
+	if x != nil {
+		return x.Text
+	}
+	return ""
+}
+
+type ClipboardContent struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Types that are valid to be assigned to Data:
+	//
+	//	*ClipboardContent_Image
+	//	*ClipboardContent_Files
+	//	*ClipboardContent_Text
+	Data          isClipboardContent_Data `protobuf_oneof:"data"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ClipboardContent) Reset() {
+	*x = ClipboardContent{}
+	mi := &file_pair_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ClipboardContent) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ClipboardContent) ProtoMessage() {}
+
+func (x *ClipboardContent) ProtoReflect() protoreflect.Message {
+	mi := &file_pair_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ClipboardContent.ProtoReflect.Descriptor instead.
+func (*ClipboardContent) Descriptor() ([]byte, []int) {
+	return file_pair_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *ClipboardContent) GetData() isClipboardContent_Data {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+func (x *ClipboardContent) GetImage() *ImageClipboardContent {
+	if x != nil {
+		if x, ok := x.Data.(*ClipboardContent_Image); ok {
+			return x.Image
+		}
+	}
+	return nil
+}
+
+func (x *ClipboardContent) GetFiles() *FileListClipboardContent {
+	if x != nil {
+		if x, ok := x.Data.(*ClipboardContent_Files); ok {
+			return x.Files
+		}
+	}
+	return nil
+}
+
+func (x *ClipboardContent) GetText() *TextClipboardContent {
+	if x != nil {
+		if x, ok := x.Data.(*ClipboardContent_Text); ok {
+			return x.Text
+		}
+	}
+	return nil
+}
+
+type isClipboardContent_Data interface {
+	isClipboardContent_Data()
+}
+
+type ClipboardContent_Image struct {
+	Image *ImageClipboardContent `protobuf:"bytes,1,opt,name=image,proto3,oneof"`
+}
+
+type ClipboardContent_Files struct {
+	Files *FileListClipboardContent `protobuf:"bytes,2,opt,name=files,proto3,oneof"`
+}
+
+type ClipboardContent_Text struct {
+	Text *TextClipboardContent `protobuf:"bytes,3,opt,name=text,proto3,oneof"`
+}
+
+func (*ClipboardContent_Image) isClipboardContent_Data() {}
+
+func (*ClipboardContent_Files) isClipboardContent_Data() {}
+
+func (*ClipboardContent_Text) isClipboardContent_Data() {}
+
+type GetClipboardRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Token         []byte                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	Requester     *DeviceInfo            `protobuf:"bytes,2,opt,name=requester,proto3" json:"requester,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetClipboardRequest) Reset() {
+	*x = GetClipboardRequest{}
+	mi := &file_pair_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetClipboardRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetClipboardRequest) ProtoMessage() {}
+
+func (x *GetClipboardRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pair_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetClipboardRequest.ProtoReflect.Descriptor instead.
+func (*GetClipboardRequest) Descriptor() ([]byte, []int) {
+	return file_pair_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *GetClipboardRequest) GetToken() []byte {
+	if x != nil {
+		return x.Token
+	}
+	return nil
+}
+
+func (x *GetClipboardRequest) GetRequester() *DeviceInfo {
+	if x != nil {
+		return x.Requester
+	}
+	return nil
+}
+
+type GetClipboardResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Status        ServiceCallStatus      `protobuf:"varint,1,opt,name=status,proto3,enum=pbuf.v1.ServiceCallStatus" json:"status,omitempty"`
+	Msg           string                 `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
+	Content       *ClipboardContent      `protobuf:"bytes,3,opt,name=content,proto3" json:"content,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetClipboardResponse) Reset() {
+	*x = GetClipboardResponse{}
+	mi := &file_pair_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetClipboardResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetClipboardResponse) ProtoMessage() {}
+
+func (x *GetClipboardResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pair_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetClipboardResponse.ProtoReflect.Descriptor instead.
+func (*GetClipboardResponse) Descriptor() ([]byte, []int) {
+	return file_pair_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *GetClipboardResponse) GetStatus() ServiceCallStatus {
+	if x != nil {
+		return x.Status
+	}
+	return ServiceCallStatus_SERVICE_CALL_STATUS_OK
+}
+
+func (x *GetClipboardResponse) GetMsg() string {
+	if x != nil {
+		return x.Msg
+	}
+	return ""
+}
+
+func (x *GetClipboardResponse) GetContent() *ClipboardContent {
+	if x != nil {
+		return x.Content
+	}
+	return nil
+}
+
+type SetClipboardRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Token         []byte                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	Requester     *DeviceInfo            `protobuf:"bytes,2,opt,name=Requester,proto3" json:"Requester,omitempty"`
+	Content       *ClipboardContent      `protobuf:"bytes,3,opt,name=content,proto3" json:"content,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SetClipboardRequest) Reset() {
+	*x = SetClipboardRequest{}
+	mi := &file_pair_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetClipboardRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetClipboardRequest) ProtoMessage() {}
+
+func (x *SetClipboardRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pair_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetClipboardRequest.ProtoReflect.Descriptor instead.
+func (*SetClipboardRequest) Descriptor() ([]byte, []int) {
+	return file_pair_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *SetClipboardRequest) GetToken() []byte {
+	if x != nil {
+		return x.Token
+	}
+	return nil
+}
+
+func (x *SetClipboardRequest) GetRequester() *DeviceInfo {
+	if x != nil {
+		return x.Requester
+	}
+	return nil
+}
+
+func (x *SetClipboardRequest) GetContent() *ClipboardContent {
+	if x != nil {
+		return x.Content
+	}
+	return nil
+}
+
+type SetClipboardResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Status        ServiceCallStatus      `protobuf:"varint,1,opt,name=status,proto3,enum=pbuf.v1.ServiceCallStatus" json:"status,omitempty"`
+	Msg           string                 `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SetClipboardResponse) Reset() {
+	*x = SetClipboardResponse{}
+	mi := &file_pair_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetClipboardResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetClipboardResponse) ProtoMessage() {}
+
+func (x *SetClipboardResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pair_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetClipboardResponse.ProtoReflect.Descriptor instead.
+func (*SetClipboardResponse) Descriptor() ([]byte, []int) {
+	return file_pair_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *SetClipboardResponse) GetStatus() ServiceCallStatus {
+	if x != nil {
+		return x.Status
+	}
+	return ServiceCallStatus_SERVICE_CALL_STATUS_OK
+}
+
+func (x *SetClipboardResponse) GetMsg() string {
+	if x != nil {
+		return x.Msg
+	}
+	return ""
+}
+
 var File_pair_proto protoreflect.FileDescriptor
 
 const file_pair_proto_rawDesc = "" +
@@ -1174,6 +1628,31 @@ const file_pair_proto_rawDesc = "" +
 	"\x04data\"X\n" +
 	"\x10SendFileResponse\x122\n" +
 	"\x06status\x18\x01 \x01(\x0e2\x1a.pbuf.v1.ServiceCallStatusR\x06status\x12\x10\n" +
+	"\x03msg\x18\x02 \x01(\tR\x03msg\"+\n" +
+	"\x15ImageClipboardContent\x12\x12\n" +
+	"\x04data\x18\x01 \x01(\fR\x04data\"0\n" +
+	"\x18FileListClipboardContent\x12\x14\n" +
+	"\x05files\x18\x01 \x03(\tR\x05files\"*\n" +
+	"\x14TextClipboardContent\x12\x12\n" +
+	"\x04text\x18\x01 \x01(\tR\x04text\"\xc2\x01\n" +
+	"\x10ClipboardContent\x126\n" +
+	"\x05image\x18\x01 \x01(\v2\x1e.pbuf.v1.ImageClipboardContentH\x00R\x05image\x129\n" +
+	"\x05files\x18\x02 \x01(\v2!.pbuf.v1.FileListClipboardContentH\x00R\x05files\x123\n" +
+	"\x04text\x18\x03 \x01(\v2\x1d.pbuf.v1.TextClipboardContentH\x00R\x04textB\x06\n" +
+	"\x04data\"^\n" +
+	"\x13GetClipboardRequest\x12\x14\n" +
+	"\x05token\x18\x01 \x01(\fR\x05token\x121\n" +
+	"\trequester\x18\x02 \x01(\v2\x13.pbuf.v1.DeviceInfoR\trequester\"\x91\x01\n" +
+	"\x14GetClipboardResponse\x122\n" +
+	"\x06status\x18\x01 \x01(\x0e2\x1a.pbuf.v1.ServiceCallStatusR\x06status\x12\x10\n" +
+	"\x03msg\x18\x02 \x01(\tR\x03msg\x123\n" +
+	"\acontent\x18\x03 \x01(\v2\x19.pbuf.v1.ClipboardContentR\acontent\"\x93\x01\n" +
+	"\x13SetClipboardRequest\x12\x14\n" +
+	"\x05token\x18\x01 \x01(\fR\x05token\x121\n" +
+	"\tRequester\x18\x02 \x01(\v2\x13.pbuf.v1.DeviceInfoR\tRequester\x123\n" +
+	"\acontent\x18\x03 \x01(\v2\x19.pbuf.v1.ClipboardContentR\acontent\"\\\n" +
+	"\x14SetClipboardResponse\x122\n" +
+	"\x06status\x18\x01 \x01(\x0e2\x1a.pbuf.v1.ServiceCallStatusR\x06status\x12\x10\n" +
 	"\x03msg\x18\x02 \x01(\tR\x03msg*n\n" +
 	"\n" +
 	"DeviceType\x12\x1b\n" +
@@ -1196,7 +1675,10 @@ const file_pair_proto_rawDesc = "" +
 	"\n" +
 	"GetSysInfo\x12\x1a.pbuf.v1.GetSysInfoRequest\x1a\x1b.pbuf.v1.GetSysInfoResponse2T\n" +
 	"\x0fFileSendService\x12A\n" +
-	"\bSendFile\x12\x18.pbuf.v1.SendFileRequest\x1a\x19.pbuf.v1.SendFileResponse(\x01B\x0fZ\ralat/pkg/pbufb\x06proto3"
+	"\bSendFile\x12\x18.pbuf.v1.SendFileRequest\x1a\x19.pbuf.v1.SendFileResponse(\x012\xb3\x01\n" +
+	"\x17ClipboardControlService\x12K\n" +
+	"\fGetClipboard\x12\x1c.pbuf.v1.GetClipboardRequest\x1a\x1d.pbuf.v1.GetClipboardResponse\x12K\n" +
+	"\fSetClipboard\x12\x1c.pbuf.v1.SetClipboardRequest\x1a\x1d.pbuf.v1.SetClipboardResponseB\x0fZ\ralat/pkg/pbufb\x06proto3"
 
 var (
 	file_pair_proto_rawDescOnce sync.Once
@@ -1211,27 +1693,35 @@ func file_pair_proto_rawDescGZIP() []byte {
 }
 
 var file_pair_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_pair_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
+var file_pair_proto_msgTypes = make([]protoimpl.MessageInfo, 25)
 var file_pair_proto_goTypes = []any{
-	(DeviceType)(0),                // 0: pbuf.v1.DeviceType
-	(ServiceCallStatus)(0),         // 1: pbuf.v1.ServiceCallStatus
-	(*Color)(nil),                  // 2: pbuf.v1.Color
-	(*DeviceInfo)(nil),             // 3: pbuf.v1.DeviceInfo
-	(*DeviceDetails)(nil),          // 4: pbuf.v1.DeviceDetails
-	(*RequestPairRequest)(nil),     // 5: pbuf.v1.RequestPairRequest
-	(*RequestPairResponse)(nil),    // 6: pbuf.v1.RequestPairResponse
-	(*GetDetailsRequest)(nil),      // 7: pbuf.v1.GetDetailsRequest
-	(*GetDetailsResponse)(nil),     // 8: pbuf.v1.GetDetailsResponse
-	(*GetInfoRequest)(nil),         // 9: pbuf.v1.GetInfoRequest
-	(*GetInfoResponse)(nil),        // 10: pbuf.v1.GetInfoResponse
-	(*SysInfo)(nil),                // 11: pbuf.v1.SysInfo
-	(*GetSysInfoRequest)(nil),      // 12: pbuf.v1.GetSysInfoRequest
-	(*GetSysInfoResponse)(nil),     // 13: pbuf.v1.GetSysInfoResponse
-	(*InitialSendFileRequest)(nil), // 14: pbuf.v1.InitialSendFileRequest
-	(*FileMetadata)(nil),           // 15: pbuf.v1.FileMetadata
-	(*FileChunk)(nil),              // 16: pbuf.v1.FileChunk
-	(*SendFileRequest)(nil),        // 17: pbuf.v1.SendFileRequest
-	(*SendFileResponse)(nil),       // 18: pbuf.v1.SendFileResponse
+	(DeviceType)(0),                  // 0: pbuf.v1.DeviceType
+	(ServiceCallStatus)(0),           // 1: pbuf.v1.ServiceCallStatus
+	(*Color)(nil),                    // 2: pbuf.v1.Color
+	(*DeviceInfo)(nil),               // 3: pbuf.v1.DeviceInfo
+	(*DeviceDetails)(nil),            // 4: pbuf.v1.DeviceDetails
+	(*RequestPairRequest)(nil),       // 5: pbuf.v1.RequestPairRequest
+	(*RequestPairResponse)(nil),      // 6: pbuf.v1.RequestPairResponse
+	(*GetDetailsRequest)(nil),        // 7: pbuf.v1.GetDetailsRequest
+	(*GetDetailsResponse)(nil),       // 8: pbuf.v1.GetDetailsResponse
+	(*GetInfoRequest)(nil),           // 9: pbuf.v1.GetInfoRequest
+	(*GetInfoResponse)(nil),          // 10: pbuf.v1.GetInfoResponse
+	(*SysInfo)(nil),                  // 11: pbuf.v1.SysInfo
+	(*GetSysInfoRequest)(nil),        // 12: pbuf.v1.GetSysInfoRequest
+	(*GetSysInfoResponse)(nil),       // 13: pbuf.v1.GetSysInfoResponse
+	(*InitialSendFileRequest)(nil),   // 14: pbuf.v1.InitialSendFileRequest
+	(*FileMetadata)(nil),             // 15: pbuf.v1.FileMetadata
+	(*FileChunk)(nil),                // 16: pbuf.v1.FileChunk
+	(*SendFileRequest)(nil),          // 17: pbuf.v1.SendFileRequest
+	(*SendFileResponse)(nil),         // 18: pbuf.v1.SendFileResponse
+	(*ImageClipboardContent)(nil),    // 19: pbuf.v1.ImageClipboardContent
+	(*FileListClipboardContent)(nil), // 20: pbuf.v1.FileListClipboardContent
+	(*TextClipboardContent)(nil),     // 21: pbuf.v1.TextClipboardContent
+	(*ClipboardContent)(nil),         // 22: pbuf.v1.ClipboardContent
+	(*GetClipboardRequest)(nil),      // 23: pbuf.v1.GetClipboardRequest
+	(*GetClipboardResponse)(nil),     // 24: pbuf.v1.GetClipboardResponse
+	(*SetClipboardRequest)(nil),      // 25: pbuf.v1.SetClipboardRequest
+	(*SetClipboardResponse)(nil),     // 26: pbuf.v1.SetClipboardResponse
 }
 var file_pair_proto_depIdxs = []int32{
 	0,  // 0: pbuf.v1.DeviceInfo.type:type_name -> pbuf.v1.DeviceType
@@ -1249,21 +1739,34 @@ var file_pair_proto_depIdxs = []int32{
 	14, // 12: pbuf.v1.SendFileRequest.initial_request:type_name -> pbuf.v1.InitialSendFileRequest
 	16, // 13: pbuf.v1.SendFileRequest.chunk:type_name -> pbuf.v1.FileChunk
 	1,  // 14: pbuf.v1.SendFileResponse.status:type_name -> pbuf.v1.ServiceCallStatus
-	5,  // 15: pbuf.v1.AlatService.RequestPair:input_type -> pbuf.v1.RequestPairRequest
-	7,  // 16: pbuf.v1.AlatService.GetDetails:input_type -> pbuf.v1.GetDetailsRequest
-	9,  // 17: pbuf.v1.AlatService.GetInfo:input_type -> pbuf.v1.GetInfoRequest
-	12, // 18: pbuf.v1.SysInfoService.GetSysInfo:input_type -> pbuf.v1.GetSysInfoRequest
-	17, // 19: pbuf.v1.FileSendService.SendFile:input_type -> pbuf.v1.SendFileRequest
-	6,  // 20: pbuf.v1.AlatService.RequestPair:output_type -> pbuf.v1.RequestPairResponse
-	8,  // 21: pbuf.v1.AlatService.GetDetails:output_type -> pbuf.v1.GetDetailsResponse
-	10, // 22: pbuf.v1.AlatService.GetInfo:output_type -> pbuf.v1.GetInfoResponse
-	13, // 23: pbuf.v1.SysInfoService.GetSysInfo:output_type -> pbuf.v1.GetSysInfoResponse
-	18, // 24: pbuf.v1.FileSendService.SendFile:output_type -> pbuf.v1.SendFileResponse
-	20, // [20:25] is the sub-list for method output_type
-	15, // [15:20] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	19, // 15: pbuf.v1.ClipboardContent.image:type_name -> pbuf.v1.ImageClipboardContent
+	20, // 16: pbuf.v1.ClipboardContent.files:type_name -> pbuf.v1.FileListClipboardContent
+	21, // 17: pbuf.v1.ClipboardContent.text:type_name -> pbuf.v1.TextClipboardContent
+	3,  // 18: pbuf.v1.GetClipboardRequest.requester:type_name -> pbuf.v1.DeviceInfo
+	1,  // 19: pbuf.v1.GetClipboardResponse.status:type_name -> pbuf.v1.ServiceCallStatus
+	22, // 20: pbuf.v1.GetClipboardResponse.content:type_name -> pbuf.v1.ClipboardContent
+	3,  // 21: pbuf.v1.SetClipboardRequest.Requester:type_name -> pbuf.v1.DeviceInfo
+	22, // 22: pbuf.v1.SetClipboardRequest.content:type_name -> pbuf.v1.ClipboardContent
+	1,  // 23: pbuf.v1.SetClipboardResponse.status:type_name -> pbuf.v1.ServiceCallStatus
+	5,  // 24: pbuf.v1.AlatService.RequestPair:input_type -> pbuf.v1.RequestPairRequest
+	7,  // 25: pbuf.v1.AlatService.GetDetails:input_type -> pbuf.v1.GetDetailsRequest
+	9,  // 26: pbuf.v1.AlatService.GetInfo:input_type -> pbuf.v1.GetInfoRequest
+	12, // 27: pbuf.v1.SysInfoService.GetSysInfo:input_type -> pbuf.v1.GetSysInfoRequest
+	17, // 28: pbuf.v1.FileSendService.SendFile:input_type -> pbuf.v1.SendFileRequest
+	23, // 29: pbuf.v1.ClipboardControlService.GetClipboard:input_type -> pbuf.v1.GetClipboardRequest
+	25, // 30: pbuf.v1.ClipboardControlService.SetClipboard:input_type -> pbuf.v1.SetClipboardRequest
+	6,  // 31: pbuf.v1.AlatService.RequestPair:output_type -> pbuf.v1.RequestPairResponse
+	8,  // 32: pbuf.v1.AlatService.GetDetails:output_type -> pbuf.v1.GetDetailsResponse
+	10, // 33: pbuf.v1.AlatService.GetInfo:output_type -> pbuf.v1.GetInfoResponse
+	13, // 34: pbuf.v1.SysInfoService.GetSysInfo:output_type -> pbuf.v1.GetSysInfoResponse
+	18, // 35: pbuf.v1.FileSendService.SendFile:output_type -> pbuf.v1.SendFileResponse
+	24, // 36: pbuf.v1.ClipboardControlService.GetClipboard:output_type -> pbuf.v1.GetClipboardResponse
+	26, // 37: pbuf.v1.ClipboardControlService.SetClipboard:output_type -> pbuf.v1.SetClipboardResponse
+	31, // [31:38] is the sub-list for method output_type
+	24, // [24:31] is the sub-list for method input_type
+	24, // [24:24] is the sub-list for extension type_name
+	24, // [24:24] is the sub-list for extension extendee
+	0,  // [0:24] is the sub-list for field type_name
 }
 
 func init() { file_pair_proto_init() }
@@ -1275,15 +1778,20 @@ func file_pair_proto_init() {
 		(*SendFileRequest_InitialRequest)(nil),
 		(*SendFileRequest_Chunk)(nil),
 	}
+	file_pair_proto_msgTypes[20].OneofWrappers = []any{
+		(*ClipboardContent_Image)(nil),
+		(*ClipboardContent_Files)(nil),
+		(*ClipboardContent_Text)(nil),
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pair_proto_rawDesc), len(file_pair_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   17,
+			NumMessages:   25,
 			NumExtensions: 0,
-			NumServices:   3,
+			NumServices:   4,
 		},
 		GoTypes:           file_pair_proto_goTypes,
 		DependencyIndexes: file_pair_proto_depIdxs,

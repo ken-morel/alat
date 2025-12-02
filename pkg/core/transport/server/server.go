@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 
+	"alat/pkg/core/service/clipboardcontrol"
 	"alat/pkg/core/service/filesend"
 	"alat/pkg/core/service/sysinfo"
 
@@ -52,6 +53,7 @@ func (s *Server) Start() (int, error) {
 	pbuf.RegisterAlatServiceServer(s.grpcServer, s)
 	pbuf.RegisterFileSendServiceServer(s.grpcServer, &filesend.FileSendServer{Service: &s.Services.FileSend})
 	pbuf.RegisterSysInfoServiceServer(s.grpcServer, &sysinfo.SysInfoServer{Service: &s.Services.SysInfo})
+	pbuf.RegisterClipboardControlServiceServer(s.grpcServer, &clipboardcontrol.ClipControlServer{Service: &s.Services.ClipControl})
 
 	go func() {
 		s.Running = true

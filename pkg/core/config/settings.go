@@ -27,9 +27,15 @@ type FileSendConfig struct {
 	MaxSize    uint64 `yaml:"maxSize"    json:"maxSize"`
 	SaveFolder string `yaml:"saveFolder" json:"saveFolder"`
 }
+
+type ClipControlConfig struct {
+	Enabled    bool `yaml:"enabled" json:"enabled"`
+	CanReceive bool `yaml:"canReceive" json:"canReceive"`
+}
 type ServiceConfig struct {
-	SysInfo  SysInfoConfig  `yaml:"sysinfo"  json:"sysinfo"`
-	FileSend FileSendConfig `yaml:"filesend" json:"filesend"`
+	SysInfo     SysInfoConfig     `yaml:"sysinfo" json:"sysinfo"`
+	FileSend    FileSendConfig    `yaml:"filesend" json:"filesend"`
+	ClipControl ClipControlConfig `yaml:"clipcontrol" json:"clipcontrol"`
 }
 
 func DefaultAppConfig() AppConfig {
@@ -67,6 +73,10 @@ func DefaultServiceConfig() ServiceConfig {
 			Enabled:    true,
 			MaxSize:    0,
 			SaveFolder: home,
+		},
+		ClipControl: ClipControlConfig{
+			Enabled:    true,
+			CanReceive: true,
 		},
 	}
 }

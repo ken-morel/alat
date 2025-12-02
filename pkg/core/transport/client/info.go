@@ -14,6 +14,7 @@ import (
 )
 
 func GetDeviceInfo(addr net.IP, port int) (*device.Info, error) {
+	// TODO: use connected connections
 	fullAddress := net.JoinHostPort(addr.String(), fmt.Sprintf("%d", port))
 	conn, err := grpc.NewClient(fullAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
@@ -25,6 +26,7 @@ func GetDeviceInfo(addr net.IP, port int) (*device.Info, error) {
 	defer cancel()
 
 	resp, err := client.GetInfo(ctx, &pbuf.GetInfoRequest{})
+
 	if err != nil {
 		return nil, err
 	} else {

@@ -92,12 +92,15 @@ func (p *PairManager) SubmitPairResponse(requestID string, accepted bool, reason
 }
 
 func (p *PairManager) IsTokenValid(token security.PairToken) bool {
+	return p.GetPairedDevice(token) != nil
+}
+func (p *PairManager) GetPairedDevice(token security.PairToken) *device.PairedDevice {
 	for _, dev := range p.pairedDevices {
 		if dev.Token == token {
-			return true
+			return &dev
 		}
 	}
-	return false
+	return nil
 }
 
 func NewManager(stor storage.NodeStorage, details *device.Details) (*PairManager, error) {
