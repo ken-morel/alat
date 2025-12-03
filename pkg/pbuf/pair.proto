@@ -118,11 +118,13 @@ message FileListClipboardContent { repeated string files = 1; }
 message TextClipboardContent { string text = 1; }
 
 message ClipboardContent {
-  oneof data {
-    ImageClipboardContent image = 1;
-    FileListClipboardContent files = 2;
-    TextClipboardContent text = 3;
-  }
+  bytes data = 1;
+  Type type = 2;
+  enum Type {
+    ImageClipboardContent = 0;
+    FileListClipboardContent = 1;
+    TextClipboardContent = 2;
+  };
 }
 
 message GetClipboardRequest {

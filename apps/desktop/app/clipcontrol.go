@@ -9,27 +9,29 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"slices"
+	"time"
 
 	"golang.design/x/clipboard"
 )
 
 // ClipboardManager defines an interface for clipboard operations.
 type ClipboardManager interface {
-	ReadText() (string, error)
-	WriteText(text string) error
+	ReadText() ([]byte, error)
+	WriteText(text []byte) error
 	Init() error
-	Watch(ctx context.Context) (<-chan []byte, error)
+	WatchText(ctx context.Context) (<-chan []byte, error)
 }
 
 // X11ClipboardManager implements ClipboardManager for X11, Windows, and macOS.
 type X11ClipboardManager struct{}
 
-func (m *X11ClipboardManager) ReadText() (string, error) {
-	return string(clipboard.Read(clipboard.FmtText)), nil
+func (m *X11ClipboardManager) ReadText() ([]byte, error) {
+	return clipboard.Read(clipboard.FmtText), nil
 }
 
-func (m *X11ClipboardManager) WriteText(text string) error {
-	clipboard.Write(clipboard.FmtText, []byte(text))
+func (m *X11ClipboardManager) WriteText(text []byte) error {
+	clipboard.Write(clipboard.FmtText, text)
 	return nil
 }
 
@@ -37,26 +39,26 @@ func (m *X11ClipboardManager) Init() error {
 	return clipboard.Init()
 }
 
-func (m *X11ClipboardManager) Watch(ctx context.Context) (<-chan []byte, error) {
+func (m *X11ClipboardManager) WatchText(ctx context.Context) (<-chan []byte, error) {
 	return clipboard.Watch(ctx, clipboard.FmtText), nil
 }
 
 // WaylandClipboardManager implements ClipboardManager for Wayland.
 type WaylandClipboardManager struct{}
 
-func (m *WaylandClipboardManager) ReadText() (string, error) {
+func (m *WaylandClipboardManager) ReadText() ([]byte, error) {
 	cmd := exec.Command("wl-paste")
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	err := cmd.Run()
 	if err != nil {
-		return "", fmt.Errorf("wl-paste command failed: %w", err)
+		return nil, fmt.Errorf("wl-paste command failed: %w", err)
 	}
-	return out.String(), nil
+	return bytes.TrimSuffix(out.Bytes(), []byte("\n")), nil
 }
 
-func (m *WaylandClipboardManager) WriteText(text string) error {
-	cmd := exec.Command("wl-copy", text)
+func (m *WaylandClipboardManager) WriteText(text []byte) error {
+	cmd := exec.Command("wl-copy", string(text))
 	err := cmd.Run()
 	if err != nil {
 		return fmt.Errorf("wl-copy command failed: %w", err)
@@ -65,7 +67,6 @@ func (m *WaylandClipboardManager) WriteText(text string) error {
 }
 
 func (m *WaylandClipboardManager) Init() error {
-	// Check if wl-copy and wl-paste are available
 	if _, err := exec.LookPath("wl-copy"); err != nil {
 		return fmt.Errorf("wl-copy not found in PATH, Wayland clipboard support disabled")
 	}
@@ -75,12 +76,25 @@ func (m *WaylandClipboardManager) Init() error {
 	return nil
 }
 
-// Watch is not supported on Wayland for passive monitoring.
-func (m *WaylandClipboardManager) Watch(ctx context.Context) (<-chan []byte, error) {
-	return nil, fmt.Errorf("automatic clipboard watching is not supported on Wayland")
+func (m *WaylandClipboardManager) WatchText(ctx context.Context) (<-chan []byte, error) {
+	output := make(chan []byte)
+	go func() {
+		content, _ := m.ReadText()
+		for {
+			time.Sleep(time.Second * 5)
+			newContent, err := m.ReadText()
+			if err != nil {
+				continue
+			}
+			if !slices.Equal(newContent, content) {
+				content = newContent
+				output <- newContent
+			}
+		}
+	}()
+	return output, nil
 }
 
-// NewClipboardManager creates the appropriate clipboard manager based on the OS and session type.
 func NewClipboardManager() ClipboardManager {
 	if runtime.GOOS == "linux" && os.Getenv("XDG_SESSION_TYPE") == "wayland" {
 		return &WaylandClipboardManager{}
@@ -88,21 +102,24 @@ func NewClipboardManager() ClipboardManager {
 	return &X11ClipboardManager{}
 }
 
+func (a *App) SendClipboardData(data []byte) {
+	for _, dev := range a.GetConnectedDevices() {
+		err := a.node.Services.ClipControl.RequestSetClipboard(&dev, &pbuf.ClipboardContent{
+			Data: data,
+			Type: pbuf.ClipboardContent_TextClipboardContent,
+		})
+		if err != nil {
+			fmt.Println("Error sending clipboard:", err)
+		}
+	}
+}
 func (a *App) SendClipboard() {
 	content, err := a.clipboardManager.ReadText()
 	if err != nil {
 		fmt.Println("Error reading clipboard:", err)
 		return
 	}
-
-	for _, dev := range a.GetConnectedDevices() {
-		err := a.node.Services.ClipControl.RequestSetClipboard(&dev, &pbuf.ClipboardContent{
-			Data: &pbuf.ClipboardContent_Text{Text: &pbuf.TextClipboardContent{Text: content}},
-		})
-		if err != nil {
-			fmt.Println("Error sending clipboard:", err)
-		}
-	}
+	a.SendClipboardData(content)
 }
 
 func (a *App) initClipboard() {
@@ -113,21 +130,23 @@ func (a *App) initClipboard() {
 	}
 
 	// Start clipboard watcher only if supported
-	ch, err := a.clipboardManager.Watch(context.TODO())
+	ch, err := a.clipboardManager.WatchText(context.TODO())
 	if err == nil {
 		go func() {
-			for range ch {
-				a.SendClipboard()
+			for data := range ch {
+				a.SendClipboardData(data)
 			}
-			println("Clipboard watcher stopped")
 		}()
 	} else {
 		fmt.Println("Disabling automatic clipboard watching:", err)
 	}
 
 	a.node.Services.ClipControl.Initialize(func(pd device.PairedDevice, cc *pbuf.ClipboardContent) error {
-		if txt := cc.GetText(); txt != nil {
-			return a.clipboardManager.WriteText(txt.GetText())
+		switch cc.GetType() {
+		case pbuf.ClipboardContent_TextClipboardContent:
+			if txt := cc.GetData(); txt != nil {
+				return a.clipboardManager.WriteText(txt)
+			}
 		}
 		// TODO: Handle other clipboard types like images
 		return nil
