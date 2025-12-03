@@ -10,10 +10,7 @@ import (
 )
 
 func (a *App) SendClipboard() {
-	// content := clipboard.Read(clipboard.FmtText)
-	println(">>>reading")
-	content := <-clipboard.Watch(context.TODO(), clipboard.FmtText)
-	println("<<<REad")
+	content := clipboard.Read(clipboard.FmtText)
 	fmt.Println("Read text from clipboard", content)
 	for _, dev := range a.GetConnectedDevices() {
 		fmt.Println("Sending text: ", string(content))
@@ -26,16 +23,14 @@ func (a *App) SendClipboard() {
 	}
 }
 func (a *App) initClipboard() {
-	fmt.Println(" ----------- Initializing clipboard ------------ ")
 	if err := clipboard.Init(); err != nil {
 		fmt.Println("Error setting up clipboard: ", err.Error())
-	} else {
-		fmt.Println("Clipboard initialized succesfully")
 	}
 	go func() {
 		for data := range clipboard.Watch(context.TODO(), clipboard.FmtText) {
 			println(" -- Clipboard -- ")
 			println(string(data))
+			a.SendClipboard()
 		}
 		println("Clipboard watcher stopped")
 	}()
@@ -48,6 +43,7 @@ func (a *App) initClipboard() {
 		}
 		return nil
 	}, func(pd device.PairedDevice) (*pbuf.ClipboardContent, error) {
+		// get clipbard and return, disabled for now for security reasons
 		return nil, fmt.Errorf("Clipboard not configured")
 	})
 }
