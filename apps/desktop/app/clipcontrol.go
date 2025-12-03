@@ -83,10 +83,8 @@ func (m *WaylandClipboardManager) Watch(ctx context.Context) (<-chan []byte, err
 // NewClipboardManager creates the appropriate clipboard manager based on the OS and session type.
 func NewClipboardManager() ClipboardManager {
 	if runtime.GOOS == "linux" && os.Getenv("XDG_SESSION_TYPE") == "wayland" {
-		fmt.Println("Wayland session detected, using wl-clipboard.")
 		return &WaylandClipboardManager{}
 	}
-	fmt.Println("Using default clipboard manager (X11/Windows/macOS).")
 	return &X11ClipboardManager{}
 }
 
@@ -97,9 +95,7 @@ func (a *App) SendClipboard() {
 		return
 	}
 
-	fmt.Println("Read text from clipboard:", content)
 	for _, dev := range a.GetConnectedDevices() {
-		fmt.Println("Sending text:", content)
 		err := a.node.Services.ClipControl.RequestSetClipboard(&dev, &pbuf.ClipboardContent{
 			Data: &pbuf.ClipboardContent_Text{Text: &pbuf.TextClipboardContent{Text: content}},
 		})
@@ -120,11 +116,7 @@ func (a *App) initClipboard() {
 	ch, err := a.clipboardManager.Watch(context.TODO())
 	if err == nil {
 		go func() {
-			fmt.Println("Clipboard watcher started.")
-			for data := range ch {
-				println(" -- Clipboard changed -- ")
-				println(string(data))
-				// This direct call is fine since Watch only works on X11 which uses the same manager
+			for range ch {
 				a.SendClipboard()
 			}
 			println("Clipboard watcher stopped")
@@ -135,7 +127,6 @@ func (a *App) initClipboard() {
 
 	a.node.Services.ClipControl.Initialize(func(pd device.PairedDevice, cc *pbuf.ClipboardContent) error {
 		if txt := cc.GetText(); txt != nil {
-			fmt.Println("Received text:", txt.GetText())
 			return a.clipboardManager.WriteText(txt.GetText())
 		}
 		// TODO: Handle other clipboard types like images
