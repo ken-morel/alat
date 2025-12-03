@@ -11,10 +11,11 @@ import (
 )
 
 type App struct {
-	ctx     context.Context
-	assets  embed.FS
-	node    *node.Node
-	started bool
+	ctx              context.Context
+	assets           embed.FS
+	node             *node.Node
+	started          bool
+	clipboardManager ClipboardManager
 }
 
 func NewApp(fs embed.FS, n *node.Node) *App {
