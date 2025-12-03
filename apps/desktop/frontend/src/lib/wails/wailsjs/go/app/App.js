@@ -66,6 +66,10 @@ export function Run() {
   return window['go']['app']['App']['Run']();
 }
 
+export function SendClipboard() {
+  return window['go']['app']['App']['SendClipboard']();
+}
+
 export function ServiceGetFileSendStatus() {
   return window['go']['app']['App']['ServiceGetFileSendStatus']();
 }

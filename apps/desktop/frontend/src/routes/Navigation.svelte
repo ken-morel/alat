@@ -50,7 +50,7 @@
       </Navigation.Tile>
       {#if $connectedDevice}
         {@const Icon = guessIcon($connectedDevice.info.type)}
-        <div transition:slide class="w-full h-full">
+        <div transition:slide class="w-full">
           <Navigation.Tile
             selected={page.url.pathname == "/dashboard/device"}
             label={$connectedDevice.info.name}

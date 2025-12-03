@@ -44,6 +44,8 @@ export function RequestPairingFoundDevice(arg1:string):Promise<app.RequestPairin
 
 export function Run():Promise<void>;
 
+export function SendClipboard():Promise<void>;
+
 export function ServiceGetFileSendStatus():Promise<filesend.FileTransfersStatus>;
 
 export function ServiceStartSendFilesToDevice(arg1:connected.Connected,arg2:Array<string>):Promise<void>;

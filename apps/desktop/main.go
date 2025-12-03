@@ -13,10 +13,7 @@ func main() {
 	if conf != nil && conf.SetupComplete {
 		n.Start()
 	}
-
 	a := app.NewApp(assets, n)
-
-	n.OnPairRequest(a.HandlePairRequest)
 
 	showTray(n, a)
 	a.Run()

@@ -58,6 +58,7 @@ func showTray(n *node.Node, a *app.App) {
 		}()
 		systray.AddSeparator()
 		mSendFiles := systray.AddMenuItem("Send files", "Select files and a device to send them")
+		mSendClipboard := systray.AddMenuItem("Send clipboard", "Send clipboard to all connected devices")
 		systray.AddSeparator()
 		mQuit := systray.AddMenuItem("Quit", "Close and stop alat")
 
@@ -76,6 +77,8 @@ func showTray(n *node.Node, a *app.App) {
 					}
 				case <-mSendFiles.ClickedCh:
 					a.OpenSendFilesPage()
+				case <-mSendClipboard.ClickedCh:
+					a.SendClipboard()
 				case <-mQuit.ClickedCh:
 					systray.Quit()
 				case <-mAutoStart.ClickedCh:

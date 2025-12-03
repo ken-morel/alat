@@ -16,6 +16,10 @@ func (app *App) startup(ctx context.Context) {
 	app.ctx = ctx
 	app.started = true
 	rt.WindowSetDarkTheme(ctx)
+
+	app.node.OnPairRequest(app.HandlePairRequest)
+
+	app.initClipboard()
 }
 
 func (app *App) Run() error {
