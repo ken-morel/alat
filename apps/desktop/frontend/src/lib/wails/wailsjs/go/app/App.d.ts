@@ -46,8 +46,6 @@ export function Run():Promise<void>;
 
 export function SendClipboard():Promise<void>;
 
-export function SendClipboardData(arg1:Array<number>):Promise<void>;
-
 export function ServiceGetFileSendStatus():Promise<filesend.FileTransfersStatus>;
 
 export function ServiceStartSendFilesToDevice(arg1:connected.Connected,arg2:Array<string>):Promise<void>;

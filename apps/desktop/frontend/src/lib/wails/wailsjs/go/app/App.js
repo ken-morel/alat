@@ -70,10 +70,6 @@ export function SendClipboard() {
   return window['go']['app']['App']['SendClipboard']();
 }
 
-export function SendClipboardData(arg1) {
-  return window['go']['app']['App']['SendClipboardData'](arg1);
-}
-
 export function ServiceGetFileSendStatus() {
   return window['go']['app']['App']['ServiceGetFileSendStatus']();
 }

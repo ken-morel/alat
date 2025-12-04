@@ -3,14 +3,13 @@ package app
 import (
 	"alat/pkg/core/device"
 	"alat/pkg/pbuf"
+	"bufio"
 	"bytes"
 	"context"
 	"fmt"
 	"os"
 	"os/exec"
 	"runtime"
-	"slices"
-	"time"
 
 	"golang.design/x/clipboard"
 )
@@ -19,8 +18,11 @@ import (
 type ClipboardManager interface {
 	ReadText() ([]byte, error)
 	WriteText(text []byte) error
+	ReadImage() ([]byte, error)
+	WriteImage(img []byte) error
 	Init() error
-	WatchText(ctx context.Context) (<-chan []byte, error)
+	// WatchChanges returns a channel that signals when the clipboard content changes.
+	WatchChanges(ctx context.Context) (<-chan struct{}, error)
 }
 
 // X11ClipboardManager implements ClipboardManager for X11, Windows, and macOS.
@@ -35,12 +37,39 @@ func (m *X11ClipboardManager) WriteText(text []byte) error {
 	return nil
 }
 
+func (m *X11ClipboardManager) ReadImage() ([]byte, error) {
+	return clipboard.Read(clipboard.FmtImage), nil
+}
+
+func (m *X11ClipboardManager) WriteImage(img []byte) error {
+	clipboard.Write(clipboard.FmtImage, img)
+	return nil
+}
+
 func (m *X11ClipboardManager) Init() error {
 	return clipboard.Init()
 }
 
-func (m *X11ClipboardManager) WatchText(ctx context.Context) (<-chan []byte, error) {
-	return clipboard.Watch(ctx, clipboard.FmtText), nil
+func (m *X11ClipboardManager) WatchChanges(ctx context.Context) (<-chan struct{}, error) {
+	notifications := make(chan struct{}, 1)
+	textChanges := clipboard.Watch(ctx, clipboard.FmtText)
+	imageChanges := clipboard.Watch(ctx, clipboard.FmtImage)
+
+	go func() {
+		defer close(notifications)
+		for {
+			select {
+			case <-textChanges:
+				notifications <- struct{}{}
+			case <-imageChanges:
+				notifications <- struct{}{}
+			case <-ctx.Done():
+				return
+			}
+		}
+	}()
+
+	return notifications, nil
 }
 
 // WaylandClipboardManager implements ClipboardManager for Wayland.
@@ -66,6 +95,27 @@ func (m *WaylandClipboardManager) WriteText(text []byte) error {
 	return nil
 }
 
+func (m *WaylandClipboardManager) ReadImage() ([]byte, error) {
+	cmd := exec.Command("wl-paste", "--type", "image/png")
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err := cmd.Run()
+	if err != nil {
+		return nil, fmt.Errorf("wl-paste command failed for image: %w", err)
+	}
+	return out.Bytes(), nil
+}
+
+func (m *WaylandClipboardManager) WriteImage(img []byte) error {
+	cmd := exec.Command("wl-copy", "--type", "image/png")
+	cmd.Stdin = bytes.NewReader(img)
+	err := cmd.Run()
+	if err != nil {
+		return fmt.Errorf("wl-copy command failed for image: %w", err)
+	}
+	return nil
+}
+
 func (m *WaylandClipboardManager) Init() error {
 	if _, err := exec.LookPath("wl-copy"); err != nil {
 		return fmt.Errorf("wl-copy not found in PATH, Wayland clipboard support disabled")
@@ -76,23 +126,29 @@ func (m *WaylandClipboardManager) Init() error {
 	return nil
 }
 
-func (m *WaylandClipboardManager) WatchText(ctx context.Context) (<-chan []byte, error) {
-	output := make(chan []byte)
+func (m *WaylandClipboardManager) WatchChanges(ctx context.Context) (<-chan struct{}, error) {
+	notifications := make(chan struct{}, 1)
+	cmd := exec.CommandContext(ctx, "wl-paste", "--watch", "echo")
+
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		return nil, err
+	}
+
+	if err := cmd.Start(); err != nil {
+		return nil, fmt.Errorf("failed to start wl-paste --watch: %w", err)
+	}
+
 	go func() {
-		content, _ := m.ReadText()
-		for {
-			time.Sleep(time.Second * 5)
-			newContent, err := m.ReadText()
-			if err != nil {
-				continue
-			}
-			if !slices.Equal(newContent, content) {
-				content = newContent
-				output <- newContent
-			}
+		defer close(notifications)
+		scanner := bufio.NewScanner(stdout)
+		for scanner.Scan() {
+			notifications <- struct{}{}
 		}
+		cmd.Wait()
 	}()
-	return output, nil
+
+	return notifications, nil
 }
 
 func NewClipboardManager() ClipboardManager {
@@ -102,24 +158,35 @@ func NewClipboardManager() ClipboardManager {
 	return &X11ClipboardManager{}
 }
 
-func (a *App) SendClipboardData(data []byte) {
-	for _, dev := range a.GetConnectedDevices() {
-		err := a.node.Services.ClipControl.RequestSetClipboard(&dev, &pbuf.ClipboardContent{
-			Data: data,
-			Type: pbuf.ClipboardContent_TextClipboardContent,
-		})
-		if err != nil {
-			fmt.Println("Error sending clipboard:", err)
+func (a *App) SendClipboard() {
+	// Prioritize sending image content over text
+	imgContent, err := a.clipboardManager.ReadImage()
+	if err == nil && len(imgContent) > 0 {
+		for _, dev := range a.GetConnectedDevices() {
+			err := a.node.Services.ClipControl.RequestSetClipboard(&dev, &pbuf.ClipboardContent{
+				Type: pbuf.ClipboardContent_ImageClipboardContent,
+				Data: imgContent,
+			})
+			if err != nil {
+				fmt.Println("Error sending image clipboard:", err)
+			}
+		}
+		return // Stop after sending image
+	}
+
+	// If no image, send text content
+	textContent, err := a.clipboardManager.ReadText()
+	if err == nil && len(textContent) > 0 {
+		for _, dev := range a.GetConnectedDevices() {
+			err := a.node.Services.ClipControl.RequestSetClipboard(&dev, &pbuf.ClipboardContent{
+				Type: pbuf.ClipboardContent_TextClipboardContent,
+				Data: textContent,
+			})
+			if err != nil {
+				fmt.Println("Error sending text clipboard:", err)
+			}
 		}
 	}
-}
-func (a *App) SendClipboard() {
-	content, err := a.clipboardManager.ReadText()
-	if err != nil {
-		fmt.Println("Error reading clipboard:", err)
-		return
-	}
-	a.SendClipboardData(content)
 }
 
 func (a *App) initClipboard() {
@@ -129,13 +196,16 @@ func (a *App) initClipboard() {
 		return // Stop if clipboard is not available
 	}
 
-	// Start clipboard watcher only if supported
-	ch, err := a.clipboardManager.WatchText(context.TODO())
+	// Start the unified clipboard watcher
+	ch, err := a.clipboardManager.WatchChanges(context.TODO())
 	if err == nil {
 		go func() {
-			for data := range ch {
-				a.SendClipboardData(data)
+			fmt.Println("Clipboard watcher started.")
+			for range ch {
+				fmt.Println("Clipboard change detected, sending content.")
+				a.SendClipboard()
 			}
+			fmt.Println("Clipboard watcher stopped.")
 		}()
 	} else {
 		fmt.Println("Disabling automatic clipboard watching:", err)
@@ -144,11 +214,10 @@ func (a *App) initClipboard() {
 	a.node.Services.ClipControl.Initialize(func(pd device.PairedDevice, cc *pbuf.ClipboardContent) error {
 		switch cc.GetType() {
 		case pbuf.ClipboardContent_TextClipboardContent:
-			if txt := cc.GetData(); txt != nil {
-				return a.clipboardManager.WriteText(txt)
-			}
+			return a.clipboardManager.WriteText(cc.GetData())
+		case pbuf.ClipboardContent_ImageClipboardContent:
+			return a.clipboardManager.WriteImage(cc.GetData())
 		}
-		// TODO: Handle other clipboard types like images
 		return nil
 	}, func(pd device.PairedDevice) (*pbuf.ClipboardContent, error) {
 		// get clipboard and return, disabled for now for security reasons
