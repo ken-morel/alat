@@ -25,7 +25,6 @@ func NewApp(fs embed.FS, n *node.Node) *App {
 func (app *App) GetAlatColors() []color.Color {
 	return color.Colors
 }
-
 func (app *App) Show() {
 	if app.started {
 		rt.Show(app.ctx)

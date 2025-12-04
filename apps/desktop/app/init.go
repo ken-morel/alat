@@ -28,7 +28,7 @@ func (app *App) Run() error {
 	return wails.Run(&options.App{
 		Title:  "Alat",
 		Width:  800,
-		Height: 1000,
+		Height: 600,
 		AssetServer: &assetserver.Options{
 			Assets: app.assets,
 		},
@@ -49,7 +49,7 @@ func (app *App) Run() error {
 		},
 		Windows: &windows.Options{
 			WindowIsTranslucent:  true,
-			WebviewIsTransparent: true,
+			WebviewIsTransparent: false,
 			BackdropType:         windows.Acrylic,
 			WindowClassName:      core.DesktopAppID,
 			Theme:                windows.Dark,
