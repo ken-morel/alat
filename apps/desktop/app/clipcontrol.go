@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"sync"
 
 	"golang.design/x/clipboard"
 )
@@ -21,12 +22,17 @@ type ClipboardManager interface {
 	ReadImage() ([]byte, error)
 	WriteImage(img []byte) error
 	Init() error
-	// WatchChanges returns a channel that signals when the clipboard content changes.
-	WatchChanges(ctx context.Context) (<-chan struct{}, error)
+	// WatchChanges returns a channel that sends the new clipboard content when it changes.
+	WatchChanges(ctx context.Context) (<-chan *pbuf.ClipboardContent, error)
 }
 
-// X11ClipboardManager implements ClipboardManager for X11, Windows, and macOS.
-type X11ClipboardManager struct{}
+// --- X11/Windows/macOS Implementation ---
+
+type X11ClipboardManager struct {
+	lastText  []byte
+	lastImage []byte
+	mu        sync.Mutex
+}
 
 func (m *X11ClipboardManager) ReadText() ([]byte, error) {
 	return clipboard.Read(clipboard.FmtText), nil
@@ -50,30 +56,55 @@ func (m *X11ClipboardManager) Init() error {
 	return clipboard.Init()
 }
 
-func (m *X11ClipboardManager) WatchChanges(ctx context.Context) (<-chan struct{}, error) {
-	notifications := make(chan struct{}, 1)
+func (m *X11ClipboardManager) WatchChanges(ctx context.Context) (<-chan *pbuf.ClipboardContent, error) {
+	contentChan := make(chan *pbuf.ClipboardContent, 1)
 	textChanges := clipboard.Watch(ctx, clipboard.FmtText)
 	imageChanges := clipboard.Watch(ctx, clipboard.FmtImage)
 
 	go func() {
-		defer close(notifications)
+		defer close(contentChan)
 		for {
 			select {
-			case <-textChanges:
-				notifications <- struct{}{}
-			case <-imageChanges:
-				notifications <- struct{}{}
+			case newText := <-textChanges:
+				m.mu.Lock()
+				if !bytes.Equal(m.lastText, newText) {
+					m.lastText = newText
+					// When text changes, image is usually cleared.
+					m.lastImage = nil
+					contentChan <- &pbuf.ClipboardContent{
+						Type: pbuf.ClipboardContent_TextClipboardContent,
+						Data: newText,
+					}
+				}
+				m.mu.Unlock()
+			case newImage := <-imageChanges:
+				m.mu.Lock()
+				if !bytes.Equal(m.lastImage, newImage) {
+					m.lastImage = newImage
+					// When image changes, text is usually cleared.
+					m.lastText = nil
+					contentChan <- &pbuf.ClipboardContent{
+						Type: pbuf.ClipboardContent_ImageClipboardContent,
+						Data: newImage,
+					}
+				}
+				m.mu.Unlock()
 			case <-ctx.Done():
 				return
 			}
 		}
 	}()
 
-	return notifications, nil
+	return contentChan, nil
 }
 
-// WaylandClipboardManager implements ClipboardManager for Wayland.
-type WaylandClipboardManager struct{}
+// --- Wayland Implementation ---
+
+type WaylandClipboardManager struct {
+	lastText  []byte
+	lastImage []byte
+	mu        sync.Mutex
+}
 
 func (m *WaylandClipboardManager) ReadText() ([]byte, error) {
 	cmd := exec.Command("wl-paste")
@@ -126,8 +157,8 @@ func (m *WaylandClipboardManager) Init() error {
 	return nil
 }
 
-func (m *WaylandClipboardManager) WatchChanges(ctx context.Context) (<-chan struct{}, error) {
-	notifications := make(chan struct{}, 1)
+func (m *WaylandClipboardManager) WatchChanges(ctx context.Context) (<-chan *pbuf.ClipboardContent, error) {
+	contentChan := make(chan *pbuf.ClipboardContent, 1)
 	cmd := exec.CommandContext(ctx, "wl-paste", "--watch", "echo")
 
 	stdout, err := cmd.StdoutPipe()
@@ -140,51 +171,78 @@ func (m *WaylandClipboardManager) WatchChanges(ctx context.Context) (<-chan stru
 	}
 
 	go func() {
-		defer close(notifications)
+		defer close(contentChan)
 		scanner := bufio.NewScanner(stdout)
 		for scanner.Scan() {
-			notifications <- struct{}{}
+			// A change occurred, now we check what it was.
+			m.mu.Lock()
+			newImage, err := m.ReadImage()
+			if err == nil && len(newImage) > 0 && !bytes.Equal(m.lastImage, newImage) {
+				m.lastImage = newImage
+				m.lastText = nil // Image takes priority
+				contentChan <- &pbuf.ClipboardContent{
+					Type: pbuf.ClipboardContent_ImageClipboardContent,
+					Data: newImage,
+				}
+			} else {
+				newText, err := m.ReadText()
+				if err == nil && len(newText) > 0 && !bytes.Equal(m.lastText, newText) {
+					m.lastText = newText
+					m.lastImage = nil
+					contentChan <- &pbuf.ClipboardContent{
+						Type: pbuf.ClipboardContent_TextClipboardContent,
+						Data: newText,
+					}
+				}
+			}
+			m.mu.Unlock()
 		}
 		cmd.Wait()
 	}()
 
-	return notifications, nil
+	return contentChan, nil
 }
+
+// --- App Integration ---
 
 func NewClipboardManager() ClipboardManager {
 	if runtime.GOOS == "linux" && os.Getenv("XDG_SESSION_TYPE") == "wayland" {
+		fmt.Println("INFO: Using Wayland clipboard manager.")
 		return &WaylandClipboardManager{}
 	}
+	fmt.Println("INFO: Using default (X11/Windows/macOS) clipboard manager.")
 	return &X11ClipboardManager{}
 }
 
+// SendClipboard is for manual triggers, like a tray icon.
 func (a *App) SendClipboard() {
 	// Prioritize sending image content over text
 	imgContent, err := a.clipboardManager.ReadImage()
 	if err == nil && len(imgContent) > 0 {
-		for _, dev := range a.GetConnectedDevices() {
-			err := a.node.Services.ClipControl.RequestSetClipboard(&dev, &pbuf.ClipboardContent{
-				Type: pbuf.ClipboardContent_ImageClipboardContent,
-				Data: imgContent,
-			})
-			if err != nil {
-				fmt.Println("Error sending image clipboard:", err)
-			}
-		}
+		fmt.Println("DEBUG: Read image from clipboard, preparing to send.")
+		a.sendClipboardToPeers(&pbuf.ClipboardContent{
+			Type: pbuf.ClipboardContent_ImageClipboardContent,
+			Data: imgContent,
+		})
 		return // Stop after sending image
 	}
 
 	// If no image, send text content
 	textContent, err := a.clipboardManager.ReadText()
 	if err == nil && len(textContent) > 0 {
-		for _, dev := range a.GetConnectedDevices() {
-			err := a.node.Services.ClipControl.RequestSetClipboard(&dev, &pbuf.ClipboardContent{
-				Type: pbuf.ClipboardContent_TextClipboardContent,
-				Data: textContent,
-			})
-			if err != nil {
-				fmt.Println("Error sending text clipboard:", err)
-			}
+		fmt.Println("DEBUG: Read text from clipboard, preparing to send.")
+		a.sendClipboardToPeers(&pbuf.ClipboardContent{
+			Type: pbuf.ClipboardContent_TextClipboardContent,
+			Data: textContent,
+		})
+	}
+}
+
+func (a *App) sendClipboardToPeers(content *pbuf.ClipboardContent) {
+	for _, dev := range a.GetConnectedDevices() {
+		err := a.node.Services.ClipControl.RequestSetClipboard(&dev, content)
+		if err != nil {
+			fmt.Printf("Error sending clipboard to device %s: %v\n", dev.Info.Name, err)
 		}
 	}
 }
@@ -200,12 +258,12 @@ func (a *App) initClipboard() {
 	ch, err := a.clipboardManager.WatchChanges(context.TODO())
 	if err == nil {
 		go func() {
-			fmt.Println("Clipboard watcher started.")
-			for range ch {
-				fmt.Println("Clipboard change detected, sending content.")
-				a.SendClipboard()
+			fmt.Println("INFO: Clipboard watcher started successfully.")
+			for content := range ch {
+				fmt.Println("DEBUG: Clipboard change detected by watcher, sending content.")
+				a.sendClipboardToPeers(content)
 			}
-			fmt.Println("Clipboard watcher stopped.")
+			fmt.Println("INFO: Clipboard watcher stopped.")
 		}()
 	} else {
 		fmt.Println("Disabling automatic clipboard watching:", err)
@@ -214,9 +272,23 @@ func (a *App) initClipboard() {
 	a.node.Services.ClipControl.Initialize(func(pd device.PairedDevice, cc *pbuf.ClipboardContent) error {
 		switch cc.GetType() {
 		case pbuf.ClipboardContent_TextClipboardContent:
-			return a.clipboardManager.WriteText(cc.GetData())
+			incomingText := cc.GetData()
+			currentText, err := a.clipboardManager.ReadText()
+			if err == nil && bytes.Equal(currentText, incomingText) {
+				fmt.Println("DEBUG: Received text clipboard is same as local, skipping write.")
+				return nil
+			}
+			fmt.Println("DEBUG: Received text clipboard from a peer, writing to local clipboard.")
+			return a.clipboardManager.WriteText(incomingText)
 		case pbuf.ClipboardContent_ImageClipboardContent:
-			return a.clipboardManager.WriteImage(cc.GetData())
+			incomingImage := cc.GetData()
+			currentImage, err := a.clipboardManager.ReadImage()
+			if err == nil && bytes.Equal(currentImage, incomingImage) {
+				fmt.Println("DEBUG: Received image clipboard is same as local, skipping write.")
+				return nil
+			}
+			fmt.Println("DEBUG: Received image clipboard from a peer, writing to local clipboard.")
+			return a.clipboardManager.WriteImage(incomingImage)
 		}
 		return nil
 	}, func(pd device.PairedDevice) (*pbuf.ClipboardContent, error) {
