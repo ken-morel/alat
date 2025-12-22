@@ -68,6 +68,7 @@ func (m *X11ClipboardManager) WatchChanges(ctx context.Context) (<-chan *pbuf.Cl
 			case newText := <-textChanges:
 				m.mu.Lock()
 				if !bytes.Equal(m.lastText, newText) {
+					fmt.Println("DEBUG: Text change detected by watcher.")
 					m.lastText = newText
 					// When text changes, image is usually cleared.
 					m.lastImage = nil
@@ -79,6 +80,7 @@ func (m *X11ClipboardManager) WatchChanges(ctx context.Context) (<-chan *pbuf.Cl
 				m.mu.Unlock()
 			case newImage := <-imageChanges:
 				m.mu.Lock()
+				fmt.Printf("DEBUG: Image change detected by watcher. Size: %d bytes\n", len(newImage))
 				if !bytes.Equal(m.lastImage, newImage) {
 					m.lastImage = newImage
 					// When image changes, text is usually cleared.
@@ -218,6 +220,7 @@ func NewClipboardManager() ClipboardManager {
 func (a *App) SendClipboard() {
 	// Prioritize sending image content over text
 	imgContent, err := a.clipboardManager.ReadImage()
+	fmt.Printf("DEBUG: Manually sending clipboard. Read image data size: %d bytes\n", len(imgContent))
 	if err == nil && len(imgContent) > 0 {
 		fmt.Println("DEBUG: Read image from clipboard, preparing to send.")
 		a.sendClipboardToPeers(&pbuf.ClipboardContent{
