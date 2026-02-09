@@ -1,8 +1,10 @@
 use super::proto::Certificate;
+use thiserror::Error;
 
-#[derive(Debug)]
+#[derive(Error, Debug)]
 pub enum StorageError {
-    LoadError,
+    #[error("Error loading storage file {0}")]
+    LoadError(String),
 }
 
 type StorageResult<T> = Result<T, StorageError>;
