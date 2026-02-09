@@ -1,0 +1,27 @@
+syntax = "proto3";
+package proto;
+
+import "messages.proto";
+
+message RequestPairRequest {
+  DeviceInfo info = 1;
+  Certificate certificate = 2;
+}
+message RequestPairResponseSuccess {
+  bytes token = 1;
+  Certificate certificate = 2;
+  DeviceInfo info = 3;
+}
+message RequestPairResponseFailure {
+  string reason = 1;
+}
+message RequestPairResponse {
+  oneof result {
+    RequestPairResponseSuccess success = 1;
+    RequestPairResponseFailure failure = 2;
+  }
+}
+
+service PairService {
+  rpc RequestPair(RequestPairRequest) returns (RequestPairResponse);
+}

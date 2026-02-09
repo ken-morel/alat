@@ -1,0 +1,18 @@
+[package]
+name = "nlem"
+version = "0.1.0"
+edition = "2024"
+authors.workspace = true
+documentation.workspace = true
+description = "Alat core"
+
+
+[dependencies]
+prost = "0.14.3"
+tonic = "0.14.3"
+tonic-prost = "0.14.3"
+
+[build-dependencies]
+prost-build = "0.14.3"
+tonic-build = "0.14.3"
+tonic-prost-build = "0.14.3"

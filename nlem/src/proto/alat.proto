@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package proto;
+
+import "messages.proto";
+
+message GetDeviceInfoRequest {}
+message GetDeviceInfoResponse {
+  DeviceInfo info = 1;
+}
+service AlatService {
+  rpc GetDeviceInfo(GetDeviceInfoRequest) returns (GetDeviceInfoResponse);
+}

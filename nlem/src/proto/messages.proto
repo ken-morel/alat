@@ -1,0 +1,25 @@
+syntax = "proto3";
+package proto;
+
+message Certificate {
+  bytes data = 1;
+}
+
+message Color {
+  uint32 r = 1;
+  uint32 g = 2;
+  uint32 b = 3;
+}
+enum DeviceType {
+  DEVICE_TYPE_UNSPECIFIED = 0;
+  DEVICE_TYPE_MOBILE = 1;
+  DEVICE_TYPE_DESKTOP = 2;
+  DEVICE_TYPE_TV = 3;
+  DEVICE_TYPE_EMBEDDED = 4;
+}
+message DeviceInfo {
+  bytes id = 1;
+  Color color = 2;
+  string name = 3;
+  DeviceType device_type = 4;
+}

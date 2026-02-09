@@ -1,0 +1,12 @@
+[package]
+name = "app"
+version = "0.1.0"
+edition = "2024"
+authors.workspace = true
+documentation.workspace = true
+description = "Alat cross platform  native application"
+
+
+[dependencies]
+platform = { path = "../platform" }
+nlem = { path = "../nlem" }

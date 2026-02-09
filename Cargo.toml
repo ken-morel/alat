@@ -1,0 +1,7 @@
+[workspace]
+resolver = "3"
+members = ["app", "nlem", "platform"]
+
+[workspace.package]
+authors = ["Engon Ken Morel <engonken8@gmail.com>"]
+documentation = "https://alat.rbs.cm"
