@@ -1,1 +1,4 @@
-target
+/target
+/platform/target
+/app/target
+/nlem/target
