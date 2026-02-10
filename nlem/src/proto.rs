@@ -4,6 +4,11 @@ pub struct Certificate {
     #[prost(bytes = "vec", tag = "1")]
     pub data: ::prost::alloc::vec::Vec<u8>,
 }
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct PairToken {
+    #[prost(bytes = "vec", tag = "1")]
+    pub data: ::prost::alloc::vec::Vec<u8>,
+}
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct Color {
     #[prost(uint32, tag = "1")]
@@ -23,6 +28,15 @@ pub struct DeviceInfo {
     pub name: ::prost::alloc::string::String,
     #[prost(enumeration = "DeviceType", tag = "4")]
     pub device_type: i32,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct PairedDevice {
+    #[prost(message, optional, tag = "1")]
+    pub token: ::core::option::Option<PairToken>,
+    #[prost(message, optional, tag = "2")]
+    pub certificate: ::core::option::Option<Certificate>,
+    #[prost(message, optional, tag = "3")]
+    pub info: ::core::option::Option<DeviceInfo>,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
@@ -374,8 +388,8 @@ pub struct RequestPairRequest {
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct RequestPairResponseSuccess {
-    #[prost(bytes = "vec", tag = "1")]
-    pub token: ::prost::alloc::vec::Vec<u8>,
+    #[prost(message, optional, tag = "1")]
+    pub token: ::core::option::Option<PairToken>,
     #[prost(message, optional, tag = "2")]
     pub certificate: ::core::option::Option<Certificate>,
     #[prost(message, optional, tag = "3")]

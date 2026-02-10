@@ -4,7 +4,9 @@ package proto;
 message Certificate {
   bytes data = 1;
 }
-
+message PairToken {
+  bytes data = 1;
+}
 message Color {
   uint32 r = 1;
   uint32 g = 2;
@@ -22,4 +24,10 @@ message DeviceInfo {
   Color color = 2;
   string name = 3;
   DeviceType device_type = 4;
+}
+
+message PairedDevice {
+  PairToken token = 1;
+  Certificate certificate = 2;
+  DeviceInfo info = 3;
 }

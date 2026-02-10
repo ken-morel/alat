@@ -9,6 +9,8 @@ description = "Alat core"
 
 [dependencies]
 prost = "0.14.3"
+serde = { version = "1.0.228", features = ["derive"] }
+serde_yaml = "0.9.34"
 thiserror = "2.0.18"
 tonic = "0.14.3"
 tonic-prost = "0.14.3"
