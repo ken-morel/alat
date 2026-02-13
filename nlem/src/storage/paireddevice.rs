@@ -32,7 +32,7 @@ impl From<PairedDevice> for proto::PairedDevice {
     fn from(pd: PairedDevice) -> Self {
         proto::PairedDevice {
             token: Some(proto::PairToken { data: pd.token }),
-            certificate: pd.certificate.into(),
+            certificate: pd.certificate,
             info: Some(pd.info.into()),
         }
     }

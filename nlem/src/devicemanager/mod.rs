@@ -1,49 +1,115 @@
-mod connected;
+pub mod connected;
+pub mod discovered;
+mod workers;
 
-use crate::storage::StorageError;
+use tokio::sync::RwLock;
+
+use crate::{server, storage::StorageError};
 
 use super::{platform, security, storage};
-use std::sync::{Arc, Mutex};
+use std::{
+    net::{Ipv4Addr, SocketAddr},
+    sync::Arc,
+};
 
-#[derive(Debug)]
-pub struct DeviceManager<S: storage::Storage, P: platform::Platform> {
-    pub storage: Arc<Mutex<S>>,
-    pub platform: Arc<Mutex<P>>,
+pub enum DeviceManagerEvent {
+    Found(discovered::DiscoveredDevice),
+    Lost(storage::DeviceInfo),
 
-    pub paired_devices: Vec<storage::PairedDevice>,
-    pub device_info: storage::DeviceInfo,
-    pub device_certificate: security::Certificate,
+    Connected(connected::ConnectedDevice),
+    Disconnected(security::DeviceID),
 
-    pub connected_devices: Vec<connected::ConnectedDevice>,
+    Paired(storage::PairedDevice),
+    Unpaired(security::DeviceID),
+
+    DiscoveryServerStarted(discovered::DiscoveredDevice),
+    DiscoveryServerUpdated(discovered::DiscoveredDevice),
+    DiscoveryServerStopped,
+
+    InfoLog(String),
+    WarningLog(String),
+
+    Started,
+    Stopped,
 }
 
-impl<S: storage::Storage, P: platform::Platform> DeviceManager<S, P> {
-    pub fn new(store: Arc<Mutex<S>>, platform: Arc<Mutex<P>>) -> Self {
+#[derive(Debug)]
+pub struct DeviceManager<
+    S: storage::Storage,
+    P: platform::Platform,
+    D: discovered::DiscoveryManager,
+> {
+    pub storage: Arc<RwLock<S>>,
+    pub platform: Arc<RwLock<P>>,
+
+    pub paired_devices: Arc<RwLock<Vec<storage::PairedDevice>>>,
+    pub this_device: Arc<RwLock<discovered::DiscoveredDevice>>,
+    pub device_certificate: Arc<RwLock<security::Certificate>>,
+
+    pub connected_devices: Arc<RwLock<Vec<connected::ConnectedDevice>>>,
+
+    pub discovered_devices: Arc<RwLock<Vec<discovered::DiscoveredDevice>>>,
+    pub discovery: Arc<RwLock<D>>,
+}
+
+impl<S: storage::Storage, P: platform::Platform, D: discovered::DiscoveryManager>
+    DeviceManager<S, P, D>
+{
+    async fn new(
+        store: Arc<RwLock<S>>,
+        platform: Arc<RwLock<P>>,
+        discovery: Arc<RwLock<D>>,
+    ) -> Self {
         Self {
-            device_info: DeviceManager::<S, P>::default_device_info(&platform),
-            platform,
+            this_device: Arc::new(RwLock::new(discovered::DiscoveredDevice {
+                address: SocketAddr::new(Ipv4Addr::LOCALHOST.into(), server::ALAT_PORT),
+                info: DeviceManager::<S, P, D>::default_device_info(&platform).await,
+            })),
             storage: store,
-            paired_devices: Vec::new(),
-            device_certificate: security::generate_certificate(),
-            connected_devices: Vec::new(),
+            paired_devices: Arc::new(RwLock::new(Vec::new())),
+            device_certificate: Arc::new(RwLock::new(security::generate_certificate())),
+            connected_devices: Arc::new(RwLock::new(Vec::new())),
+            discovered_devices: Arc::new(RwLock::new(Vec::new())),
+            discovery,
+            platform,
         }
     }
-    pub fn load(&mut self) -> Result<(), StorageError> {
-        let store = self.storage.lock().expect("Could not lock node storage");
-        self.paired_devices = store.load_paired()?;
-        self.device_info = store.load_info()?;
-        self.device_certificate = store.load_certificate()?;
+    async fn load(&mut self) -> Result<(), StorageError> {
+        let store = self.storage.read().await;
+        std::mem::replace(
+            &mut *self.paired_devices.write().await,
+            store.load_paired()?,
+        );
+        std::mem::replace(
+            &mut *&mut self.this_device.write().await.info,
+            store.load_info()?,
+        );
+        std::mem::replace(
+            &mut *self.device_certificate.write().await,
+            store.load_certificate()?,
+        );
         Ok(())
     }
-    pub fn save(&self) -> Result<(), StorageError> {
-        let store = self.storage.lock().expect("Could not lock storage");
-        store.save_paired(self.paired_devices.clone())?;
-        store.save_info(self.device_info.clone())?;
-        store.save_certificate(self.device_certificate.clone())?;
+    async fn save(&self) -> Result<(), StorageError> {
+        let store = self.storage.read().await;
+        store.save_paired(self.paired_devices.read().await.clone())?;
+        store.save_info(self.this_device.read().await.info.clone())?;
+        store.save_certificate(self.device_certificate.read().await.clone())?;
         Ok(())
     }
-    pub fn default_device_info(p: &Arc<Mutex<P>>) -> storage::DeviceInfo {
-        let lck = p.lock().expect("Could not lock platform");
+    pub async fn init(
+        store: Arc<RwLock<S>>,
+        platform: Arc<RwLock<P>>,
+        discovery: Arc<RwLock<D>>,
+    ) -> Result<Self, StorageError> {
+        let mut manager = Self::new(store, platform, discovery).await;
+        if manager.load().await.is_err() {
+            manager.save().await?;
+        }
+        Ok(manager)
+    }
+    pub async fn default_device_info(p: &Arc<RwLock<P>>) -> storage::DeviceInfo {
+        let lck = p.read().await;
         storage::DeviceInfo {
             id: security::generate_id(),
             color: storage::Color::random(),

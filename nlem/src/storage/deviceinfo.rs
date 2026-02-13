@@ -1,6 +1,6 @@
 use super::{Color, DeviceType, proto};
 
-#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize)]
 pub struct DeviceInfo {
     pub id: Vec<u8>,
     pub name: String,

@@ -28,7 +28,7 @@ use super::proto;
 
 type StorageResult<T> = Result<T, StorageError>;
 
-pub trait Storage: Send + Sync {
+pub trait Storage: Sized + Send + Sync {
     fn load_certificate(&self) -> StorageResult<Certificate>;
     fn save_certificate(&self, certificate: Certificate) -> StorageResult<()>;
 
