@@ -5,11 +5,11 @@ import "messages.proto";
 
 message RequestPairRequest {
   DeviceInfo info = 1;
-  Certificate certificate = 2;
+  bytes certificate = 2;
 }
 message RequestPairResponseSuccess {
   PairToken token = 1;
-  Certificate certificate = 2;
+  bytes certificate = 2;
   DeviceInfo info = 3;
 }
 message RequestPairResponseFailure {

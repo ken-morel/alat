@@ -1,8 +1,7 @@
+use super::security::Certificate;
+
 mod error;
 pub type StorageError = error::StorageError;
-
-mod certificate;
-pub type Certificate = certificate::Certificate;
 
 mod color;
 pub type Color = color::Color;
@@ -29,7 +28,7 @@ use super::proto;
 
 type StorageResult<T> = Result<T, StorageError>;
 
-pub trait Storage {
+pub trait Storage: Send + Sync {
     fn load_certificate(&self) -> StorageResult<Certificate>;
     fn save_certificate(&self, certificate: Certificate) -> StorageResult<()>;
 

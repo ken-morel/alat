@@ -1,6 +1,8 @@
+use rand::random_range;
+
 use super::proto;
 
-#[derive(Debug, serde::Deserialize, serde::Serialize)]
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
 pub struct Color(u8, u8, u8);
 impl From<proto::Color> for Color {
     fn from(col: proto::Color) -> Self {
@@ -18,5 +20,14 @@ impl From<Color> for proto::Color {
             g: col.1.into(),
             b: col.2.into(),
         }
+    }
+}
+impl Color {
+    pub fn random() -> Self {
+        Self(
+            random_range(0..256),
+            random_range(0..256),
+            random_range(0..256),
+        )
     }
 }

@@ -1,12 +1,11 @@
-use super::proto;
-use super::{Color, DeviceType};
+use super::{Color, DeviceType, proto};
 
-#[derive(Debug, serde::Deserialize, serde::Serialize)]
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
 pub struct DeviceInfo {
-    id: Vec<u8>,
-    name: String,
-    color: Color,
-    device_type: DeviceType,
+    pub id: Vec<u8>,
+    pub name: String,
+    pub color: Color,
+    pub device_type: DeviceType,
 }
 impl From<proto::DeviceInfo> for DeviceInfo {
     fn from(inf: proto::DeviceInfo) -> Self {
