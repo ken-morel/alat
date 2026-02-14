@@ -1,8 +1,10 @@
 pub const DEVICE_ID_LENGTH: usize = 1 << 10; // 1kB
+pub const PAIR_TOKEN_LENGTH: usize = 10 << 10; // 10kB
 pub const DEVICE_CERTIFICATE_LENGTH: usize = 1 << 20; // 1MB
 
 pub type DeviceID = Vec<u8>;
 pub type Certificate = Vec<u8>;
+pub type PairToken = Vec<u8>;
 
 fn generate_vecu8(size: usize) -> Vec<u8> {
     let mut vec = vec![0u8; size];
@@ -15,4 +17,8 @@ pub fn generate_id() -> DeviceID {
 }
 pub fn generate_certificate() -> Certificate {
     generate_vecu8(DEVICE_CERTIFICATE_LENGTH)
+}
+
+pub fn generate_pair_token() -> PairToken {
+    generate_vecu8(PAIR_TOKEN_LENGTH)
 }

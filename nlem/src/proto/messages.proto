@@ -1,9 +1,6 @@
 syntax = "proto3";
 package proto;
 
-message PairToken {
-  bytes data = 1;
-}
 message Color {
   uint32 r = 1;
   uint32 g = 2;
@@ -24,7 +21,7 @@ message DeviceInfo {
 }
 
 message PairedDevice {
-  PairToken token = 1;
+  bytes token = 1;
   bytes certificate = 2;
   DeviceInfo info = 3;
 }

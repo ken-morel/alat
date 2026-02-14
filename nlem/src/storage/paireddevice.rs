@@ -1,21 +1,16 @@
+use crate::security;
+
 use super::{Certificate, DeviceInfo, StorageError, StorageResult, proto};
 #[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
 pub struct PairedDevice {
-    pub token: Vec<u8>,
+    pub token: security::PairToken,
     pub certificate: Certificate,
     pub info: DeviceInfo,
 }
 impl From<proto::PairedDevice> for StorageResult<PairedDevice> {
     fn from(pd: proto::PairedDevice) -> Self {
         Ok(PairedDevice {
-            token: match pd.token {
-                Some(tk) => tk.data,
-                None => {
-                    return Err(StorageError::PbufConvert(String::from(
-                        "paired device record has no token",
-                    )));
-                }
-            },
+            token: pd.token,
             certificate: pd.certificate,
             info: match pd.info {
                 Some(i) => i.into(),
@@ -31,7 +26,7 @@ impl From<proto::PairedDevice> for StorageResult<PairedDevice> {
 impl From<PairedDevice> for proto::PairedDevice {
     fn from(pd: PairedDevice) -> Self {
         proto::PairedDevice {
-            token: Some(proto::PairToken { data: pd.token }),
+            token: pd.token,
             certificate: pd.certificate,
             info: Some(pd.info.into()),
         }

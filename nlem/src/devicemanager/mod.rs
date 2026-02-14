@@ -15,18 +15,18 @@ use std::{
 
 #[derive(Debug, Clone)]
 pub enum DeviceManagerEvent {
-    Found(discovered::DiscoveredDevice),
+    Found(Box<discovered::DiscoveredDevice>),
     Lost(security::DeviceID),
 
-    Connected(connected::ConnectedDevice),
+    Connected(Box<connected::ConnectedDevice>),
     Disconnected(security::DeviceID),
     ConnectionError(String),
 
     Paired(storage::PairedDevice),
     Unpaired(security::DeviceID),
 
-    DiscoveryServerStarted(discovered::DiscoveredDevice),
-    DiscoveryServerUpdated(discovered::DiscoveredDevice),
+    DiscoveryServerStarted(Box<discovered::DiscoveredDevice>),
+    DiscoveryServerUpdated(Box<discovered::DiscoveredDevice>),
     DiscoveryServerStopped,
 
     DiscoveryStarted,
@@ -87,26 +87,15 @@ impl<S: storage::Storage, P: platform::Platform, D: discovered::DiscoveryManager
         for device in store.load_paired()? {
             map.insert(device.info.id.clone(), device);
         }
-        std::mem::replace(&mut *self.paired_devices.write().await, map);
-        std::mem::replace(
-            &mut *&mut self.this_device.write().await.info,
-            store.load_info()?,
-        );
-        std::mem::replace(
-            &mut *self.device_certificate.write().await,
-            store.load_certificate()?,
-        );
+        *self.paired_devices.write().await = map;
+        self.this_device.write().await.info = store.load_info()?;
+        *self.device_certificate.write().await = store.load_certificate()?;
+
         Ok(())
     }
     async fn save(&self) -> Result<(), StorageError> {
         let store = self.storage.read().await;
-        let paired_devices = self
-            .paired_devices
-            .read()
-            .await
-            .values()
-            .map(|d| d.clone())
-            .collect();
+        let paired_devices = self.paired_devices.read().await.values().cloned().collect();
         store.save_paired(paired_devices)?;
         store.save_info(self.this_device.read().await.info.clone())?;
         store.save_certificate(self.device_certificate.read().await.clone())?;

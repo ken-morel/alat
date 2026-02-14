@@ -8,7 +8,7 @@ message RequestPairRequest {
   bytes certificate = 2;
 }
 message RequestPairResponseSuccess {
-  PairToken token = 1;
+  bytes token = 1;
   bytes certificate = 2;
   DeviceInfo info = 3;
 }

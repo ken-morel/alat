@@ -25,7 +25,7 @@ impl<
         let mut current_info = this_device.read().await.clone();
         coordinator
             .send(WorkerEvent::Wrapper(
-                DeviceManagerEvent::DiscoveryServerStarted(current_info.clone()),
+                DeviceManagerEvent::DiscoveryServerStarted(Box::new(current_info.clone())),
             ))
             .await
             .expect("Could not send server starting message");
@@ -75,7 +75,9 @@ impl<
             match event {
                 discovered::DiscoveryEvent::Found(device) => {
                     worker_events
-                        .send(WorkerEvent::Wrapper(DeviceManagerEvent::Found(device)))
+                        .send(WorkerEvent::Wrapper(DeviceManagerEvent::Found(Box::new(
+                            device,
+                        ))))
                         .await
                         .expect("Could not send Found message to worker_events");
                 }
@@ -119,7 +121,7 @@ impl<
                             .entry(found_device.info.id.clone())
                             .or_insert_with(|| {
                                 already_found = false;
-                                found_device.clone()
+                                *found_device.clone()
                             });
                         if already_found {
                             continue 'event_loop; // just to be clear
@@ -153,13 +155,15 @@ impl<
                                         .entry(connected_device.device.info.id.clone())
                                         .or_insert_with(|| connected_device.clone()); // clone only if needed
                                     global_events
-                                        .send(DeviceManagerEvent::Connected(connected_device))
+                                        .send(DeviceManagerEvent::Connected(Box::new(
+                                            connected_device,
+                                        )))
                                         .await
                                         .expect("Could not send connected event to global_events");
                                 }
                                 Err(err) => {
                                     global_events
-                                        .send(DeviceManagerEvent::ConnectionError(err))
+                                        .send(DeviceManagerEvent::ConnectionError(err.to_string()))
                                         .await
                                         .expect("Could not send connection error to global events");
                                 }
