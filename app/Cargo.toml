@@ -1,5 +1,5 @@
 [package]
-name = "slint-rust-template"
+name = "app"
 version = "0.1.0"
 edition = "2021"
 description = "Alat cross-platform application"
@@ -9,6 +9,8 @@ documentation.workspace = true
 
 [dependencies]
 slint = "1.14.1"
+platform = { path = "../platform" }
+nlem = { path = "../nlem" }
 
 [build-dependencies]
 slint-build = "1.14.1"

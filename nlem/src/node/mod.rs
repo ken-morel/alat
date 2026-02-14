@@ -21,7 +21,9 @@ impl<S: storage::Storage, P: platform::Platform<D>, D: devicemanager::discovered
         storage: Arc<RwLock<S>>,
         platform: Arc<RwLock<P>>,
     ) -> Result<Self, Box<dyn std::error::Error + Send + Sync>> {
-        let discovery = Arc::new(RwLock::new(platform.write().await.discovery_manager()));
+        let discovery = Arc::new(RwLock::new(
+            platform.write().await.discovery_manager().await?,
+        ));
         let device_manager = Arc::new(RwLock::new(
             devicemanager::DeviceManager::init(
                 storage.clone(),

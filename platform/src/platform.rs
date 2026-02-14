@@ -17,6 +17,6 @@ impl nlem::platform::Platform<discovery::DiscoveryManager> for Platform {
         nlem::storage::DeviceType::Desktop
     }
     async fn discovery_manager(&self) -> Result<discovery::DiscoveryManager, String> {
-        discovery::DiscoveryManager::init()
+        discovery::DiscoveryManager::init().await
     }
 }
