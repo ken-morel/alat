@@ -5,7 +5,7 @@ use super::{devicemanager, platform, server, storage};
 
 pub struct Node<
     S: storage::Storage + 'static,
-    P: platform::Platform<D> + 'static,
+    P: platform::Platform<S, D> + 'static,
     D: devicemanager::discovered::DiscoveryManager + 'static,
 > {
     pub storage: Arc<RwLock<S>>,
@@ -14,13 +14,16 @@ pub struct Node<
     pub server: Arc<RwLock<server::Server<S, P, D>>>,
 }
 
-impl<S: storage::Storage, P: platform::Platform<D>, D: devicemanager::discovered::DiscoveryManager>
-    Node<S, P, D>
+impl<
+    S: storage::Storage,
+    P: platform::Platform<S, D>,
+    D: devicemanager::discovered::DiscoveryManager,
+> Node<S, P, D>
 {
     pub async fn init(
-        storage: Arc<RwLock<S>>,
         platform: Arc<RwLock<P>>,
     ) -> Result<Self, Box<dyn std::error::Error + Send + Sync>> {
+        let storage = Arc::new(RwLock::new(platform.read().await.storage().await?));
         let discovery = Arc::new(RwLock::new(
             platform.write().await.discovery_manager().await?,
         ));

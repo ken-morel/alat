@@ -43,7 +43,7 @@ pub enum DeviceManagerEvent {
 #[derive(Debug)]
 pub struct DeviceManager<
     S: storage::Storage,
-    P: platform::Platform<D>,
+    P: platform::Platform<S, D>,
     D: discovered::DiscoveryManager,
 > {
     pub storage: Arc<RwLock<S>>,
@@ -59,7 +59,7 @@ pub struct DeviceManager<
     discovery: Arc<RwLock<D>>,
 }
 
-impl<S: storage::Storage, P: platform::Platform<D>, D: discovered::DiscoveryManager>
+impl<S: storage::Storage, P: platform::Platform<S, D>, D: discovered::DiscoveryManager>
     DeviceManager<S, P, D>
 {
     async fn new(

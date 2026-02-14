@@ -3,13 +3,13 @@ use super::*;
 #[derive(Debug)]
 pub struct PairService<
     S: storage::Storage,
-    P: platform::Platform<D>,
+    P: platform::Platform<S, D>,
     D: discovered::DiscoveryManager,
 > {
     device_manager: Arc<RwLock<devicemanager::DeviceManager<S, P, D>>>,
 }
 
-impl<S: storage::Storage, P: platform::Platform<D>, D: discovered::DiscoveryManager>
+impl<S: storage::Storage, P: platform::Platform<S, D>, D: discovered::DiscoveryManager>
     PairService<S, P, D>
 {
     pub fn new(device_manager: Arc<RwLock<devicemanager::DeviceManager<S, P, D>>>) -> Self {
@@ -20,7 +20,7 @@ impl<S: storage::Storage, P: platform::Platform<D>, D: discovered::DiscoveryMana
 #[tonic::async_trait]
 impl<
     S: storage::Storage + 'static,
-    P: platform::Platform<D> + 'static,
+    P: platform::Platform<S, D> + 'static,
     D: discovered::DiscoveryManager + 'static,
 > proto::pair_service_server::PairService for PairService<S, P, D>
 {

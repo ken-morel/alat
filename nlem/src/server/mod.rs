@@ -11,12 +11,12 @@ pub const ALAT_PORT: u16 = 1143;
 #[derive(Debug)]
 pub struct Server<
     S: storage::Storage + 'static,
-    P: platform::Platform<D> + 'static,
+    P: platform::Platform<S, D> + 'static,
     D: discovered::DiscoveryManager + 'static,
 > {
     device_manager: Arc<RwLock<devicemanager::DeviceManager<S, P, D>>>,
 }
-impl<S: storage::Storage, P: platform::Platform<D>, D: discovered::DiscoveryManager>
+impl<S: storage::Storage, P: platform::Platform<S, D>, D: discovered::DiscoveryManager>
     Server<S, P, D>
 {
     pub fn new(device_manager: Arc<RwLock<devicemanager::DeviceManager<S, P, D>>>) -> Self {
