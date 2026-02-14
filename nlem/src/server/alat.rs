@@ -1,14 +1,17 @@
 use super::*;
 
 #[derive(Debug)]
-pub struct AlatService<S: storage::Storage, P: platform::Platform, D: discovered::DiscoveryManager>
-{
-    device_manager: Arc<Mutex<devicemanager::DeviceManager<S, P, D>>>,
+pub struct AlatService<
+    S: storage::Storage,
+    P: platform::Platform<D>,
+    D: discovered::DiscoveryManager,
+> {
+    device_manager: Arc<RwLock<devicemanager::DeviceManager<S, P, D>>>,
 }
-impl<S: storage::Storage, P: platform::Platform, D: discovered::DiscoveryManager>
+impl<S: storage::Storage, P: platform::Platform<D>, D: discovered::DiscoveryManager>
     AlatService<S, P, D>
 {
-    pub fn new(device_manager: Arc<Mutex<devicemanager::DeviceManager<S, P, D>>>) -> Self {
+    pub fn new(device_manager: Arc<RwLock<devicemanager::DeviceManager<S, P, D>>>) -> Self {
         Self { device_manager }
     }
 }
@@ -16,7 +19,7 @@ impl<S: storage::Storage, P: platform::Platform, D: discovered::DiscoveryManager
 #[tonic::async_trait]
 impl<
     S: storage::Storage + 'static,
-    P: platform::Platform + 'static,
+    P: platform::Platform<D> + 'static,
     D: discovered::DiscoveryManager + 'static,
 > proto::alat_service_server::AlatService for AlatService<S, P, D>
 {
@@ -27,7 +30,7 @@ impl<
         Ok(Response::new(proto::GetDeviceInfoResponse {
             info: Some(
                 self.device_manager
-                    .lock()
+                    .read()
                     .await
                     .this_device
                     .read()

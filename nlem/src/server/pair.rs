@@ -1,14 +1,18 @@
 use super::*;
 
 #[derive(Debug)]
-pub struct PairService<S: storage::Storage, P: platform::Platform, D: discovered::DiscoveryManager>
-{
-    device_manager: Arc<Mutex<devicemanager::DeviceManager<S, P, D>>>,
+pub struct PairService<
+    S: storage::Storage,
+    P: platform::Platform<D>,
+    D: discovered::DiscoveryManager,
+> {
+    device_manager: Arc<RwLock<devicemanager::DeviceManager<S, P, D>>>,
 }
-impl<S: storage::Storage, P: platform::Platform, D: discovered::DiscoveryManager>
+
+impl<S: storage::Storage, P: platform::Platform<D>, D: discovered::DiscoveryManager>
     PairService<S, P, D>
 {
-    pub fn new(device_manager: Arc<Mutex<devicemanager::DeviceManager<S, P, D>>>) -> Self {
+    pub fn new(device_manager: Arc<RwLock<devicemanager::DeviceManager<S, P, D>>>) -> Self {
         Self { device_manager }
     }
 }
@@ -16,7 +20,7 @@ impl<S: storage::Storage, P: platform::Platform, D: discovered::DiscoveryManager
 #[tonic::async_trait]
 impl<
     S: storage::Storage + 'static,
-    P: platform::Platform + 'static,
+    P: platform::Platform<D> + 'static,
     D: discovered::DiscoveryManager + 'static,
 > proto::pair_service_server::PairService for PairService<S, P, D>
 {

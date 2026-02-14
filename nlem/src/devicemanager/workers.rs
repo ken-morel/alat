@@ -13,7 +13,7 @@ enum WorkerEvent {
 
 impl<
     S: storage::Storage + 'static,
-    P: platform::Platform + 'static,
+    P: platform::Platform<D> + 'static,
     D: discovered::DiscoveryManager + 'static,
 > DeviceManager<S, P, D>
 {

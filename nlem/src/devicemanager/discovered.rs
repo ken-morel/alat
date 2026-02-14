@@ -24,16 +24,19 @@ pub enum DiscoveryError {
     PlatformSpecific(String),
 }
 
-#[tonic::async_trait]
 pub trait DiscoveryManager: Sized + Send + Sync {
-    async fn new() -> Result<Self, DiscoveryError>;
-    async fn advertise(&mut self, device: DiscoveredDevice) -> Result<(), DiscoveryError>;
-    async fn cease_advertising(&mut self) -> Result<(), DiscoveryError>;
-
-    async fn scan(
+    fn advertise(
+        &mut self,
+        device: DiscoveredDevice,
+    ) -> impl std::future::Future<Output = Result<(), DiscoveryError>> + std::marker::Send;
+    fn cease_advertising(
+        &mut self,
+    ) -> impl std::future::Future<Output = Result<(), DiscoveryError>> + std::marker::Send;
+    fn scan(
         &mut self,
         sender: tokio::sync::mpsc::Sender<DiscoveryEvent>,
-    ) -> Result<(), DiscoveryError>;
-
-    async fn cease_scan(&mut self) -> Result<(), DiscoveryError>;
+    ) -> impl std::future::Future<Output = Result<(), DiscoveryError>> + std::marker::Send;
+    fn cease_scan(
+        &mut self,
+    ) -> impl std::future::Future<Output = Result<(), DiscoveryError>> + std::marker::Send;
 }

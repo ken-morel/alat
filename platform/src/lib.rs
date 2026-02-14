@@ -1,14 +1,9 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+mod discovery;
+mod platform;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+cfg_if::cfg_if! {
+    if #[cfg(target_os = "windows")] {
+        todo!("Windows not supported");
+    } else if #[cfg(target_os = "linux")] {
     }
 }
