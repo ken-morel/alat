@@ -1,9 +1,9 @@
 use super::{Certificate, DeviceInfo, StorageError, StorageResult, proto};
 #[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
 pub struct PairedDevice {
-    token: Vec<u8>,
-    certificate: Certificate,
-    info: DeviceInfo,
+    pub token: Vec<u8>,
+    pub certificate: Certificate,
+    pub info: DeviceInfo,
 }
 impl From<proto::PairedDevice> for StorageResult<PairedDevice> {
     fn from(pd: proto::PairedDevice) -> Self {

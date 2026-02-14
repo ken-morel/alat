@@ -8,16 +8,19 @@ use crate::{server, storage::StorageError};
 
 use super::{platform, security, storage};
 use std::{
+    collections::HashMap,
     net::{Ipv4Addr, SocketAddr},
     sync::Arc,
 };
 
+#[derive(Debug, Clone)]
 pub enum DeviceManagerEvent {
     Found(discovered::DiscoveredDevice),
-    Lost(storage::DeviceInfo),
+    Lost(security::DeviceID),
 
     Connected(connected::ConnectedDevice),
     Disconnected(security::DeviceID),
+    ConnectionError(String),
 
     Paired(storage::PairedDevice),
     Unpaired(security::DeviceID),
@@ -25,6 +28,10 @@ pub enum DeviceManagerEvent {
     DiscoveryServerStarted(discovered::DiscoveredDevice),
     DiscoveryServerUpdated(discovered::DiscoveredDevice),
     DiscoveryServerStopped,
+
+    DiscoveryStarted,
+    DiscoveryError(discovered::DiscoveryError),
+    DiscoveryStopped,
 
     InfoLog(String),
     WarningLog(String),
@@ -42,13 +49,13 @@ pub struct DeviceManager<
     pub storage: Arc<RwLock<S>>,
     pub platform: Arc<RwLock<P>>,
 
-    pub paired_devices: Arc<RwLock<Vec<storage::PairedDevice>>>,
+    pub paired_devices: Arc<RwLock<HashMap<security::DeviceID, storage::PairedDevice>>>,
     pub this_device: Arc<RwLock<discovered::DiscoveredDevice>>,
     pub device_certificate: Arc<RwLock<security::Certificate>>,
 
-    pub connected_devices: Arc<RwLock<Vec<connected::ConnectedDevice>>>,
+    pub connected_devices: Arc<RwLock<HashMap<security::DeviceID, connected::ConnectedDevice>>>,
 
-    pub discovered_devices: Arc<RwLock<Vec<discovered::DiscoveredDevice>>>,
+    pub discovered_devices: Arc<RwLock<HashMap<security::DeviceID, discovered::DiscoveredDevice>>>,
     pub discovery: Arc<RwLock<D>>,
 }
 
@@ -66,20 +73,21 @@ impl<S: storage::Storage, P: platform::Platform, D: discovered::DiscoveryManager
                 info: DeviceManager::<S, P, D>::default_device_info(&platform).await,
             })),
             storage: store,
-            paired_devices: Arc::new(RwLock::new(Vec::new())),
+            paired_devices: Arc::new(RwLock::new(HashMap::new())),
             device_certificate: Arc::new(RwLock::new(security::generate_certificate())),
-            connected_devices: Arc::new(RwLock::new(Vec::new())),
-            discovered_devices: Arc::new(RwLock::new(Vec::new())),
+            connected_devices: Arc::new(RwLock::new(HashMap::new())),
+            discovered_devices: Arc::new(RwLock::new(HashMap::new())),
             discovery,
             platform,
         }
     }
     async fn load(&mut self) -> Result<(), StorageError> {
         let store = self.storage.read().await;
-        std::mem::replace(
-            &mut *self.paired_devices.write().await,
-            store.load_paired()?,
-        );
+        let mut map = HashMap::new();
+        for device in store.load_paired()? {
+            map.insert(device.info.id.clone(), device);
+        }
+        std::mem::replace(&mut *self.paired_devices.write().await, map);
         std::mem::replace(
             &mut *&mut self.this_device.write().await.info,
             store.load_info()?,
@@ -92,7 +100,14 @@ impl<S: storage::Storage, P: platform::Platform, D: discovered::DiscoveryManager
     }
     async fn save(&self) -> Result<(), StorageError> {
         let store = self.storage.read().await;
-        store.save_paired(self.paired_devices.read().await.clone())?;
+        let paired_devices = self
+            .paired_devices
+            .read()
+            .await
+            .values()
+            .map(|d| d.clone())
+            .collect();
+        store.save_paired(paired_devices)?;
         store.save_info(self.this_device.read().await.info.clone())?;
         store.save_certificate(self.device_certificate.read().await.clone())?;
         Ok(())

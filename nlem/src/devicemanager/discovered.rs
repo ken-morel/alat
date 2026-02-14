@@ -10,7 +10,7 @@ pub enum DiscoveryEvent {
     Lost(security::DeviceID),
 }
 
-#[derive(Debug, thiserror::Error)]
+#[derive(Debug, Clone, thiserror::Error)]
 pub enum DiscoveryError {
     #[error("Failed to start advertising: {0}")]
     AdvertiseError(String),
@@ -21,7 +21,7 @@ pub enum DiscoveryError {
     #[error("Failed to stop scanning: {0}")]
     StopScanError(String),
     #[error("Platform-specific error: {0}")]
-    PlatformSpecific(#[from] Box<dyn std::error::Error + Send + Sync>),
+    PlatformSpecific(String),
 }
 
 #[tonic::async_trait]
@@ -30,9 +30,9 @@ pub trait DiscoveryManager: Sized + Send + Sync {
     async fn advertise(&mut self, device: DiscoveredDevice) -> Result<(), DiscoveryError>;
     async fn cease_advertising(&mut self) -> Result<(), DiscoveryError>;
 
-    fn scan(
+    async fn scan(
         &mut self,
-        sender: tokio::sync::mpsc::Sender<DiscoveryError>,
+        sender: tokio::sync::mpsc::Sender<DiscoveryEvent>,
     ) -> Result<(), DiscoveryError>;
 
     async fn cease_scan(&mut self) -> Result<(), DiscoveryError>;
