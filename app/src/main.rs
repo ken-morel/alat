@@ -1,4 +1,3 @@
-use slint::{SharedString, Weak};
 
 mod ui;
 
