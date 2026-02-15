@@ -3713,6 +3713,7 @@ dependencies = [
  "cfg-if",
  "dirs",
  "hostname",
+ "log",
  "nlem",
  "serde",
  "serde_json",

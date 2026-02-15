@@ -1,10 +1,133 @@
-import { Button, VerticalBox, HorizontalBox, GridBox } from "std-widgets.slint";
+import { StandardListView } from "std-widgets.slint";
 
-export component MainWindow inherits Window {
-    VerticalBox {
-        Text {
-            text: "Hello ama";
-            color: red;
+// Define a structure for displaying DeviceInfo in Slint
+struct SlintDeviceInfo {
+    id: string,
+    name: string,
+    kind: string, // Assuming DeviceType can be represented as a string
+}
+
+// Define a structure for displaying DiscoveredDevice in Slint
+struct SlintDiscoveredDevice {
+    address: string, // Display SocketAddr as a string
+    info: SlintDeviceInfo,
+}
+
+// Define a generic device list item component
+component DeviceListItem {
+    in property <string> device_name;
+    in property <string> device_address;
+    in property <string> status_text; // e.g., "Found", "Connected", "Paired"
+
+    HorizontalLayout {
+        spacing: 5px;
+        Text { text: device_name; font-weight: 700; }
+        Text { text: " (" + device_address + ")"; color: #666; }
+        Text { text: " - " + status_text; color: #007bff; }
+    }
+}
+
+export component AppWindow inherits Window {
+    title: "Alat";
+    width: 600px;
+    height: 800px;
+
+    // Properties for main status
+    in-out property <string> node_status: "Initializing...";
+    in-out property <string> discovery_status: "Stopped";
+    in-out property <string> server_status: "Stopped";
+    in-out property <string> own_device_name: "Unknown Device";
+
+    // Models for device lists
+    in-out property <[SlintDiscoveredDevice]> found_devices_model: [];
+    in-out property <[SlintDiscoveredDevice]> connected_devices_model: []; // For simplicity, using DiscoveredDevice for now
+    in-out property <[SlintDiscoveredDevice]> paired_devices_model: [];   // For simplicity, using DiscoveredDevice for now
+
+    // Callbacks for UI actions (e.g., to trigger start/stop)
+    callback start_node_requested();
+    callback stop_node_requested();
+    callback pair_device_requested(string device_id); // Example for future pairing
+
+    VerticalLayout {
+        spacing: 10px;
+        padding: 15px;
+
+        // --- Node Status ---
+        Text { text: "Alat Node Status: " + root.node_status; font-size: 18px; font-weight: 700; }
+
+        HorizontalLayout {
+            spacing: 10px;
+            Button {
+                text: "Start Node";
+                clicked => { root.start_node_requested(); }
+            }
+            Button {
+                text: "Stop Node";
+                clicked => { root.stop_node_requested(); }
+            }
+        }
+
+        Divider {}
+
+        // --- Core Service Statuses ---
+        VerticalLayout {
+            Text { text: "Own Device: " + root.own_device_name; }
+            Text { text: "Discovery Service: " + root.discovery_status; }
+            Text { text: "Server Service: " + root.server_status; }
+        }
+
+        Divider {}
+
+        // --- Found Devices ---
+        Text { text: "Found Devices:"; font-size: 16px; font-weight: 600; }
+        StandardListView {
+            height: 150px;
+            model: root.found_devices_model;
+            // Provide a template for each item in the list
+            Row {
+                DeviceListItem {
+                    device_name: root.model.info.name;
+                    device_address: root.model.address;
+                    status_text: "Found";
+                }
+                // Example button for future interaction
+                Button {
+                    text: "Pair";
+                    clicked => { root.pair_device_requested(root.model.info.id); }
+                }
+            }
+        }
+
+        Divider {}
+
+        // --- Connected Devices ---
+        Text { text: "Connected Devices:"; font-size: 16px; font-weight: 600; }
+        StandardListView {
+            height: 150px;
+            model: root.connected_devices_model;
+            Row {
+                DeviceListItem {
+                    device_name: root.model.info.name;
+                    device_address: root.model.address;
+                    status_text: "Connected";
+                }
+            }
+        }
+
+        Divider {}
+
+        // --- Paired Devices ---
+        Text { text: "Paired Devices (Persistent Storage):"; font-size: 16px; font-weight: 600; }
+        StandardListView {
+            height: 150px;
+            model: root.paired_devices_model;
+            Row {
+                DeviceListItem {
+                    device_name: root.model.info.name;
+                    device_address: root.model.address;
+                    status_text: "Paired";
+                }
+            }
         }
     }
 }

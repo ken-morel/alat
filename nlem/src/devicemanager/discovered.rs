@@ -1,5 +1,6 @@
 use super::{security, storage};
-#[derive(Debug, Clone, PartialEq, Eq)]
+
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct DiscoveredDevice {
     pub address: std::net::SocketAddr,
     pub info: storage::DeviceInfo,

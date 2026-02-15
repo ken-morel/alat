@@ -15,7 +15,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         println!("Starting node");
         let mut manager_event = node.start().await;
         while let Some(event) = manager_event.recv().await {
-            println!("{:?}", event);
+            println!("EVENT: {:?}", event);
         }
     });
 
