@@ -1,133 +1,83 @@
-import { StandardListView } from "std-widgets.slint";
+import {
+    Button,
+    VerticalBox,
+    HorizontalBox,
+    GridBox,
+} from "std-widgets.slint";
 
-// Define a structure for displaying DeviceInfo in Slint
-struct SlintDeviceInfo {
-    id: string,
-    name: string,
-    kind: string, // Assuming DeviceType can be represented as a string
+export struct NodeStatus {
+    running: bool,
+    okay: bool,
 }
 
-// Define a structure for displaying DiscoveredDevice in Slint
-struct SlintDiscoveredDevice {
-    address: string, // Display SocketAddr as a string
-    info: SlintDeviceInfo,
-}
 
-// Define a generic device list item component
-component DeviceListItem {
-    in property <string> device_name;
-    in property <string> device_address;
-    in property <string> status_text; // e.g., "Found", "Connected", "Paired"
+component NodeButton inherits Rectangle {
+    in property <NodeStatus> node_status;
+    callback run_node(bool);
 
-    HorizontalLayout {
-        spacing: 5px;
-        Text { text: device_name; font-weight: 700; }
-        Text { text: " (" + device_address + ")"; color: #666; }
-        Text { text: " - " + status_text; color: #007bff; }
+    property <bool> query_running: node_status.running;
+
+    property <int> padd:  5;
+    // function & pure function
+
+    background: node_status.okay ? gray : yellowgreen;
+    border-radius: self.height / 2;
+
+    button_knob := Rectangle {
+        height: root.height - padd * 2px;
+        width: self.height;
+        border-radius: self.height / 2;
+        x: query_running ? padd * 1px : root.width - padd * 1px - self.width;
+        animate x, background {
+            easing: ease-in;
+            duration: 100ms;
+        }
+        y: padd * 1px;
+        background: node_status.running ? green : darkgray;
+
+        Rectangle {
+            property <int> ipad: 5;
+            width: button_knob.width - ipad * 2px;
+            height: self.width;
+            border-radius: self.width / 2;
+            y: ipad * 1px;
+            x: ipad * 1px;
+            background: button_knob.background.brighter(0.1);
+        }
+    }
+
+    TouchArea {
+        clicked => {
+            query_running = !query_running;
+            run_node(query_running);
+        }
     }
 }
 
-export component AppWindow inherits Window {
-    title: "Alat";
-    width: 600px;
-    height: 800px;
-
-    // Properties for main status
-    in-out property <string> node_status: "Initializing...";
-    in-out property <string> discovery_status: "Stopped";
-    in-out property <string> server_status: "Stopped";
-    in-out property <string> own_device_name: "Unknown Device";
-
-    // Models for device lists
-    in-out property <[SlintDiscoveredDevice]> found_devices_model: [];
-    in-out property <[SlintDiscoveredDevice]> connected_devices_model: []; // For simplicity, using DiscoveredDevice for now
-    in-out property <[SlintDiscoveredDevice]> paired_devices_model: [];   // For simplicity, using DiscoveredDevice for now
-
-    // Callbacks for UI actions (e.g., to trigger start/stop)
-    callback start_node_requested();
-    callback stop_node_requested();
-    callback pair_device_requested(string device_id); // Example for future pairing
+component StatusPage {
+    callback run_node(bool);
+    in property <NodeStatus> node_status;
+    // in property <string> device_name;
+    // in property <int> connected_devices;
+    // in property <color> device_color;
 
     VerticalLayout {
-        spacing: 10px;
-        padding: 15px;
-
-        // --- Node Status ---
-        Text { text: "Alat Node Status: " + root.node_status; font-size: 18px; font-weight: 700; }
-
-        HorizontalLayout {
-            spacing: 10px;
-            Button {
-                text: "Start Node";
-                clicked => { root.start_node_requested(); }
-            }
-            Button {
-                text: "Stop Node";
-                clicked => { root.stop_node_requested(); }
-            }
+        NodeButton {
+            node_status: node_status;
+            width: root.width;
+            height: root.width / 2;
+            run_node(val) => root.run_node(val);
         }
+    }
+}
 
-        Divider {}
-
-        // --- Core Service Statuses ---
-        VerticalLayout {
-            Text { text: "Own Device: " + root.own_device_name; }
-            Text { text: "Discovery Service: " + root.discovery_status; }
-            Text { text: "Server Service: " + root.server_status; }
-        }
-
-        Divider {}
-
-        // --- Found Devices ---
-        Text { text: "Found Devices:"; font-size: 16px; font-weight: 600; }
-        StandardListView {
-            height: 150px;
-            model: root.found_devices_model;
-            // Provide a template for each item in the list
-            Row {
-                DeviceListItem {
-                    device_name: root.model.info.name;
-                    device_address: root.model.address;
-                    status_text: "Found";
-                }
-                // Example button for future interaction
-                Button {
-                    text: "Pair";
-                    clicked => { root.pair_device_requested(root.model.info.id); }
-                }
-            }
-        }
-
-        Divider {}
-
-        // --- Connected Devices ---
-        Text { text: "Connected Devices:"; font-size: 16px; font-weight: 600; }
-        StandardListView {
-            height: 150px;
-            model: root.connected_devices_model;
-            Row {
-                DeviceListItem {
-                    device_name: root.model.info.name;
-                    device_address: root.model.address;
-                    status_text: "Connected";
-                }
-            }
-        }
-
-        Divider {}
-
-        // --- Paired Devices ---
-        Text { text: "Paired Devices (Persistent Storage):"; font-size: 16px; font-weight: 600; }
-        StandardListView {
-            height: 150px;
-            model: root.paired_devices_model;
-            Row {
-                DeviceListItem {
-                    device_name: root.model.info.name;
-                    device_address: root.model.address;
-                    status_text: "Paired";
-                }
-            }
+export component MainWindow inherits Window {
+    in property <NodeStatus> node_status;
+    height: 250px;
+    width: 200px;
+    VerticalBox {
+        StatusPage {
+            node_status: node_status;
         }
     }
 }

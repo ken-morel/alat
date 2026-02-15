@@ -62,7 +62,7 @@ impl Client {
             .pair_client
             .request_pair(proto::RequestPairRequest {
                 info: Some(this_info.into()),
-                certificate: this_certificate,
+                certificate: this_certificate.to_vec(),
             })
             .await?
             .into_inner();
@@ -71,7 +71,7 @@ impl Client {
                 proto::request_pair_response::Result::Success(success_response) => {
                     _ = 5;
                     Ok((
-                        success_response.token,
+                        security::array_from_vec(success_response.token),
                         success_response.certificate,
                         success_response
                             .info

@@ -108,6 +108,10 @@ impl<
         connected_devices: Arc<RwLock<HashMap<security::DeviceID, connected::ConnectedDevice>>>,
         paired_devices: Arc<RwLock<HashMap<security::DeviceID, storage::PairedDevice>>>,
     ) {
+        global_events
+            .send(DeviceManagerEvent::Started)
+            .await
+            .expect("Could not send device manager started event");
         'event_loop: while let Some(event) = worker_events.recv().await {
             match event {
                 WorkerEvent::Wrapper(event) => match &event {
@@ -118,7 +122,7 @@ impl<
                         discovered_devices
                             .write()
                             .await
-                            .entry(found_device.info.id.clone())
+                            .entry(found_device.info.id)
                             .or_insert_with(|| {
                                 already_found = false;
                                 *found_device.clone()
@@ -137,7 +141,7 @@ impl<
                         paired_devices
                             .write()
                             .await
-                            .entry(found_device.info.id.clone())
+                            .entry(found_device.info.id)
                             .and_modify(|paired| {
                                 paired.info = found_device.info.clone();
                                 paired_device = Some(paired.clone());
@@ -152,7 +156,7 @@ impl<
                                     connected_devices
                                         .write()
                                         .await
-                                        .entry(connected_device.device.info.id.clone())
+                                        .entry(connected_device.device.info.id)
                                         .or_insert_with(|| connected_device.clone()); // clone only if needed
                                     global_events
                                         .send(DeviceManagerEvent::Connected(Box::new(
@@ -185,6 +189,10 @@ impl<
                 },
             }
         }
+        global_events
+            .send(DeviceManagerEvent::Stopped)
+            .await
+            .expect("Could not send device manager started event");
     }
     pub async fn start_workers(&mut self, sender: Sender<DeviceManagerEvent>) {
         println!("Spawning workers");

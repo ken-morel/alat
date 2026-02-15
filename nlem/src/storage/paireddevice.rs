@@ -10,7 +10,7 @@ pub struct PairedDevice {
 impl From<proto::PairedDevice> for StorageResult<PairedDevice> {
     fn from(pd: proto::PairedDevice) -> Self {
         Ok(PairedDevice {
-            token: pd.token,
+            token: security::array_from_vec(pd.token),
             certificate: pd.certificate,
             info: match pd.info {
                 Some(i) => i.into(),
@@ -26,7 +26,7 @@ impl From<proto::PairedDevice> for StorageResult<PairedDevice> {
 impl From<PairedDevice> for proto::PairedDevice {
     fn from(pd: PairedDevice) -> Self {
         proto::PairedDevice {
-            token: pd.token,
+            token: pd.token.to_vec(),
             certificate: pd.certificate,
             info: Some(pd.info.into()),
         }

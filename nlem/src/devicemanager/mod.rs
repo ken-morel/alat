@@ -66,7 +66,7 @@ impl<S: storage::Storage, P: platform::Platform<S, D>, D: discovered::DiscoveryM
         let store = self.storage.read().await;
         let mut map = HashMap::new();
         for device in store.load_paired().await? {
-            map.insert(device.info.id.clone(), device);
+            map.insert(device.info.id, device);
         }
         *self.paired_devices.write().await = map;
         self.this_device.write().await.info = store.load_info().await?;
@@ -102,7 +102,7 @@ impl<S: storage::Storage, P: platform::Platform<S, D>, D: discovered::DiscoveryM
             .await?;
         let mut paired_devices = HashMap::new();
         for paired_device in data.paired_devices {
-            paired_devices.insert(paired_device.info.id.clone(), paired_device);
+            paired_devices.insert(paired_device.info.id, paired_device);
         }
 
         Ok(Self {
