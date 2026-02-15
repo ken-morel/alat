@@ -62,25 +62,6 @@ pub struct DeviceManager<
 impl<S: storage::Storage, P: platform::Platform<S, D>, D: discovered::DiscoveryManager>
     DeviceManager<S, P, D>
 {
-    async fn new(
-        store: Arc<RwLock<S>>,
-        platform: Arc<RwLock<P>>,
-        discovery: Arc<RwLock<D>>,
-    ) -> Self {
-        Self {
-            this_device: Arc::new(RwLock::new(discovered::DiscoveredDevice {
-                address: SocketAddr::new(Ipv4Addr::LOCALHOST.into(), server::ALAT_PORT),
-                info: DeviceManager::<S, P, D>::default_device_info(&platform).await,
-            })),
-            storage: store,
-            paired_devices: Arc::new(RwLock::new(HashMap::new())),
-            device_certificate: Arc::new(RwLock::new(security::generate_certificate())),
-            connected_devices: Arc::new(RwLock::new(HashMap::new())),
-            discovered_devices: Arc::new(RwLock::new(HashMap::new())),
-            discovery,
-            platform,
-        }
-    }
     async fn load(&mut self) -> Result<(), StorageError> {
         let store = self.storage.read().await;
         let mut map = HashMap::new();
@@ -106,7 +87,31 @@ impl<S: storage::Storage, P: platform::Platform<S, D>, D: discovered::DiscoveryM
         platform: Arc<RwLock<P>>,
         discovery: Arc<RwLock<D>>,
     ) -> Result<Self, StorageError> {
-        let mut manager = Self::new(store, platform, discovery).await;
+        let mut manager = Self {
+            this_device: Arc::new(RwLock::new(discovered::DiscoveredDevice {
+                address: SocketAddr::new(Ipv4Addr::LOCALHOST.into(), server::ALAT_PORT),
+                info: DeviceManager::<S, P, D>::default_device_info(&platform).await,
+            })),
+            storage: store.clone(),
+            paired_devices: Arc::new(RwLock::new(HashMap::new())),
+            device_certificate: Arc::new(RwLock::new(security::generate_certificate())),
+            connected_devices: Arc::new(RwLock::new(HashMap::new())),
+            discovered_devices: Arc::new(RwLock::new(HashMap::new())),
+            discovery,
+            platform,
+        };
+        store.write().await.init(storage::StorageData {
+            certificate: manager.device_certificate.read().await.clone(),
+            paired_devices: manager
+                .paired_devices
+                .read()
+                .await
+                .values()
+                .cloned()
+                .collect(),
+            info: manager.this_device.read().await.info.clone(),
+        })?;
+
         if manager.load().await.is_err() {
             manager.save().await?;
         }

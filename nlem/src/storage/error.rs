@@ -6,16 +6,10 @@ pub enum StorageError {
     Load(String, String),
     #[error("Could not convert object from pbuf object {0}")]
     PbufConvert(String),
-    #[error("serde_yaml had an error processing yaml data: {0}")]
-    SerdeYaml(serde_yaml::Error),
-    #[error("input/output error saving/loading data: {0}")]
+    #[error("{0}")]
+    Other(String),
+    #[error("input/output error saving/loading node storage data: {0}")]
     Io(std::io::Error),
-}
-
-impl From<serde_yaml::Error> for StorageError {
-    fn from(err: serde_yaml::Error) -> Self {
-        Self::SerdeYaml(err)
-    }
 }
 
 impl From<std::io::Error> for StorageError {

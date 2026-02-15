@@ -1,12 +1,28 @@
+use super::storage;
+use std::path::PathBuf;
+
 use super::discovery;
 
 pub struct Platform {}
 
 impl Platform {
-    pub fn init() {}
+    pub fn init() -> Self {
+        Self {}
+    }
 }
 
-impl nlem::platform::Platform<discovery::DiscoveryManager> for Platform {
+impl Platform {
+    async fn config_dir(&self) -> Result<PathBuf, String> {
+        match &mut dirs::config_dir() {
+            Some(path) => {
+                path.push(nlem::APP_ID);
+                Ok(path.clone())
+            }
+            None => Err(String::from("Could not get application config dir")),
+        }
+    }
+}
+impl nlem::platform::Platform<storage::YamlFileStorage, discovery::DiscoveryManager> for Platform {
     fn hostname(&self) -> Result<String, String> {
         hostname::get()
             .map_err(|e| e.to_string())?
@@ -18,5 +34,10 @@ impl nlem::platform::Platform<discovery::DiscoveryManager> for Platform {
     }
     async fn discovery_manager(&self) -> Result<discovery::DiscoveryManager, String> {
         discovery::DiscoveryManager::init().await
+    }
+    async fn storage(&self) -> Result<storage::YamlFileStorage, String> {
+        let mut cfg_path = self.config_dir().await?;
+        cfg_path.push("data.yml");
+        Ok(storage::YamlFileStorage::new(cfg_path.as_path()))
     }
 }
