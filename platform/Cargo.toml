@@ -12,6 +12,6 @@ cfg-if = "1.0.4"
 hostname = "0.4.2"
 nlem = { path = "../nlem" }
 tokio = "1.49.0"
-serde_yaml = "0.9.34"
 serde = { version = "1.0.228", features = ["derive"] }
 dirs = "6.0.0"
+serde_json = "1.0.149"

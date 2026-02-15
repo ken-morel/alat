@@ -56,8 +56,7 @@ impl<
                     server::ALAT_PORT,
                 )),
         );
-        let (tx, rx) = tokio::sync::mpsc::channel(0);
-        // devicemanager::DeviceManagerEvent
+        let (tx, rx) = tokio::sync::mpsc::channel(1);
         self.device_manager.write().await.start_workers(tx).await;
         rx
     }

@@ -65,21 +65,25 @@ impl<S: storage::Storage, P: platform::Platform<S, D>, D: discovered::DiscoveryM
     async fn load(&mut self) -> Result<(), StorageError> {
         let store = self.storage.read().await;
         let mut map = HashMap::new();
-        for device in store.load_paired()? {
+        for device in store.load_paired().await? {
             map.insert(device.info.id.clone(), device);
         }
         *self.paired_devices.write().await = map;
-        self.this_device.write().await.info = store.load_info()?;
-        *self.device_certificate.write().await = store.load_certificate()?;
-
+        self.this_device.write().await.info = store.load_info().await?;
+        *self.device_certificate.write().await = store.load_certificate().await?;
         Ok(())
     }
+
     async fn save(&self) -> Result<(), StorageError> {
         let store = self.storage.read().await;
         let paired_devices = self.paired_devices.read().await.values().cloned().collect();
-        store.save_paired(paired_devices)?;
-        store.save_info(self.this_device.read().await.info.clone())?;
-        store.save_certificate(self.device_certificate.read().await.clone())?;
+        store.save_paired(paired_devices).await?;
+        store
+            .save_info(self.this_device.read().await.info.clone())
+            .await?;
+        store
+            .save_certificate(self.device_certificate.read().await.clone())
+            .await?;
         Ok(())
     }
     pub async fn init(
@@ -87,35 +91,33 @@ impl<S: storage::Storage, P: platform::Platform<S, D>, D: discovered::DiscoveryM
         platform: Arc<RwLock<P>>,
         discovery: Arc<RwLock<D>>,
     ) -> Result<Self, StorageError> {
-        let mut manager = Self {
+        let data = store
+            .write()
+            .await
+            .init(storage::StorageData {
+                certificate: security::generate_certificate(),
+                paired_devices: Vec::new(),
+                info: Self::default_device_info(&platform).await,
+            })
+            .await?;
+        let mut paired_devices = HashMap::new();
+        for paired_device in data.paired_devices {
+            paired_devices.insert(paired_device.info.id.clone(), paired_device);
+        }
+
+        Ok(Self {
             this_device: Arc::new(RwLock::new(discovered::DiscoveredDevice {
                 address: SocketAddr::new(Ipv4Addr::LOCALHOST.into(), server::ALAT_PORT),
-                info: DeviceManager::<S, P, D>::default_device_info(&platform).await,
+                info: data.info,
             })),
             storage: store.clone(),
-            paired_devices: Arc::new(RwLock::new(HashMap::new())),
-            device_certificate: Arc::new(RwLock::new(security::generate_certificate())),
+            paired_devices: Arc::new(RwLock::new(paired_devices)),
+            device_certificate: Arc::new(RwLock::new(data.certificate)),
             connected_devices: Arc::new(RwLock::new(HashMap::new())),
             discovered_devices: Arc::new(RwLock::new(HashMap::new())),
             discovery,
             platform,
-        };
-        store.write().await.init(storage::StorageData {
-            certificate: manager.device_certificate.read().await.clone(),
-            paired_devices: manager
-                .paired_devices
-                .read()
-                .await
-                .values()
-                .cloned()
-                .collect(),
-            info: manager.this_device.read().await.info.clone(),
-        })?;
-
-        if manager.load().await.is_err() {
-            manager.save().await?;
-        }
-        Ok(manager)
+        })
     }
     pub async fn default_device_info(p: &Arc<RwLock<P>>) -> storage::DeviceInfo {
         let lck = p.read().await;

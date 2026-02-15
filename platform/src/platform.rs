@@ -22,7 +22,7 @@ impl Platform {
         }
     }
 }
-impl nlem::platform::Platform<storage::YamlFileStorage, discovery::DiscoveryManager> for Platform {
+impl nlem::platform::Platform<storage::JSONFileStorage, discovery::DiscoveryManager> for Platform {
     fn hostname(&self) -> Result<String, String> {
         hostname::get()
             .map_err(|e| e.to_string())?
@@ -35,9 +35,9 @@ impl nlem::platform::Platform<storage::YamlFileStorage, discovery::DiscoveryMana
     async fn discovery_manager(&self) -> Result<discovery::DiscoveryManager, String> {
         discovery::DiscoveryManager::init().await
     }
-    async fn storage(&self) -> Result<storage::YamlFileStorage, String> {
+    async fn storage(&self) -> Result<storage::JSONFileStorage, String> {
         let mut cfg_path = self.config_dir().await?;
-        cfg_path.push("data.yml");
-        Ok(storage::YamlFileStorage::new(cfg_path.as_path()))
+        cfg_path.push("data.json");
+        Ok(storage::JSONFileStorage::new(cfg_path.as_path()))
     }
 }

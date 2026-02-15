@@ -1,11 +1,11 @@
 use nlem::security::Certificate;
 use nlem::storage::*;
 
-pub struct YamlFileStorage {
+pub struct JSONFileStorage {
     path: std::path::PathBuf,
 }
 
-impl YamlFileStorage {
+impl JSONFileStorage {
     pub fn new(path: &std::path::Path) -> Self {
         Self { path: path.into() }
     }
@@ -18,31 +18,31 @@ impl YamlFileStorage {
         println!("writting app data at {:?}", self.path);
         Ok(std::fs::write(
             self.path.clone(),
-            serde_yaml::to_string(&data).map_err(|e| {
+            serde_json::to_string(&data).map_err(|e| {
                 StorageError::Other(format!(
-                    "Could not serialize YamlFIleStoraage to string: {e}"
+                    "Could not serialize JSONFIleStoraage to string: {e}"
                 ))
             })?,
         )?)
     }
     pub async fn load(&self) -> StorageResult<StorageData> {
         println!("loading app data at {:?}", self.path);
-        serde_yaml::from_slice(std::fs::read(self.path.clone())?.as_slice())
-            .map_err(|e| StorageError::Other(format!("Error parsing config YamlFileStorage: {e}")))
+        let ret = serde_json::from_slice(std::fs::read(self.path.clone())?.as_slice())
+            .map_err(|e| StorageError::Other(format!("Error parsing config JSONFileStorage: {e}")));
+        println!("  ... data loaded");
+        ret
     }
 }
 
-impl Storage for YamlFileStorage {
-    async fn init(&self, data: StorageData) -> StorageResult<()> {
-        if let Err(err) = self.load().await {
-            match err {
-                StorageError::Io(_) | StorageError::Other(_) => {
-                    self.write(data).await?;
-                }
-                _ => {}
+impl Storage for JSONFileStorage {
+    async fn init(&self, data: StorageData) -> StorageResult<StorageData> {
+        match self.load().await {
+            Err(_) => {
+                self.write(data.clone()).await?;
+                Ok(data)
             }
+            Ok(data) => Ok(data),
         }
-        Ok(())
     }
     async fn load_certificate(&self) -> StorageResult<Certificate> {
         Ok(self.load().await?.certificate)

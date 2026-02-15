@@ -1,8 +1,8 @@
-// mod ui;
+mod ui;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
-// use slint::ComponentHandle;
+use slint::ComponentHandle;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -12,15 +12,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .expect("Could not create node");
 
     tokio::spawn(async move {
+        println!("Starting node");
         let mut manager_event = node.start().await;
         while let Some(event) = manager_event.recv().await {
-            println!("{:#?}", event);
+            println!("{:?}", event);
         }
     });
 
-    // let window = ui::MainWindow::new()?;
+    let window = ui::MainWindow::new()?;
 
-    // window.run()?;
+    window.run()?;
 
     Ok(())
 }

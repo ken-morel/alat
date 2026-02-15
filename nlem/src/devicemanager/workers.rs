@@ -58,7 +58,7 @@ impl<
     }
 
     async fn discoverer_worker(worker_events: Sender<WorkerEvent>, discovery: Arc<RwLock<D>>) {
-        let (tx, mut rx) = channel(0);
+        let (tx, mut rx) = channel(1);
         if let Err(e) = discovery.write().await.scan(tx).await {
             worker_events
                 .send(WorkerEvent::Wrapper(DeviceManagerEvent::DiscoveryError(e)))
@@ -187,7 +187,8 @@ impl<
         }
     }
     pub async fn start_workers(&mut self, sender: Sender<DeviceManagerEvent>) {
-        let (itx, irx) = channel::<WorkerEvent>(0);
+        println!("Spawning workers");
+        let (itx, irx) = channel::<WorkerEvent>(1);
 
         tokio::spawn(Self::discovery_server_worker(
             itx.clone(),
