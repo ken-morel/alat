@@ -34,7 +34,7 @@ struct Device {
     color: nlem::storage::Color,
     address: String,
     port: i32,
-    id: Vec<i32>,
+    id: Vec<u8>,
     relationship: DeviceRelationship,
 }
 
@@ -94,7 +94,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         color: device.info.color.clone(),
                         address: "".into(),
                         port: 0,
-                        id: device.info.id.map(|v| v as i32).into(),
+                        id: device.info.id.to_vec(),
                         relationship: DeviceRelationship::Paired,
                     },
                 );
@@ -107,7 +107,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         color: device.device.info.color.clone(),
                         address: device.client.server_addr.ip().to_string(),
                         port: device.client.server_addr.port().into(),
-                        id: device.device.info.id.map(|v| v as i32).into(),
+                        id: device.device.info.id.to_vec(),
                         relationship: DeviceRelationship::Connected,
                     },
                 );
@@ -118,7 +118,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     color: device.info.color.clone(),
                     address: device.address.ip().to_string(),
                     port: device.address.port().into(),
-                    id: device.info.id.map(|v| v as i32).into(),
+                    id: device.info.id.to_vec(),
                     relationship: DeviceRelationship::Found,
                 });
             }
@@ -131,7 +131,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             .map(|d| ui::Device {
                                 address: d.address.into(),
                                 color: slint_col(&d.color),
-                                id: slint::ModelRc::new(slint::VecModel::from(d.id)),
+                                id: d
+                                    .id
+                                    .iter()
+                                    .map(|v| format!("{v:02X}"))
+                                    .collect::<String>()
+                                    .into(),
                                 name: d.name.into(),
                                 port: d.port,
                                 relationship: d.relationship.into(),

@@ -18,21 +18,113 @@ export struct Device {
     color: color,
     address: string,
     port: int,
-    id: [int],
+    id: string,
     relationship: DeviceRelationship,
+}
+
+component RelationshipBadge inherits Rectangle {
+    in property <DeviceRelationship> relationship;
+
+    property <string> label: relationship == DeviceRelationship.paired ? "Paired" : relationship == DeviceRelationship.connected ? "Connected" : "Found";
+    property <color> badge_color: relationship == DeviceRelationship.paired ? #3b82f6 : relationship == DeviceRelationship.connected ? #22c55e : #f59e0b;
+
+    background: badge_color;
+    border-radius: 4px;
+    min-width: 70px;
+
+    VerticalLayout {
+        padding: 4px;
+
+        Text {
+            text: root.label;
+            font-size: 10px;
+            font-weight: 600;
+            color: white;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+    }
 }
 
 component DeviceCard inherits Rectangle {
     in property <Device> device;
 
-    border-radius: 10px;
-    background: #123;
+    border-radius: 12px;
+    background: #1a1a2e;
 
-    GridLayout {
-        Row {
+    property <length> card_spacing: 8px;
+
+    VerticalLayout {
+        spacing: card_spacing;
+        padding: 12px;
+
+        // Header: Color indicator + Name + Relationship badge
+        HorizontalLayout {
+            spacing: card_spacing;
+
+            // Color indicator circle
+            Rectangle {
+                background: device.color;
+                border-radius: self.height / 2;
+                width: 24px;
+                height: 24px;
+            }
+
+            // Device name
             Text {
                 text: device.name;
-                font-weight: 2;
+                font-size: 16px;
+                font-weight: 600;
+                color: #e0e0e0;
+                vertical-alignment: center;
+                horizontal-alignment: left;
+            }
+
+            Rectangle {
+                background: transparent;
+                horizontal-stretch: 1;
+            }
+
+            // Relationship badge
+            RelationshipBadge {
+                relationship: device.relationship;
+            }
+        }
+
+        // Connection info (address:port)
+        HorizontalLayout {
+            spacing: card_spacing;
+            visible: device.relationship != DeviceRelationship.paired;
+
+            Image {
+                source: @image-url("icons/location.svg");
+                width: 16px;
+                height: 16px;
+            }
+
+            Text {
+                text: device.address + ":" + device.port;
+                font-size: 12px;
+                color: #888888;
+                vertical-alignment: center;
+            }
+        }
+
+        // Device ID
+        HorizontalLayout {
+            spacing: card_spacing;
+
+            Image {
+                source: @image-url("icons/id.svg");
+                width: 16px;
+                height: 16px;
+            }
+
+            Text {
+                text: "ID: " + device.id;
+                font-size: 12px;
+                color: #888888;
+                vertical-alignment: center;
             }
         }
     }
@@ -41,8 +133,14 @@ component DeviceCard inherits Rectangle {
 component Devices {
     in property <[Device]> devices;
 
-    for device in devices: DeviceCard {
-        device: device;
+    VerticalLayout {
+        spacing: 10px;
+        padding: 10px;
+
+        for device in devices: DeviceCard {
+            device: device;
+            height: 100px;
+        }
     }
 }
 
@@ -93,21 +191,94 @@ component StatusPage {
     callback run_node(bool);
     in property <NodeStatus> node_status;
     in property <[Device]> devices;
-    // in property <string> device_name;
-    // in property <int> connected_devices;
-    // in property <color> device_color;
 
     VerticalLayout {
+        spacing: 15px;
+        padding: 15px;
+
+        // Header with title and status
+        HorizontalLayout {
+            spacing: 10px;
+
+            Text {
+                text: "Device Manager";
+                font-size: 20px;
+                font-weight: 600;
+                color: #e0e0e0;
+                vertical-alignment: center;
+            }
+
+            Rectangle {
+                background: transparent;
+                horizontal-stretch: 1;
+            }
+
+            // Status indicator
+            Rectangle {
+                background: node_status.okay ? #22c55e : #ef4444;
+                border-radius: 4px;
+
+                VerticalLayout {
+                    padding: 6px;
+
+                    Text {
+                        text: node_status.okay ? "OK" : "Error";
+                        font-size: 11px;
+                        font-weight: 600;
+                        color: white;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                    }
+                }
+            }
+        }
+
+        // Node control button
         NodeButton {
-            x: (root.width - self.width) / 2;
             node_status: node_status;
-            width: 200px;
-            height: self.width / 2;
+            width: 180px;
+            height: 90px;
             run_node(val) => root.run_node(val);
         }
 
-        Devices {
-            devices: devices;
+        // Devices section header
+        HorizontalLayout {
+            spacing: 8px;
+
+            Text {
+                text: "Devices";
+                font-size: 14px;
+                font-weight: 600;
+                color: #a0a0a0;
+                vertical-alignment: center;
+            }
+
+            Rectangle {
+                background: #333350;
+                height: 1px;
+                horizontal-stretch: 1;
+            }
+
+            Text {
+                text: devices.length + "";
+                font-size: 12px;
+                color: #666680;
+                vertical-alignment: center;
+            }
+        }
+
+        // Device list container
+        Rectangle {
+            background: #0f0f1a;
+            border-radius: 8px;
+            vertical-stretch: 1;
+            clip: true;
+
+            Devices {
+                devices: devices;
+                width: parent.width;
+                height: parent.height;
+            }
         }
     }
 }
@@ -116,8 +287,9 @@ export component MainWindow inherits Window {
     in property <NodeStatus> node_status;
     in property <[Device]> devices;
 
-    preferred-height: 400px;
-    preferred-width: 300px;
+    preferred-height: 600px;
+    preferred-width: 400px;
+    background: #121218;
 
     StatusPage {
         node_status: node_status;
