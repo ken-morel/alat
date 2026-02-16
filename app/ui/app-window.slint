@@ -11,6 +11,41 @@ export struct NodeStatus {
 }
 
 
+export enum DeviceRelationship{ paired, connected, found }
+
+export struct Device {
+    name: string,
+    color: color,
+    address: string,
+    port: int,
+    id: [int],
+    relationship: DeviceRelationship,
+}
+
+component DeviceCard inherits Rectangle {
+    in property <Device> device;
+
+    border-radius: 10px;
+    background: #123;
+
+    GridLayout {
+        Row {
+            Text {
+                text: device.name;
+                font-weight: 2;
+            }
+        }
+    }
+}
+
+component Devices {
+    in property <[Device]> devices;
+
+    for device in devices: DeviceCard {
+        device: device;
+    }
+}
+
 component NodeButton inherits Rectangle {
     in property <NodeStatus> node_status;
     callback run_node(bool);
@@ -36,7 +71,7 @@ component NodeButton inherits Rectangle {
         background: node_status.running ? green : darkgray;
 
         Rectangle {
-            property <int> ipad: 5;
+            property <int> ipad: 10;
             width: button_knob.width - ipad * 2px;
             height: self.width;
             border-radius: self.width / 2;
@@ -57,27 +92,35 @@ component NodeButton inherits Rectangle {
 component StatusPage {
     callback run_node(bool);
     in property <NodeStatus> node_status;
+    in property <[Device]> devices;
     // in property <string> device_name;
     // in property <int> connected_devices;
     // in property <color> device_color;
 
     VerticalLayout {
         NodeButton {
+            x: (root.width - self.width) / 2;
             node_status: node_status;
-            width: root.width;
-            height: root.width / 2;
+            width: 200px;
+            height: self.width / 2;
             run_node(val) => root.run_node(val);
+        }
+
+        Devices {
+            devices: devices;
         }
     }
 }
 
 export component MainWindow inherits Window {
     in property <NodeStatus> node_status;
-    height: 250px;
-    width: 200px;
-    VerticalBox {
-        StatusPage {
-            node_status: node_status;
-        }
+    in property <[Device]> devices;
+
+    preferred-height: 400px;
+    preferred-width: 300px;
+
+    StatusPage {
+        node_status: node_status;
+        devices: devices;
     }
 }

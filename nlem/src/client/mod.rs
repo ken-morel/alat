@@ -10,7 +10,7 @@ use std::net::SocketAddr;
 pub struct Client {
     alat_client: proto::alat_service_client::AlatServiceClient<tonic::transport::Channel>,
     pair_client: proto::pair_service_client::PairServiceClient<tonic::transport::Channel>,
-    server_addr: SocketAddr,
+    pub server_addr: SocketAddr,
 }
 
 impl Client {
