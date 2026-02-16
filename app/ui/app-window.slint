@@ -134,13 +134,34 @@ component DeviceCard inherits Rectangle {
 component Devices {
     in property <[Device]> devices;
 
-    VerticalLayout {
-        spacing: 8px;
-        padding: 10px;
+    Rectangle {
+        width: parent.width;
+        height: parent.height;
 
-        for device in devices: DeviceCard {
-            device: device;
-            height: 100px;
+        VerticalLayout {
+            spacing: 8px;
+            padding: 10px;
+
+            for device in devices: DeviceCard {
+                device: device;
+                height: 100px;
+            }
+
+            Rectangle {
+                background: transparent;
+                vertical-stretch: 1;
+            }
+        }
+
+        Text {
+            text: "No devices found";
+            font-size: 14px;
+            color: #666666;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+            visible: devices.length == 0;
+            width: parent.width;
+            height: parent.height;
         }
     }
 }
