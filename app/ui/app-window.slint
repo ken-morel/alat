@@ -3,6 +3,7 @@ import {
     VerticalBox,
     HorizontalBox,
     GridBox,
+    ScrollView,
 } from "std-widgets.slint";
 
 export struct NodeStatus {
@@ -29,15 +30,15 @@ component RelationshipBadge inherits Rectangle {
     property <color> badge_color: relationship == DeviceRelationship.paired ? #3b82f6 : relationship == DeviceRelationship.connected ? #22c55e : #f59e0b;
 
     background: badge_color;
-    border-radius: 4px;
-    min-width: 70px;
+    min-width: 80px;
+    height: 24px;
 
     VerticalLayout {
         padding: 4px;
 
         Text {
             text: root.label;
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 600;
             color: white;
             horizontal-alignment: center;
@@ -49,8 +50,9 @@ component RelationshipBadge inherits Rectangle {
 component DeviceCard inherits Rectangle {
     in property <Device> device;
 
-    border-radius: 12px;
-    background: #1a1a2e;
+    background: #1f1f1f;
+    border-width: 1px;
+    border-color: #333333;
 
     property <length> card_spacing: 8px;
 
@@ -62,10 +64,9 @@ component DeviceCard inherits Rectangle {
         HorizontalLayout {
             spacing: card_spacing;
 
-            // Color indicator circle
+            // Color indicator square
             Rectangle {
                 background: device.color;
-                border-radius: self.height / 2;
                 width: 24px;
                 height: 24px;
             }
@@ -75,7 +76,7 @@ component DeviceCard inherits Rectangle {
                 text: device.name;
                 font-size: 16px;
                 font-weight: 600;
-                color: #e0e0e0;
+                color: #ffffff;
                 vertical-alignment: center;
                 horizontal-alignment: left;
             }
@@ -104,7 +105,7 @@ component DeviceCard inherits Rectangle {
 
             Text {
                 text: device.address + ":" + device.port;
-                font-size: 12px;
+                font-size: 13px;
                 color: #888888;
                 vertical-alignment: center;
             }
@@ -122,7 +123,7 @@ component DeviceCard inherits Rectangle {
 
             Text {
                 text: "ID: " + device.id;
-                font-size: 12px;
+                font-size: 13px;
                 color: #888888;
                 vertical-alignment: center;
             }
@@ -134,7 +135,7 @@ component Devices {
     in property <[Device]> devices;
 
     VerticalLayout {
-        spacing: 10px;
+        spacing: 8px;
         padding: 10px;
 
         for device in devices: DeviceCard {
@@ -144,45 +145,84 @@ component Devices {
     }
 }
 
-component NodeButton inherits Rectangle {
+component NodeToggleButton inherits Rectangle {
     in property <NodeStatus> node_status;
     callback run_node(bool);
 
-    property <bool> query_running: node_status.running;
+    property <bool> is_running: node_status.running && node_status.okay;
 
-    property <int> padd:  5;
-    // function & pure function
+    background: #2d2d2d;
+    height: 60px;
 
-    background: node_status.okay ? gray : yellowgreen;
-    border-radius: self.height / 2;
+    HorizontalLayout {
+        spacing: 0px;
 
-    button_knob := Rectangle {
-        height: root.height - padd * 2px;
-        width: self.height;
-        border-radius: self.height / 2;
-        x: query_running ? padd * 1px : root.width - padd * 1px - self.width;
-        animate x, background {
-            easing: ease-in;
-            duration: 100ms;
-        }
-        y: padd * 1px;
-        background: node_status.running ? green : darkgray;
-
+        // Status indicator bar
         Rectangle {
-            property <int> ipad: 10;
-            width: button_knob.width - ipad * 2px;
-            height: self.width;
-            border-radius: self.width / 2;
-            y: ipad * 1px;
-            x: ipad * 1px;
-            background: button_knob.background.brighter(0.1);
+            width: 5px;
+            background: root.is_running ? #4cc2ff : #666666;
+        }
+
+        // Button content
+        HorizontalLayout {
+            spacing: 14px;
+            padding: 16px;
+            horizontal-stretch: 1;
+
+            // Icon
+            Rectangle {
+                background: root.is_running ? #4cc2ff : #666666;
+                width: 28px;
+                height: 28px;
+
+                Rectangle {
+                    width: 12px;
+                    height: 12px;
+                    background: #1a1a1a;
+                    x: 8px;
+                    y: 8px;
+                }
+            }
+
+            // Label
+            Text {
+                text: root.is_running ? "Node Running" : "Node Stopped";
+                font-size: 16px;
+                font-weight: 600;
+                color: #ffffff;
+                vertical-alignment: center;
+            }
+
+            Rectangle {
+                background: transparent;
+                horizontal-stretch: 1;
+            }
+
+            // Toggle switch
+            Rectangle {
+                background: root.is_running ? #4cc2ff : #444444;
+                width: 52px;
+                height: 28px;
+
+                Rectangle {
+                    width: 20px;
+                    height: 20px;
+                    background: #1a1a1a;
+                    x: root.is_running ? 28px : 4px;
+                    y: 4px;
+
+                    animate x {
+                        duration: 150ms;
+                        easing: ease-in-out;
+                    }
+                }
+            }
         }
     }
 
     TouchArea {
         clicked => {
-            query_running = !query_running;
-            run_node(query_running);
+            root.run_node(!root.is_running);
         }
     }
 }
@@ -193,86 +233,99 @@ component StatusPage {
     in property <[Device]> devices;
 
     VerticalLayout {
-        spacing: 15px;
-        padding: 15px;
+        spacing: 0px;
 
-        // Header with title and status
-        HorizontalLayout {
-            spacing: 10px;
+        // Header bar
+        Rectangle {
+            background: #202020;
+            height: 60px;
 
-            Text {
-                text: "Device Manager";
-                font-size: 20px;
-                font-weight: 600;
-                color: #e0e0e0;
-                vertical-alignment: center;
-            }
+            HorizontalLayout {
+                spacing: 16px;
+                padding: 20px;
 
-            Rectangle {
-                background: transparent;
-                horizontal-stretch: 1;
-            }
+                Text {
+                    text: "Device Manager";
+                    font-size: 20px;
+                    font-weight: 600;
+                    color: #ffffff;
+                    vertical-alignment: center;
+                }
 
-            // Status indicator
-            Rectangle {
-                background: node_status.okay ? #22c55e : #ef4444;
-                border-radius: 4px;
+                Rectangle {
+                    background: transparent;
+                    horizontal-stretch: 1;
+                }
 
-                VerticalLayout {
-                    padding: 6px;
+                // Status indicator
+                Rectangle {
+                    background: node_status.okay ? #1a5c3a : #8b3a1a;
+                    height: 36px;
 
-                    Text {
-                        text: node_status.okay ? "OK" : "Error";
-                        font-size: 11px;
-                        font-weight: 600;
-                        color: white;
-                        horizontal-alignment: center;
-                        vertical-alignment: center;
+                    HorizontalLayout {
+                        padding: 8px;
+                        spacing: 8px;
+
+                        Rectangle {
+                            width: 10px;
+                            height: 10px;
+                            background: node_status.okay ? #4ade80 : #f87171;
+                            y: 2px;
+                        }
+
+                        Text {
+                            text: node_status.okay ? "System OK" : "System Error";
+                            font-size: 14px;
+                            font-weight: 600;
+                            color: white;
+                            vertical-alignment: center;
+                        }
                     }
                 }
             }
         }
 
         // Node control button
-        NodeButton {
+        NodeToggleButton {
             node_status: node_status;
-            width: 180px;
-            height: 90px;
             run_node(val) => root.run_node(val);
         }
 
         // Devices section header
-        HorizontalLayout {
-            spacing: 8px;
+        Rectangle {
+            background: #202020;
+            height: 44px;
 
-            Text {
-                text: "Devices";
-                font-size: 14px;
-                font-weight: 600;
-                color: #a0a0a0;
-                vertical-alignment: center;
-            }
+            HorizontalLayout {
+                padding: 16px;
+                spacing: 12px;
 
-            Rectangle {
-                background: #333350;
-                height: 1px;
-                horizontal-stretch: 1;
-            }
+                Text {
+                    text: "Devices";
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: #888888;
+                    vertical-alignment: center;
+                }
 
-            Text {
-                text: devices.length + "";
-                font-size: 12px;
-                color: #666680;
-                vertical-alignment: center;
+                Rectangle {
+                    background: #333333;
+                    width: 2px;
+                }
+
+                Text {
+                    text: devices.length + "";
+                    font-size: 13px;
+                    color: #666666;
+                    vertical-alignment: center;
+                }
             }
         }
 
         // Device list container
         Rectangle {
-            background: #0f0f1a;
-            border-radius: 8px;
+            background: #1a1a1a;
             vertical-stretch: 1;
-            clip: true;
 
             Devices {
                 devices: devices;
@@ -287,9 +340,9 @@ export component MainWindow inherits Window {
     in property <NodeStatus> node_status;
     in property <[Device]> devices;
 
-    preferred-height: 600px;
-    preferred-width: 400px;
-    background: #121218;
+    preferred-height: 750px;
+    preferred-width: 500px;
+    background: #1a1a1a;
 
     StatusPage {
         node_status: node_status;
