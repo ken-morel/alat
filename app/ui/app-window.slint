@@ -1,372 +1,203 @@
 import {
-    Button,
     VerticalBox,
     HorizontalBox,
     GridBox,
     ScrollView,
+    Button,
 } from "std-widgets.slint";
 
-export struct NodeStatus {
-    running: bool,
-    okay: bool,
-}
+import { NodeStatus, Device, DeviceRelationship } from "models.slint";
+import {
+    Horizontal,
+    Vertical,
+    MaterialText,
+    MaterialWindow,
+    Switch,
+    AppBar,
+    SmallAppBar,
+    Modal,
+    ModalDrawer,
+    Dialog,
+    ScrollView,
+    Icon,
+} from "material/material.slint";
+import { CheckBox } from "material/ui/components/check_box.slint";
+import {
+    CircularProgressIndicator,
+} from "material/ui/components/progress_indicator.slint";
+import {
+    HorizontalDivider,
+    VerticalDivider,
+} from "material/ui/components/divider.slint";
+import { OutlinedCard, ElevatedCard } from "material/ui/components/card.slint";
+import { Icon } from "material/ui/components/icon.slint";
+import { ActionChip } from "material/ui/components/chip.slint";
+import { Grid } from "material/ui/components/grid.slint";
+import { FilledButton } from "material/ui/components/filled_button.slint";
+import { ModalBottomSheet } from "material/ui/components/bottom_sheet.slint";
+import { Icons } from "material/ui/icons/icons.slint";
+import { Drawer } from "material/ui/components/drawer.slint";
 
 
-export enum DeviceRelationship{ paired, connected, found }
 
-export struct Device {
-    name: string,
-    color: color,
-    address: string,
-    port: int,
-    id: string,
-    relationship: DeviceRelationship,
-}
-
-component RelationshipBadge inherits Rectangle {
-    in property <DeviceRelationship> relationship;
-
-    property <string> label: relationship == DeviceRelationship.paired ? "Paired" : relationship == DeviceRelationship.connected ? "Connected" : "Found";
-    property <color> badge_color: relationship == DeviceRelationship.paired ? #3b82f6 : relationship == DeviceRelationship.connected ? #22c55e : #f59e0b;
-
-    background: badge_color;
-    min-width: 80px;
-    height: 24px;
-
-    VerticalLayout {
-        padding: 4px;
-
-        Text {
-            text: root.label;
-            font-size: 11px;
-            font-weight: 600;
-            color: white;
-            horizontal-alignment: center;
-            vertical-alignment: center;
-        }
-    }
-}
-
-component DeviceCard inherits Rectangle {
+component DeviceCard {
     in property <Device> device;
+    callback clicked(Device);
 
-    background: #1f1f1f;
-    border-width: 1px;
-    border-color: #333333;
+    card := OutlinedCard {
+        clickable: true;
 
-    property <length> card_spacing: 8px;
-
-    VerticalLayout {
-        spacing: card_spacing;
-        padding: 12px;
-
-        // Header: Color indicator + Name + Relationship badge
-        HorizontalLayout {
-            spacing: card_spacing;
-
-            // Color indicator square
-            Rectangle {
-                background: device.color;
-                width: 24px;
-                height: 24px;
-            }
-
-            // Device name
-            Text {
-                text: device.name;
-                font-size: 16px;
-                font-weight: 600;
-                color: #ffffff;
-                vertical-alignment: center;
-                horizontal-alignment: left;
-            }
-
-            Rectangle {
-                background: transparent;
-                horizontal-stretch: 1;
-            }
-
-            // Relationship badge
-            RelationshipBadge {
-                relationship: device.relationship;
+        if device.relationship == DeviceRelationship.found: FilledButton {
+            x: card.width - self.width - 10px;
+            y: 10px;
+            text: "Pair";
+            clicked => {
+                clicked(device);
             }
         }
 
-        // Connection info (address:port)
-        HorizontalLayout {
-            spacing: card_spacing;
-            visible: device.relationship != DeviceRelationship.paired;
+        Vertical {
+            Horizontal {
+                Rectangle {
+                    height: 50px;
+                    width: 50px;
+                    background: device.color;
+                    border-radius: 8px;
+                    Icon {
+                        source: @image-url("./icons/location.svg");
+                        height: 100%;
+                        width: 100%;
+                    }
+                }
 
-            Image {
-                source: @image-url("icons/location.svg");
-                width: 16px;
-                height: 16px;
+                VerticalDivider { }
+
+                Text {
+                    text: device.name;
+                    font-size: 30px;
+                }
             }
 
-            Text {
-                text: device.address + ":" + device.port;
-                font-size: 13px;
-                color: #888888;
-                vertical-alignment: center;
-            }
-        }
+            Grid {
+                spacing-vertical: 0;
+                spacing-horizontal: 30px;
+                Row {
+                    MaterialText {
+                        text: "ID:";
+                    }
 
-        // Device ID
-        HorizontalLayout {
-            spacing: card_spacing;
+                    MaterialText {
+                        text: device.id;
+                    }
+                }
 
-            Image {
-                source: @image-url("icons/id.svg");
-                width: 16px;
-                height: 16px;
-            }
+                Row {
+                    MaterialText {
+                        text: "Address:";
+                    }
 
-            Text {
-                text: "ID: " + device.id;
-                font-size: 13px;
-                color: #888888;
-                vertical-alignment: center;
+                    MaterialText {
+                        text: device.address + ":" + device.port;
+                    }
+                }
             }
         }
     }
 }
 
-component Devices {
-    in property <[Device]> devices;
+export component MainWindow inherits MaterialWindow {
+    in property <NodeStatus> node_status: {
+        running: false,
+        okay: true,
+    };
+    in property <[Device]> devices: [
+        {
+            name: "jealomy",
+            color: rgb(200, 100, 200),
+            address:"192.192.192.192",
+            port: 89291,
+            id: "AF38FAF38FAF38FAF38FAF38FAF38F8F",
+            relationship: DeviceRelationship.found,
+        }
+    ];
+    callback request_pair(Device);
+    property <Device> selected_device;
 
-    Rectangle {
-        width: parent.width;
-        height: parent.height;
+    width: 400px;
+    height: 500px;
 
-        VerticalLayout {
-            spacing: 8px;
-            padding: 10px;
+    Vertical {
+        padding: 0;
+        spacing: 0;
+        AppBar {
+            width: root.width;
+            height: 50px;
+            title: "Alat";
 
+            leading_button: {
+                icon: node_status.running ? Icons.check : Icons.remove,
+                enabled: true,
+            };
+            leading_button_clicked => {
+                node_drawer.show();
+            };
+            trailing_button: {
+                icon: Icons.menu,
+                enabled: true,
+            };
+        }
+
+        ScrollView {
             for device in devices: DeviceCard {
                 device: device;
-                height: 100px;
-            }
-
-            Rectangle {
-                background: transparent;
-                vertical-stretch: 1;
-            }
-        }
-
-        Text {
-            text: "No devices found";
-            font-size: 14px;
-            color: #666666;
-            horizontal-alignment: center;
-            vertical-alignment: center;
-            visible: devices.length == 0;
-            width: parent.width;
-            height: parent.height;
-        }
-    }
-}
-
-component NodeToggleButton inherits Rectangle {
-    in property <NodeStatus> node_status;
-    callback run_node(bool);
-
-    property <bool> is_running: node_status.running && node_status.okay;
-
-    background: #2d2d2d;
-    height: 60px;
-
-    HorizontalLayout {
-        spacing: 0px;
-
-        // Status indicator bar
-        Rectangle {
-            width: 5px;
-            background: root.is_running ? #4cc2ff : #666666;
-        }
-
-        // Button content
-        HorizontalLayout {
-            spacing: 14px;
-            padding: 16px;
-            horizontal-stretch: 1;
-
-            // Icon
-            Rectangle {
-                background: root.is_running ? #4cc2ff : #666666;
-                width: 28px;
-                height: 28px;
-
-                Rectangle {
-                    width: 12px;
-                    height: 12px;
-                    background: #1a1a1a;
-                    x: 8px;
-                    y: 8px;
-                }
-            }
-
-            // Label
-            Text {
-                text: root.is_running ? "Node Running" : "Node Stopped";
-                font-size: 16px;
-                font-weight: 600;
-                color: #ffffff;
-                vertical-alignment: center;
-            }
-
-            Rectangle {
-                background: transparent;
-                horizontal-stretch: 1;
-            }
-
-            // Toggle switch
-            Rectangle {
-                background: root.is_running ? #4cc2ff : #444444;
-                width: 52px;
-                height: 28px;
-
-                Rectangle {
-                    width: 20px;
-                    height: 20px;
-                    background: #1a1a1a;
-                    x: root.is_running ? 28px : 4px;
-                    y: 4px;
-
-                    animate x {
-                        duration: 150ms;
-                        easing: ease-in-out;
-                    }
+                clicked(device) => {
+                    selected_device = device;
+                    device_dialog.show();
                 }
             }
         }
     }
 
-    TouchArea {
-        clicked => {
-            root.run_node(!root.is_running);
-        }
-    }
-}
+    node_drawer := ModalDrawer {
+        title: status.running ? "Node running" : "Node stopped";
+        height: root.height;
+        width: root.width;
+        in property <NodeStatus> status: node_status;
 
-component StatusPage {
-    callback run_node(bool);
-    in property <NodeStatus> node_status;
-    in property <[Device]> devices;
+        property <bool> switch_on: status.running;
 
-    VerticalLayout {
-        spacing: 0px;
+        Horizontal {
+            alignment: LayoutAlignment.space-between;
+            MaterialText {
+                text: switch_on ? status.running ? "Stop node" : "Starting node..." : status.running ? "Stopping node..." : "Start node";
+                font-size: 18px;
+            }
 
-        // Header bar
-        Rectangle {
-            background: #202020;
-            height: 60px;
-
-            HorizontalLayout {
-                spacing: 16px;
-                padding: 20px;
-
-                Text {
-                    text: "Device Manager";
-                    font-size: 20px;
-                    font-weight: 600;
-                    color: #ffffff;
-                    vertical-alignment: center;
-                }
-
-                Rectangle {
-                    background: transparent;
-                    horizontal-stretch: 1;
-                }
-
-                // Status indicator
-                Rectangle {
-                    background: node_status.okay ? #1a5c3a : #8b3a1a;
-                    height: 36px;
-
-                    HorizontalLayout {
-                        padding: 8px;
-                        spacing: 8px;
-
-                        Rectangle {
-                            width: 10px;
-                            height: 10px;
-                            background: node_status.okay ? #4ade80 : #f87171;
-                            y: 2px;
-                        }
-
-                        Text {
-                            text: node_status.okay ? "System OK" : "System Error";
-                            font-size: 14px;
-                            font-weight: 600;
-                            color: white;
-                            vertical-alignment: center;
-                        }
-                    }
+            if switch_on == status.running: Switch {
+                checked: switch_on;
+                checked_state_changed(checked) => {
+                    switch_on = checked;
                 }
             }
-        }
-
-        // Node control button
-        NodeToggleButton {
-            node_status: node_status;
-            run_node(val) => root.run_node(val);
-        }
-
-        // Devices section header
-        Rectangle {
-            background: #202020;
-            height: 44px;
-
-            HorizontalLayout {
-                padding: 16px;
-                spacing: 12px;
-
-                Text {
-                    text: "Devices";
-                    font-size: 14px;
-                    font-weight: 600;
-                    color: #888888;
-                    vertical-alignment: center;
-                }
-
-                Rectangle {
-                    background: #333333;
-                    width: 2px;
-                }
-
-                Text {
-                    text: devices.length + "";
-                    font-size: 13px;
-                    color: #666666;
-                    vertical-alignment: center;
-                }
-            }
-        }
-
-        // Device list container
-        Rectangle {
-            background: #1a1a1a;
-            vertical-stretch: 1;
-
-            Devices {
-                devices: devices;
-                width: parent.width;
-                height: parent.height;
+            if switch_on != status.running: CircularProgressIndicator {
+                indeterminate: true;
             }
         }
     }
-}
 
-export component MainWindow inherits Window {
-    in property <NodeStatus> node_status;
-    in property <[Device]> devices;
+    device_dialog := Dialog {
+        width: root.width;
+        height: root.height;
+        property <Device> device: selected_device;
 
-    preferred-height: 750px;
-    preferred-width: 500px;
-    background: #1a1a1a;
-
-    StatusPage {
-        node_status: node_status;
-        devices: devices;
+        title: "Pair with \n" + device.name + "?";
+        actions: ["Cancel"];
+        default_action_text: "Pair";
+        default_action_clicked => {
+            request_pair(device);
+        }
+        action_clicked(index) => {
+            device_dialog.close();
+        }
     }
 }

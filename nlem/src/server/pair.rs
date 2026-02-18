@@ -1,3 +1,5 @@
+use crate::proto::RequestPairResponse;
+
 use super::*;
 
 #[derive(Debug)]
@@ -26,14 +28,33 @@ impl<
 {
     async fn request_pair(
         &self,
-        _: Request<proto::RequestPairRequest>,
+        req: Request<proto::RequestPairRequest>,
     ) -> Result<Response<proto::RequestPairResponse>, Status> {
-        Ok(Response::new(proto::RequestPairResponse {
-            result: Some(proto::request_pair_response::Result::Failure(
-                proto::RequestPairResponseFailure {
-                    reason: String::from("Pairing not setup"),
-                },
-            )),
+        let req = req.into_inner();
+        let result = self
+            .device_manager
+            .read()
+            .await
+            ._handle_pair_request(
+                req.info
+                    .ok_or(Status::invalid_argument("Device info was blank"))?
+                    .into(),
+                req.certificate.into(),
+            )
+            .await;
+        Ok(Response::new(RequestPairResponse {
+            result: Some(match result {
+                Ok(paired) => proto::request_pair_response::Result::Success(
+                    proto::RequestPairResponseSuccess {
+                        token: paired.token.into(),
+                        certificate: paired.certificate.into(),
+                        info: Some(paired.info.into()),
+                    },
+                ),
+                Err(reason) => proto::request_pair_response::Result::Failure(
+                    proto::RequestPairResponseFailure { reason },
+                ),
+            }),
         }))
     }
 }

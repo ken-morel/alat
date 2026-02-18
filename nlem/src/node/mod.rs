@@ -1,7 +1,7 @@
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
-use super::{devicemanager, platform, server, storage};
+use super::{client, devicemanager, platform, security, server, storage};
 
 pub struct Node<
     S: storage::Storage + 'static,
@@ -59,5 +59,48 @@ impl<
         let (tx, rx) = tokio::sync::mpsc::channel(1);
         self.device_manager.write().await.start_workers(tx).await;
         rx
+    }
+
+    pub async fn request_pair(
+        &self,
+        device_id: &security::DeviceID,
+    ) -> Result<Result<storage::PairedDevice, String>, String> {
+        let manager = self.device_manager.read().await;
+        let device = manager
+            .discovered_devices
+            .read()
+            .await
+            .get(device_id)
+            .ok_or(String::from("Device not found"))?
+            .clone();
+        let this_info = manager.this_device.read().await.clone().info;
+        let this_certificate = manager.device_certificate.read().await.clone();
+        drop(manager);
+
+        let mut cl = client::Client::connect(device.address)
+            .await
+            .map_err(|e| format!("Client could not connect to device: {e}"))?;
+
+        match cl.request_pair(this_info, this_certificate).await {
+            Ok(response) => match response {
+                Ok((token, certificate, info)) => {
+                    let paired_device = storage::PairedDevice {
+                        token,
+                        certificate,
+                        info,
+                    };
+                    self.device_manager
+                        .read()
+                        .await
+                        .paired_devices
+                        .write()
+                        .await
+                        .insert(paired_device.info.id, paired_device.clone());
+                    Ok(Ok(paired_device))
+                }
+                Err(message) => Ok(Err(message)),
+            },
+            Err(err) => Err(format!("Could not send pair request: {err}")),
+        }
     }
 }

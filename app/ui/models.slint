@@ -1,0 +1,17 @@
+
+export struct NodeStatus {
+    running: bool,
+    okay: bool,
+}
+
+
+export enum DeviceRelationship{ paired, connected, found }
+
+export struct Device {
+    name: string,
+    color: color,
+    address: string,
+    port: int,
+    id: string,
+    relationship: DeviceRelationship,
+}

@@ -128,4 +128,29 @@ impl<S: storage::Storage, P: platform::Platform<S, D>, D: discovered::DiscoveryM
             device_type: lck.device_type(),
         }
     }
+
+    pub async fn _handle_pair_request(
+        &self,
+        info: storage::DeviceInfo,
+        certificate: security::Certificate,
+    ) -> Result<storage::PairedDevice, String> {
+        self.platform
+            .read()
+            .await
+            .prompt_pair_request(info, certificate)
+            .await?;
+        let paired = storage::PairedDevice {
+            token: security::generate_pair_token(),
+            certificate: self.device_certificate.read().await,
+            info: self.this_device.read().await.info,
+        };
+        self.paired_devices
+            .write()
+            .await
+            .insert(paired.info.id, paired.clone());
+        self.save()
+            .await
+            .map_err(|e| format!("Could not save paired device: {e}"))?;
+        Ok(paired)
+    }
 }
