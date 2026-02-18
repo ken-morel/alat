@@ -29,6 +29,7 @@ import {
     Grid,
     Drawer,
     OutlineButton,
+    Badge,
 } from "material/material.slint";
 import { CheckBox } from "material/ui/components/check_box.slint";
 import {
@@ -53,14 +54,10 @@ component DeviceCard {
             root.clicked(device);
         }
 
-        ActionChip {
-            enabled: false;
+        Badge {
             x: card.width - self.width - 10px;
             y: 10px;
             text: device.relationship == DeviceRelationship.paired ? "Paired" : device.relationship == DeviceRelationship.connected ? "Connected" : "Found";
-            clicked => {
-                root.clicked(device);
-            }
         }
 
         Vertical {
@@ -199,6 +196,12 @@ export component MainWindow inherits MaterialWindow {
     in property <string> pairing_error;
 
     changed is_pairing => {
+        pairing_modal.show();
+    }
+    changed pairing_succeded => {
+        pairing_modal.show();
+    }
+    changed pairing_error => {
         pairing_modal.show();
     }
 
