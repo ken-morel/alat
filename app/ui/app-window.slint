@@ -28,6 +28,7 @@ import {
     Icon,
     Grid,
     Drawer,
+    OutlineButton,
 } from "material/material.slint";
 import { CheckBox } from "material/ui/components/check_box.slint";
 import {
@@ -48,13 +49,17 @@ component DeviceCard {
 
     card := OutlinedCard {
         clickable: true;
+        clicked => {
+            root.clicked(device);
+        }
 
-        if device.relationship == DeviceRelationship.found: FilledButton {
+        ActionChip {
+            enabled: false;
             x: card.width - self.width - 10px;
             y: 10px;
-            text: "Pair";
+            text: device.relationship == DeviceRelationship.paired ? "Paired" : device.relationship == DeviceRelationship.connected ? "Connected" : "Found";
             clicked => {
-                clicked(device);
+                root.clicked(device);
             }
         }
 
@@ -153,8 +158,10 @@ export component MainWindow inherits MaterialWindow {
             for device in devices: DeviceCard {
                 device: device;
                 clicked(device) => {
-                    selected_device = device;
-                    device_dialog.show();
+                    if device.relationship == DeviceRelationship.found {
+                        selected_device = device;
+                        ask_pair_dialog.show();
+                    }
                 }
             }
         }
@@ -194,12 +201,6 @@ export component MainWindow inherits MaterialWindow {
     changed is_pairing => {
         pairing_modal.show();
     }
-    changed pairing_succeded => {
-        pairing_modal.show();
-    }
-    changed pairing_error => {
-        pairing_modal.show();
-    }
 
     pairing_modal := ModalBottomSheet {
         in property <Device> device: selected_device;
@@ -234,7 +235,7 @@ export component MainWindow inherits MaterialWindow {
         }
     }
 
-    device_dialog := Dialog {
+    ask_pair_dialog := Dialog {
         width: root.width;
         height: root.height;
         property <Device> device: selected_device;
@@ -245,8 +246,8 @@ export component MainWindow inherits MaterialWindow {
         default_action_clicked => {
             request_pair(device);
         }
-        action_clicked(index) => {
-            device_dialog.close();
+        action_clicked() => {
+            ask_pair_dialog.close();
         }
     }
 }

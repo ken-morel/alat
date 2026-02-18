@@ -7,7 +7,7 @@ use tokio::{
     time::sleep,
 };
 
-enum WorkerEvent {
+pub(super) enum WorkerEvent {
     Wrapper(DeviceManagerEvent),
 }
 
@@ -197,6 +197,8 @@ impl<
     pub async fn start_workers(&mut self, sender: Sender<DeviceManagerEvent>) {
         println!("Spawning workers");
         let (itx, irx) = channel::<WorkerEvent>(1);
+
+        self.worker = Some(itx.clone());
 
         tokio::spawn(Self::discovery_server_worker(
             itx.clone(),

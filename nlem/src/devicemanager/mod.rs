@@ -56,23 +56,25 @@ pub struct DeviceManager<
     pub connected_devices: Arc<RwLock<HashMap<security::DeviceID, connected::ConnectedDevice>>>,
 
     pub discovered_devices: Arc<RwLock<HashMap<security::DeviceID, discovered::DiscoveredDevice>>>,
+
+    worker: Option<tokio::sync::mpsc::Sender<workers::WorkerEvent>>,
     discovery: Arc<RwLock<D>>,
 }
 
 impl<S: storage::Storage, P: platform::Platform<S, D>, D: discovered::DiscoveryManager>
     DeviceManager<S, P, D>
 {
-    async fn load(&mut self) -> Result<(), StorageError> {
-        let store = self.storage.read().await;
-        let mut map = HashMap::new();
-        for device in store.load_paired().await? {
-            map.insert(device.info.id, device);
-        }
-        *self.paired_devices.write().await = map;
-        self.this_device.write().await.info = store.load_info().await?;
-        *self.device_certificate.write().await = store.load_certificate().await?;
-        Ok(())
-    }
+    // async fn load(&mut self) -> Result<(), StorageError> {
+    //     let store = self.storage.read().await;
+    //     let mut map = HashMap::new();
+    //     for device in store.load_paired().await? {
+    //         map.insert(device.info.id, device);
+    //     }
+    //     *self.paired_devices.write().await = map;
+    //     self.this_device.write().await.info = store.load_info().await?;
+    //     *self.device_certificate.write().await = store.load_certificate().await?;
+    //     Ok(())
+    // }
 
     async fn save(&self) -> Result<(), StorageError> {
         let store = self.storage.read().await;
@@ -115,6 +117,7 @@ impl<S: storage::Storage, P: platform::Platform<S, D>, D: discovered::DiscoveryM
             device_certificate: Arc::new(RwLock::new(data.certificate)),
             connected_devices: Arc::new(RwLock::new(HashMap::new())),
             discovered_devices: Arc::new(RwLock::new(HashMap::new())),
+            worker: None,
             discovery,
             platform,
         })
@@ -133,7 +136,15 @@ impl<S: storage::Storage, P: platform::Platform<S, D>, D: discovered::DiscoveryM
         self.paired_devices
             .write()
             .await
-            .insert(device.info.id, device);
+            .insert(device.info.id, device.clone());
+        if let Some(worker) = self.worker.clone() {
+            _ = worker
+                .send(workers::WorkerEvent::Wrapper(DeviceManagerEvent::Paired(
+                    device,
+                )))
+                .await;
+        }
+
         if let Err(e) = self.save().await {
             println!("Error saving paired devices after add_paired_device: {e}");
         }
