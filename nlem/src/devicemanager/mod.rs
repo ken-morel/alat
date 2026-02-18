@@ -129,6 +129,16 @@ impl<S: storage::Storage, P: platform::Platform<S, D>, D: discovered::DiscoveryM
         }
     }
 
+    pub async fn add_paired_device(&self, device: storage::PairedDevice) {
+        self.paired_devices
+            .write()
+            .await
+            .insert(device.info.id, device);
+        if let Err(e) = self.save().await {
+            println!("Error saving paired devices after add_paired_device: {e}");
+        }
+    }
+
     pub async fn _handle_pair_request(
         &self,
         info: storage::DeviceInfo,
@@ -137,20 +147,14 @@ impl<S: storage::Storage, P: platform::Platform<S, D>, D: discovered::DiscoveryM
         self.platform
             .read()
             .await
-            .prompt_pair_request(info, certificate)
+            .prompt_pair_request(info.clone(), certificate.clone())
             .await?;
         let paired = storage::PairedDevice {
             token: security::generate_pair_token(),
-            certificate: self.device_certificate.read().await.to_vec(),
-            info: self.this_device.read().await.info.clone(),
+            certificate,
+            info,
         };
-        self.paired_devices
-            .write()
-            .await
-            .insert(paired.info.id, paired.clone());
-        self.save()
-            .await
-            .map_err(|e| format!("Could not save paired device: {e}"))?;
+        self.add_paired_device(paired.clone()).await;
         Ok(paired)
     }
 }

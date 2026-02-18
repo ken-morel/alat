@@ -1,5 +1,10 @@
-use std::sync::Arc;
+use std::{
+    net::{Ipv4Addr, SocketAddr},
+    sync::Arc,
+};
 use tokio::sync::RwLock;
+
+use crate::server::ALAT_PORT;
 
 use super::{client, devicemanager, platform, security, server, storage};
 
@@ -46,16 +51,20 @@ impl<
     pub async fn start(
         &mut self,
     ) -> tokio::sync::mpsc::Receiver<devicemanager::DeviceManagerEvent> {
-        tokio::spawn(
-            self.server
-                .write()
-                .await
-                .create_router()
-                .serve(std::net::SocketAddr::new(
-                    std::net::Ipv4Addr::LOCALHOST.into(),
-                    server::ALAT_PORT,
-                )),
-        );
+        let router = self.server.write().await.create_router();
+        tokio::spawn(async move {
+            let addr = std::net::SocketAddr::new(
+                std::net::Ipv4Addr::UNSPECIFIED.into(),
+                server::ALAT_PORT,
+            );
+            println!("[node/server] Starting server at {addr}");
+            let r = router.serve(addr).await;
+            println!("[node/server] Server at {addr} stopped");
+            if let Err(e) = r {
+                println!("[node/server::error] {e}");
+            }
+        });
+
         let (tx, rx) = tokio::sync::mpsc::channel(1);
         self.device_manager.write().await.start_workers(tx).await;
         rx
@@ -95,10 +104,8 @@ impl<
                     self.device_manager
                         .read()
                         .await
-                        .paired_devices
-                        .write()
-                        .await
-                        .insert(paired_device.info.id, paired_device.clone());
+                        .add_paired_device(paired_device.clone())
+                        .await;
                     Ok(Ok(paired_device))
                 }
                 Err(message) => Ok(Err(message)),

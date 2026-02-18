@@ -2,10 +2,7 @@ mod alat;
 mod pair;
 
 use super::{devicemanager, devicemanager::discovered, platform, proto, storage};
-use std::{
-    net::{Ipv4Addr, SocketAddr, SocketAddrV4},
-    sync::Arc,
-};
+use std::sync::Arc;
 use tokio::sync::RwLock;
 use tonic::{Request, Response, Status};
 

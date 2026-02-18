@@ -14,7 +14,7 @@ pub fn generate_id() -> DeviceID {
     devid
 }
 pub fn generate_certificate() -> Certificate {
-    let mut cert: Certificate = Vec::with_capacity(CERTIFICATE_SIZE);
+    let mut cert = vec![0u8; CERTIFICATE_SIZE];
     rand::fill(&mut cert);
     cert
 }

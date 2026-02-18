@@ -1,7 +1,6 @@
 use log::{error, warn};
 use nlem::devicemanager::discovered::{self, DiscoveredDevice, DiscoveryError, DiscoveryEvent};
 use nlem::security::DeviceID;
-use nlem::storage::DeviceInfo;
 use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::net::UdpSocket;
@@ -31,12 +30,12 @@ impl DiscoveryManager {
     }
 }
 
-async fn run_advertiser(device_info: DeviceInfo, socket: Arc<UdpSocket>) {
+async fn run_advertiser(device: DiscoveredDevice, socket: Arc<UdpSocket>) {
     let mut interval = time::interval(ADVERTISEMENT_INTERVAL);
     let broadcast_addr = format!("{}:{}", BROADCAST_ADDR, DISCOVERY_PORT);
 
     // usuall about 130B
-    let message_bytes = match serde_json::to_vec(&device_info) {
+    let message_bytes = match serde_json::to_vec(&device) {
         Ok(bytes) => bytes,
         Err(e) => {
             error!("Failed to serialize DeviceInfo for advertising: {}", e);
@@ -46,7 +45,7 @@ async fn run_advertiser(device_info: DeviceInfo, socket: Arc<UdpSocket>) {
 
     log::info!(
         "[platform/discovery.rs] Starting to advertise device '{}' on port {}",
-        device_info.name,
+        device.info.name,
         DISCOVERY_PORT
     );
 
@@ -138,11 +137,10 @@ impl discovered::DiscoveryManager for DiscoveryManager {
         })?;
         let socket = Arc::new(socket);
 
-        let device_info = device.info;
-        *self.advertised_device_id.lock().await = Some(device_info.id);
+        *self.advertised_device_id.lock().await = Some(device.info.id);
 
         let handle = tokio::spawn(async move {
-            run_advertiser(device_info, socket).await;
+            run_advertiser(device, socket).await;
         });
 
         self.advertising_task = Some(handle);

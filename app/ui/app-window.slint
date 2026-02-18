@@ -20,6 +20,14 @@ import {
     Dialog,
     ScrollView,
     Icon,
+    FilledButton,
+    ModalBottomSheet,
+    OutlinedCard,
+    ElevatedCard,
+    ActionChip,
+    Icon,
+    Grid,
+    Drawer,
 } from "material/material.slint";
 import { CheckBox } from "material/ui/components/check_box.slint";
 import {
@@ -29,14 +37,8 @@ import {
     HorizontalDivider,
     VerticalDivider,
 } from "material/ui/components/divider.slint";
-import { OutlinedCard, ElevatedCard } from "material/ui/components/card.slint";
-import { Icon } from "material/ui/components/icon.slint";
-import { ActionChip } from "material/ui/components/chip.slint";
-import { Grid } from "material/ui/components/grid.slint";
-import { FilledButton } from "material/ui/components/filled_button.slint";
-import { ModalBottomSheet } from "material/ui/components/bottom_sheet.slint";
 import { Icons } from "material/ui/icons/icons.slint";
-import { Drawer } from "material/ui/components/drawer.slint";
+import { TonalButton } from "material/ui/components/tonal_button.slint";
 
 
 
@@ -181,6 +183,53 @@ export component MainWindow inherits MaterialWindow {
             }
             if switch_on != status.running: CircularProgressIndicator {
                 indeterminate: true;
+            }
+        }
+    }
+
+    in property <bool> is_pairing;
+    in property <bool> pairing_succeded;
+    in property <string> pairing_error;
+
+    changed is_pairing => {
+        pairing_modal.show();
+    }
+    changed pairing_succeded => {
+        pairing_modal.show();
+    }
+    changed pairing_error => {
+        pairing_modal.show();
+    }
+
+    pairing_modal := ModalBottomSheet {
+        in property <Device> device: selected_device;
+        width: root.width;
+        height: root.height;
+
+        Vertical {
+            Horizontal {
+                width: 100%;
+                alignment: LayoutAlignment.center;
+
+                if is_pairing: CircularProgressIndicator {
+                    indeterminate: true;
+                    width: 100px;
+                    height: self.width;
+                }
+                if !is_pairing && pairing_succeded: Icon {
+                    source: Icons.check;
+                    width: 100px;
+                    height: self.width;
+                }
+                if !is_pairing && !pairing_succeded: Icon {
+                    width: 100px;
+                    height: self.width;
+                    source: Icons.close;
+                }
+            }
+
+            Text {
+                text: is_pairing ? "Pairing to " + device.name + "..." : pairing_succeded ? "Succesfully paired to " + device.name : "Error pairing to " + device.name + ": " + pairing_error;
             }
         }
     }

@@ -17,10 +17,15 @@ impl Client {
     pub async fn connect(
         addr: SocketAddr,
     ) -> Result<Self, Box<dyn std::error::Error + Send + Sync>> {
+        let endpoint = tonic::transport::Endpoint::from_shared(format!(
+            "http://{}:{}",
+            addr.ip(),
+            addr.port()
+        ))?;
         let alat_client =
-            proto::alat_service_client::AlatServiceClient::connect(addr.to_string()).await?;
+            proto::alat_service_client::AlatServiceClient::connect(endpoint.clone()).await?;
         let pair_client =
-            proto::pair_service_client::PairServiceClient::connect(addr.to_string()).await?;
+            proto::pair_service_client::PairServiceClient::connect(endpoint.clone()).await?;
 
         Ok(Self {
             server_addr: addr,

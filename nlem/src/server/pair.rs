@@ -39,7 +39,7 @@ impl<
                 req.info
                     .ok_or(Status::invalid_argument("Device info was blank"))?
                     .into(),
-                req.certificate.into(),
+                req.certificate,
             )
             .await;
         Ok(Response::new(RequestPairResponse {
@@ -47,7 +47,7 @@ impl<
                 Ok(paired) => proto::request_pair_response::Result::Success(
                     proto::RequestPairResponseSuccess {
                         token: paired.token.into(),
-                        certificate: paired.certificate.into(),
+                        certificate: paired.certificate,
                         info: Some(paired.info.into()),
                     },
                 ),
