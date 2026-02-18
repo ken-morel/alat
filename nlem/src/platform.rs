@@ -8,9 +8,9 @@ pub trait Platform<S: storage::Storage, D: devicemanager::discovered::DiscoveryM
     fn discovery_manager(&self) -> impl std::future::Future<Output = Result<D, String>> + Send;
     fn storage(&self) -> impl std::future::Future<Output = Result<S, String>> + Send;
 
-    async fn prompt_pair_request(
+    fn prompt_pair_request(
         &self,
         info: storage::DeviceInfo,
         certificate: security::Certificate,
-    ) -> Result<(), String>;
+    ) -> impl std::future::Future<Output = Result<(), String>> + Send;
 }

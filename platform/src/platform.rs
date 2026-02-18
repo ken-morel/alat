@@ -40,4 +40,31 @@ impl nlem::platform::Platform<storage::JSONFileStorage, discovery::DiscoveryMana
         cfg_path.push("data.json");
         Ok(storage::JSONFileStorage::new(cfg_path.as_path()))
     }
+    async fn prompt_pair_request(
+        &self,
+        info: nlem::storage::DeviceInfo,
+        _certificate: nlem::security::Certificate,
+    ) -> Result<(), String> {
+        let (tx, rx) = tokio::sync::oneshot::channel();
+        tokio::task::spawn_blocking(move || {
+            notify_rust::Notification::new()
+                .summary("Pair request")
+                .body(&format!("Device named {} wants to pair", info.name))
+                .action("y", "Pair")
+                .action("n", "Decline")
+                .show()
+                .unwrap()
+                .wait_for_action(|action| {
+                    if let Err(e) = match action {
+                        "y" => tx.send(Ok(())),
+                        "n" => tx.send(Err(String::from("User declined"))),
+                        _ => tx.send(Err(String::from("No notification reply"))),
+                    } {
+                        println!("ERROR sending notification reply to oneshot channel: {e:?}");
+                    }
+                });
+        });
+        rx.await
+            .map_err(|e| format!("Could not receive noification reply: {e}"))?
+    }
 }

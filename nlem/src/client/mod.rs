@@ -56,7 +56,7 @@ impl Client {
             ),
             String,
         >,
-        Box<dyn std::error::Error>,
+        Box<dyn std::error::Error + Send + Sync>,
     > {
         let response = self
             .pair_client

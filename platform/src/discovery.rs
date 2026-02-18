@@ -73,23 +73,23 @@ async fn run_scanner(
     loop {
         tokio::select! {
             Ok((len, remote_addr)) = socket.recv_from(&mut buffer) => {
-                match serde_json::from_slice::<DeviceInfo>(&buffer[..len]) {
-                    Ok(info) => {
+                match serde_json::from_slice::<DiscoveredDevice>(&buffer[..len]) {
+                    Ok(mut device) => {
                         let own_id_lock = own_device_id_arc.lock().await;
                         if let Some(own_id) = &*own_id_lock
-                            && &info.id == own_id {
+                            && &device.info.id == own_id {
                                 //DEBUG: Let's just consider it for tests
                                 // continue;
                             }
 
-                        let discovered_device = DiscoveredDevice { address: remote_addr, info };
+                        device.address.set_ip(remote_addr.ip());
 
-                        if !discovered_devices.contains_key(&discovered_device.info.id)
-                             && sender.send(DiscoveryEvent::Found(discovered_device.clone())).await.is_err() {
+                        if !discovered_devices.contains_key(&device.info.id)
+                             && sender.send(DiscoveryEvent::Found(device.clone())).await.is_err() {
                                 error!("Failed to send DiscoveryEvent::Found. Receiver closed.");
                                 break;
                              }
-                        discovered_devices.insert(discovered_device.info.id, (discovered_device, time::Instant::now()));
+                        discovered_devices.insert(device.info.id, (device, time::Instant::now()));
                     }
                     Err(e) => {
                         warn!("Failed to deserialize discovery packet from {}: {}", remote_addr, e);

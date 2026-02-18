@@ -141,8 +141,8 @@ impl<S: storage::Storage, P: platform::Platform<S, D>, D: discovered::DiscoveryM
             .await?;
         let paired = storage::PairedDevice {
             token: security::generate_pair_token(),
-            certificate: self.device_certificate.read().await,
-            info: self.this_device.read().await.info,
+            certificate: self.device_certificate.read().await.to_vec(),
+            info: self.this_device.read().await.info.clone(),
         };
         self.paired_devices
             .write()

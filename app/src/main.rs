@@ -2,11 +2,6 @@ mod ui;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
-#[derive(Debug, Clone)]
-enum UIMessage {
-    RequestPair(nlem::security::DeviceID),
-}
-
 use slint::ComponentHandle;
 
 pub fn slint_col(col: &nlem::storage::Color) -> slint::Color {
@@ -48,15 +43,17 @@ unsafe impl Send for Device {}
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let platform = platform::Platform::init();
-    let mut node = Arc::new(RwLock::new(
+    let node = Arc::new(RwLock::new(
         nlem::node::Node::init(Arc::new(RwLock::new(platform)))
             .await
             .expect("Could not create node"),
     ));
 
-    let window = ui::MainWindow::new()?.as_weak();
+    let window = ui::MainWindow::new()?;
 
-    window.upgrade().unwrap().on_request_pair(move |device| {
+    let pair_node = node.clone();
+    window.on_request_pair(move |device| {
+        let node = pair_node.clone();
         let st: String = device.id.clone().into();
         let device_id = nlem::security::array_from_vec(
             (0..st.len())
@@ -65,18 +62,25 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .collect(),
         );
         tokio::spawn(async move {
-            node.write()
-                .await
-                .device_manager
-                .write()
-                .await
-                .request_pair(device_id);
+            match node.read().await.request_pair(&device_id).await {
+                Ok(response) => match response {
+                    Ok(device) => {
+                        println!("Device paired: {device:#?}");
+                    }
+                    Err(msg) => {
+                        println!("Pairing failed, reason: {msg}");
+                    }
+                },
+                Err(e) => {
+                    println!("Error pairing: {e}");
+                }
+            };
         });
     });
 
-    tokio::spawn(worker(node, window));
+    tokio::spawn(worker(node, window.as_weak()));
 
-    window.upgrade().unwrap().run()?;
+    window.run()?;
     Ok(())
 }
 
@@ -88,8 +92,8 @@ async fn worker<
     node: Arc<RwLock<nlem::node::Node<S, P, D>>>,
     window: slint::Weak<ui::MainWindow>,
 ) {
+    let manager = node.read().await.device_manager.clone();
     let mut manager_event = node.write().await.start().await;
-    let node = Arc::new(RwLock::new(node));
 
     while let Some(event) = manager_event.recv().await {
         tokio::time::sleep(std::time::Duration::from_secs(1)).await;
@@ -114,10 +118,8 @@ async fn worker<
             _ => {}
         };
 
-        let node = node.read().await;
-
         let mut devices = std::collections::HashMap::new();
-        let manager = node.device_manager.read().await;
+        let manager = manager.read().await;
 
         for device in manager.paired_devices.read().await.values() {
             devices.insert(
@@ -156,7 +158,7 @@ async fn worker<
             });
         }
 
-        handle
+        window
             .upgrade_in_event_loop(move |window: ui::MainWindow| {
                 window.set_devices(slint::ModelRc::new(slint::VecModel::from(
                     devices

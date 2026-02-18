@@ -77,9 +77,12 @@ impl<
         let this_certificate = manager.device_certificate.read().await.clone();
         drop(manager);
 
-        let mut cl = client::Client::connect(device.address)
-            .await
-            .map_err(|e| format!("Client could not connect to device: {e}"))?;
+        let mut cl = client::Client::connect(device.address).await.map_err(|e| {
+            format!(
+                "Client could not connect to device at {0}: {e}",
+                device.address
+            )
+        })?;
 
         match cl.request_pair(this_info, this_certificate).await {
             Ok(response) => match response {
