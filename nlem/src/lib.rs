@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use tokio::sync::RwLock;
+use tokio::sync::{Mutex, RwLock};
 
 pub mod client;
 pub mod devicemanager;
@@ -13,7 +13,7 @@ pub mod server;
 pub mod service;
 pub mod storage;
 
-pub type StorageC = Arc<RwLock<dyn storage::Storage + Send + Sync + 'static>>;
+pub type StorageC = Arc<Mutex<dyn storage::Storage + Send + Sync + 'static>>;
 
 pub type Platform = dyn platform::Platform + Send + Sync + 'static;
 pub type PlatformC = Arc<RwLock<Platform>>;

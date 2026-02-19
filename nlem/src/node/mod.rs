@@ -21,7 +21,7 @@ impl Node {
     pub async fn init(platform: crate::PlatformC) -> Result<Self, crate::ErrorC> {
         let storage = platform.read().await.storage().await?;
         storage
-            .write()
+            .lock()
             .await
             .init(storage::StorageData {
                 certificate: security::generate_certificate(),

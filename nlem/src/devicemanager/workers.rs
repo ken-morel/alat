@@ -107,30 +107,40 @@ impl DeviceManager {
             .send(DeviceManagerEvent::Started)
             .await
             .expect("Could not send device manager started event");
-        'event_loop: while let Some(event) = worker_events.recv().await {
+        let try_connect = async |device, address| {
+            match client::Client::connect(address).await {
+                Ok(client) => {
+                    let connected_device = connected::ConnectedDevice { client, device };
+                    connected_devices
+                        .write()
+                        .await
+                        .entry(connected_device.device.info.id)
+                        .or_insert_with(|| connected_device.clone()); // clone only if needed
+                    global_events
+                        .send(DeviceManagerEvent::Connected(Box::new(connected_device)))
+                        .await
+                        .expect("Could not send connected event to global_events");
+                }
+                Err(err) => {
+                    global_events
+                        .send(DeviceManagerEvent::ConnectionError(err.to_string()))
+                        .await
+                        .expect("Could not send connection error to global events");
+                }
+            }
+        };
+        while let Some(event) = worker_events.recv().await {
             match event {
                 WorkerEvent::Wrapper(event) => match &event {
                     DeviceManagerEvent::Found(found_device) => {
-                        // let's do this, we pass the data to send in events, and we clone the data
-                        // to the designated vec or hashmap.
-                        let mut already_found = true;
                         discovered_devices
                             .write()
                             .await
-                            .entry(found_device.info.id)
-                            .or_insert_with(|| {
-                                already_found = false;
-                                *found_device.clone()
-                            });
-                        if already_found {
-                            continue 'event_loop; // just to be clear
-                        }
+                            .insert(found_device.info.id, *found_device.clone());
                         global_events
                             .send(event.clone())
                             .await
                             .expect("Could not send found device event"); // send the found event before trying to connect
-
-                        let mut paired_device = Option::None;
 
                         // update the paired_devices if found and clone it to local paired_device
                         paired_devices
@@ -139,48 +149,45 @@ impl DeviceManager {
                             .entry(found_device.info.id)
                             .and_modify(|paired| {
                                 paired.info = found_device.info.clone();
-                                paired_device = Some(paired.clone());
                             });
                         // attempt to connect
-                        if let Some(device) = paired_device {
-                            match client::Client::connect(found_device.address).await {
-                                Ok(client) => {
-                                    let connected_device =
-                                        connected::ConnectedDevice { client, device };
-
-                                    connected_devices
-                                        .write()
-                                        .await
-                                        .entry(connected_device.device.info.id)
-                                        .or_insert_with(|| connected_device.clone()); // clone only if needed
-                                    global_events
-                                        .send(DeviceManagerEvent::Connected(Box::new(
-                                            connected_device,
-                                        )))
-                                        .await
-                                        .expect("Could not send connected event to global_events");
-                                }
-                                Err(err) => {
-                                    global_events
-                                        .send(DeviceManagerEvent::ConnectionError(err.to_string()))
-                                        .await
-                                        .expect("Could not send connection error to global events");
-                                }
-                            }
+                        if let Some(device) = paired_devices
+                            .read()
+                            .await
+                            .get(&found_device.info.id)
+                            .cloned()
+                        {
+                            try_connect(device, found_device.address).await;
                         }
                     }
-                    DeviceManagerEvent::Lost(device_id) => {
-                        connected_devices.write().await.remove(device_id);
-                        discovered_devices.write().await.remove(device_id);
+                    echoable => {
+                        match echoable {
+                            DeviceManagerEvent::Lost(device_id) => {
+                                connected_devices.write().await.remove(device_id);
+                                discovered_devices.write().await.remove(device_id);
+                            }
+                            DeviceManagerEvent::Paired(paired) => {
+                                paired_devices
+                                    .write()
+                                    .await
+                                    .insert(paired.info.id, paired.clone());
+                                if let Some(found) =
+                                    discovered_devices.read().await.get(&paired.info.id)
+                                {
+                                    try_connect(paired.clone(), found.address).await;
+                                }
+                            }
+                            DeviceManagerEvent::Unpaired(dev_id) => {
+                                paired_devices.write().await.remove(dev_id);
+                                connected_devices.write().await.remove(dev_id);
+                            }
+                            _ => {}
+                        };
                         global_events
                             .send(event)
                             .await
-                            .expect("Could not send lost event to global_events");
+                            .expect("COuld not transfer global event");
                     }
-                    _ => global_events
-                        .send(event)
-                        .await
-                        .expect("Could not send global_event"),
                 },
             }
         }

@@ -58,26 +58,26 @@ pub struct DeviceManager {
 
 impl DeviceManager {
     async fn load(&mut self) -> Result<(), StorageError> {
-        let store = self.storage.read().await;
+        let mut store = self.storage.lock().await;
         let mut map = HashMap::new();
-        for device in store.load_paired().await? {
+        for device in store.get_paired().await? {
             map.insert(device.info.id, device);
         }
         *self.paired_devices.write().await = map;
-        self.this_device.write().await.info = store.load_info().await?;
-        *self.device_certificate.write().await = store.load_certificate().await?;
+        self.this_device.write().await.info = store.get_info().await?;
+        *self.device_certificate.write().await = store.get_certificate().await?;
         Ok(())
     }
 
     async fn save(&self) -> Result<(), StorageError> {
-        let store = self.storage.read().await;
+        let mut store = self.storage.lock().await;
         let paired_devices = self.paired_devices.read().await.values().cloned().collect();
-        store.save_paired(paired_devices).await?;
+        store.set_paired(paired_devices).await?;
         store
-            .save_info(self.this_device.read().await.info.clone())
+            .set_info(self.this_device.read().await.info.clone())
             .await?;
         store
-            .save_certificate(self.device_certificate.read().await.clone())
+            .set_certificate(self.device_certificate.read().await.clone())
             .await?;
         Ok(())
     }
@@ -105,10 +105,6 @@ impl DeviceManager {
     }
 
     pub async fn add_paired_device(&self, device: storage::PairedDevice) {
-        self.paired_devices
-            .write()
-            .await
-            .insert(device.info.id, device.clone());
         if let Some(worker) = self.worker.clone() {
             _ = worker
                 .send(workers::WorkerEvent::Wrapper(DeviceManagerEvent::Paired(

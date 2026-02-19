@@ -13,6 +13,7 @@ pub async fn worker(node: Arc<RwLock<nlem::node::Node>>, window: slint::Weak<ui:
 
     while let Some(event) = manager_event.recv().await {
         println!("EVENT: {:?}", event);
+        tokio::time::sleep(std::time::Duration::from_secs(2)).await;
         match event {
             nlem::devicemanager::DeviceManagerEvent::Started => {
                 window

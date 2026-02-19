@@ -10,6 +10,8 @@ pub enum StorageError {
     Other(String),
     #[error("input/output error saving/loading node storage data: {0}")]
     Io(std::io::Error),
+    #[error("Storage was not initialized")]
+    Init(),
 }
 
 impl From<std::io::Error> for StorageError {

@@ -28,19 +28,19 @@ pub type StorageResult<T> = Result<T, StorageError>;
 
 #[tonic::async_trait]
 pub trait Storage: Send + Sync {
-    async fn init(&self, data: StorageData) -> StorageResult<()>;
+    async fn init(&mut self, data: StorageData) -> StorageResult<()>;
 
-    async fn load_certificate(&self) -> StorageResult<Certificate>;
-    async fn save_certificate(&self, certificate: Certificate) -> StorageResult<()>;
+    async fn get_certificate(&mut self) -> StorageResult<Certificate>;
+    async fn set_certificate(&mut self, certificate: Certificate) -> StorageResult<()>;
 
-    async fn load_info(&self) -> StorageResult<DeviceInfo>;
-    async fn save_info(&self, info: DeviceInfo) -> StorageResult<()>;
+    async fn get_info(&mut self) -> StorageResult<DeviceInfo>;
+    async fn set_info(&mut self, info: DeviceInfo) -> StorageResult<()>;
 
-    async fn load_paired(&self) -> StorageResult<Vec<PairedDevice>>;
-    async fn save_paired(&self, paired: Vec<PairedDevice>) -> StorageResult<()>;
-    async fn add_paired(&self, dev: PairedDevice) -> StorageResult<()> {
-        let mut data = self.load_paired().await?;
+    async fn get_paired(&mut self) -> StorageResult<Vec<PairedDevice>>;
+    async fn set_paired(&mut self, paired: Vec<PairedDevice>) -> StorageResult<()>;
+    async fn add_paired(&mut self, dev: PairedDevice) -> StorageResult<()> {
+        let mut data = self.get_paired().await?;
         data.push(dev);
-        self.save_paired(data).await
+        self.set_paired(data).await
     }
 }

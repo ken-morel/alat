@@ -1,6 +1,6 @@
 use super::storage;
 use std::{path::PathBuf, sync::Arc};
-use tokio::sync::RwLock;
+use tokio::sync::{Mutex, RwLock};
 
 use super::discovery;
 
@@ -43,7 +43,7 @@ impl nlem::platform::Platform for Platform {
     async fn storage(&self) -> Result<nlem::StorageC, String> {
         let mut cfg_path = self.config_dir().await?;
         cfg_path.push("data.json");
-        Ok(Arc::new(RwLock::new(storage::JSONFileStorage::new(
+        Ok(Arc::new(Mutex::new(storage::JSONFileStorage::new(
             cfg_path.as_path(),
         ))))
     }
