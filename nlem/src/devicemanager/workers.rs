@@ -11,16 +11,11 @@ pub(super) enum WorkerEvent {
     Wrapper(DeviceManagerEvent),
 }
 
-impl<
-    S: storage::Storage + 'static,
-    P: platform::Platform<S, D> + 'static,
-    D: discovered::DiscoveryManager + 'static,
-> DeviceManager<S, P, D>
-{
+impl DeviceManager {
     async fn discovery_server_worker(
         coordinator: Sender<WorkerEvent>,
-        this_device: Arc<RwLock<discovered::DiscoveredDevice>>,
-        discovery: Arc<RwLock<D>>,
+        this_device: Arc<RwLock<discovery::DiscoveredDevice>>,
+        discovery: crate::DiscoveryC,
     ) {
         let mut current_info = this_device.read().await.clone();
         coordinator
@@ -57,7 +52,7 @@ impl<
         }
     }
 
-    async fn discoverer_worker(worker_events: Sender<WorkerEvent>, discovery: Arc<RwLock<D>>) {
+    async fn discoverer_worker(worker_events: Sender<WorkerEvent>, discovery: crate::DiscoveryC) {
         let (tx, mut rx) = channel(1);
         if let Err(e) = discovery.write().await.scan(tx).await {
             worker_events
@@ -73,7 +68,7 @@ impl<
         }
         while let Some(event) = rx.recv().await {
             match event {
-                discovered::DiscoveryEvent::Found(device) => {
+                crate::discovery::DiscoveryEvent::Found(device) => {
                     worker_events
                         .send(WorkerEvent::Wrapper(DeviceManagerEvent::Found(Box::new(
                             device,
@@ -81,7 +76,7 @@ impl<
                         .await
                         .expect("Could not send Found message to worker_events");
                 }
-                discovered::DiscoveryEvent::Lost(device_id) => {
+                crate::discovery::DiscoveryEvent::Lost(device_id) => {
                     worker_events
                         .send(WorkerEvent::Wrapper(DeviceManagerEvent::Lost(device_id)))
                         .await
@@ -104,7 +99,7 @@ impl<
     async fn coordinator_worker(
         mut worker_events: Receiver<WorkerEvent>,
         global_events: Sender<DeviceManagerEvent>,
-        discovered_devices: Arc<RwLock<HashMap<security::DeviceID, discovered::DiscoveredDevice>>>,
+        discovered_devices: Arc<RwLock<HashMap<security::DeviceID, discovery::DiscoveredDevice>>>,
         connected_devices: Arc<RwLock<HashMap<security::DeviceID, connected::ConnectedDevice>>>,
         paired_devices: Arc<RwLock<HashMap<security::DeviceID, storage::PairedDevice>>>,
     ) {

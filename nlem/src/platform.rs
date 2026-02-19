@@ -1,16 +1,15 @@
-use super::{devicemanager, security, storage};
+use super::{security, storage};
 
-pub trait Platform<S: storage::Storage, D: devicemanager::discovered::DiscoveryManager>:
-    Sized + Send + Sync
-{
-    fn hostname(&self) -> Result<String, String>;
-    fn device_type(&self) -> storage::DeviceType;
-    fn discovery_manager(&self) -> impl std::future::Future<Output = Result<D, String>> + Send;
-    fn storage(&self) -> impl std::future::Future<Output = Result<S, String>> + Send;
+#[tonic::async_trait]
+pub trait Platform: Send + Sync {
+    async fn hostname(&self) -> Result<String, String>;
+    async fn device_type(&self) -> storage::DeviceType;
+    async fn discovery_manager(&self) -> Result<crate::DiscoveryC, String>;
+    async fn storage(&self) -> Result<crate::StorageC, String>;
 
-    fn prompt_pair_request(
+    async fn prompt_pair_request(
         &self,
         info: storage::DeviceInfo,
         certificate: security::Certificate,
-    ) -> impl std::future::Future<Output = Result<(), String>> + Send;
+    ) -> Result<(), String>;
 }

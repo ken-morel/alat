@@ -26,38 +26,21 @@ use super::proto;
 
 pub type StorageResult<T> = Result<T, StorageError>;
 
-pub trait Storage: Sized + Send + Sync {
-    fn init(&self, data: StorageData) -> impl std::future::Future<Output = ()> + Send;
+#[tonic::async_trait]
+pub trait Storage: Send + Sync {
+    async fn init(&self, data: StorageData);
 
-    fn load_certificate(
-        &self,
-    ) -> impl std::future::Future<Output = StorageResult<Certificate>> + Send;
-    fn save_certificate(
-        &self,
-        certificate: Certificate,
-    ) -> impl std::future::Future<Output = StorageResult<()>> + Send;
+    async fn load_certificate(&self) -> StorageResult<Certificate>;
+    async fn save_certificate(&self, certificate: Certificate) -> StorageResult<()>;
 
-    fn load_info(&self) -> impl std::future::Future<Output = StorageResult<DeviceInfo>> + Send;
-    fn save_info(
-        &self,
-        info: DeviceInfo,
-    ) -> impl std::future::Future<Output = StorageResult<()>> + Send;
+    async fn load_info(&self) -> StorageResult<DeviceInfo>;
+    async fn save_info(&self, info: DeviceInfo) -> StorageResult<()>;
 
-    fn load_paired(
-        &self,
-    ) -> impl std::future::Future<Output = StorageResult<Vec<PairedDevice>>> + Send;
-    fn save_paired(
-        &self,
-        paired: Vec<PairedDevice>,
-    ) -> impl std::future::Future<Output = StorageResult<()>> + Send;
-    fn add_paired(
-        &self,
-        dev: PairedDevice,
-    ) -> impl std::future::Future<Output = StorageResult<()>> + Send {
-        async {
-            let mut data = self.load_paired().await?;
-            data.push(dev);
-            self.save_paired(data).await
-        }
+    async fn load_paired(&self) -> StorageResult<Vec<PairedDevice>>;
+    async fn save_paired(&self, paired: Vec<PairedDevice>) -> StorageResult<()>;
+    async fn add_paired(&self, dev: PairedDevice) -> StorageResult<()> {
+        let mut data = self.load_paired().await?;
+        data.push(dev);
+        self.save_paired(data).await
     }
 }

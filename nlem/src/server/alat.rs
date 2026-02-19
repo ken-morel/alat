@@ -1,28 +1,17 @@
 use super::*;
 
-#[derive(Debug)]
-pub struct AlatService<
-    S: storage::Storage,
-    P: platform::Platform<S, D>,
-    D: discovered::DiscoveryManager,
-> {
-    device_manager: Arc<RwLock<devicemanager::DeviceManager<S, P, D>>>,
+#[derive()]
+pub struct AlatService {
+    device_manager: Arc<RwLock<devicemanager::DeviceManager>>,
 }
-impl<S: storage::Storage, P: platform::Platform<S, D>, D: discovered::DiscoveryManager>
-    AlatService<S, P, D>
-{
-    pub fn new(device_manager: Arc<RwLock<devicemanager::DeviceManager<S, P, D>>>) -> Self {
+impl AlatService {
+    pub fn new(device_manager: Arc<RwLock<devicemanager::DeviceManager>>) -> Self {
         Self { device_manager }
     }
 }
 
 #[tonic::async_trait]
-impl<
-    S: storage::Storage + 'static,
-    P: platform::Platform<S, D> + 'static,
-    D: discovered::DiscoveryManager + 'static,
-> proto::alat_service_server::AlatService for AlatService<S, P, D>
-{
+impl proto::alat_service_server::AlatService for AlatService {
     async fn get_device_info(
         &self,
         _: Request<proto::GetDeviceInfoRequest>,

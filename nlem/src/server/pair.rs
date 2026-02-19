@@ -2,30 +2,19 @@ use crate::proto::RequestPairResponse;
 
 use super::*;
 
-#[derive(Debug)]
-pub struct PairService<
-    S: storage::Storage,
-    P: platform::Platform<S, D>,
-    D: discovered::DiscoveryManager,
-> {
-    device_manager: Arc<RwLock<devicemanager::DeviceManager<S, P, D>>>,
+#[derive()]
+pub struct PairService {
+    device_manager: crate::DeviceManagerC,
 }
 
-impl<S: storage::Storage, P: platform::Platform<S, D>, D: discovered::DiscoveryManager>
-    PairService<S, P, D>
-{
-    pub fn new(device_manager: Arc<RwLock<devicemanager::DeviceManager<S, P, D>>>) -> Self {
+impl PairService {
+    pub fn new(device_manager: crate::DeviceManagerC) -> Self {
         Self { device_manager }
     }
 }
 
 #[tonic::async_trait]
-impl<
-    S: storage::Storage + 'static,
-    P: platform::Platform<S, D> + 'static,
-    D: discovered::DiscoveryManager + 'static,
-> proto::pair_service_server::PairService for PairService<S, P, D>
-{
+impl proto::pair_service_server::PairService for PairService {
     async fn request_pair(
         &self,
         req: Request<proto::RequestPairRequest>,

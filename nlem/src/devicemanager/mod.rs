@@ -1,12 +1,11 @@
 pub mod connected;
-pub mod discovered;
 mod workers;
 
 use tokio::sync::RwLock;
 
-use crate::{server, storage::StorageError};
+use crate::{discovery, server, storage::StorageError};
 
-use super::{platform, security, storage};
+use super::{security, storage};
 use std::{
     collections::HashMap,
     net::{Ipv4Addr, SocketAddr},
@@ -15,7 +14,7 @@ use std::{
 
 #[derive(Debug, Clone)]
 pub enum DeviceManagerEvent {
-    Found(Box<discovered::DiscoveredDevice>),
+    Found(Box<discovery::DiscoveredDevice>),
     Lost(security::DeviceID),
 
     Connected(Box<connected::ConnectedDevice>),
@@ -25,12 +24,12 @@ pub enum DeviceManagerEvent {
     Paired(storage::PairedDevice),
     Unpaired(security::DeviceID),
 
-    DiscoveryServerStarted(Box<discovered::DiscoveredDevice>),
-    DiscoveryServerUpdated(Box<discovered::DiscoveredDevice>),
+    DiscoveryServerStarted(Box<discovery::DiscoveredDevice>),
+    DiscoveryServerUpdated(Box<discovery::DiscoveredDevice>),
     DiscoveryServerStopped,
 
     DiscoveryStarted,
-    DiscoveryError(discovered::DiscoveryError),
+    DiscoveryError(discovery::DiscoveryError),
     DiscoveryStopped,
 
     InfoLog(String),
@@ -40,30 +39,24 @@ pub enum DeviceManagerEvent {
     Stopped,
 }
 
-#[derive(Debug)]
-pub struct DeviceManager<
-    S: storage::Storage,
-    P: platform::Platform<S, D>,
-    D: discovered::DiscoveryManager,
-> {
-    pub storage: Arc<RwLock<S>>,
-    pub platform: Arc<RwLock<P>>,
+#[derive()]
+pub struct DeviceManager {
+    pub storage: crate::StorageC,
+    pub platform: crate::PlatformC,
 
     pub paired_devices: Arc<RwLock<HashMap<security::DeviceID, storage::PairedDevice>>>,
-    pub this_device: Arc<RwLock<discovered::DiscoveredDevice>>,
+    pub this_device: Arc<RwLock<discovery::DiscoveredDevice>>,
     pub device_certificate: Arc<RwLock<security::Certificate>>,
 
     pub connected_devices: Arc<RwLock<HashMap<security::DeviceID, connected::ConnectedDevice>>>,
 
-    pub discovered_devices: Arc<RwLock<HashMap<security::DeviceID, discovered::DiscoveredDevice>>>,
+    pub discovered_devices: Arc<RwLock<HashMap<security::DeviceID, discovery::DiscoveredDevice>>>,
 
     worker: Option<tokio::sync::mpsc::Sender<workers::WorkerEvent>>,
-    discovery: Arc<RwLock<D>>,
+    discovery: crate::DiscoveryC,
 }
 
-impl<S: storage::Storage, P: platform::Platform<S, D>, D: discovered::DiscoveryManager>
-    DeviceManager<S, P, D>
-{
+impl DeviceManager {
     async fn load(&mut self) -> Result<(), StorageError> {
         let store = self.storage.read().await;
         let mut map = HashMap::new();
@@ -89,30 +82,26 @@ impl<S: storage::Storage, P: platform::Platform<S, D>, D: discovered::DiscoveryM
         Ok(())
     }
     pub async fn init(
-        store: Arc<RwLock<S>>,
-        platform: Arc<RwLock<P>>,
-        discovery: Arc<RwLock<D>>,
+        store: crate::StorageC,
+        platform: crate::PlatformC,
+        discovery: crate::DiscoveryC,
     ) -> Result<Self, StorageError> {
-        let mut paired_devices = HashMap::new();
-        let storage = store.write().await;
-        for paired_device in storage.load_paired().await? {
-            paired_devices.insert(paired_device.info.id, paired_device);
-        }
-
-        Ok(Self {
-            this_device: Arc::new(RwLock::new(discovered::DiscoveredDevice {
+        let mut manager = Self {
+            this_device: Arc::new(RwLock::new(discovery::DiscoveredDevice {
                 address: SocketAddr::new(Ipv4Addr::LOCALHOST.into(), server::ALAT_PORT),
-                info: storage.load_info().await?,
+                info: storage::DeviceInfo::default(),
             })),
-            paired_devices: Arc::new(RwLock::new(paired_devices)),
-            device_certificate: Arc::new(RwLock::new(storage.load_certificate().await?)),
-            connected_devices: Arc::new(RwLock::new(HashMap::new())),
-            discovered_devices: Arc::new(RwLock::new(HashMap::new())),
+            paired_devices: Arc::new(RwLock::new(HashMap::default())),
+            device_certificate: Arc::new(RwLock::new(security::Certificate::default())),
+            connected_devices: Arc::new(RwLock::new(HashMap::default())),
+            discovered_devices: Arc::new(RwLock::new(HashMap::default())),
             worker: None,
             storage: store.clone(),
             discovery,
             platform,
-        })
+        };
+        manager.load().await?;
+        Ok(manager)
     }
 
     pub async fn add_paired_device(&self, device: storage::PairedDevice) {

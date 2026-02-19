@@ -1,7 +1,7 @@
 use super::{Color, DeviceType, proto};
 use crate::security;
 
-#[derive(Debug, Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize)]
 pub struct DeviceInfo {
     pub id: security::DeviceID,
     pub name: String,

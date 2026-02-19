@@ -1,5 +1,5 @@
 use log::{error, warn};
-use nlem::devicemanager::discovered::{self, DiscoveredDevice, DiscoveryError, DiscoveryEvent};
+use nlem::discovery::{DiscoveredDevice, DiscoveryError, DiscoveryEvent};
 use nlem::security::DeviceID;
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -121,7 +121,8 @@ async fn run_scanner(
     log::warn!("Scanner task stopped.");
 }
 
-impl discovered::DiscoveryManager for DiscoveryManager {
+#[tonic::async_trait]
+impl nlem::discovery::DiscoveryManager for DiscoveryManager {
     async fn advertise(&mut self, device: DiscoveredDevice) -> Result<(), DiscoveryError> {
         if self.advertising_task.is_some() {
             return Err(DiscoveryError::AdvertiseError(

@@ -1,41 +1,30 @@
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
-use super::{client, devicemanager, platform, security, server, storage};
+use super::{client, devicemanager, security, server, storage};
 
-pub struct Node<
-    S: storage::Storage + 'static,
-    P: platform::Platform<S, D> + 'static,
-    D: devicemanager::discovered::DiscoveryManager + 'static,
-> {
-    pub storage: Arc<RwLock<S>>,
-    pub platform: Arc<RwLock<P>>,
-    pub device_manager: Arc<RwLock<devicemanager::DeviceManager<S, P, D>>>,
-    pub server: Arc<RwLock<server::Server<S, P, D>>>,
+pub struct Node {
+    pub storage: crate::StorageC,
+    pub platform: crate::PlatformC,
+    pub device_manager: crate::DeviceManagerC,
+    pub server: crate::ServerC,
 }
 
-impl<
-    S: storage::Storage,
-    P: platform::Platform<S, D>,
-    D: devicemanager::discovered::DiscoveryManager,
-> Node<S, P, D>
-{
+impl Node {
     pub async fn init(
-        platform: Arc<RwLock<P>>,
+        platform: crate::PlatformC,
     ) -> Result<Self, Box<dyn std::error::Error + Send + Sync>> {
-        let storage = Arc::new(RwLock::new(platform.read().await.storage().await?));
+        let storage = platform.read().await.storage().await?;
         storage
             .write()
             .await
             .init(storage::StorageData {
                 certificate: security::generate_certificate(),
                 paired_devices: Vec::new(),
-                info: Self::default_device_info(&platform).await,
+                info: Self::default_device_info(&*platform.read().await).await,
             })
             .await;
-        let discovery = Arc::new(RwLock::new(
-            platform.write().await.discovery_manager().await?,
-        ));
+        let discovery = platform.write().await.discovery_manager().await?;
         let device_manager = Arc::new(RwLock::new(
             devicemanager::DeviceManager::init(
                 storage.clone(),
@@ -52,13 +41,12 @@ impl<
             server,
         })
     }
-    pub async fn default_device_info(p: &Arc<RwLock<P>>) -> storage::DeviceInfo {
-        let lck = p.read().await;
+    pub async fn default_device_info(p: &crate::Platform) -> storage::DeviceInfo {
         storage::DeviceInfo {
             id: security::generate_id(),
             color: storage::Color::random(),
-            name: lck.hostname().expect("Could not get hostname"),
-            device_type: lck.device_type(),
+            name: p.hostname().await.expect("Could not get hostname"),
+            device_type: p.device_type().await,
         }
     }
     pub async fn start(

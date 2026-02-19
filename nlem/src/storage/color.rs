@@ -2,7 +2,7 @@ use rand::random_range;
 
 use super::proto;
 
-#[derive(Debug, Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize)]
 pub struct Color(pub u8, pub u8, pub u8);
 impl From<proto::Color> for Color {
     fn from(col: proto::Color) -> Self {

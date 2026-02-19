@@ -1,6 +1,7 @@
 use super::proto;
-#[derive(Debug, Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize)]
 pub enum DeviceType {
+    #[default]
     Unspecified = 0,
     Mobile = 1,
     Desktop = 2,

@@ -1,25 +1,19 @@
 mod alat;
 mod pair;
 
-use super::{devicemanager, devicemanager::discovered, platform, proto, storage};
+use super::{devicemanager, platform, proto, storage};
 use std::sync::Arc;
 use tokio::sync::RwLock;
 use tonic::{Request, Response, Status};
 
 pub const ALAT_PORT: u16 = 1143;
 
-#[derive(Debug)]
-pub struct Server<
-    S: storage::Storage + 'static,
-    P: platform::Platform<S, D> + 'static,
-    D: discovered::DiscoveryManager + 'static,
-> {
-    device_manager: Arc<RwLock<devicemanager::DeviceManager<S, P, D>>>,
+#[derive()]
+pub struct Server {
+    device_manager: crate::DeviceManagerC,
 }
-impl<S: storage::Storage, P: platform::Platform<S, D>, D: discovered::DiscoveryManager>
-    Server<S, P, D>
-{
-    pub fn new(device_manager: Arc<RwLock<devicemanager::DeviceManager<S, P, D>>>) -> Self {
+impl Server {
+    pub fn new(device_manager: Arc<RwLock<devicemanager::DeviceManager>>) -> Self {
         Self {
             device_manager: device_manager.clone(),
         }
