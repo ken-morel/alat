@@ -24,6 +24,15 @@ impl<
         platform: Arc<RwLock<P>>,
     ) -> Result<Self, Box<dyn std::error::Error + Send + Sync>> {
         let storage = Arc::new(RwLock::new(platform.read().await.storage().await?));
+        storage
+            .write()
+            .await
+            .init(storage::StorageData {
+                certificate: security::generate_certificate(),
+                paired_devices: Vec::new(),
+                info: Self::default_device_info(&platform).await,
+            })
+            .await;
         let discovery = Arc::new(RwLock::new(
             platform.write().await.discovery_manager().await?,
         ));
@@ -42,6 +51,15 @@ impl<
             device_manager,
             server,
         })
+    }
+    pub async fn default_device_info(p: &Arc<RwLock<P>>) -> storage::DeviceInfo {
+        let lck = p.read().await;
+        storage::DeviceInfo {
+            id: security::generate_id(),
+            color: storage::Color::random(),
+            name: lck.hostname().expect("Could not get hostname"),
+            device_type: lck.device_type(),
+        }
     }
     pub async fn start(
         &mut self,

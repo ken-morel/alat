@@ -27,10 +27,7 @@ use super::proto;
 pub type StorageResult<T> = Result<T, StorageError>;
 
 pub trait Storage: Sized + Send + Sync {
-    fn init(
-        &self,
-        data: StorageData,
-    ) -> impl std::future::Future<Output = StorageResult<StorageData>> + Send;
+    fn init(&self, data: StorageData) -> impl std::future::Future<Output = ()> + Send;
 
     fn load_certificate(
         &self,
