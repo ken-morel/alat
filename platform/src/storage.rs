@@ -34,14 +34,14 @@ impl JSONFileStorage {
     }
 }
 
+#[tonic::async_trait]
 impl Storage for JSONFileStorage {
-    async fn init(&self, data: StorageData) -> StorageResult<StorageData> {
-        match self.load().await {
-            Err(_) => {
-                self.write(data.clone()).await?;
-                Ok(data)
-            }
-            Ok(data) => Ok(data),
+    async fn init(&self, data: StorageData) -> StorageResult<()> {
+        if let Err(e) = self.load().await {
+            println!("[storage] Error loading storage {e} creating new storage");
+            self.write(data).await
+        } else {
+            Ok(())
         }
     }
     async fn load_certificate(&self) -> StorageResult<Certificate> {

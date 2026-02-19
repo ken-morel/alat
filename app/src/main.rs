@@ -12,11 +12,12 @@ use worker::worker;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let platform = platform::Platform::init();
-    let node = Arc::new(RwLock::new(
-        nlem::node::Node::init(Arc::new(RwLock::new(platform)))
-            .await
-            .expect("Could not create node"),
-    ));
+    let platform = Arc::new(RwLock::new(platform));
+    let node = nlem::node::Node::init(platform)
+        .await
+        .expect("Could not create node");
+
+    let node = Arc::new(RwLock::new(node));
 
     let window = ui::MainWindow::new()?;
     let weak_window = window.as_weak();

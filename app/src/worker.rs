@@ -2,19 +2,16 @@ use super::{ui, utils::*};
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
-pub async fn worker<
-    S: nlem::storage::Storage + 'static,
-    P: nlem::platform::Platform<S, D> + 'static,
-    D: nlem::devicemanager::discovered::DiscoveryManager + 'static,
->(
-    node: Arc<RwLock<nlem::node::Node<S, P, D>>>,
-    window: slint::Weak<ui::MainWindow>,
-) {
+pub async fn worker(node: Arc<RwLock<nlem::node::Node>>, window: slint::Weak<ui::MainWindow>) {
     let manager = node.read().await.device_manager.clone();
-    let mut manager_event = node.write().await.start().await;
+    let mut manager_event = node
+        .write()
+        .await
+        .start()
+        .await
+        .expect("Could not receive device manager event channel");
 
     while let Some(event) = manager_event.recv().await {
-        // tokio::time::sleep(std::time::Duration::from_secs(1)).await;
         println!("EVENT: {:?}", event);
         match event {
             nlem::devicemanager::DeviceManagerEvent::Started => {
@@ -32,7 +29,6 @@ pub async fn worker<
             nlem::devicemanager::DeviceManagerEvent::WarningLog(log) => {
                 println!("[warn] {log}")
             }
-
             _ => {}
         };
 

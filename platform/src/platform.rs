@@ -1,5 +1,6 @@
 use super::storage;
-use std::path::PathBuf;
+use std::{path::PathBuf, sync::Arc};
+use tokio::sync::RwLock;
 
 use super::discovery;
 
@@ -22,23 +23,29 @@ impl Platform {
         }
     }
 }
-impl nlem::platform::Platform<storage::JSONFileStorage, discovery::DiscoveryManager> for Platform {
-    fn hostname(&self) -> Result<String, String> {
+
+#[tonic::async_trait]
+impl nlem::platform::Platform for Platform {
+    async fn hostname(&self) -> Result<String, String> {
         hostname::get()
             .map_err(|e| e.to_string())?
             .into_string()
             .map_err(|e| format!("Could not convert osstring to string: {e:#?}"))
     }
-    fn device_type(&self) -> nlem::storage::DeviceType {
+    async fn device_type(&self) -> nlem::storage::DeviceType {
         nlem::storage::DeviceType::Desktop
     }
-    async fn discovery_manager(&self) -> Result<discovery::DiscoveryManager, String> {
-        discovery::DiscoveryManager::init().await
+    async fn discovery_manager(&self) -> Result<nlem::DiscoveryC, String> {
+        Ok(Arc::new(RwLock::new(
+            discovery::DiscoveryManager::init().await?,
+        )))
     }
-    async fn storage(&self) -> Result<storage::JSONFileStorage, String> {
+    async fn storage(&self) -> Result<nlem::StorageC, String> {
         let mut cfg_path = self.config_dir().await?;
         cfg_path.push("data.json");
-        Ok(storage::JSONFileStorage::new(cfg_path.as_path()))
+        Ok(Arc::new(RwLock::new(storage::JSONFileStorage::new(
+            cfg_path.as_path(),
+        ))))
     }
     async fn prompt_pair_request(
         &self,

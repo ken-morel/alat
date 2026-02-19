@@ -1,4 +1,4 @@
-pub const CERTIFICATE_SIZE: usize = 2048;
+pub const CERTIFICATE_SIZE: usize = 8; // has no use for now
 pub type Certificate = Vec<u8>;
 pub type DeviceID = [u8; 16];
 pub type PairToken = [u8; 32];

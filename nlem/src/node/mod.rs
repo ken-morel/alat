@@ -1,19 +1,24 @@
+mod services;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
+use crate::service;
+
 use super::{client, devicemanager, security, server, storage};
 
+/// A node contains a collection of references to it's components.
+/// The node stores no data on it's own, that's why it can easily be cloned
+#[derive(Clone)]
 pub struct Node {
     pub storage: crate::StorageC,
     pub platform: crate::PlatformC,
     pub device_manager: crate::DeviceManagerC,
+    pub service_manager: crate::ServiceManagerC,
     pub server: crate::ServerC,
 }
 
 impl Node {
-    pub async fn init(
-        platform: crate::PlatformC,
-    ) -> Result<Self, Box<dyn std::error::Error + Send + Sync>> {
+    pub async fn init(platform: crate::PlatformC) -> Result<Self, crate::ErrorC> {
         let storage = platform.read().await.storage().await?;
         storage
             .write()
@@ -23,7 +28,7 @@ impl Node {
                 paired_devices: Vec::new(),
                 info: Self::default_device_info(&*platform.read().await).await,
             })
-            .await;
+            .await?;
         let discovery = platform.write().await.discovery_manager().await?;
         let device_manager = Arc::new(RwLock::new(
             devicemanager::DeviceManager::init(
@@ -33,14 +38,23 @@ impl Node {
             )
             .await?,
         ));
-        let server = Arc::new(RwLock::new(server::Server::new(device_manager.clone())));
+        let service_manager = Arc::new(RwLock::new(service::ServiceManager::new()));
+
+        services::register_services(&mut *service_manager.write().await).await?;
+
+        let server = Arc::new(RwLock::new(server::Server::new(
+            device_manager.clone(),
+            service_manager.clone(),
+        )));
         Ok(Self {
             storage,
             platform,
             device_manager,
+            service_manager,
             server,
         })
     }
+
     pub async fn default_device_info(p: &crate::Platform) -> storage::DeviceInfo {
         storage::DeviceInfo {
             id: security::generate_id(),
@@ -50,9 +64,14 @@ impl Node {
         }
     }
     pub async fn start(
-        &mut self,
-    ) -> tokio::sync::mpsc::Receiver<devicemanager::DeviceManagerEvent> {
-        let router = self.server.write().await.create_router();
+        &self,
+    ) -> Result<tokio::sync::mpsc::Receiver<devicemanager::DeviceManagerEvent>, crate::ErrorC> {
+        self.service_manager
+            .write()
+            .await
+            .initialize_services(self.clone())
+            .await?;
+        let router = self.server.write().await.create_router().await?;
         tokio::spawn(async move {
             let addr = std::net::SocketAddr::new(
                 std::net::Ipv4Addr::UNSPECIFIED.into(),
@@ -68,7 +87,7 @@ impl Node {
 
         let (tx, rx) = tokio::sync::mpsc::channel(1);
         self.device_manager.write().await.start_workers(tx).await;
-        rx
+        Ok(rx)
     }
 
     pub async fn request_pair(

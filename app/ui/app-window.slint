@@ -234,6 +234,7 @@ export component MainWindow inherits MaterialWindow {
 
             Text {
                 text: is_pairing ? "Pairing to " + device.name + "..." : pairing_succeded ? "Succesfully paired to " + device.name : "Error pairing to " + device.name + ": " + pairing_error;
+                wrap: word-wrap;
             }
         }
     }

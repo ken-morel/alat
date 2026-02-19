@@ -28,7 +28,7 @@ pub type StorageResult<T> = Result<T, StorageError>;
 
 #[tonic::async_trait]
 pub trait Storage: Send + Sync {
-    async fn init(&self, data: StorageData);
+    async fn init(&self, data: StorageData) -> StorageResult<()>;
 
     async fn load_certificate(&self) -> StorageResult<Certificate>;
     async fn save_certificate(&self, certificate: Certificate) -> StorageResult<()>;
