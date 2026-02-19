@@ -74,4 +74,13 @@ impl nlem::platform::Platform for Platform {
         rx.await
             .map_err(|e| format!("Could not receive noification reply: {e}"))?
     }
+    async fn log_info(&self, msg: String) {
+        log::info!("{msg}");
+    }
+    async fn log_error(&self, msg: String) {
+        log::error!("{msg}");
+    }
+    async fn log_warning(&self, msg: String) {
+        log::warn!("{msg}");
+    }
 }

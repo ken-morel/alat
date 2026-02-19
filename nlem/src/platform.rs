@@ -12,4 +12,8 @@ pub trait Platform: Send + Sync {
         info: storage::DeviceInfo,
         certificate: security::Certificate,
     ) -> Result<(), String>;
+
+    async fn log_info(&self, msg: String);
+    async fn log_error(&self, msg: String);
+    async fn log_warning(&self, msg: String);
 }

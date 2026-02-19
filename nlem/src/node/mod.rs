@@ -2,7 +2,10 @@ mod services;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
-use crate::service;
+use crate::{
+    devicemanager::{DeviceManagerEvent, connected},
+    discovery, service,
+};
 
 use super::{client, devicemanager, security, server, storage};
 
@@ -63,9 +66,7 @@ impl Node {
             device_type: p.device_type().await,
         }
     }
-    pub async fn start(
-        &self,
-    ) -> Result<tokio::sync::mpsc::Receiver<devicemanager::DeviceManagerEvent>, crate::ErrorC> {
+    pub async fn start(&self) -> Result<tokio::sync::mpsc::Receiver<NodeEvent>, crate::ErrorC> {
         self.service_manager
             .write()
             .await
@@ -85,8 +86,14 @@ impl Node {
             }
         });
 
+        let (managertx, managerrx) = tokio::sync::mpsc::channel(1);
+        self.device_manager
+            .write()
+            .await
+            .start_workers(managertx)
+            .await;
         let (tx, rx) = tokio::sync::mpsc::channel(1);
-        self.device_manager.write().await.start_workers(tx).await;
+        tokio::spawn(node_worker(self.clone(), tx, managerrx));
         Ok(rx)
     }
 
@@ -133,4 +140,96 @@ impl Node {
             Err(err) => Err(format!("Could not send pair request: {err}")),
         }
     }
+}
+
+#[derive(Debug)]
+pub enum NodeEvent {
+    DiscoveryStarted,
+    DeviceDiscovered(Box<discovery::DiscoveredDevice>),
+    DeviceLost(security::DeviceID),
+    DiscoveryError(discovery::DiscoveryError),
+    DiscoveryStopped,
+
+    DeviceConnected(Box<connected::ConnectedDevice>),
+    DeviceDisconnected(security::DeviceID),
+    ConnectionError(String),
+
+    DevicePaired(storage::PairedDevice),
+    DeviceUnpaired(security::DeviceID),
+
+    DiscoveryServerStarted(Box<discovery::DiscoveredDevice>),
+    DiscoveryServerUpdated(Box<discovery::DiscoveredDevice>),
+    DiscoveryServerStopped,
+    DiscoveryServerError(crate::ErrorC),
+
+    DeviceManagerStarted,
+    DeviceManagerStopped,
+
+    NodeStarted,
+    NodeStopped,
+}
+
+async fn node_worker(
+    node: Node,
+    events: tokio::sync::mpsc::Sender<NodeEvent>,
+    mut manager_events: tokio::sync::mpsc::Receiver<devicemanager::DeviceManagerEvent>,
+) {
+    let send = async |event| {
+        events
+            .send(event)
+            .await
+            .expect("Could not send event to node events listener");
+    };
+    send(NodeEvent::NodeStarted).await;
+    while let Some(event) = manager_events.recv().await {
+        match event as DeviceManagerEvent {
+            DeviceManagerEvent::Started => send(NodeEvent::DeviceManagerStarted).await,
+            DeviceManagerEvent::Stopped => send(NodeEvent::DeviceManagerStopped).await,
+            DeviceManagerEvent::Found(device) => {
+                send(NodeEvent::DeviceDiscovered(device)).await;
+            }
+            DeviceManagerEvent::Lost(device_id) => {
+                send(NodeEvent::DeviceLost(device_id)).await;
+            }
+            DeviceManagerEvent::DiscoveryError(err) => {
+                send(NodeEvent::DiscoveryError(err)).await;
+            }
+            DeviceManagerEvent::Connected(device) => {
+                send(NodeEvent::DeviceConnected(device)).await;
+            }
+            DeviceManagerEvent::Disconnected(device_id) => {
+                send(NodeEvent::DeviceDisconnected(device_id)).await;
+            }
+            DeviceManagerEvent::ConnectionError(msg) => {
+                send(NodeEvent::ConnectionError(msg)).await;
+            }
+            DeviceManagerEvent::Paired(device) => {
+                send(NodeEvent::DevicePaired(device)).await;
+            }
+            DeviceManagerEvent::Unpaired(device_id) => {
+                send(NodeEvent::DeviceUnpaired(device_id)).await;
+            }
+            DeviceManagerEvent::DiscoveryServerStarted(info) => {
+                send(NodeEvent::DiscoveryServerStarted(info)).await;
+            }
+            DeviceManagerEvent::DiscoveryServerUpdated(info) => {
+                send(NodeEvent::DiscoveryServerUpdated(info)).await;
+            }
+            DeviceManagerEvent::DiscoveryServerStopped => {
+                send(NodeEvent::DiscoveryServerStopped).await;
+            }
+            DeviceManagerEvent::DiscoveryStarted => {
+                send(NodeEvent::DiscoveryStarted).await;
+            }
+            DeviceManagerEvent::DiscoveryStopped => {
+                send(NodeEvent::DiscoveryStopped).await;
+            }
+            DeviceManagerEvent::InfoLog(msg) => node.platform.read().await.log_info(msg).await,
+            DeviceManagerEvent::WarningLog(msg) => {
+                node.platform.read().await.log_warning(msg).await
+            }
+            DeviceManagerEvent::ErrorLog(msg) => node.platform.read().await.log_error(msg).await,
+        }
+    }
+    send(NodeEvent::NodeStopped).await;
 }

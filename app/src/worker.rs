@@ -4,18 +4,18 @@ use tokio::sync::RwLock;
 
 pub async fn worker(node: Arc<RwLock<nlem::node::Node>>, window: slint::Weak<ui::MainWindow>) {
     let manager = node.read().await.device_manager.clone();
-    let mut manager_event = node
+    let mut node_events = node
         .write()
         .await
         .start()
         .await
         .expect("Could not receive device manager event channel");
 
-    while let Some(event) = manager_event.recv().await {
-        println!("EVENT: {:?}", event);
+    while let Some(event) = node_events.recv().await {
         tokio::time::sleep(std::time::Duration::from_secs(2)).await;
+        println!("EVENT: {:#?}", event);
         match event {
-            nlem::devicemanager::DeviceManagerEvent::Started => {
+            nlem::node::NodeEvent::NodeStarted => {
                 window
                     .upgrade_in_event_loop(move |window| {
                         let mut status = window.get_node_status();
@@ -25,10 +25,17 @@ pub async fn worker(node: Arc<RwLock<nlem::node::Node>>, window: slint::Weak<ui:
                         window.set_node_status(status);
                     })
                     .expect("Could not run callback in event loop");
-            }
-            nlem::devicemanager::DeviceManagerEvent::InfoLog(log) => println!("[info] {log}"),
-            nlem::devicemanager::DeviceManagerEvent::WarningLog(log) => {
-                println!("[warn] {log}")
+            } // i need two patterns for lsp
+            nlem::node::NodeEvent::NodeStopped => {
+                window
+                    .upgrade_in_event_loop(move |window| {
+                        let mut status = window.get_node_status();
+                        status.okay = true;
+                        status.running = false;
+
+                        window.set_node_status(status);
+                    })
+                    .expect("Could not run callback in event loop");
             }
             _ => {}
         };

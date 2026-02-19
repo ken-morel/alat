@@ -14,7 +14,7 @@ use std::{
 
 #[derive(Debug, Clone)]
 pub enum DeviceManagerEvent {
-    Found(Box<discovery::DiscoveredDevice>),
+    Found(Box<discovery::DiscoveredDevice>), // we use box to limit size differences
     Lost(security::DeviceID),
 
     Connected(Box<connected::ConnectedDevice>),
@@ -34,6 +34,7 @@ pub enum DeviceManagerEvent {
 
     InfoLog(String),
     WarningLog(String),
+    ErrorLog(String),
 
     Started,
     Stopped,
