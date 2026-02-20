@@ -1,6 +1,8 @@
+pub mod config;
 pub mod error;
 
 pub mod pair;
+pub mod telemetry;
 
 use std::collections::HashMap;
 

@@ -1,0 +1,39 @@
+syntax = "proto3";
+package proto;
+
+// import "messages.proto";
+import "service.proto";
+
+service TelemetryService {
+  rpc GetTelemetryStatus(GetTelemetryStatusRequest) returns (GetTelemetryStatusResponse);
+}
+message GetTelemetryStatusRequest {
+  ServiceCall call = 1;
+}
+message GetTelemetryStatusResponse {
+  ServiceReply reply = 1;
+
+  TelemetryStatus telemetry_status = 3;
+}
+
+message TelemetryStatus {
+  uint64 uptime_secs = 2;
+
+  string os_name = 3;
+  string os_version = 4;
+  string kernel_version = 5;
+
+  string hostname = 6;
+
+  repeated float cpu_usage_per_core = 7;
+
+  repeated string disk_names = 8;
+  repeated float disk_available_spaces_gb = 9;
+  repeated float disk_total_spaces_gb = 10;
+
+  repeated bool batteries_changing = 11;
+  repeated uint32 batteries_percent = 12;
+
+  uint32 memory_used = 13;
+  uint32 memory_total = 14;
+}

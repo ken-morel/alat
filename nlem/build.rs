@@ -4,8 +4,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .build_client(true)
         .out_dir("src")
         .compile_protos(
-            &["src/proto/alat.proto", "src/proto/pair.proto"], // main proto files
-            &["src/proto"],                                    // import dir
+            &[
+                "src/proto/alat.proto",
+                "src/proto/pair.proto",
+                "src/proto/telemetry.proto",
+            ], // main proto files
+            &["src/proto"], // import dir
         )?;
     Ok(())
 }

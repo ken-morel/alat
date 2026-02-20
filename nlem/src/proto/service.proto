@@ -1,0 +1,27 @@
+syntax = "proto3";
+package proto;
+
+message Auth {
+  bytes token = 1;
+}
+message ServiceCall {
+  Auth auth = 1;
+}
+
+enum ServiceReplyStatus {
+  SERVICE_REPLY_STATUS_UNSPECIFIED = 0;
+  SERVICE_REPLY_STATUS_UNAVAILABLE = 1;
+
+  SERVICE_REPLY_STATUS_OK = 2;
+  SERVICE_REPLY_STATUS_RETRY = 3;
+
+  SERVICE_REPLY_STATUS_ERROR = 10;
+  SERVICE_REPLY_STATUS_DISABLED = 11;
+  SERVICE_REPLY_STATUS_INTERNAL_ERROR = 12;
+  SERVICE_REPLY_STATUS_INVALID_AUTH = 13;
+  SERVICE_REPLY_STATUS_UNAUTHORIZED = 14;
+}
+message ServiceReply {
+  ServiceReplyStatus status = 1;
+  string message = 2;
+}

@@ -704,3 +704,411 @@ pub mod pair_service_server {
         const NAME: &'static str = SERVICE_NAME;
     }
 }
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct Auth {
+    #[prost(bytes = "vec", tag = "1")]
+    pub token: ::prost::alloc::vec::Vec<u8>,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ServiceCall {
+    #[prost(message, optional, tag = "1")]
+    pub auth: ::core::option::Option<Auth>,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ServiceReply {
+    #[prost(enumeration = "ServiceReplyStatus", tag = "1")]
+    pub status: i32,
+    #[prost(string, tag = "2")]
+    pub message: ::prost::alloc::string::String,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum ServiceReplyStatus {
+    Unspecified = 0,
+    Unavailable = 1,
+    Ok = 2,
+    Retry = 3,
+    Error = 10,
+    Disabled = 11,
+    InternalError = 12,
+    InvalidAuth = 13,
+    Unauthorized = 14,
+}
+impl ServiceReplyStatus {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "SERVICE_REPLY_STATUS_UNSPECIFIED",
+            Self::Unavailable => "SERVICE_REPLY_STATUS_UNAVAILABLE",
+            Self::Ok => "SERVICE_REPLY_STATUS_OK",
+            Self::Retry => "SERVICE_REPLY_STATUS_RETRY",
+            Self::Error => "SERVICE_REPLY_STATUS_ERROR",
+            Self::Disabled => "SERVICE_REPLY_STATUS_DISABLED",
+            Self::InternalError => "SERVICE_REPLY_STATUS_INTERNAL_ERROR",
+            Self::InvalidAuth => "SERVICE_REPLY_STATUS_INVALID_AUTH",
+            Self::Unauthorized => "SERVICE_REPLY_STATUS_UNAUTHORIZED",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "SERVICE_REPLY_STATUS_UNSPECIFIED" => Some(Self::Unspecified),
+            "SERVICE_REPLY_STATUS_UNAVAILABLE" => Some(Self::Unavailable),
+            "SERVICE_REPLY_STATUS_OK" => Some(Self::Ok),
+            "SERVICE_REPLY_STATUS_RETRY" => Some(Self::Retry),
+            "SERVICE_REPLY_STATUS_ERROR" => Some(Self::Error),
+            "SERVICE_REPLY_STATUS_DISABLED" => Some(Self::Disabled),
+            "SERVICE_REPLY_STATUS_INTERNAL_ERROR" => Some(Self::InternalError),
+            "SERVICE_REPLY_STATUS_INVALID_AUTH" => Some(Self::InvalidAuth),
+            "SERVICE_REPLY_STATUS_UNAUTHORIZED" => Some(Self::Unauthorized),
+            _ => None,
+        }
+    }
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetTelemetryStatusRequest {
+    #[prost(message, optional, tag = "1")]
+    pub call: ::core::option::Option<ServiceCall>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetTelemetryStatusResponse {
+    #[prost(message, optional, tag = "1")]
+    pub reply: ::core::option::Option<ServiceReply>,
+    #[prost(message, optional, tag = "3")]
+    pub telemetry_status: ::core::option::Option<TelemetryStatus>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct TelemetryStatus {
+    #[prost(uint64, tag = "2")]
+    pub uptime_secs: u64,
+    #[prost(string, tag = "3")]
+    pub os_name: ::prost::alloc::string::String,
+    #[prost(string, tag = "4")]
+    pub os_version: ::prost::alloc::string::String,
+    #[prost(string, tag = "5")]
+    pub kernel_version: ::prost::alloc::string::String,
+    #[prost(string, tag = "6")]
+    pub hostname: ::prost::alloc::string::String,
+    #[prost(float, repeated, tag = "7")]
+    pub cpu_usage_per_core: ::prost::alloc::vec::Vec<f32>,
+    #[prost(string, repeated, tag = "8")]
+    pub disk_names: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    #[prost(float, repeated, tag = "9")]
+    pub disk_available_spaces_gb: ::prost::alloc::vec::Vec<f32>,
+    #[prost(float, repeated, tag = "10")]
+    pub disk_total_spaces_gb: ::prost::alloc::vec::Vec<f32>,
+    #[prost(bool, repeated, tag = "11")]
+    pub batteries_changing: ::prost::alloc::vec::Vec<bool>,
+    #[prost(uint32, repeated, tag = "12")]
+    pub batteries_percent: ::prost::alloc::vec::Vec<u32>,
+    #[prost(uint32, tag = "13")]
+    pub memory_used: u32,
+    #[prost(uint32, tag = "14")]
+    pub memory_total: u32,
+}
+/// Generated client implementations.
+pub mod telemetry_service_client {
+    #![allow(
+        unused_variables,
+        dead_code,
+        missing_docs,
+        clippy::wildcard_imports,
+        clippy::let_unit_value,
+    )]
+    use tonic::codegen::*;
+    use tonic::codegen::http::Uri;
+    #[derive(Debug, Clone)]
+    pub struct TelemetryServiceClient<T> {
+        inner: tonic::client::Grpc<T>,
+    }
+    impl TelemetryServiceClient<tonic::transport::Channel> {
+        /// Attempt to create a new client by connecting to a given endpoint.
+        pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
+        where
+            D: TryInto<tonic::transport::Endpoint>,
+            D::Error: Into<StdError>,
+        {
+            let conn = tonic::transport::Endpoint::new(dst)?.connect().await?;
+            Ok(Self::new(conn))
+        }
+    }
+    impl<T> TelemetryServiceClient<T>
+    where
+        T: tonic::client::GrpcService<tonic::body::Body>,
+        T::Error: Into<StdError>,
+        T::ResponseBody: Body<Data = Bytes> + std::marker::Send + 'static,
+        <T::ResponseBody as Body>::Error: Into<StdError> + std::marker::Send,
+    {
+        pub fn new(inner: T) -> Self {
+            let inner = tonic::client::Grpc::new(inner);
+            Self { inner }
+        }
+        pub fn with_origin(inner: T, origin: Uri) -> Self {
+            let inner = tonic::client::Grpc::with_origin(inner, origin);
+            Self { inner }
+        }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> TelemetryServiceClient<InterceptedService<T, F>>
+        where
+            F: tonic::service::Interceptor,
+            T::ResponseBody: Default,
+            T: tonic::codegen::Service<
+                http::Request<tonic::body::Body>,
+                Response = http::Response<
+                    <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
+                >,
+            >,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::Body>,
+            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
+        {
+            TelemetryServiceClient::new(InterceptedService::new(inner, interceptor))
+        }
+        /// Compress requests with the given encoding.
+        ///
+        /// This requires the server to support it otherwise it might respond with an
+        /// error.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.send_compressed(encoding);
+            self
+        }
+        /// Enable decompressing responses.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.accept_compressed(encoding);
+            self
+        }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_decoding_message_size(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_encoding_message_size(limit);
+            self
+        }
+        pub async fn get_telemetry_status(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetTelemetryStatusRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetTelemetryStatusResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/proto.TelemetryService/GetTelemetryStatus",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("proto.TelemetryService", "GetTelemetryStatus"));
+            self.inner.unary(req, path, codec).await
+        }
+    }
+}
+/// Generated server implementations.
+pub mod telemetry_service_server {
+    #![allow(
+        unused_variables,
+        dead_code,
+        missing_docs,
+        clippy::wildcard_imports,
+        clippy::let_unit_value,
+    )]
+    use tonic::codegen::*;
+    /// Generated trait containing gRPC methods that should be implemented for use with TelemetryServiceServer.
+    #[async_trait]
+    pub trait TelemetryService: std::marker::Send + std::marker::Sync + 'static {
+        async fn get_telemetry_status(
+            &self,
+            request: tonic::Request<super::GetTelemetryStatusRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetTelemetryStatusResponse>,
+            tonic::Status,
+        >;
+    }
+    #[derive(Debug)]
+    pub struct TelemetryServiceServer<T> {
+        inner: Arc<T>,
+        accept_compression_encodings: EnabledCompressionEncodings,
+        send_compression_encodings: EnabledCompressionEncodings,
+        max_decoding_message_size: Option<usize>,
+        max_encoding_message_size: Option<usize>,
+    }
+    impl<T> TelemetryServiceServer<T> {
+        pub fn new(inner: T) -> Self {
+            Self::from_arc(Arc::new(inner))
+        }
+        pub fn from_arc(inner: Arc<T>) -> Self {
+            Self {
+                inner,
+                accept_compression_encodings: Default::default(),
+                send_compression_encodings: Default::default(),
+                max_decoding_message_size: None,
+                max_encoding_message_size: None,
+            }
+        }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> InterceptedService<Self, F>
+        where
+            F: tonic::service::Interceptor,
+        {
+            InterceptedService::new(Self::new(inner), interceptor)
+        }
+        /// Enable decompressing requests with the given encoding.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.accept_compression_encodings.enable(encoding);
+            self
+        }
+        /// Compress responses with the given encoding, if the client supports it.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.send_compression_encodings.enable(encoding);
+            self
+        }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.max_decoding_message_size = Some(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.max_encoding_message_size = Some(limit);
+            self
+        }
+    }
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for TelemetryServiceServer<T>
+    where
+        T: TelemetryService,
+        B: Body + std::marker::Send + 'static,
+        B::Error: Into<StdError> + std::marker::Send + 'static,
+    {
+        type Response = http::Response<tonic::body::Body>;
+        type Error = std::convert::Infallible;
+        type Future = BoxFuture<Self::Response, Self::Error>;
+        fn poll_ready(
+            &mut self,
+            _cx: &mut Context<'_>,
+        ) -> Poll<std::result::Result<(), Self::Error>> {
+            Poll::Ready(Ok(()))
+        }
+        fn call(&mut self, req: http::Request<B>) -> Self::Future {
+            match req.uri().path() {
+                "/proto.TelemetryService/GetTelemetryStatus" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetTelemetryStatusSvc<T: TelemetryService>(pub Arc<T>);
+                    impl<
+                        T: TelemetryService,
+                    > tonic::server::UnaryService<super::GetTelemetryStatusRequest>
+                    for GetTelemetryStatusSvc<T> {
+                        type Response = super::GetTelemetryStatusResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetTelemetryStatusRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as TelemetryService>::get_telemetry_status(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetTelemetryStatusSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                _ => {
+                    Box::pin(async move {
+                        let mut response = http::Response::new(
+                            tonic::body::Body::default(),
+                        );
+                        let headers = response.headers_mut();
+                        headers
+                            .insert(
+                                tonic::Status::GRPC_STATUS,
+                                (tonic::Code::Unimplemented as i32).into(),
+                            );
+                        headers
+                            .insert(
+                                http::header::CONTENT_TYPE,
+                                tonic::metadata::GRPC_CONTENT_TYPE,
+                            );
+                        Ok(response)
+                    })
+                }
+            }
+        }
+    }
+    impl<T> Clone for TelemetryServiceServer<T> {
+        fn clone(&self) -> Self {
+            let inner = self.inner.clone();
+            Self {
+                inner,
+                accept_compression_encodings: self.accept_compression_encodings,
+                send_compression_encodings: self.send_compression_encodings,
+                max_decoding_message_size: self.max_decoding_message_size,
+                max_encoding_message_size: self.max_encoding_message_size,
+            }
+        }
+    }
+    /// Generated gRPC service name
+    pub const SERVICE_NAME: &str = "proto.TelemetryService";
+    impl<T> tonic::server::NamedService for TelemetryServiceServer<T> {
+        const NAME: &'static str = SERVICE_NAME;
+    }
+}
