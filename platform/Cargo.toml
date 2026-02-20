@@ -6,15 +6,23 @@ description = "Alat platform-specific bindings"
 authors.workspace = true
 documentation.workspace = true
 
-
 [dependencies]
 cfg-if = "1.0.4"
 hostname = "0.4.2"
 nlem = { path = "../nlem" }
-tokio = { version = "1.49.0", features = ["net", "sync", "rt-multi-thread", "macros", "time"] }
+tokio = { version = "1.49.0", features = [
+  "net",
+  "sync",
+  "rt-multi-thread",
+  "macros",
+  "time",
+] }
 serde = { version = "1.0.228", features = ["derive"] }
 dirs = "6.0.0"
 serde_json = "1.0.149"
 log = "0.4.21"
 notify-rust = "4.12.0"
 tonic = "0.14.4"
+battery = "0.7.8"
+# objc2-core-foundation = "0.3.1"
+sysinfo = "0.38.2"

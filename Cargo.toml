@@ -5,3 +5,16 @@ members = ["app", "nlem", "platform"]
 [workspace.package]
 authors = ["Engon Ken Morel <engonken8@gmail.com>"]
 documentation = "https://alat.rbs.cm"
+
+[patch.crates-io]
+# objc2-core-foundation = "0.3.2"
+#
+
+[workspace.dependencies]
+tokio = { version = "1.49.*", features = [
+  "net",
+  "sync",
+  "rt-multi-thread",
+  "macros",
+  "time",
+] }
