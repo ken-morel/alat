@@ -30,6 +30,7 @@ impl Node {
                 certificate: security::generate_certificate(),
                 paired_devices: Vec::new(),
                 info: Self::default_device_info(&*platform.read().await).await,
+                settings: std::collections::BTreeMap::new(),
             })
             .await?;
         let discovery = platform.write().await.discovery_manager().await?;

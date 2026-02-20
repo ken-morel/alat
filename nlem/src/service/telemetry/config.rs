@@ -1,9 +1,13 @@
-#[derive(serde::Deserialize, serde::Serialize)]
+#[derive(serde::Deserialize, serde::Serialize, Clone)]
 pub struct TelemetryServiceConfig {
-    enabled: bool,
+    pub enabled: bool,
+    pub poll_interval_secs: u32,
 }
 impl Default for TelemetryServiceConfig {
     fn default() -> Self {
-        Self { enabled: true }
+        Self {
+            enabled: true,
+            poll_interval_secs: 10,
+        }
     }
 }

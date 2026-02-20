@@ -15,10 +15,18 @@ pub trait Service: Send + Sync {
     fn name(&self) -> ServiceID;
     async fn init(&mut self, node: crate::Node) -> Result<(), crate::ErrorC>;
     async fn worker(&mut self) -> Result<(), error::ServiceError>;
-    async fn register_grpc_service_server(
+    async fn grpc(
         &self,
         server: tonic::transport::server::Router,
     ) -> Result<tonic::transport::server::Router, error::ServiceError>;
+    fn is_init(&self) -> bool;
+    fn ensure_init(&self) -> Result<(), error::ServiceError> {
+        if !self.is_init() {
+            Err(error::ServiceError::NotInitialized(self.name().to_string()))
+        } else {
+            Ok(())
+        }
+    }
 }
 
 #[derive(Default)]
@@ -44,11 +52,7 @@ impl ServiceManager {
         mut server: tonic::transport::server::Router,
     ) -> Result<tonic::transport::server::Router, error::ServiceError> {
         for service in self.services.read().await.values() {
-            server = service
-                .write()
-                .await
-                .register_grpc_service_server(server)
-                .await?;
+            server = service.write().await.grpc(server).await?;
         }
         Ok(server)
     }

@@ -13,28 +13,39 @@ pub mod server;
 pub mod service;
 pub mod storage;
 
-pub type StorageC = Arc<Mutex<dyn storage::Storage + Send + Sync + 'static>>;
+pub type RWContainer<S> = Arc<RwLock<S>>;
+pub type MContainer<S> = Arc<Mutex<S>>;
+
+pub type Storage = dyn storage::Storage + Send + Sync + 'static;
+pub type StorageC = MContainer<Storage>;
 
 pub type Platform = dyn platform::Platform + Send + Sync + 'static;
-pub type PlatformC = Arc<RwLock<Platform>>;
+pub type PlatformC = RWContainer<Platform>;
 
 pub type Discovery = dyn discovery::DiscoveryManager + Send + Sync + 'static;
-pub type DiscoveryC = Arc<RwLock<Discovery>>;
+pub type DiscoveryC = RWContainer<Discovery>;
 
 pub type DeviceManager = devicemanager::DeviceManager;
-pub type DeviceManagerC = Arc<RwLock<DeviceManager>>;
+pub type DeviceManagerC = RWContainer<DeviceManager>;
 
 pub type ServiceManager = service::ServiceManager;
-pub type ServiceManagerC = Arc<RwLock<ServiceManager>>;
+pub type ServiceManagerC = RWContainer<ServiceManager>;
 
 pub type Server = server::Server;
-pub type ServerC = Arc<RwLock<Server>>;
+pub type ServerC = RWContainer<Server>;
 
 pub type Service = dyn service::Service + Send + Sync + 'static;
-pub type ServiceC = Arc<RwLock<Service>>;
+pub type ServiceC = RWContainer<Service>;
 
 pub type Node = node::Node;
 
 pub type ErrorC = Box<dyn std::error::Error + Send + Sync>;
+
+pub fn contain<T>(val: T) -> std::sync::Arc<tokio::sync::RwLock<T>> {
+    std::sync::Arc::new(tokio::sync::RwLock::new(val))
+}
+pub fn mcontain<T>(val: T) -> std::sync::Arc<tokio::sync::Mutex<T>> {
+    std::sync::Arc::new(tokio::sync::Mutex::new(val))
+}
 
 pub const APP_ID: &str = "cm.engon.alat";

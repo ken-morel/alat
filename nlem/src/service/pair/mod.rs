@@ -4,6 +4,7 @@ use crate::proto;
 
 #[derive(Default, Clone)]
 pub struct PairService {
+    initialized: bool,
     node: Option<crate::Node>,
 }
 
@@ -15,6 +16,9 @@ impl PairService {
 
 #[tonic::async_trait]
 impl super::Service for PairService {
+    fn is_init(&self) -> bool {
+        self.initialized
+    }
     fn name(&self) -> super::ServiceID {
         "pair"
     }
@@ -25,10 +29,11 @@ impl super::Service for PairService {
     async fn worker(&mut self) -> Result<(), super::error::ServiceError> {
         Ok(())
     }
-    async fn register_grpc_service_server(
+    async fn grpc(
         &self,
         server: tonic::transport::server::Router,
     ) -> Result<tonic::transport::server::Router, super::error::ServiceError> {
+        self.ensure_init()?;
         Ok(
             server.add_service(proto::pair_service_server::PairServiceServer::new(
                 self.clone(),

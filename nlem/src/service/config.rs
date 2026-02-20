@@ -38,23 +38,20 @@ impl ServiceConfig {
         &self,
         data: T,
     ) -> storage::StorageResult<serde_json::Value> {
-        Ok(serde_json::to_value(data)
-            .map_err(|e| storage::StorageError::Serialize(e.to_string()))?)
+        serde_json::to_value(data).map_err(|e| storage::StorageError::Serialize(e.to_string()))
     }
     pub fn deserialize<T: for<'a> serde::Deserialize<'a>>(
         &self,
         data: serde_json::Value,
     ) -> storage::StorageResult<T> {
-        Ok(serde_json::from_value(data)
-            .map_err(|e| storage::StorageError::Deserialize(e.to_string()))?)
+        serde_json::from_value(data).map_err(|e| storage::StorageError::Deserialize(e.to_string()))
     }
     pub async fn save<T: serde::Serialize>(&self, data: T) -> storage::StorageResult<()> {
-        Ok(self
-            .storage
+        self.storage
             .lock()
             .await
             .save_settings(&self.settings_key, &self.serialize(data)?)
-            .await?)
+            .await
     }
     pub async fn init<T: serde::Serialize + serde::de::DeserializeOwned + Clone>(
         &mut self,
@@ -63,7 +60,7 @@ impl ServiceConfig {
         if let Ok(Some(data)) = self.load().await {
             Ok(data)
         } else {
-            self.save(data.clone()).await;
+            self.save(data.clone()).await?;
             Ok(data)
         }
     }

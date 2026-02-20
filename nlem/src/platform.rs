@@ -1,4 +1,4 @@
-use super::{security, storage};
+use super::{security, service, storage};
 
 #[tonic::async_trait]
 pub trait Platform: Send + Sync {
@@ -16,4 +16,6 @@ pub trait Platform: Send + Sync {
     async fn log_info(&self, msg: String);
     async fn log_error(&self, msg: String);
     async fn log_warning(&self, msg: String);
+
+    async fn query_telemetry(&self) -> Result<service::telemetry::TelemetryInfo, String>;
 }

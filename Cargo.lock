@@ -3160,6 +3160,7 @@ version = "0.1.0"
 dependencies = [
  "prost",
  "prost-build",
+ "prost-derive",
  "rand 0.10.0",
  "serde",
  "serde_json",
