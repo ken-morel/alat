@@ -5,7 +5,7 @@
 > The project is nothing but starting, and I'm not that fast as a rust beginner,
 > so I didn't spend time handwritting a readme just yet.
 
-![Alat Logo](./logo/animated/logo.svg)
+![Alat Logo](logo/animated/logo.svg)
 
 ## The Vision
 
