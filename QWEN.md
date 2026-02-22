@@ -2,134 +2,126 @@
 
 ## Project Overview
 
-Alat is a cross-platform application for device pairing and management, built with Rust. The project follows a modular architecture with three main components:
+Alat is a Rust-based device unification project with the slogan **"That's one device that's all your devices."** It represents a complete reimagination of the original Alat project, moving from a complex multi-component architecture to a simpler, more robust design that prioritizes system integration over standalone applications.
 
-1. **app**: The user interface layer, built with Slint for cross-platform GUI development
-2. **nlem**: The core logic layer, handling device management, discovery, security, and communication protocols
-3. **platform**: Platform-specific bindings for Linux (currently only Linux is supported)
+The project aims to unify devices into a single computational fabric, where devices are not merely "connected" but truly integrated regardless of their type (as long as they support the Alat protocol).
 
-The application appears to focus on discovering, pairing with, and managing devices through a clean, modern UI.
+## Architecture
+
+### Three-Layer Structure
+
+1. **`nlem` (Core)**: The "heart" of the system (named `nlem` instead of `core` to follow Rust crate naming conventions)
+   - Implements the central `Node` coordinator
+   - Provides `Services` (modular functionality units) and `Controllers` (components that consume services)
+   - Handles device management, security, discovery, and communication protocols
+   - Uses channel-based communication instead of shared mutable state
+
+2. **`platform` (Platform Abstraction)**: OS-specific bindings
+   - Currently implements Linux support
+   - Provides platform-specific functionality (hostname, config directories, notifications, etc.)
+   - Uses `cfg-if` for conditional compilation across platforms
+
+3. **`app` (UI/Application)**: Cross-platform interface
+   - Built with Slint for Material Design UI
+   - Minimal interface focused on initial setup and monitoring
+   - Designed to integrate with the operating system rather than be a standalone application
+
+### Communication Model
+
+- **Channel-based messaging**: Components communicate via dedicated channels instead of shared state
+- **Node-centric**: The `Node` acts as the central coordinator that processes events and relays messages
+- **Event-driven**: UI receives `NodeEvent` notifications to maintain state
+
+### Service-Controller Pattern
+
+- **Services**: Implement the `Service` trait and may provide:
+  - Worker threads/tasks
+  - gRPC servers
+  - Client implementations
+  - Storage partitions for cache/config/temp
+- **Controllers**: Consume services to perform operations like:
+  - Clipboard synchronization
+  - File transfer
+  - Notification forwarding
+  - Media control
 
 ## Technology Stack
 
 - **Language**: Rust (edition 2021/2024)
-- **UI Framework**: Slint (for cross-platform GUI)
+- **UI Framework**: Slint (for cross-platform GUI with Material Design)
 - **Async Runtime**: Tokio (with multi-threaded runtime)
 - **RPC/Protocol**: Tonic + Prost (gRPC with Protocol Buffers)
 - **Data Serialization**: Serde + serde_json
 - **Platform Integration**: Various crates for system integration (hostname, dirs, notify-rust, battery, sysinfo)
 
-## Project Structure
+## Key Features
 
-```
-alat/
-├── Cargo.toml          # Workspace definition
-├── bacon.toml          # Configuration for the bacon build tool
-├── app/                # UI application
-│   ├── src/main.rs     # Application entry point
-│   ├── ui/             # Slint UI definitions
-│   │   ├── app-window.slint  # Main window UI
-│   │   └── models.slint      # Data models for UI
-│   └── Cargo.toml      # App dependencies
-├── nlem/               # Core logic
-│   ├── src/lib.rs      # Core module definitions
-│   ├── src/client/     # Client-side logic
-│   ├── src/devicemanager/  # Device management
-│   ├── src/discovery/  # Device discovery
-│   ├── src/node/       # Node implementation
-│   ├── src/platform/   # Platform abstraction
-│   ├── src/proto/      # Protocol definitions
-│   ├── src/security/   # Security functionality
-│   ├── src/server/     # Server implementation
-│   ├── src/service/    # Service management
-│   ├── src/storage/    # Data storage
-│   └── Cargo.toml
-├── platform/           # Platform-specific code
-│   ├── src/lib.rs      # Platform abstraction
-│   ├── src/platform.rs # Linux implementation
-│   ├── src/discovery/  # Discovery implementation
-│   ├── src/storage/    # Storage implementation
-│   ├── src/telemetry/  # Telemetry collection
-│   └── Cargo.toml
-├── logo/               # Logo assets
-└── LICENSE             # Custom software license
-```
+### Discovery Protocol
+- UDP broadcast on port 4147 for device discovery
+- Devices advertise every 5 seconds
+- Devices considered lost after 15 seconds of no advertisement
+- More reliable and simpler than mDNS while maintaining cross-platform compatibility
 
-## Building and Running
+### Security Model
+- Each device has a unique ID and certificate
+- Pairing involves secure certificate exchange with user confirmation
+- User approval via desktop notifications (Linux) ensures security
 
-### Prerequisites
-- Rust toolchain (latest stable)
-- Cargo
-- For UI development: Slint build tools
+### Data Storage
+- Configuration and paired device data stored in JSON format
+- Location: `~/.config/cm.engon.alat/data.json` on Linux
+- Structured for easy migration and backup
 
-### Build Commands
-The project uses `bacon` as a build tool (configured in `bacon.toml`). Common commands include:
+## Development Environment
 
-- `bacon check` - Run cargo check (default job)
-- `bacon clippy` - Run Clippy linter
-- `bacon test` - Run tests
-- `bacon run` - Run the application
-- `bacon doc` - Generate documentation
+### Build Tools
+- **Bacon**: Configured in `bacon.toml` as the primary development tool
+  - `bacon run`: Run the application
+  - `bacon check`: Check for compilation errors
+  - `bacon clippy`: Run Clippy linter
+  - `bacon test`: Run tests
+  - `bacon doc`: Generate documentation
 
-Alternatively, you can use standard Cargo commands:
-- `cargo check` - Check for compilation errors
-- `cargo build` - Build the project
-- `cargo run` - Run the application
-- `cargo test` - Run tests
+### Cargo Workspace
+- Defined in `Cargo.toml` with members: `app`, `nlem`, `platform`
+- Shared dependencies defined in workspace section
+- Uses resolver version 3
 
-### Running the Application
-```bash
-# Using bacon (recommended)
-bacon run
+### Key Dependencies
+- **app**: slint, platform, nlem, tokio
+- **nlem**: prost, serde, tonic, rand, thiserror
+- **platform**: cfg-if, hostname, dirs, notify-rust, sysinfo, battery
 
-# Using cargo directly
-cargo run --package app
-```
+## Project Status
+
+The project is in early development stages. As noted in the README, the developer acknowledges being "not that fast as a rust beginner" and that the project is "nothing but starting." Key areas that need development include:
+
+- Implementation of core services (pairing, telemetry, etc.)
+- Development of controllers (clipboard sync, file transfer, etc.)
+- Expansion to additional platforms (macOS, Windows)
+- Mobile client integration
+- Advanced discovery options (Bluetooth, Wi-Fi Direct)
 
 ## Development Conventions
 
-### Code Style
-- Follows Rust standard formatting (use `cargo fmt`)
-- Uses `tokio::main` for async main functions
-- Uses Arc/RwLock for shared state management
-- Follows idiomatic Rust patterns for error handling
+- **Code Style**: Follows Rust standard formatting (`cargo fmt`)
+- **Error Handling**: Uses `thiserror` for custom error types
+- **Async Patterns**: Uses `tokio::main` for async main functions
+- **State Management**: Uses `Arc<RwLock<T>>` for shared state with channel-based communication
+- **Testing**: Currently limited; the developer notes "You will notice I'm not the one to write tests, they're even worse than docs."
 
-### Testing
-- Tests are organized in each crate's `tests/` directory (not yet visible in current structure)
-- Uses `cargo test` for running tests
-- Supports nextest for more advanced testing scenarios
+## Contact and Resources
 
-### UI Development
-- Uses Slint for declarative UI definition
-- UI components are defined in `.slint` files
-- Data binding between Rust and Slint is handled through property declarations and callbacks
+- **Email**: engonken8@gmail.com or me@engon.cm
+- **Alat Project Website**: https://alat.engon.cm
+- **Developer Portfolio**: https://engon.cm
+- **Original Project**: https://github.com/ken-morel/alat-old
 
-## Key Features
+## Important Notes
 
-1. **Device Discovery**: Automatically discovers available devices on the network
-2. **Device Pairing**: Secure pairing mechanism with user confirmation
-3. **Cross-Platform UI**: Modern UI using Slint with Material Design components
-4. **Telemetry Collection**: Collects system information for diagnostics
-5. **Platform Abstraction**: Clean separation between core logic and platform-specific code
+- The name "Alat" means "to link" in some languages, reflecting the application's purpose
+- "nlem" means "heart" in the developer's naming convention
+- The project follows a custom license that permits educational use and contributions but prohibits commercial use without explicit permission
+- The developer humorously notes that "whatever way you try to pronounce 'alat' and especially 'nlem', your are surely not doing it right"
 
-## License Information
-
-The project uses a custom software license that permits educational use, personal modification, and contributions, but explicitly prohibits commercial use without explicit written permission.
-
-For commercial licensing inquiries, contact: engon@engon.cm
-
-## Contribution Guidelines
-
-- All contributions become part of the original work under the same license
-- Contributors retain credit for their specific contributions
-- The project maintainer reserves the right to accept or reject contributions
-- Please include proper attribution when sharing the software
-
-## Architecture Overview
-
-The application follows a layered architecture:
-- **UI Layer (app)**: Handles user interaction with Slint
-- **Core Logic Layer (nlem)**: Implements business logic, device management, security, and communication protocols
-- **Platform Layer (platform)**: Provides OS-specific functionality (Linux currently supported)
-
-The core components communicate through well-defined interfaces, with the `Node` struct acting as the central coordinator between the UI and backend services.
+This documentation provides a comprehensive overview of the Alat project for future development and maintenance work.
