@@ -24,9 +24,11 @@ impl super::Service for PairService {
     }
     async fn init(&mut self, node: crate::Node) -> Result<(), crate::ErrorC> {
         self.node = Some(node);
+        self.initialized = true;
         Ok(())
     }
     async fn worker(&mut self) -> Result<(), super::error::ServiceError> {
+        self.ensure_init()?;
         Ok(())
     }
     async fn grpc(

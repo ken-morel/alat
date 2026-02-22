@@ -793,21 +793,25 @@ pub struct TelemetryStatus {
     #[prost(string, tag = "6")]
     pub hostname: ::prost::alloc::string::String,
     #[prost(float, repeated, tag = "7")]
-    pub cpu_usage_per_core: ::prost::alloc::vec::Vec<f32>,
+    pub cpu_usages: ::prost::alloc::vec::Vec<f32>,
     #[prost(string, repeated, tag = "8")]
     pub disk_names: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
     #[prost(float, repeated, tag = "9")]
-    pub disk_available_spaces_gb: ::prost::alloc::vec::Vec<f32>,
+    pub disk_used_spaces_gb: ::prost::alloc::vec::Vec<f32>,
     #[prost(float, repeated, tag = "10")]
     pub disk_total_spaces_gb: ::prost::alloc::vec::Vec<f32>,
     #[prost(bool, repeated, tag = "11")]
-    pub batteries_changing: ::prost::alloc::vec::Vec<bool>,
+    pub batteries_charging: ::prost::alloc::vec::Vec<bool>,
     #[prost(uint32, repeated, tag = "12")]
     pub batteries_percent: ::prost::alloc::vec::Vec<u32>,
     #[prost(uint32, tag = "13")]
-    pub memory_used: u32,
+    pub memory_used_mb: u32,
     #[prost(uint32, tag = "14")]
-    pub memory_total: u32,
+    pub memory_total_mb: u32,
+    #[prost(uint32, tag = "15")]
+    pub swap_used_mb: u32,
+    #[prost(uint32, tag = "16")]
+    pub swap_total_mb: u32,
 }
 /// Generated client implementations.
 pub mod telemetry_service_client {

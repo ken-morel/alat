@@ -1,6 +1,7 @@
 mod discovery;
 mod platform;
 mod storage;
+mod telemetry;
 
 pub type Platform = platform::Platform;
 

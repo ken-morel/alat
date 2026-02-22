@@ -3,22 +3,17 @@ use nlem::storage::*;
 
 pub struct JSONFileStorage {
     path: std::path::PathBuf,
-    storage_data: Option<StorageData>,
+    data: StorageData,
 }
 
 impl JSONFileStorage {
     pub fn new(path: &std::path::Path) -> Self {
         Self {
             path: path.into(),
-            storage_data: None,
+            data: StorageData::default(),
         }
     }
-    pub fn data(&mut self) -> StorageResult<&mut StorageData> {
-        self.storage_data.ok_or(StorageError::Init())
-    }
     pub async fn write(&mut self) -> StorageResult<()> {
-        let data = self.data()?;
-
         if let Some(parent) = self.path.parent() {
             std::fs::create_dir_all(parent).map_err(|e| {
                 StorageError::Other(format!("Could not create config parent directories: {e}"))
@@ -27,7 +22,7 @@ impl JSONFileStorage {
         println!("writting app data at {:?}", self.path);
         std::fs::write(
             self.path.clone(),
-            serde_json::to_string(data).map_err(|e| {
+            serde_json::to_string_pretty(&self.data).map_err(|e| {
                 StorageError::Other(format!(
                     "Could not serialize JSONFIleStoraage to string: {e}"
                 ))
@@ -37,11 +32,10 @@ impl JSONFileStorage {
     }
     pub async fn load(&mut self) -> StorageResult<()> {
         println!("loading app data at {:?}", self.path);
-        self.storage_data = Some(
+        self.data =
             serde_json::from_slice(std::fs::read(self.path.clone())?.as_slice()).map_err(|e| {
                 StorageError::Other(format!("Error parsing config JSONFileStorage: {e}"))
-            })?,
-        );
+            })?;
         Ok(())
     }
 }
@@ -51,43 +45,41 @@ impl Storage for JSONFileStorage {
     async fn init(&mut self, data: StorageData) -> StorageResult<()> {
         if let Err(e) = self.load().await {
             println!("[storage] Error loading storage {e} creating new storage");
-            self.storage_data = Some(data);
+            self.data = data;
             self.write().await
         } else {
             Ok(())
         }
     }
     async fn get_certificate(&mut self) -> StorageResult<Certificate> {
-        Ok(self.data()?.certificate.clone())
+        Ok(self.data.certificate.clone())
     }
     async fn set_certificate(&mut self, certificate: Certificate) -> StorageResult<()> {
-        let mut data = self.data()?;
-        data.certificate = certificate;
+        self.data.certificate = certificate;
         self.write().await
     }
 
     async fn get_info(&mut self) -> StorageResult<DeviceInfo> {
-        Ok(self.data()?.info.clone())
+        Ok(self.data.info.clone())
     }
     async fn set_info(&mut self, info: DeviceInfo) -> StorageResult<()> {
-        let mut data = self.data()?;
-        data.info = info;
+        self.data.info = info;
         self.write().await
     }
 
     async fn get_paired(&mut self) -> StorageResult<Vec<PairedDevice>> {
-        Ok(self.data()?.paired_devices.clone())
+        Ok(self.data.paired_devices.clone())
     }
 
     async fn set_paired(&mut self, paired: Vec<PairedDevice>) -> StorageResult<()> {
-        let mut data = self.data()?;
-        data.paired_devices = paired;
+        self.data.paired_devices = paired;
         self.write().await
     }
     async fn _load_settings(&mut self, key: &str) -> StorageResult<Option<String>> {
-        Ok(self.data()?.settings.get(key).clone())
+        Ok(self.data.settings.get(key).cloned())
     }
     async fn _save_settings(&mut self, key: &str, data: String) -> StorageResult<()> {
-        self.data()?.settings.insert(key.to_string(), data);
+        self.data.settings.insert(key.to_string(), data);
+        self.write().await
     }
 }

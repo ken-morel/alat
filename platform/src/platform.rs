@@ -1,4 +1,6 @@
 use super::storage;
+
+use nlem::service;
 use std::{path::PathBuf, sync::Arc};
 use tokio::sync::{Mutex, RwLock};
 
@@ -72,7 +74,7 @@ impl nlem::platform::Platform for Platform {
                 });
         });
         rx.await
-            .map_err(|e| format!("Could not receive noification reply: {e}"))?
+            .map_err(|e| format!("Could not ama receive noification reply: {e}"))?
     }
     async fn log_info(&self, msg: String) {
         log::info!("{msg}");
@@ -82,5 +84,10 @@ impl nlem::platform::Platform for Platform {
     }
     async fn log_warning(&self, msg: String) {
         log::warn!("{msg}");
+    }
+    async fn query_telemetry(&self) -> Result<service::telemetry::TelemetryInfo, String> {
+        let mut info = service::telemetry::TelemetryInfo::default();
+        super::telemetry::collect_info(&mut info).await?;
+        Ok(info)
     }
 }

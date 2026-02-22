@@ -9,7 +9,7 @@ pub async fn worker(node: Arc<RwLock<nlem::node::Node>>, window: slint::Weak<ui:
         .await
         .start()
         .await
-        .expect("Could not receive device manager event channel");
+        .expect("Could not start node and get event manager channel");
 
     while let Some(event) = node_events.recv().await {
         tokio::time::sleep(std::time::Duration::from_secs(2)).await;

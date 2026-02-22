@@ -6,14 +6,16 @@ pub struct TelemetryInfo {
     pub os_version: String,
     pub kernel_version: String,
     pub hostname: String,
-    pub cpu_usage_per_core: Vec<f32>,
+    pub cpu_usages: Vec<f32>,
     pub disk_names: Vec<String>,
-    pub disk_available_spaces_gb: Vec<f32>,
+    pub disk_used_spaces_gb: Vec<f32>,
     pub disk_total_spaces_gb: Vec<f32>,
-    pub batteries_changing: Vec<bool>,
+    pub batteries_charging: Vec<bool>,
     pub batteries_percent: Vec<u32>,
-    pub memory_used: u32,
-    pub memory_total: u32,
+    pub memory_used_mb: u32,
+    pub memory_total_mb: u32,
+    pub swap_used_mb: u32,
+    pub swap_total_mb: u32,
 }
 
 impl From<TelemetryInfo> for proto::TelemetryStatus {

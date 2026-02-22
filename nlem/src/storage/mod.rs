@@ -15,7 +15,7 @@ pub type DeviceType = devicetype::DeviceType;
 mod paireddevice;
 pub type PairedDevice = paireddevice::PairedDevice;
 
-#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize, Default)]
 pub struct StorageData {
     pub certificate: Certificate,
     pub paired_devices: Vec<PairedDevice>,

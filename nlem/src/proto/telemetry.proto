@@ -25,15 +25,18 @@ message TelemetryStatus {
 
   string hostname = 6;
 
-  repeated float cpu_usage_per_core = 7;
+  repeated float cpu_usages = 7;
 
   repeated string disk_names = 8;
-  repeated float disk_available_spaces_gb = 9;
+  repeated float disk_used_spaces_gb = 9;
   repeated float disk_total_spaces_gb = 10;
 
-  repeated bool batteries_changing = 11;
+  repeated bool batteries_charging = 11;
   repeated uint32 batteries_percent = 12;
 
-  uint32 memory_used = 13;
-  uint32 memory_total = 14;
+  uint32 memory_used_mb = 13;
+  uint32 memory_total_mb = 14;
+
+  uint32 swap_used_mb = 15;
+  uint32 swap_total_mb = 16;
 }
