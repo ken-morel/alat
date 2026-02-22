@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <bx:grid x="0" y="0" width="50" height="50"/>
+    <bx:export>
+      <bx:file format="png" path="logo.png">
+        <bx:variant scale="0.1" suffix="@100px"/>
+        <bx:variant scale="0.64" suffix="@640px"/>
+        <bx:variant scale="2" suffix="@2000px"/>
+      </bx:file>
+      <bx:file format="svg" path="logo.svg" normalization="web-secure-static"/>
+      <bx:file format="svg" path="logo.svg" normalization="web-secure-animated" excluded="true"/>
+    </bx:export>
+  </defs>
+  <circle cx="500" cy="150" r="100" id="circle-0" style="fill: rgb(34, 85, 85);">
+    <title>node1</title>
+    <animate attributeName="cx" values="200;500" begin="0s" dur="0.3s" fill="freeze" keyTimes="0; 1"/>
+    <animate attributeName="cy" values="850;150" begin="0s" dur="0.3s" fill="freeze" keyTimes="0; 1"/>
+  </circle>
+  <circle cx="200" cy="850" r="100" id="circle-1" style="stroke-width: 1; fill: rgb(34, 85, 85);">
+    <title>node2</title>
+  </circle>
+  <line style="stroke-width: 100px; stroke-linecap: round; stroke: rgb(68, 68, 68);" x1="450" y1="550" x2="700" y2="550" id="line-2">
+    <title>A's opposite</title>
+    <animate attributeName="x1" values="700;450" begin="0.8s" dur="0.2s" fill="freeze" keyTimes="0; 1"/>
+    <animate attributeName="visibility" values="hidden;visible" dur="0.8s" fill="freeze" calcMode="discrete" keyTimes="0; 1"/>
+  </line>
+  <line style="stroke-width: 100; stroke-linecap: round; stroke-linejoin: round; transform-origin: 725px 575px; stroke: rgb(68, 68, 68);" x1="600" y1="300" x2="850" y2="850" id="line-3">
+    <title>A's hypotenuse</title>
+    <animate attributeName="x2" values="600;850" dur="0.3s" fill="freeze" begin="0.4s" keyTimes="0; 1"/>
+    <animate attributeName="y2" values="300;850" begin="0.4s" dur="0.3s" fill="freeze" keyTimes="0; 1"/>
+    <animate attributeName="display" values="none;inline" begin="0s" dur="2s" fill="freeze" calcMode="discrete" keyTimes="0; 0.2"/>
+  </line>
+  <line style="stroke-width: 100px; stroke-linecap: round; transform-box: fill-box; transform-origin: 50% 50%; stroke: rgb(34, 85, 85);" x1="500" y1="150" x2="200" y2="850" id="line-0">
+    <animate attributeName="x1" values="200;500" begin="0s" dur="0.5s" fill="freeze" keyTimes="0; 1"/>
+    <animate attributeName="y1" values="850;150" begin="0s" dur="0.5s" fill="freeze" keyTimes="0; 1"/>
+  </line>
+</svg>

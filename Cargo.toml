@@ -4,7 +4,7 @@ members = ["app", "nlem", "platform"]
 
 [workspace.package]
 authors = ["Engon Ken Morel <engonken8@gmail.com>"]
-documentation = "https://alat.rbs.cm"
+documentation = "https://alat.engon.cm"
 
 
 [workspace.dependencies]
