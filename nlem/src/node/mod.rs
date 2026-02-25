@@ -71,7 +71,7 @@ impl Node {
         self.service_manager
             .write()
             .await
-            .initialize_services(self.clone())
+            .init(self.clone())
             .await?;
         let router = self.server.write().await.create_router().await?;
         tokio::spawn(async move {
@@ -87,12 +87,7 @@ impl Node {
             }
         });
 
-        let (managertx, managerrx) = tokio::sync::mpsc::channel(1);
-        self.device_manager
-            .write()
-            .await
-            .start_workers(managertx)
-            .await;
+        let managerrx = self.device_manager.write().await.start_workers().await;
         let (tx, rx) = tokio::sync::mpsc::channel(1);
         tokio::spawn(node_worker(self.clone(), tx, managerrx));
         Ok(rx)

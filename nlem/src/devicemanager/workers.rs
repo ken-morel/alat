@@ -196,7 +196,8 @@ impl DeviceManager {
             .await
             .expect("Could not send device manager started event");
     }
-    pub async fn start_workers(&mut self, sender: Sender<DeviceManagerEvent>) {
+    pub async fn start_workers(&mut self) -> Receiver<DeviceManagerEvent> {
+        let (sender, receiver) = channel(1);
         println!("Spawning workers");
         let (itx, irx) = channel::<WorkerEvent>(1);
 
@@ -215,5 +216,6 @@ impl DeviceManager {
             self.connected_devices.clone(),
             self.paired_devices.clone(),
         ));
+        receiver
     }
 }

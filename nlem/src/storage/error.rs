@@ -1,6 +1,6 @@
 use thiserror::Error;
 
-#[derive(Error, Debug)]
+#[derive(Error, Debug, Clone)]
 pub enum StorageError {
     #[error("Error loading storage {0}: {1}")]
     Load(String, String),
@@ -17,14 +17,14 @@ pub enum StorageError {
     #[error("{0}")]
     Other(String),
     #[error("input/output error saving/loading node storage data: {0}")]
-    Io(std::io::Error),
+    Io(String),
     #[error("Storage was not initialized")]
     Init(),
 }
 
 impl From<std::io::Error> for StorageError {
     fn from(err: std::io::Error) -> Self {
-        Self::Io(err)
+        Self::Io(err.to_string())
     }
 }
 

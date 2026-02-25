@@ -1,3 +1,4 @@
+mod clipboard;
 mod discovery;
 mod platform;
 mod storage;

@@ -4,7 +4,7 @@ mod server;
 
 pub type TelemetryInfo = info::TelemetryInfo;
 
-use crate::{proto, service::Service};
+use crate::proto;
 
 #[derive(Default, Clone)]
 pub struct TelemetryService {
@@ -19,19 +19,6 @@ impl TelemetryService {
     pub fn new() -> Self {
         Self::default()
     }
-    pub async fn query_info(&self) -> Result<info::TelemetryInfo, crate::ErrorC> {
-        Service::ensure_init(self)?;
-        Ok(self
-            .node
-            .clone()
-            .unwrap()
-            .platform
-            .read()
-            .await
-            .query_telemetry()
-            .await
-            .map_err(super::error::ServiceError::BackendQuery)?)
-    }
 }
 
 #[tonic::async_trait]
@@ -42,12 +29,14 @@ impl super::Service for TelemetryService {
     fn name(&self) -> super::ServiceID {
         "telemetry"
     }
-    async fn init(&mut self, node: crate::Node) -> Result<(), crate::ErrorC> {
+    async fn init(&mut self, node: crate::Node) -> super::error::ServiceResult<()> {
+        let name = self.name();
         let mut storage = super::config::ServiceConfig::new(node.storage.clone(), self.name());
         self.config = Some(crate::contain(
             storage
                 .init(config::TelemetryServiceConfig::default())
-                .await?,
+                .await
+                .map_err(|e| super::error::ServiceError::StorageError(name, e))?,
         ));
         self.storage = Some(crate::contain(storage));
         self.node = Some(node);
@@ -55,25 +44,44 @@ impl super::Service for TelemetryService {
         self.initialized = true;
         Ok(())
     }
-    async fn worker(&mut self) -> Result<(), super::error::ServiceError> {
+    async fn spawn_worker(&self, channel: super::ServiceChannel) -> super::SpawnWorkerResult {
+        let send = async move |msg: super::ServiceEvent| {
+            channel
+                .send(msg)
+                .await
+                .expect("COuld not relay message to servicechannel");
+        };
+        if let Err(e) = self.ensure_init() {
+            send(super::ServiceEvent::Error(self.name(), e)).await;
+            return None;
+        }
+        let name = self.name();
         let info = self.info.clone().unwrap();
         let config = self.config.clone().unwrap();
+        let platform = self.node.clone().unwrap().platform;
 
-        loop {
-            match self.query_info().await {
-                Ok(data) => {
-                    *info.write().await = Some(data);
+        Some(tokio::spawn(async move {
+            send(super::ServiceEvent::Started(name)).await;
+            loop {
+                match platform.read().await.query_telemetry().await {
+                    Ok(data) => {
+                        *info.write().await = Some(data);
+                    }
+                    Err(e) => {
+                        println!("[service/telemetry] ERROR {e}");
+                    }
                 }
-                Err(e) => {
-                    println!("[service/telemetry] ERROR {e}");
+
+                tokio::time::sleep(std::time::Duration::from_secs(
+                    config.read().await.poll_interval_secs.into(),
+                ))
+                .await;
+                if false {
+                    break;
                 }
             }
-
-            tokio::time::sleep(std::time::Duration::from_secs(
-                config.read().await.poll_interval_secs.into(),
-            ))
-            .await;
-        }
+            send(super::ServiceEvent::Stopped(name)).await;
+        }))
     }
     async fn grpc(
         &self,

@@ -87,7 +87,11 @@ impl nlem::platform::Platform for Platform {
     }
     async fn query_telemetry(&self) -> Result<service::telemetry::TelemetryInfo, String> {
         let mut info = service::telemetry::TelemetryInfo::default();
-        super::telemetry::collect_info(&mut info).await?;
+        crate::telemetry::collect_info(&mut info).await?;
         Ok(info)
+    }
+
+    async fn clipboard(&self) -> Result<Box<dyn service::clipboard::Clipboard>, String> {
+        Box::new(crate::clipboard::Clipboard::init()?)
     }
 }

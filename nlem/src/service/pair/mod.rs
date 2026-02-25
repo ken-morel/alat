@@ -22,19 +22,18 @@ impl super::Service for PairService {
     fn name(&self) -> super::ServiceID {
         "pair"
     }
-    async fn init(&mut self, node: crate::Node) -> Result<(), crate::ErrorC> {
+    async fn init(&mut self, node: crate::Node) -> super::error::ServiceResult<()> {
         self.node = Some(node);
         self.initialized = true;
         Ok(())
     }
-    async fn worker(&mut self) -> Result<(), super::error::ServiceError> {
-        self.ensure_init()?;
-        Ok(())
+    async fn spawn_worker(&self, _: super::ServiceChannel) -> super::SpawnWorkerResult {
+        None
     }
     async fn grpc(
         &self,
         server: tonic::transport::server::Router,
-    ) -> Result<tonic::transport::server::Router, super::error::ServiceError> {
+    ) -> super::error::ServiceResult<tonic::transport::server::Router> {
         self.ensure_init()?;
         Ok(
             server.add_service(proto::pair_service_server::PairServiceServer::new(
