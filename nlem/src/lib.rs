@@ -3,7 +3,6 @@ use std::sync::Arc;
 use tokio::sync::{Mutex, RwLock};
 
 pub mod client;
-pub mod controllers;
 pub mod devicemanager;
 pub mod discovery;
 pub mod node;
@@ -11,8 +10,9 @@ pub mod platform;
 pub mod proto;
 pub mod security;
 pub mod server;
-pub mod service;
 pub mod storage;
+pub mod unit;
+pub mod units;
 
 pub type RWContainer<S> = Arc<RwLock<S>>;
 pub type MContainer<S> = Arc<Mutex<S>>;
@@ -29,14 +29,14 @@ pub type DiscoveryC = RWContainer<Discovery>;
 pub type DeviceManager = devicemanager::DeviceManager;
 pub type DeviceManagerC = RWContainer<DeviceManager>;
 
-pub type ServiceManager = service::ServiceManager;
-pub type ServiceManagerC = RWContainer<ServiceManager>;
+pub type UnitManager = unit::UnitManager;
+pub type UnitManagerC = RWContainer<UnitManager>;
 
 pub type Server = server::Server;
 pub type ServerC = RWContainer<Server>;
 
-pub type Service = dyn service::Service + Send + Sync + 'static;
-pub type ServiceC = RWContainer<Service>;
+pub type Unit = dyn unit::Unit + Send + Sync + 'static;
+pub type UnitC = RWContainer<Unit>;
 
 pub type Node = node::Node;
 
