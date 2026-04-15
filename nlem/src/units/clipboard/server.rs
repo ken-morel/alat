@@ -1,4 +1,5 @@
-use crate::{proto, service::Service};
+use crate::proto;
+use crate::unit::Unit;
 
 #[tonic::async_trait]
 impl proto::clipboard_service_server::ClipboardService for super::ClipboardService {
@@ -8,7 +9,7 @@ impl proto::clipboard_service_server::ClipboardService for super::ClipboardServi
     ) -> Result<tonic::Response<proto::GetClipboardResponse>, tonic::Status> {
         self.ensure_init()?;
         self.authenticate(
-            &*self.node.clone().unwrap().device_manager.read().await,
+            &*self.node.clone().device_manager.read().await,
             &req.into_inner().call.unwrap(),
         )
         .await?;
@@ -45,7 +46,7 @@ impl proto::clipboard_service_server::ClipboardService for super::ClipboardServi
         self.ensure_init()?;
         let req = req.into_inner();
         self.authenticate(
-            &*self.node.clone().unwrap().device_manager.read().await,
+            &*self.node.clone().device_manager.read().await,
             &req.call.unwrap(),
         )
         .await?;

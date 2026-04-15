@@ -1,5 +1,5 @@
 use battery::Manager;
-use nlem::service::telemetry;
+use nlem::units::telemetry;
 use sysinfo::{Disks, System};
 
 pub async fn collect_info(info: &mut telemetry::TelemetryInfo) -> Result<(), String> {

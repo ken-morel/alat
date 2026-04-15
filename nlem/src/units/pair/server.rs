@@ -9,8 +9,6 @@ impl proto::pair_service_server::PairService for super::PairService {
         let req = req.into_inner();
         let result = self
             .node
-            .clone()
-            .ok_or(tonic::Status::unavailable("Service uninitialized"))?
             .device_manager
             .read()
             .await

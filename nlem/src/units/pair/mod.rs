@@ -1,39 +1,41 @@
 mod server;
 
-use crate::proto;
+use crate::{proto, unit};
 
-#[derive(Default, Clone)]
+#[derive(Clone)]
 pub struct PairService {
     initialized: bool,
-    node: Option<crate::Node>,
+    node: crate::Node,
 }
 
 impl PairService {
-    pub fn new() -> Self {
-        Self::default()
+    pub fn new(node: crate::Node) -> Self {
+        Self {
+            node,
+            initialized: false,
+        }
     }
 }
 
 #[tonic::async_trait]
-impl super::Service for PairService {
+impl unit::Unit for PairService {
     fn is_init(&self) -> bool {
         self.initialized
     }
-    fn name(&self) -> super::ServiceID {
-        "pair"
+    fn id(&self) -> unit::UnitID {
+        unit::UnitID::Service("pair")
     }
-    async fn init(&mut self, node: crate::Node) -> super::error::ServiceResult<()> {
-        self.node = Some(node);
+    async fn init(&mut self) -> unit::error::UnitResult<()> {
         self.initialized = true;
         Ok(())
     }
-    async fn spawn_worker(&self, _: super::ServiceChannel) -> super::SpawnWorkerResult {
+    async fn spawn_worker(&self, _: unit::UnitSender) -> unit::SpawnWorkerResult {
         None
     }
     async fn grpc(
         &self,
         server: tonic::transport::server::Router,
-    ) -> super::error::ServiceResult<tonic::transport::server::Router> {
+    ) -> unit::error::UnitResult<tonic::transport::server::Router> {
         self.ensure_init()?;
         Ok(
             server.add_service(proto::pair_service_server::PairServiceServer::new(

@@ -1,6 +1,6 @@
 use super::storage;
 
-use nlem::service;
+use nlem::units;
 use std::{path::PathBuf, sync::Arc};
 use tokio::sync::{Mutex, RwLock};
 
@@ -85,13 +85,13 @@ impl nlem::platform::Platform for Platform {
     async fn log_warning(&self, msg: String) {
         log::warn!("{msg}");
     }
-    async fn query_telemetry(&self) -> Result<service::telemetry::TelemetryInfo, String> {
-        let mut info = service::telemetry::TelemetryInfo::default();
+    async fn query_telemetry(&self) -> Result<units::telemetry::TelemetryInfo, String> {
+        let mut info = units::telemetry::TelemetryInfo::default();
         crate::telemetry::collect_info(&mut info).await?;
         Ok(info)
     }
 
-    async fn clipboard(&self) -> Result<service::clipboard::ClipboardC, String> {
+    async fn clipboard(&self) -> Result<units::clipboard::ClipboardC, String> {
         Ok(nlem::mcontain(crate::clipboard::Clipboard::init()?))
     }
 }

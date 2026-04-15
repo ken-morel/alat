@@ -1,4 +1,4 @@
-use nlem::service::clipboard::ClipboardContent;
+use nlem::units::clipboard::ClipboardContent;
 
 cfg_if::cfg_if! {
     if #[cfg(target_os = "windows")] {
@@ -23,7 +23,7 @@ impl Clipboard {
 }
 
 #[tonic::async_trait]
-impl nlem::service::clipboard::Clipboard for Clipboard {
+impl nlem::units::clipboard::Clipboard for Clipboard {
     async fn get_content(&self) -> Result<ClipboardContent, String> {
         if let Ok(text) = self.arboard.lock().await.get_text() {
             Ok(ClipboardContent::Text(text))

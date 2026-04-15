@@ -4,64 +4,68 @@ mod server;
 
 pub type TelemetryInfo = info::TelemetryInfo;
 
-use crate::proto;
+use crate::{proto, unit};
 
-#[derive(Default, Clone)]
+#[derive(Clone)]
 pub struct TelemetryService {
     initialized: bool,
-    node: Option<crate::Node>,
+    node: crate::Node,
     config: Option<crate::RWContainer<config::TelemetryServiceConfig>>,
-    storage: Option<crate::RWContainer<super::config::ServiceConfig>>,
-    info: Option<crate::RWContainer<Option<info::TelemetryInfo>>>,
+    storage: Option<crate::RWContainer<unit::config::UnitConfig>>,
+    info: crate::RWContainer<Option<info::TelemetryInfo>>,
 }
 
 impl TelemetryService {
-    pub fn new() -> Self {
-        Self::default()
+    pub fn new(node: crate::Node) -> Self {
+        Self {
+            node,
+            initialized: false,
+            config: None,
+            storage: None,
+            info: crate::contain(None),
+        }
     }
 }
 
 #[tonic::async_trait]
-impl super::Service for TelemetryService {
+impl unit::Unit for TelemetryService {
     fn is_init(&self) -> bool {
         self.initialized
     }
-    fn name(&self) -> super::ServiceID {
-        "telemetry"
+    fn id(&self) -> unit::UnitID {
+        unit::UnitID::Service("telemetry")
     }
-    async fn init(&mut self, node: crate::Node) -> super::error::ServiceResult<()> {
-        let name = self.name();
-        let mut storage = super::config::ServiceConfig::new(node.storage.clone(), self.name());
+    async fn init(&mut self) -> unit::error::UnitResult<()> {
+        let name = self.id();
+        let mut storage = unit::config::UnitConfig::new(self.node.storage.clone(), self.id());
         self.config = Some(crate::contain(
             storage
                 .init(config::TelemetryServiceConfig::default())
                 .await
-                .map_err(|e| super::error::ServiceError::StorageError(name, e))?,
+                .map_err(|e| unit::error::UnitError::StorageError(name, e))?,
         ));
         self.storage = Some(crate::contain(storage));
-        self.node = Some(node);
-        self.info = Some(crate::contain(None));
         self.initialized = true;
         Ok(())
     }
-    async fn spawn_worker(&self, channel: super::ServiceChannel) -> super::SpawnWorkerResult {
-        let send = async move |msg: super::ServiceEvent| {
+    async fn spawn_worker(&self, channel: unit::UnitSender) -> unit::SpawnWorkerResult {
+        let send = async move |msg: unit::UnitEvent| {
             channel
                 .send(msg)
                 .await
                 .expect("COuld not relay message to servicechannel");
         };
         if let Err(e) = self.ensure_init() {
-            send(super::ServiceEvent::Error(self.name(), e)).await;
+            send(unit::UnitEvent::Error(self.id(), e)).await;
             return None;
         }
-        let name = self.name();
-        let info = self.info.clone().unwrap();
+        let name = self.id();
+        let info = self.info.clone();
         let config = self.config.clone().unwrap();
-        let platform = self.node.clone().unwrap().platform;
+        let platform = self.node.clone().platform;
 
         Some(tokio::spawn(async move {
-            send(super::ServiceEvent::Started(name)).await;
+            send(unit::UnitEvent::Started(name.clone())).await;
             loop {
                 match platform.read().await.query_telemetry().await {
                     Ok(data) => {
@@ -80,13 +84,13 @@ impl super::Service for TelemetryService {
                     break;
                 }
             }
-            send(super::ServiceEvent::Stopped(name)).await;
+            send(unit::UnitEvent::Stopped(name)).await;
         }))
     }
     async fn grpc(
         &self,
         server: tonic::transport::server::Router,
-    ) -> Result<tonic::transport::server::Router, super::error::ServiceError> {
+    ) -> Result<tonic::transport::server::Router, unit::error::UnitError> {
         let server = server.add_service(
             proto::telemetry_service_server::TelemetryServiceServer::new(self.clone()),
         );

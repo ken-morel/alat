@@ -1,23 +1,23 @@
 use crate::storage;
 
 #[derive(Clone)]
-pub struct ServiceConfig {
+pub struct UnitConfig {
     storage: crate::StorageC,
-    service_id: super::ServiceID,
+    unit_id: super::UnitID,
     settings_key: String,
 }
 
-unsafe impl Send for ServiceConfig {}
+unsafe impl Send for UnitConfig {}
 
-unsafe impl Sync for ServiceConfig {}
+unsafe impl Sync for UnitConfig {}
 
-impl ServiceConfig {
-    pub fn new(storage: crate::StorageC, service_id: super::ServiceID) -> Self {
-        let mut settings_key = String::from("services/");
-        settings_key.push_str(service_id);
+impl UnitConfig {
+    pub fn new(storage: crate::StorageC, unit_id: super::UnitID) -> Self {
+        let mut settings_key = String::from("units/");
+        settings_key.push_str(&unit_id.to_string());
         Self {
             storage,
-            service_id,
+            unit_id,
             settings_key,
         }
     }
@@ -26,7 +26,7 @@ impl ServiceConfig {
             .storage
             .lock()
             .await
-            .load_settings(self.service_id)
+            .load_settings(&self.unit_id.to_string())
             .await?
         {
             self.deserialize(json_value)

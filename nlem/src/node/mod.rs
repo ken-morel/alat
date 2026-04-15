@@ -1,10 +1,9 @@
-mod services;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
 use crate::{
     devicemanager::{DeviceManagerEvent, connected},
-    discovery, service,
+    discovery, unit,
 };
 
 use super::{client, devicemanager, security, server, storage};
@@ -16,7 +15,7 @@ pub struct Node {
     pub storage: crate::StorageC,
     pub platform: crate::PlatformC,
     pub device_manager: crate::DeviceManagerC,
-    pub service_manager: crate::ServiceManagerC,
+    pub unit_manager: crate::UnitManagerC,
     pub server: crate::ServerC,
 }
 
@@ -42,19 +41,17 @@ impl Node {
             )
             .await?,
         ));
-        let service_manager = Arc::new(RwLock::new(service::ServiceManager::new()));
-
-        services::register_services(&mut *service_manager.write().await).await?;
+        let unit_manager = Arc::new(RwLock::new(unit::UnitManager::new()));
 
         let server = Arc::new(RwLock::new(server::Server::new(
             device_manager.clone(),
-            service_manager.clone(),
+            unit_manager.clone(),
         )));
         Ok(Self {
             storage,
             platform,
             device_manager,
-            service_manager,
+            unit_manager,
             server,
         })
     }
@@ -68,11 +65,7 @@ impl Node {
         }
     }
     pub async fn start(&self) -> Result<tokio::sync::mpsc::Receiver<NodeEvent>, crate::ErrorC> {
-        self.service_manager
-            .write()
-            .await
-            .init(self.clone())
-            .await?;
+        self.unit_manager.write().await.init().await?;
         let router = self.server.write().await.create_router().await?;
         tokio::spawn(async move {
             let addr = std::net::SocketAddr::new(
@@ -135,6 +128,9 @@ impl Node {
             },
             Err(err) => Err(format!("Could not send pair request: {err}")),
         }
+    }
+    pub async fn unit_register(&self, unit: crate::UnitC) {
+        self.unit_manager.write().await.add_unit(unit).await;
     }
 }
 
