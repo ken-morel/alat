@@ -8,6 +8,8 @@ pub mod telemetry;
 use std::collections::HashMap;
 use tokio::sync::RwLock;
 
+use crate::{devicemanager::connected, proto, security};
+
 #[derive(Debug, Clone)]
 pub enum ServiceEvent {
     Started(ServiceID),
@@ -37,6 +39,21 @@ pub trait Service: Send + Sync {
         &self,
         server: tonic::transport::server::Router,
     ) -> Result<tonic::transport::server::Router, error::ServiceError>;
+    async fn authenticate(
+        &self,
+        man: &crate::DeviceManager,
+        req: &proto::ServiceCall,
+    ) -> error::ServiceResult<connected::ConnectedDevice> {
+        if let Some(auth) = &req.auth {
+            if let Some(dev) = man
+                .get_connected_device_by_token(&security::array_from_vec(auth.token.clone()))
+                .await
+            {
+                return Ok(dev);
+            }
+        }
+        Err(error::ServiceError::Unauthenticated())
+    }
     fn is_init(&self) -> bool;
     fn ensure_init(&self) -> Result<(), error::ServiceError> {
         if !self.is_init() {

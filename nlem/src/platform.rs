@@ -18,5 +18,5 @@ pub trait Platform: Send + Sync {
     async fn log_warning(&self, msg: String);
 
     async fn query_telemetry(&self) -> Result<service::telemetry::TelemetryInfo, String>;
-    async fn clipboard(&self) -> Result<service::clipboard::Clipboard, String>;
+    async fn clipboard(&self) -> Result<service::clipboard::ClipboardC, String>;
 }

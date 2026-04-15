@@ -13,6 +13,8 @@ pub enum ServiceError {
 
     #[error("Service {0} had an error: {1}")]
     Message(super::ServiceID, String),
+    #[error("Request not authenticated")]
+    Unauthenticated(),
 }
 
 pub type ServiceResult<T> = Result<T, ServiceError>;

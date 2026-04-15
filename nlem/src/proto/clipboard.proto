@@ -1,0 +1,46 @@
+syntax = "proto3";
+package proto;
+
+import "service.proto";
+
+message ClipboardContentImage {
+  uint32 width = 1;
+  uint32 height = 2;
+  bytes data = 3;
+}
+message ClipboardContentText {
+  string data = 1;
+}
+message ClipboardContentFiles {
+  repeated string files = 1;
+}
+message ClipboardContentEmpty {}
+
+message ClipboardContent {
+  oneof data {
+    ClipboardContentImage image = 1;
+    ClipboardContentText text = 2;
+    ClipboardContentFiles files = 3;
+    ClipboardContentEmpty empty = 4;
+  }
+}
+
+message GetClipboardRequest {
+  ServiceCall call = 1;
+}
+message GetClipboardResponse {
+  ServiceReply reply = 1;
+  ClipboardContent content = 2;
+}
+
+message SendClipboardRequest {
+  ServiceCall call = 1;
+  ClipboardContent content = 2;
+}
+message SendClipboardResponse {
+  ServiceReply reply = 1;
+}
+service ClipboardService {
+  rpc GetClipboard(GetClipboardRequest) returns (GetClipboardResponse);
+  rpc SendClipboard(SendClipboardRequest) returns (SendClipboardResponse);
+}

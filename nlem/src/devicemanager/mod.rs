@@ -137,4 +137,16 @@ impl DeviceManager {
         self.add_paired_device(paired.clone()).await;
         Ok(paired)
     }
+
+    pub async fn get_connected_device_by_token(
+        &self,
+        token: &security::PairToken,
+    ) -> Option<connected::ConnectedDevice> {
+        for dev in self.connected_devices.read().await.values() {
+            if &dev.device.token == token {
+                return Some(dev.clone());
+            }
+        }
+        None
+    }
 }

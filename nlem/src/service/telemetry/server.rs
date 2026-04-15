@@ -6,8 +6,12 @@ impl proto::telemetry_service_server::TelemetryService for super::TelemetryServi
         &self,
         req: tonic::Request<proto::GetTelemetryStatusRequest>,
     ) -> Result<tonic::Response<proto::GetTelemetryStatusResponse>, tonic::Status> {
-        let req = req.into_inner();
-        _ = req;
+        self.authenticate(
+            &*self.node.clone().unwrap().device_manager.read().await,
+            &req.into_inner().call.unwrap(),
+        )
+        .await?;
+
         self.ensure_init()?;
 
         Ok(

@@ -8,6 +8,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 "src/proto/alat.proto",
                 "src/proto/pair.proto",
                 "src/proto/telemetry.proto",
+                "src/proto/clipboard.proto",
             ], // main proto files
             &["src/proto"], // import dir
         )?;

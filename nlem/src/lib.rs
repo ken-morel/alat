@@ -3,6 +3,7 @@ use std::sync::Arc;
 use tokio::sync::{Mutex, RwLock};
 
 pub mod client;
+pub mod controllers;
 pub mod devicemanager;
 pub mod discovery;
 pub mod node;

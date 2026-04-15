@@ -733,6 +733,8 @@ pub enum ServiceReplyStatus {
     InternalError = 12,
     InvalidAuth = 13,
     Unauthorized = 14,
+    InvalidArguments = 15,
+    EmptyArguments = 16,
 }
 impl ServiceReplyStatus {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -750,6 +752,8 @@ impl ServiceReplyStatus {
             Self::InternalError => "SERVICE_REPLY_STATUS_INTERNAL_ERROR",
             Self::InvalidAuth => "SERVICE_REPLY_STATUS_INVALID_AUTH",
             Self::Unauthorized => "SERVICE_REPLY_STATUS_UNAUTHORIZED",
+            Self::InvalidArguments => "SERVICE_REPLY_STATUS_INVALID_ARGUMENTS",
+            Self::EmptyArguments => "SERVICE_REPLY_STATUS_EMPTY_ARGUMENTS",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -764,6 +768,8 @@ impl ServiceReplyStatus {
             "SERVICE_REPLY_STATUS_INTERNAL_ERROR" => Some(Self::InternalError),
             "SERVICE_REPLY_STATUS_INVALID_AUTH" => Some(Self::InvalidAuth),
             "SERVICE_REPLY_STATUS_UNAUTHORIZED" => Some(Self::Unauthorized),
+            "SERVICE_REPLY_STATUS_INVALID_ARGUMENTS" => Some(Self::InvalidArguments),
+            "SERVICE_REPLY_STATUS_EMPTY_ARGUMENTS" => Some(Self::EmptyArguments),
             _ => None,
         }
     }
@@ -1113,6 +1119,447 @@ pub mod telemetry_service_server {
     /// Generated gRPC service name
     pub const SERVICE_NAME: &str = "proto.TelemetryService";
     impl<T> tonic::server::NamedService for TelemetryServiceServer<T> {
+        const NAME: &'static str = SERVICE_NAME;
+    }
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ClipboardContentImage {
+    #[prost(uint32, tag = "1")]
+    pub width: u32,
+    #[prost(uint32, tag = "2")]
+    pub height: u32,
+    #[prost(bytes = "vec", tag = "3")]
+    pub data: ::prost::alloc::vec::Vec<u8>,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ClipboardContentText {
+    #[prost(string, tag = "1")]
+    pub data: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ClipboardContentFiles {
+    #[prost(string, repeated, tag = "1")]
+    pub files: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+}
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ClipboardContentEmpty {}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ClipboardContent {
+    #[prost(oneof = "clipboard_content::Data", tags = "1, 2, 3, 4")]
+    pub data: ::core::option::Option<clipboard_content::Data>,
+}
+/// Nested message and enum types in `ClipboardContent`.
+pub mod clipboard_content {
+    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Oneof)]
+    pub enum Data {
+        #[prost(message, tag = "1")]
+        Image(super::ClipboardContentImage),
+        #[prost(message, tag = "2")]
+        Text(super::ClipboardContentText),
+        #[prost(message, tag = "3")]
+        Files(super::ClipboardContentFiles),
+        #[prost(message, tag = "4")]
+        Empty(super::ClipboardContentEmpty),
+    }
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetClipboardRequest {
+    #[prost(message, optional, tag = "1")]
+    pub call: ::core::option::Option<ServiceCall>,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetClipboardResponse {
+    #[prost(message, optional, tag = "1")]
+    pub reply: ::core::option::Option<ServiceReply>,
+    #[prost(message, optional, tag = "2")]
+    pub content: ::core::option::Option<ClipboardContent>,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SendClipboardRequest {
+    #[prost(message, optional, tag = "1")]
+    pub call: ::core::option::Option<ServiceCall>,
+    #[prost(message, optional, tag = "2")]
+    pub content: ::core::option::Option<ClipboardContent>,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SendClipboardResponse {
+    #[prost(message, optional, tag = "1")]
+    pub reply: ::core::option::Option<ServiceReply>,
+}
+/// Generated client implementations.
+pub mod clipboard_service_client {
+    #![allow(
+        unused_variables,
+        dead_code,
+        missing_docs,
+        clippy::wildcard_imports,
+        clippy::let_unit_value,
+    )]
+    use tonic::codegen::*;
+    use tonic::codegen::http::Uri;
+    #[derive(Debug, Clone)]
+    pub struct ClipboardServiceClient<T> {
+        inner: tonic::client::Grpc<T>,
+    }
+    impl ClipboardServiceClient<tonic::transport::Channel> {
+        /// Attempt to create a new client by connecting to a given endpoint.
+        pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
+        where
+            D: TryInto<tonic::transport::Endpoint>,
+            D::Error: Into<StdError>,
+        {
+            let conn = tonic::transport::Endpoint::new(dst)?.connect().await?;
+            Ok(Self::new(conn))
+        }
+    }
+    impl<T> ClipboardServiceClient<T>
+    where
+        T: tonic::client::GrpcService<tonic::body::Body>,
+        T::Error: Into<StdError>,
+        T::ResponseBody: Body<Data = Bytes> + std::marker::Send + 'static,
+        <T::ResponseBody as Body>::Error: Into<StdError> + std::marker::Send,
+    {
+        pub fn new(inner: T) -> Self {
+            let inner = tonic::client::Grpc::new(inner);
+            Self { inner }
+        }
+        pub fn with_origin(inner: T, origin: Uri) -> Self {
+            let inner = tonic::client::Grpc::with_origin(inner, origin);
+            Self { inner }
+        }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> ClipboardServiceClient<InterceptedService<T, F>>
+        where
+            F: tonic::service::Interceptor,
+            T::ResponseBody: Default,
+            T: tonic::codegen::Service<
+                http::Request<tonic::body::Body>,
+                Response = http::Response<
+                    <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
+                >,
+            >,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::Body>,
+            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
+        {
+            ClipboardServiceClient::new(InterceptedService::new(inner, interceptor))
+        }
+        /// Compress requests with the given encoding.
+        ///
+        /// This requires the server to support it otherwise it might respond with an
+        /// error.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.send_compressed(encoding);
+            self
+        }
+        /// Enable decompressing responses.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.accept_compressed(encoding);
+            self
+        }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_decoding_message_size(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_encoding_message_size(limit);
+            self
+        }
+        pub async fn get_clipboard(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetClipboardRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetClipboardResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/proto.ClipboardService/GetClipboard",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("proto.ClipboardService", "GetClipboard"));
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn send_clipboard(
+            &mut self,
+            request: impl tonic::IntoRequest<super::SendClipboardRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::SendClipboardResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/proto.ClipboardService/SendClipboard",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("proto.ClipboardService", "SendClipboard"));
+            self.inner.unary(req, path, codec).await
+        }
+    }
+}
+/// Generated server implementations.
+pub mod clipboard_service_server {
+    #![allow(
+        unused_variables,
+        dead_code,
+        missing_docs,
+        clippy::wildcard_imports,
+        clippy::let_unit_value,
+    )]
+    use tonic::codegen::*;
+    /// Generated trait containing gRPC methods that should be implemented for use with ClipboardServiceServer.
+    #[async_trait]
+    pub trait ClipboardService: std::marker::Send + std::marker::Sync + 'static {
+        async fn get_clipboard(
+            &self,
+            request: tonic::Request<super::GetClipboardRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetClipboardResponse>,
+            tonic::Status,
+        >;
+        async fn send_clipboard(
+            &self,
+            request: tonic::Request<super::SendClipboardRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::SendClipboardResponse>,
+            tonic::Status,
+        >;
+    }
+    #[derive(Debug)]
+    pub struct ClipboardServiceServer<T> {
+        inner: Arc<T>,
+        accept_compression_encodings: EnabledCompressionEncodings,
+        send_compression_encodings: EnabledCompressionEncodings,
+        max_decoding_message_size: Option<usize>,
+        max_encoding_message_size: Option<usize>,
+    }
+    impl<T> ClipboardServiceServer<T> {
+        pub fn new(inner: T) -> Self {
+            Self::from_arc(Arc::new(inner))
+        }
+        pub fn from_arc(inner: Arc<T>) -> Self {
+            Self {
+                inner,
+                accept_compression_encodings: Default::default(),
+                send_compression_encodings: Default::default(),
+                max_decoding_message_size: None,
+                max_encoding_message_size: None,
+            }
+        }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> InterceptedService<Self, F>
+        where
+            F: tonic::service::Interceptor,
+        {
+            InterceptedService::new(Self::new(inner), interceptor)
+        }
+        /// Enable decompressing requests with the given encoding.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.accept_compression_encodings.enable(encoding);
+            self
+        }
+        /// Compress responses with the given encoding, if the client supports it.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.send_compression_encodings.enable(encoding);
+            self
+        }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.max_decoding_message_size = Some(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.max_encoding_message_size = Some(limit);
+            self
+        }
+    }
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for ClipboardServiceServer<T>
+    where
+        T: ClipboardService,
+        B: Body + std::marker::Send + 'static,
+        B::Error: Into<StdError> + std::marker::Send + 'static,
+    {
+        type Response = http::Response<tonic::body::Body>;
+        type Error = std::convert::Infallible;
+        type Future = BoxFuture<Self::Response, Self::Error>;
+        fn poll_ready(
+            &mut self,
+            _cx: &mut Context<'_>,
+        ) -> Poll<std::result::Result<(), Self::Error>> {
+            Poll::Ready(Ok(()))
+        }
+        fn call(&mut self, req: http::Request<B>) -> Self::Future {
+            match req.uri().path() {
+                "/proto.ClipboardService/GetClipboard" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetClipboardSvc<T: ClipboardService>(pub Arc<T>);
+                    impl<
+                        T: ClipboardService,
+                    > tonic::server::UnaryService<super::GetClipboardRequest>
+                    for GetClipboardSvc<T> {
+                        type Response = super::GetClipboardResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetClipboardRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as ClipboardService>::get_clipboard(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetClipboardSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/proto.ClipboardService/SendClipboard" => {
+                    #[allow(non_camel_case_types)]
+                    struct SendClipboardSvc<T: ClipboardService>(pub Arc<T>);
+                    impl<
+                        T: ClipboardService,
+                    > tonic::server::UnaryService<super::SendClipboardRequest>
+                    for SendClipboardSvc<T> {
+                        type Response = super::SendClipboardResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::SendClipboardRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as ClipboardService>::send_clipboard(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = SendClipboardSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                _ => {
+                    Box::pin(async move {
+                        let mut response = http::Response::new(
+                            tonic::body::Body::default(),
+                        );
+                        let headers = response.headers_mut();
+                        headers
+                            .insert(
+                                tonic::Status::GRPC_STATUS,
+                                (tonic::Code::Unimplemented as i32).into(),
+                            );
+                        headers
+                            .insert(
+                                http::header::CONTENT_TYPE,
+                                tonic::metadata::GRPC_CONTENT_TYPE,
+                            );
+                        Ok(response)
+                    })
+                }
+            }
+        }
+    }
+    impl<T> Clone for ClipboardServiceServer<T> {
+        fn clone(&self) -> Self {
+            let inner = self.inner.clone();
+            Self {
+                inner,
+                accept_compression_encodings: self.accept_compression_encodings,
+                send_compression_encodings: self.send_compression_encodings,
+                max_decoding_message_size: self.max_decoding_message_size,
+                max_encoding_message_size: self.max_encoding_message_size,
+            }
+        }
+    }
+    /// Generated gRPC service name
+    pub const SERVICE_NAME: &str = "proto.ClipboardService";
+    impl<T> tonic::server::NamedService for ClipboardServiceServer<T> {
         const NAME: &'static str = SERVICE_NAME;
     }
 }

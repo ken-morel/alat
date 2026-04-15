@@ -91,7 +91,7 @@ impl nlem::platform::Platform for Platform {
         Ok(info)
     }
 
-    async fn clipboard(&self) -> Result<Box<dyn service::clipboard::Clipboard>, String> {
-        Box::new(crate::clipboard::Clipboard::init()?)
+    async fn clipboard(&self) -> Result<service::clipboard::ClipboardC, String> {
+        Ok(nlem::mcontain(crate::clipboard::Clipboard::init()?))
     }
 }
