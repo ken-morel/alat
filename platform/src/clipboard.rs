@@ -7,8 +7,14 @@ cfg_if::cfg_if! {
     }
 }
 
+#[derive(Clone)]
 pub struct Clipboard {
     arboard: nlem::MContainer<arboard::Clipboard>,
+}
+impl std::fmt::Debug for Clipboard {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str("<platform::clipboard{}>")
+    }
 }
 
 impl Clipboard {

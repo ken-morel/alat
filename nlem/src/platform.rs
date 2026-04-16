@@ -1,7 +1,7 @@
 use super::{security, storage, units};
 
 #[tonic::async_trait]
-pub trait Platform: Send + Sync {
+pub trait Platform: Send + Sync + std::fmt::Debug {
     async fn hostname(&self) -> Result<String, String>;
     async fn device_type(&self) -> storage::DeviceType;
     async fn discovery_manager(&self) -> Result<crate::DiscoveryC, String>;

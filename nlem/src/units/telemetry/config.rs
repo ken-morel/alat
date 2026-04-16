@@ -1,4 +1,4 @@
-#[derive(serde::Deserialize, serde::Serialize, Clone)]
+#[derive(serde::Deserialize, serde::Serialize, Clone, Debug)]
 pub struct TelemetryServiceConfig {
     pub enabled: bool,
     pub poll_interval_secs: u32,

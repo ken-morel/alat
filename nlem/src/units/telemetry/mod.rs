@@ -6,7 +6,7 @@ pub type TelemetryInfo = info::TelemetryInfo;
 
 use crate::{proto, unit};
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct TelemetryService {
     initialized: bool,
     node: crate::Node,
@@ -48,7 +48,7 @@ impl unit::Unit for TelemetryService {
         self.initialized = true;
         Ok(())
     }
-    async fn spawn_worker(&self, channel: unit::UnitSender) -> unit::SpawnWorkerResult {
+    async fn spawn_worker(&mut self, channel: unit::UnitSender) -> unit::SpawnWorkerResult {
         let send = async move |msg: unit::UnitEvent| {
             channel
                 .send(msg)
@@ -88,7 +88,7 @@ impl unit::Unit for TelemetryService {
         }))
     }
     async fn grpc(
-        &self,
+        &mut self,
         server: tonic::transport::server::Router,
     ) -> Result<tonic::transport::server::Router, unit::error::UnitError> {
         let server = server.add_service(

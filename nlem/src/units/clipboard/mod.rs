@@ -6,14 +6,14 @@ use crate::proto;
 use crate::unit;
 
 #[tonic::async_trait]
-pub trait Clipboard {
+pub trait Clipboard: std::fmt::Debug {
     async fn get_content(&self) -> Result<ClipboardContent, String>;
     async fn set_content(&self, content: ClipboardContent) -> Result<(), String>;
 }
 
 pub type ClipboardC = crate::MContainer<dyn Clipboard + Send + Sync + 'static>;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct ClipboardService {
     initialized: bool,
     node: crate::Node,
@@ -51,11 +51,11 @@ impl unit::Unit for ClipboardService {
         self.initialized = true;
         Ok(())
     }
-    async fn spawn_worker(&self, _: unit::UnitSender) -> unit::SpawnWorkerResult {
+    async fn spawn_worker(&mut self, _: unit::UnitSender) -> unit::SpawnWorkerResult {
         None
     }
     async fn grpc(
-        &self,
+        &mut self,
         server: tonic::transport::server::Router,
     ) -> unit::error::UnitResult<tonic::transport::server::Router> {
         self.ensure_init()?;

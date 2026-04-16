@@ -2,7 +2,7 @@ mod server;
 
 use crate::{proto, unit};
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct PairService {
     initialized: bool,
     node: crate::Node,
@@ -29,11 +29,11 @@ impl unit::Unit for PairService {
         self.initialized = true;
         Ok(())
     }
-    async fn spawn_worker(&self, _: unit::UnitSender) -> unit::SpawnWorkerResult {
+    async fn spawn_worker(&mut self, _: unit::UnitSender) -> unit::SpawnWorkerResult {
         None
     }
     async fn grpc(
-        &self,
+        &mut self,
         server: tonic::transport::server::Router,
     ) -> unit::error::UnitResult<tonic::transport::server::Router> {
         self.ensure_init()?;

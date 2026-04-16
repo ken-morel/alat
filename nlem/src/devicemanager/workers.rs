@@ -1,11 +1,6 @@
-use std::time::Duration;
-
 use super::*;
 use crate::client;
-use tokio::{
-    sync::mpsc::{Receiver, Sender, channel},
-    time::sleep,
-};
+use tokio::{sync::mpsc, time};
 
 pub(super) enum WorkerEvent {
     Wrapper(DeviceManagerEvent),
@@ -13,8 +8,8 @@ pub(super) enum WorkerEvent {
 
 impl DeviceManager {
     async fn discovery_server_worker(
-        coordinator: Sender<WorkerEvent>,
-        this_device: Arc<RwLock<discovery::DiscoveredDevice>>,
+        coordinator: mpsc::Sender<WorkerEvent>,
+        this_device: sync::Arc<RwLock<discovery::DiscoveredDevice>>,
         discovery: crate::DiscoveryC,
     ) {
         let mut current_info = this_device.read().await.clone();
@@ -31,7 +26,7 @@ impl DeviceManager {
             .await
             .expect("Discovery worker failed");
         loop {
-            sleep(Duration::from_secs(2)).await;
+            time::sleep(time::Duration::from_secs(2)).await;
             let new_info = this_device.read().await.clone();
             if new_info != current_info {
                 current_info = new_info;
@@ -41,7 +36,7 @@ impl DeviceManager {
                     .cease_advertising()
                     .await
                     .expect("Could not stop advertiser");
-                sleep(Duration::from_secs(1)).await;
+                time::sleep(time::Duration::from_secs(1)).await;
                 discovery
                     .write()
                     .await
@@ -52,8 +47,11 @@ impl DeviceManager {
         }
     }
 
-    async fn discoverer_worker(worker_events: Sender<WorkerEvent>, discovery: crate::DiscoveryC) {
-        let (tx, mut rx) = channel(1);
+    async fn discoverer_worker(
+        worker_events: mpsc::Sender<WorkerEvent>,
+        discovery: crate::DiscoveryC,
+    ) {
+        let (tx, mut rx) = mpsc::channel(1);
         if let Err(e) = discovery.write().await.scan(tx).await {
             worker_events
                 .send(WorkerEvent::Wrapper(DeviceManagerEvent::DiscoveryError(e)))
@@ -97,11 +95,15 @@ impl DeviceManager {
     }
 
     async fn coordinator_worker(
-        mut worker_events: Receiver<WorkerEvent>,
-        global_events: Sender<DeviceManagerEvent>,
-        discovered_devices: Arc<RwLock<HashMap<security::DeviceID, discovery::DiscoveredDevice>>>,
-        connected_devices: Arc<RwLock<HashMap<security::DeviceID, connected::ConnectedDevice>>>,
-        paired_devices: Arc<RwLock<HashMap<security::DeviceID, storage::PairedDevice>>>,
+        mut worker_events: mpsc::Receiver<WorkerEvent>,
+        global_events: mpsc::Sender<DeviceManagerEvent>,
+        discovered_devices: sync::Arc<
+            dashmap::DashMap<security::DeviceID, discovery::DiscoveredDevice>,
+        >,
+        connected_devices: sync::Arc<
+            dashmap::DashMap<security::DeviceID, connected::ConnectedDevice>,
+        >,
+        paired_devices: sync::Arc<dashmap::DashMap<security::DeviceID, storage::PairedDevice>>,
     ) {
         global_events
             .send(DeviceManagerEvent::Started)
@@ -112,8 +114,6 @@ impl DeviceManager {
                 Ok(client) => {
                     let connected_device = connected::ConnectedDevice { client, device };
                     connected_devices
-                        .write()
-                        .await
                         .entry(connected_device.device.info.id)
                         .or_insert_with(|| connected_device.clone()); // clone only if needed
                     global_events
@@ -133,10 +133,7 @@ impl DeviceManager {
             match event {
                 WorkerEvent::Wrapper(event) => match &event {
                     DeviceManagerEvent::Found(found_device) => {
-                        discovered_devices
-                            .write()
-                            .await
-                            .insert(found_device.info.id, *found_device.clone());
+                        discovered_devices.insert(found_device.info.id, *found_device.clone());
                         global_events
                             .send(event.clone())
                             .await
@@ -144,42 +141,30 @@ impl DeviceManager {
 
                         // update the paired_devices if found and clone it to local paired_device
                         paired_devices
-                            .write()
-                            .await
                             .entry(found_device.info.id)
                             .and_modify(|paired| {
                                 paired.info = found_device.info.clone();
                             });
                         // attempt to connect
-                        if let Some(device) = paired_devices
-                            .read()
-                            .await
-                            .get(&found_device.info.id)
-                            .cloned()
-                        {
-                            try_connect(device, found_device.address).await;
+                        if let Some(device) = paired_devices.get(&found_device.info.id) {
+                            try_connect(device.clone(), found_device.address).await;
                         }
                     }
                     echoable => {
                         match echoable {
                             DeviceManagerEvent::Lost(device_id) => {
-                                connected_devices.write().await.remove(device_id);
-                                discovered_devices.write().await.remove(device_id);
+                                connected_devices.remove(device_id);
+                                discovered_devices.remove(device_id);
                             }
                             DeviceManagerEvent::Paired(paired) => {
-                                paired_devices
-                                    .write()
-                                    .await
-                                    .insert(paired.info.id, paired.clone());
-                                if let Some(found) =
-                                    discovered_devices.read().await.get(&paired.info.id)
-                                {
+                                paired_devices.insert(paired.info.id, paired.clone());
+                                if let Some(found) = discovered_devices.get(&paired.info.id) {
                                     try_connect(paired.clone(), found.address).await;
                                 }
                             }
                             DeviceManagerEvent::Unpaired(dev_id) => {
-                                paired_devices.write().await.remove(dev_id);
-                                connected_devices.write().await.remove(dev_id);
+                                paired_devices.remove(dev_id);
+                                connected_devices.remove(dev_id);
                             }
                             _ => {}
                         };
@@ -196,10 +181,10 @@ impl DeviceManager {
             .await
             .expect("Could not send device manager started event");
     }
-    pub async fn start_workers(&mut self) -> Receiver<DeviceManagerEvent> {
-        let (sender, receiver) = channel(1);
+    pub async fn start_workers(&mut self) -> mpsc::Receiver<DeviceManagerEvent> {
+        let (sender, receiver) = mpsc::channel(1);
         println!("Spawning workers");
-        let (itx, irx) = channel::<WorkerEvent>(1);
+        let (itx, irx) = mpsc::channel::<WorkerEvent>(1);
 
         self.worker = Some(itx.clone());
 

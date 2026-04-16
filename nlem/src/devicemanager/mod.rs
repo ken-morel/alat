@@ -3,14 +3,9 @@ mod workers;
 
 use tokio::sync::RwLock;
 
-use crate::{discovery, server, storage::StorageError};
+use crate::{discovery, security, server, storage};
 
-use super::{security, storage};
-use std::{
-    collections::HashMap,
-    net::{Ipv4Addr, SocketAddr},
-    sync::Arc,
-};
+use std::{net, sync};
 
 #[derive(Debug, Clone)]
 pub enum DeviceManagerEvent {
@@ -40,39 +35,45 @@ pub enum DeviceManagerEvent {
     Stopped,
 }
 
-#[derive()]
+#[derive(Debug)]
 pub struct DeviceManager {
     pub storage: crate::StorageC,
     pub platform: crate::PlatformC,
 
-    pub paired_devices: Arc<RwLock<HashMap<security::DeviceID, storage::PairedDevice>>>,
-    pub this_device: Arc<RwLock<discovery::DiscoveredDevice>>,
-    pub device_certificate: Arc<RwLock<security::Certificate>>,
+    pub paired_devices: sync::Arc<dashmap::DashMap<security::DeviceID, storage::PairedDevice>>,
+    pub this_device: sync::Arc<RwLock<discovery::DiscoveredDevice>>,
+    pub device_certificate: sync::Arc<RwLock<security::Certificate>>,
 
-    pub connected_devices: Arc<RwLock<HashMap<security::DeviceID, connected::ConnectedDevice>>>,
+    pub connected_devices:
+        sync::Arc<dashmap::DashMap<security::DeviceID, connected::ConnectedDevice>>,
 
-    pub discovered_devices: Arc<RwLock<HashMap<security::DeviceID, discovery::DiscoveredDevice>>>,
+    pub discovered_devices:
+        sync::Arc<dashmap::DashMap<security::DeviceID, discovery::DiscoveredDevice>>,
 
     worker: Option<tokio::sync::mpsc::Sender<workers::WorkerEvent>>,
     discovery: crate::DiscoveryC,
 }
 
 impl DeviceManager {
-    async fn load(&mut self) -> Result<(), StorageError> {
+    async fn load(&mut self) -> Result<(), storage::StorageError> {
         let mut store = self.storage.lock().await;
-        let mut map = HashMap::new();
+        let map = dashmap::DashMap::new();
         for device in store.get_paired().await? {
             map.insert(device.info.id, device);
         }
-        *self.paired_devices.write().await = map;
+        self.paired_devices = sync::Arc::new(map);
         self.this_device.write().await.info = store.get_info().await?;
         *self.device_certificate.write().await = store.get_certificate().await?;
         Ok(())
     }
 
-    async fn save(&self) -> Result<(), StorageError> {
+    async fn save(&self) -> Result<(), storage::StorageError> {
         let mut store = self.storage.lock().await;
-        let paired_devices = self.paired_devices.read().await.values().cloned().collect();
+        let paired_devices = self
+            .paired_devices
+            .iter()
+            .map(|e| e.value().clone())
+            .collect();
         store.set_paired(paired_devices).await?;
         store
             .set_info(self.this_device.read().await.info.clone())
@@ -86,16 +87,16 @@ impl DeviceManager {
         store: crate::StorageC,
         platform: crate::PlatformC,
         discovery: crate::DiscoveryC,
-    ) -> Result<Self, StorageError> {
+    ) -> Result<Self, storage::StorageError> {
         let mut manager = Self {
-            this_device: Arc::new(RwLock::new(discovery::DiscoveredDevice {
-                address: SocketAddr::new(Ipv4Addr::LOCALHOST.into(), server::ALAT_PORT),
+            this_device: sync::Arc::new(RwLock::new(discovery::DiscoveredDevice {
+                address: net::SocketAddr::new(net::Ipv4Addr::LOCALHOST.into(), server::ALAT_PORT),
                 info: storage::DeviceInfo::default(),
             })),
-            paired_devices: Arc::new(RwLock::new(HashMap::default())),
-            device_certificate: Arc::new(RwLock::new(security::Certificate::default())),
-            connected_devices: Arc::new(RwLock::new(HashMap::default())),
-            discovered_devices: Arc::new(RwLock::new(HashMap::default())),
+            paired_devices: sync::Arc::new(dashmap::DashMap::new()),
+            device_certificate: sync::Arc::new(RwLock::new(security::Certificate::default())),
+            connected_devices: sync::Arc::new(dashmap::DashMap::new()),
+            discovered_devices: sync::Arc::new(dashmap::DashMap::new()),
             worker: None,
             storage: store.clone(),
             discovery,
@@ -142,7 +143,7 @@ impl DeviceManager {
         &self,
         token: &security::PairToken,
     ) -> Option<connected::ConnectedDevice> {
-        for dev in self.connected_devices.read().await.values() {
+        for dev in self.connected_devices.iter() {
             if &dev.device.token == token {
                 return Some(dev.clone());
             }

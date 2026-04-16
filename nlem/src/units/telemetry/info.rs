@@ -1,5 +1,5 @@
 use crate::proto;
-#[derive(serde::Serialize, serde::Deserialize, Clone, Default)]
+#[derive(serde::Serialize, serde::Deserialize, Clone, Default, Debug)]
 pub struct TelemetryInfo {
     pub uptime_secs: u64,
     pub os_name: String,

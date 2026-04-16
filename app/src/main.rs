@@ -16,16 +16,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let node = nlem::node::Node::init(platform)
         .await
         .expect("Could not create node");
-
-    let node = Arc::new(RwLock::new(node));
+    nlem::units::register_units(&node).await;
+    let node = nlem::contain(node); // using arc directrly causes issues with contained types
 
     let window = ui::MainWindow::new()?;
     let weak_window = window.as_weak();
 
     let pair_node = node.clone();
     window.on_request_pair(move |device| {
-        let weak_window = weak_window.clone();
         let node = pair_node.clone();
+        let weak_window = weak_window.clone();
         let st: String = device.id.clone().into();
         let device_id = nlem::security::array_from_vec(
             (0..st.len())

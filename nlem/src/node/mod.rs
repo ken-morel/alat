@@ -10,7 +10,7 @@ use super::{client, devicemanager, security, server, storage};
 
 /// A node contains a collection of references to it's components.
 /// The node stores no data on it's own, that's why it can easily be cloned
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Node {
     pub storage: crate::StorageC,
     pub platform: crate::PlatformC,
@@ -33,20 +33,20 @@ impl Node {
             })
             .await?;
         let discovery = platform.write().await.discovery_manager().await?;
-        let device_manager = Arc::new(RwLock::new(
+        let device_manager = crate::contain(
             devicemanager::DeviceManager::init(
                 storage.clone(),
                 platform.clone(),
                 discovery.clone(),
             )
             .await?,
-        ));
+        );
         let unit_manager = Arc::new(RwLock::new(unit::UnitManager::new()));
 
-        let server = Arc::new(RwLock::new(server::Server::new(
+        let server = crate::contain(server::Server::new(
             device_manager.clone(),
             unit_manager.clone(),
-        )));
+        ));
         Ok(Self {
             storage,
             platform,
@@ -93,8 +93,6 @@ impl Node {
         let manager = self.device_manager.read().await;
         let device = manager
             .discovered_devices
-            .read()
-            .await
             .get(device_id)
             .ok_or(String::from("Device not found"))?
             .clone();

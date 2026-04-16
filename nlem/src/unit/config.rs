@@ -1,6 +1,6 @@
 use crate::storage;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct UnitConfig {
     storage: crate::StorageC,
     unit_id: super::UnitID,

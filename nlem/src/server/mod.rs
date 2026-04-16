@@ -9,7 +9,7 @@ use tonic::{Request, Response, Status};
 
 pub const ALAT_PORT: u16 = 1143;
 
-#[derive()]
+#[derive(Debug)]
 pub struct Server {
     device_manager: crate::DeviceManagerC,
     unit_manager: crate::UnitManagerC,

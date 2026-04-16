@@ -14,6 +14,7 @@ const ADVERTISEMENT_INTERVAL: Duration = Duration::from_secs(5);
 const DEVICE_TIMEOUT: Duration = Duration::from_secs(15);
 const BROADCAST_DATA_BUFFER_SIZE: usize = 256;
 
+#[derive(Debug)]
 pub struct DiscoveryManager {
     advertising_task: Option<JoinHandle<()>>,
     scan_task: Option<JoinHandle<()>>,

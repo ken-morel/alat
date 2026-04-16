@@ -1,12 +1,12 @@
 use super::{ui, utils::*};
 use std::sync::Arc;
-use tokio::sync::RwLock;
 
-pub async fn worker(node: Arc<RwLock<nlem::node::Node>>, window: slint::Weak<ui::MainWindow>) {
-    let manager = node.read().await.device_manager.clone();
+pub async fn worker(
+    node: nlem::RWContainer<nlem::node::Node>,
+    window: slint::Weak<ui::MainWindow>,
+) {
+    let node = node.read().await;
     let mut node_events = node
-        .write()
-        .await
         .start()
         .await
         .expect("Could not start node and get event manager channel");
@@ -41,43 +41,47 @@ pub async fn worker(node: Arc<RwLock<nlem::node::Node>>, window: slint::Weak<ui:
         };
 
         let mut devices = std::collections::HashMap::new();
-        let manager = manager.read().await;
 
-        for device in manager.paired_devices.read().await.values() {
-            devices.insert(
-                device.info.id,
-                Device {
+        {
+            let manager = node.device_manager.read().await;
+
+            for device in manager.paired_devices.iter() {
+                devices.insert(
+                    device.info.id,
+                    Device {
+                        name: device.info.name.clone(),
+                        color: device.info.color.clone(),
+                        address: "".into(),
+                        port: 0,
+                        id: device.info.id,
+                        relationship: DeviceRelationship::Paired,
+                    },
+                );
+            }
+            for device in manager.connected_devices.iter() {
+                devices.insert(
+                    device.device.info.id,
+                    Device {
+                        name: device.device.info.name.clone(),
+                        color: device.device.info.color.clone(),
+                        address: device.client.server_addr.ip().to_string(),
+                        port: device.client.server_addr.port().into(),
+                        id: device.device.info.id,
+                        relationship: DeviceRelationship::Connected,
+                    },
+                );
+            }
+            for device in manager.discovered_devices.iter() {
+                devices.entry(device.info.id).or_insert(Device {
                     name: device.info.name.clone(),
                     color: device.info.color.clone(),
-                    address: "".into(),
-                    port: 0,
+                    address: device.address.ip().to_string(),
+                    port: device.address.port().into(),
                     id: device.info.id,
-                    relationship: DeviceRelationship::Paired,
-                },
-            );
-        }
-        for device in manager.connected_devices.read().await.values() {
-            devices.insert(
-                device.device.info.id,
-                Device {
-                    name: device.device.info.name.clone(),
-                    color: device.device.info.color.clone(),
-                    address: device.client.server_addr.ip().to_string(),
-                    port: device.client.server_addr.port().into(),
-                    id: device.device.info.id,
-                    relationship: DeviceRelationship::Connected,
-                },
-            );
-        }
-        for device in manager.discovered_devices.read().await.values() {
-            devices.entry(device.info.id).or_insert(Device {
-                name: device.info.name.clone(),
-                color: device.info.color.clone(),
-                address: device.address.ip().to_string(),
-                port: device.address.port().into(),
-                id: device.info.id,
-                relationship: DeviceRelationship::Found,
-            });
+                    relationship: DeviceRelationship::Found,
+                });
+            }
+            drop(manager);
         }
 
         window

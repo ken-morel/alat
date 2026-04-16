@@ -1,6 +1,7 @@
 use nlem::security::Certificate;
 use nlem::storage::*;
 
+#[derive(Debug)]
 pub struct JSONFileStorage {
     path: std::path::PathBuf,
     data: StorageData,

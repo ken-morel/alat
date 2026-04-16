@@ -1,8 +1,7 @@
 pub mod config;
 pub mod error;
 
-use std::{collections::HashMap, fmt::Display};
-use tokio::sync::RwLock;
+use std::fmt::Display;
 
 use crate::{devicemanager::connected, proto, security};
 
@@ -40,12 +39,12 @@ pub type UnitSender = tokio::sync::mpsc::Sender<UnitEvent>;
 pub type SpawnWorkerResult = Option<tokio::task::JoinHandle<()>>;
 
 #[tonic::async_trait]
-pub trait Unit: Send + Sync {
+pub trait Unit: Send + Sync + std::fmt::Debug {
     fn id(&self) -> UnitID;
     async fn init(&mut self) -> Result<(), error::UnitError>;
-    async fn spawn_worker(&self, channel: UnitSender) -> SpawnWorkerResult;
+    async fn spawn_worker(&mut self, channel: UnitSender) -> SpawnWorkerResult;
     async fn grpc(
-        &self,
+        &mut self,
         server: tonic::transport::server::Router,
     ) -> Result<tonic::transport::server::Router, error::UnitError>;
     async fn authenticate(
@@ -73,35 +72,34 @@ pub trait Unit: Send + Sync {
     }
 }
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct UnitManager {
-    pub units: RwLock<HashMap<UnitID, crate::UnitC>>,
+    pub units: dashmap::DashMap<UnitID, crate::UnitC>,
 }
-
 impl UnitManager {
     pub fn new() -> Self {
         Self::default()
     }
     pub async fn add_unit(&mut self, s: crate::UnitC) {
-        self.units
-            .write()
-            .await
-            .insert(s.clone().read().await.id(), s);
+        self.units.insert(s.read().await.id(), s.clone());
     }
     pub async fn get_unit(&self, id: &UnitID) -> Option<crate::UnitC> {
-        self.units.read().await.get(&id).cloned()
+        match self.units.get(&id) {
+            Some(u) => Some(u.clone()),
+            None => None,
+        }
     }
     pub async fn register_grpc_unit_servers(
         &self,
         mut server: tonic::transport::server::Router,
     ) -> Result<tonic::transport::server::Router, error::UnitError> {
-        for unit in self.units.read().await.values() {
+        for unit in self.units.iter() {
             server = unit.write().await.grpc(server).await?;
         }
         Ok(server)
     }
     pub async fn init(&mut self) -> Result<(), crate::ErrorC> {
-        for unit in self.units.read().await.values() {
+        for unit in self.units.iter() {
             unit.write().await.init().await?;
         }
         Ok(())
@@ -116,8 +114,7 @@ impl UnitManager {
                 .await
                 .expect("Could not relay message to main unit manage channel");
         };
-        let units = self.units.read().await;
-        for unit in units.values() {
+        for unit in self.units.iter() {
             let sender = stx.clone();
             let unit = unit.clone();
             tokio::spawn(async move {

@@ -28,7 +28,7 @@ use super::proto;
 pub type StorageResult<T> = Result<T, StorageError>;
 
 #[tonic::async_trait]
-pub trait Storage: Send + Sync {
+pub trait Storage: Send + Sync + std::fmt::Debug {
     async fn init(&mut self, data: StorageData) -> StorageResult<()>;
 
     async fn get_certificate(&mut self) -> StorageResult<Certificate>;

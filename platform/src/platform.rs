@@ -6,6 +6,7 @@ use tokio::sync::{Mutex, RwLock};
 
 use super::discovery;
 
+#[derive(Debug)]
 pub struct Platform {}
 
 impl Platform {

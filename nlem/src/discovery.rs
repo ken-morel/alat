@@ -26,7 +26,7 @@ pub enum DiscoveryError {
 }
 
 #[tonic::async_trait]
-pub trait DiscoveryManager: Send + Sync {
+pub trait DiscoveryManager: Send + Sync + std::fmt::Debug {
     async fn advertise(&mut self, device: DiscoveredDevice) -> Result<(), DiscoveryError>;
     async fn cease_advertising(&mut self) -> Result<(), DiscoveryError>;
     async fn scan(
