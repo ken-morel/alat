@@ -181,12 +181,12 @@ impl DeviceManager {
             .await
             .expect("Could not send device manager started event");
     }
-    pub async fn start_workers(&mut self) -> mpsc::Receiver<DeviceManagerEvent> {
+    pub async fn start_workers(&self) -> mpsc::Receiver<DeviceManagerEvent> {
         let (sender, receiver) = mpsc::channel(1);
         println!("Spawning workers");
         let (itx, irx) = mpsc::channel::<WorkerEvent>(1);
 
-        self.worker = Some(itx.clone());
+        *self.worker.write().await = Some(itx.clone());
 
         tokio::spawn(Self::discovery_server_worker(
             itx.clone(),

@@ -1,11 +1,12 @@
 use super::*;
+use std::sync::Arc;
 
 #[derive()]
 pub struct AlatService {
-    device_manager: Arc<RwLock<devicemanager::DeviceManager>>,
+    device_manager: Arc<devicemanager::DeviceManager>,
 }
 impl AlatService {
-    pub fn new(device_manager: Arc<RwLock<devicemanager::DeviceManager>>) -> Self {
+    pub fn new(device_manager: Arc<devicemanager::DeviceManager>) -> Self {
         Self { device_manager }
     }
 }
@@ -19,8 +20,6 @@ impl proto::alat_service_server::AlatService for AlatService {
         Ok(Response::new(proto::GetDeviceInfoResponse {
             info: Some(
                 self.device_manager
-                    .read()
-                    .await
                     .this_device
                     .read()
                     .await

@@ -17,7 +17,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .await
         .expect("Could not create node");
     nlem::units::register_units(&node).await;
-    let node = nlem::contain(node); // using arc directrly causes issues with contained types
 
     let window = ui::MainWindow::new()?;
     let weak_window = window.as_weak();
@@ -43,7 +42,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         tokio::spawn(async move {
             let weak_window = weak_window.clone();
-            let response = node.read().await.request_pair(&device_id).await;
+            let response = node.request_pair(&device_id).await;
             weak_window
                 .upgrade_in_event_loop(move |window| {
                     window.set_is_pairing(false);

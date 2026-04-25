@@ -3,8 +3,6 @@ mod alat;
 use crate::unit;
 
 use super::{devicemanager, proto};
-use std::sync::Arc;
-use tokio::sync::RwLock;
 use tonic::{Request, Response, Status};
 
 pub const ALAT_PORT: u16 = 1143;
@@ -29,8 +27,6 @@ impl Server {
             alat::AlatService::new(self.device_manager.clone()),
         ));
         self.unit_manager
-            .read()
-            .await
             .register_grpc_unit_servers(router)
             .await
     }

@@ -1,5 +1,4 @@
 use std::sync::Arc;
-use tokio::sync::RwLock;
 
 use crate::{
     devicemanager::{DeviceManagerEvent, connected},
@@ -33,7 +32,7 @@ impl Node {
             })
             .await?;
         let discovery = platform.write().await.discovery_manager().await?;
-        let device_manager = crate::contain(
+        let device_manager = Arc::new(
             devicemanager::DeviceManager::init(
                 storage.clone(),
                 platform.clone(),
@@ -41,9 +40,9 @@ impl Node {
             )
             .await?,
         );
-        let unit_manager = Arc::new(RwLock::new(unit::UnitManager::new()));
+        let unit_manager = Arc::new(unit::UnitManager::new());
 
-        let server = crate::contain(server::Server::new(
+        let server = Arc::new(server::Server::new(
             device_manager.clone(),
             unit_manager.clone(),
         ));
@@ -65,8 +64,8 @@ impl Node {
         }
     }
     pub async fn start(&self) -> Result<tokio::sync::mpsc::Receiver<NodeEvent>, crate::ErrorC> {
-        self.unit_manager.write().await.init().await?;
-        let router = self.server.write().await.create_router().await?;
+        self.unit_manager.init().await?;
+        let router = self.server.create_router().await?;
         tokio::spawn(async move {
             let addr = std::net::SocketAddr::new(
                 std::net::Ipv4Addr::UNSPECIFIED.into(),
@@ -80,7 +79,7 @@ impl Node {
             }
         });
 
-        let managerrx = self.device_manager.write().await.start_workers().await;
+        let managerrx = self.device_manager.start_workers().await;
         let (tx, rx) = tokio::sync::mpsc::channel(1);
         tokio::spawn(node_worker(self.clone(), tx, managerrx));
         Ok(rx)
@@ -90,7 +89,7 @@ impl Node {
         &self,
         device_id: &security::DeviceID,
     ) -> Result<Result<storage::PairedDevice, String>, String> {
-        let manager = self.device_manager.read().await;
+        let manager = self.device_manager.clone();
         let device = manager
             .discovered_devices
             .get(device_id)
@@ -98,7 +97,6 @@ impl Node {
             .clone();
         let this_info = manager.this_device.read().await.clone().info;
         let this_certificate = manager.device_certificate.read().await.clone();
-        drop(manager);
 
         let mut cl = client::Client::connect(device.address).await.map_err(|e| {
             format!(
@@ -116,8 +114,6 @@ impl Node {
                         info,
                     };
                     self.device_manager
-                        .read()
-                        .await
                         .add_paired_device(paired_device.clone())
                         .await;
                     Ok(Ok(paired_device))
@@ -128,7 +124,7 @@ impl Node {
         }
     }
     pub async fn unit_register(&self, unit: crate::UnitC) {
-        self.unit_manager.write().await.add_unit(unit).await;
+        self.unit_manager.add_unit(unit).await;
     }
 }
 
@@ -164,12 +160,21 @@ async fn node_worker(
     events: tokio::sync::mpsc::Sender<NodeEvent>,
     mut manager_events: tokio::sync::mpsc::Receiver<devicemanager::DeviceManagerEvent>,
 ) {
-    let send = async |event| {
-        events
-            .send(event)
-            .await
-            .expect("Could not send event to node events listener");
+    let (tx, mut rx) = tokio::sync::mpsc::channel(1);
+    
+    tokio::spawn(async move {
+        while let Some(event) = rx.recv().await {
+            events.send(event).await.ok();
+        }
+    });
+
+    let send = |event| {
+        let tx = tx.clone();
+        async move {
+            tx.send(event).await.ok();
+        }
     };
+
     send(NodeEvent::NodeStarted).await;
     while let Some(event) = manager_events.recv().await {
         match event as DeviceManagerEvent {
@@ -202,7 +207,7 @@ async fn node_worker(
             DeviceManagerEvent::DiscoveryServerStarted(info) => {
                 send(NodeEvent::DiscoveryServerStarted(info)).await;
             }
-            DeviceManagerEvent::DiscoveryServerUpdated(info) => {
+            DeviceManagerEvent::DiscoveryServerStartedUpdated(info) => {
                 send(NodeEvent::DiscoveryServerUpdated(info)).await;
             }
             DeviceManagerEvent::DiscoveryServerStopped => {
@@ -214,11 +219,18 @@ async fn node_worker(
             DeviceManagerEvent::DiscoveryStopped => {
                 send(NodeEvent::DiscoveryStopped).await;
             }
-            DeviceManagerEvent::InfoLog(msg) => node.platform.read().await.log_info(msg).await,
-            DeviceManagerEvent::WarningLog(msg) => {
-                node.platform.read().await.log_warning(msg).await
+            DeviceManagerEvent::InfoLog(msg) => {
+                let p = node.platform.read().await;
+                p.log_info(msg).await
             }
-            DeviceManagerEvent::ErrorLog(msg) => node.platform.read().await.log_error(msg).await,
+            DeviceManagerEvent::WarningLog(msg) => {
+                let p = node.platform.read().await;
+                p.log_warning(msg).await
+            }
+            DeviceManagerEvent::ErrorLog(msg) => {
+                let p = node.platform.read().await;
+                p.log_error(msg).await
+            }
         }
     }
     send(NodeEvent::NodeStopped).await;

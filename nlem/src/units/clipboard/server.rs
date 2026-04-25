@@ -7,14 +7,15 @@ impl proto::clipboard_service_server::ClipboardService for super::ClipboardServi
         &self,
         req: tonic::Request<proto::GetClipboardRequest>,
     ) -> Result<tonic::Response<proto::GetClipboardResponse>, tonic::Status> {
-        self.ensure_init()?;
+        self.ensure_init().await?;
+        let inner = self.inner.read().await;
         self.authenticate(
-            &*self.node.clone().device_manager.read().await,
+            &inner.node.device_manager,
             &req.into_inner().call.unwrap(),
         )
         .await?;
 
-        match self
+        match inner
             .clipboard
             .clone()
             .unwrap()
@@ -43,10 +44,11 @@ impl proto::clipboard_service_server::ClipboardService for super::ClipboardServi
         &self,
         req: tonic::Request<proto::SendClipboardRequest>,
     ) -> Result<tonic::Response<proto::SendClipboardResponse>, tonic::Status> {
-        self.ensure_init()?;
+        self.ensure_init().await?;
         let req = req.into_inner();
+        let inner = self.inner.read().await;
         self.authenticate(
-            &*self.node.clone().device_manager.read().await,
+            &inner.node.device_manager,
             &req.call.unwrap(),
         )
         .await?;

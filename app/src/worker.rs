@@ -2,10 +2,9 @@ use super::{ui, utils::*};
 use std::sync::Arc;
 
 pub async fn worker(
-    node: nlem::RWContainer<nlem::node::Node>,
+    node: nlem::node::Node,
     window: slint::Weak<ui::MainWindow>,
 ) {
-    let node = node.read().await;
     let mut node_events = node
         .start()
         .await
@@ -43,7 +42,7 @@ pub async fn worker(
         let mut devices = std::collections::HashMap::new();
 
         {
-            let manager = node.device_manager.read().await;
+            let manager = node.device_manager.clone();
 
             for device in manager.paired_devices.iter() {
                 devices.insert(

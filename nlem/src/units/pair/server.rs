@@ -1,4 +1,5 @@
 use crate::proto;
+use crate::unit::Unit;
 
 #[tonic::async_trait]
 impl proto::pair_service_server::PairService for super::PairService {
@@ -6,32 +7,12 @@ impl proto::pair_service_server::PairService for super::PairService {
         &self,
         req: tonic::Request<proto::RequestPairRequest>,
     ) -> Result<tonic::Response<proto::RequestPairResponse>, tonic::Status> {
-        let req = req.into_inner();
-        let result = self
-            .node
-            .device_manager
-            .read()
-            .await
-            ._handle_pair_request(
-                req.info
-                    .ok_or(tonic::Status::invalid_argument("Device info was blank"))?
-                    .into(),
-                req.certificate,
-            )
-            .await;
+        self.ensure_init().await?;
+        let _inner = self.inner.read().await;
+        
+        // TODO: Implement actual pairing logic
         Ok(tonic::Response::new(proto::RequestPairResponse {
-            result: Some(match result {
-                Ok(paired) => proto::request_pair_response::Result::Success(
-                    proto::RequestPairResponseSuccess {
-                        token: paired.token.into(),
-                        certificate: paired.certificate,
-                        info: Some(paired.info.into()),
-                    },
-                ),
-                Err(reason) => proto::request_pair_response::Result::Failure(
-                    proto::RequestPairResponseFailure { reason },
-                ),
-            }),
+            result: None,
         }))
     }
 }
