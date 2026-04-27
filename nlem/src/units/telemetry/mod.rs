@@ -1,6 +1,6 @@
+mod config;
 mod info;
 mod server;
-mod config;
 
 pub use info::TelemetryInfo;
 
@@ -18,6 +18,8 @@ pub struct TelemetryService {
 struct TelemetryServiceInner {
     initialized: bool,
     node: crate::Node,
+    config: config::TelemetryServiceConfig,
+    info: Option<(std::time::Instant, TelemetryInfo)>,
 }
 
 impl TelemetryService {
@@ -26,8 +28,36 @@ impl TelemetryService {
             inner: Arc::new(RwLock::new(TelemetryServiceInner {
                 node,
                 initialized: false,
+                config: config::TelemetryServiceConfig::default(),
+                info: None,
             })),
         }
+    }
+    pub async fn _query_telemetry(&self) -> unit::error::UnitResult<TelemetryInfo> {
+        self.inner
+            .read()
+            .await
+            .node
+            .platform
+            .read()
+            .await
+            .query_telemetry()
+            .await
+            .map_err(|e| unit::error::UnitError::Message(unit::Unit::id(self), e.to_string()))
+    }
+    pub async fn query_telemetry(&self) -> unit::error::UnitResult<TelemetryInfo> {
+        let inner = self.inner.read().await;
+        if let Some((timestamp, info)) = &self.inner.read().await.info
+            && std::time::Instant::now().duration_since(*timestamp)
+                < std::time::Duration::from_secs(inner.config.poll_interval_secs.into())
+        {
+            return Ok(info.clone());
+        }
+        drop(inner);
+
+        let info = self._query_telemetry().await?;
+        self.inner.write().await.info = Some((std::time::Instant::now(), info.clone()));
+        Ok(info)
     }
 }
 
@@ -40,7 +70,21 @@ impl unit::Unit for TelemetryService {
         unit::UnitID::Service("telemetry")
     }
     async fn init(&self) -> unit::error::UnitResult<()> {
-        self.inner.write().await.initialized = true;
+        let mut inner = self.inner.write().await;
+        inner.initialized = true;
+        if let Some(conf) = inner
+            .node
+            .clone()
+            .storage
+            .lock()
+            .await
+            .load_settings(&self.id().to_string())
+            .await
+            .map_err(|e| unit::error::UnitError::Init(self.id(), e.to_string()))?
+        {
+            inner.config = serde_json::from_value(conf)
+                .map_err(|e| unit::error::UnitError::Message(self.id(), e.to_string()))?;
+        }
         Ok(())
     }
     async fn spawn_worker(&self, _channel: unit::UnitSender) -> unit::SpawnWorkerResult {

@@ -1,10 +1,6 @@
 use super::{ui, utils::*};
-use std::sync::Arc;
 
-pub async fn worker(
-    node: nlem::node::Node,
-    window: slint::Weak<ui::MainWindow>,
-) {
+pub async fn worker(node: nlem::node::Node, window: slint::Weak<ui::MainWindow>) {
     let mut node_events = node
         .start()
         .await

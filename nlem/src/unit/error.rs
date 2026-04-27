@@ -15,6 +15,11 @@ pub enum UnitError {
     Message(super::UnitID, String),
     #[error("Request not authenticated")]
     Unauthenticated(),
+
+    #[error("Unit manager not initialized")]
+    ManagerNotInitialized(),
+    #[error("Unit {0} already registered")]
+    UnitAlreadyRegistered(super::UnitID),
 }
 
 pub type UnitResult<T> = Result<T, UnitError>;

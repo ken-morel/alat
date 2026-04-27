@@ -123,8 +123,8 @@ impl Node {
             Err(err) => Err(format!("Could not send pair request: {err}")),
         }
     }
-    pub async fn unit_register(&self, unit: crate::UnitC) {
-        self.unit_manager.add_unit(unit).await;
+    pub async fn unit_register(&self, unit: crate::UnitC) -> Result<(), crate::ErrorC> {
+        self.unit_manager.add_unit(unit).await
     }
 }
 
@@ -161,7 +161,7 @@ async fn node_worker(
     mut manager_events: tokio::sync::mpsc::Receiver<devicemanager::DeviceManagerEvent>,
 ) {
     let (tx, mut rx) = tokio::sync::mpsc::channel(1);
-    
+
     tokio::spawn(async move {
         while let Some(event) = rx.recv().await {
             events.send(event).await.ok();

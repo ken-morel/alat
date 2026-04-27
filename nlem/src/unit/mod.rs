@@ -2,9 +2,8 @@ pub mod config;
 pub mod error;
 
 use std::fmt::Display;
-use std::sync::Arc;
 
-use crate::{devicemanager::connected, proto, security, devicemanager::DeviceManager};
+use crate::{devicemanager::DeviceManager, devicemanager::connected, proto, security};
 
 #[derive(Debug, Clone)]
 pub enum UnitEvent {
@@ -76,13 +75,28 @@ pub trait Unit: Send + Sync + std::fmt::Debug {
 #[derive(Default, Debug)]
 pub struct UnitManager {
     pub units: dashmap::DashMap<UnitID, crate::UnitC>,
+    pub initialized: tokio::sync::RwLock<bool>,
 }
 impl UnitManager {
     pub fn new() -> Self {
         Self::default()
     }
-    pub async fn add_unit(&self, s: crate::UnitC) {
-        self.units.insert(s.id(), s.clone());
+    pub async fn add_unit(&self, s: crate::UnitC) -> Result<(), crate::ErrorC> {
+        let init = self.initialized.read().await;
+        if *init {
+            s.init().await?;
+        }
+        let mut inserted = false;
+
+        let id = s.id();
+        self.units.entry(s.id()).or_insert_with(|| {
+            inserted = true;
+            s
+        });
+        if !inserted {
+            return Err(Box::new(error::UnitError::UnitAlreadyRegistered(id)));
+        }
+        Ok(())
     }
     pub async fn get_unit(&self, id: &UnitID) -> Option<crate::UnitC> {
         match self.units.get(&id) {
@@ -101,10 +115,14 @@ impl UnitManager {
         Ok(server)
     }
     pub async fn init(&self) -> Result<(), crate::ErrorC> {
-        let units: Vec<_> = self.units.iter().map(|u| u.value().clone()).collect();
-        for unit in units {
-            unit.init().await?;
+        let mut init = self.initialized.write().await;
+        if !*init {
+            let units: Vec<_> = self.units.iter().map(|u| u.value().clone()).collect();
+            for unit in units {
+                unit.init().await?;
+            }
         }
+        *init = true;
         Ok(())
     }
     pub async fn start(

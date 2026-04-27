@@ -1,4 +1,5 @@
 use std::sync::Arc;
+pub mod error;
 
 use tokio::sync::{Mutex, RwLock};
 

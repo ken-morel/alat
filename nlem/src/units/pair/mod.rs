@@ -47,8 +47,10 @@ impl unit::Unit for PairService {
         server: tonic::transport::server::Router,
     ) -> unit::error::UnitResult<tonic::transport::server::Router> {
         self.ensure_init().await?;
-        Ok(server.add_service(
-            proto::pair_service_server::PairServiceServer::new(self.clone()),
-        ))
+        Ok(
+            server.add_service(proto::pair_service_server::PairServiceServer::new(
+                self.clone(),
+            )),
+        )
     }
 }

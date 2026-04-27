@@ -10,13 +10,13 @@ use slint::ComponentHandle;
 use worker::worker;
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> Result<(), nlem::ErrorC> {
     let platform = platform::Platform::init();
     let platform = Arc::new(RwLock::new(platform));
     let node = nlem::node::Node::init(platform)
         .await
         .expect("Could not create node");
-    nlem::units::register_units(&node).await;
+    nlem::units::register_units(&node).await?;
 
     let window = ui::MainWindow::new()?;
     let weak_window = window.as_weak();
